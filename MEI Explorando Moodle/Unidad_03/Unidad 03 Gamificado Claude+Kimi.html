@@ -106,11 +106,13 @@
         .field-title { font-size: 18px; font-weight: 800; fill: #1e3a5f; }
         .field-note { font-size: 12px; fill: #475569; }
         .field-label { font-size: 13px; font-weight: 700; fill: #1e3a5f; }
+        .probe-tag { fill: #1e3a5f; font-weight: 800; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
         .field-small { font-size: 11px; font-weight: 700; fill: #475569; }
         .wire-current { fill: none; stroke: #dc2626; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
         .wire-potential { fill: none; stroke: #2563eb; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-        .dimension-line { stroke: #334155; stroke-width: 2; }
-        .dimension-tick { stroke: #334155; stroke-width: 2; }
+        .dimension-line { stroke: #fde68a; stroke-width: 2.5; }
+        .dimension-tick { stroke: #fde68a; stroke-width: 2.5; }
+        .dimension-label { fill: #fff7ed; font-weight: 800; paint-order: stroke; stroke: #3f2415; stroke-width: 3px; stroke-linejoin: round; }
         .soil-top { fill: #84cc16; }
         .soil-layer-1 { fill: #c99a5a; }
         .soil-layer-2 { fill: #8a5529; }
@@ -135,6 +137,21 @@
         .matrix-cell:hover { background: #eef2ff; transform: scale(1.03); }
         .matrix-cell.measured { background: #27ae60; color: white; border-color: #27ae60; }
         .matrix-cell.active { background: #f39c12; color: #1e3a5f; border-color: #f39c12; }
+        .field-matrix { width: 100%; max-width: 980px; margin: 0 auto; display: block; }
+        .matrix-line { stroke: #334155; stroke-width: 2; }
+        .matrix-axis-label { font-size: 13px; font-weight: 800; fill: #1e3a5f; }
+        .matrix-tick-label { font-size: 12px; font-weight: 700; fill: #475569; }
+        .matrix-caption { font-size: 12px; fill: #475569; font-style: italic; }
+        .matrix-x { font-size: 26px; font-weight: 900; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
+        .matrix-black { fill: #111827; color: #111827; }
+        .matrix-green { fill: #16a34a; color: #16a34a; }
+        .matrix-yellow { fill: #facc15; color: #facc15; }
+        .matrix-red { fill: #ef4444; color: #ef4444; }
+        .matrix-line-hit { cursor: pointer; outline: none; }
+        .matrix-line-hit:hover .matrix-x, .matrix-line-hit.active .matrix-x { filter: drop-shadow(0 0 4px rgba(37,99,235,0.75)); }
+        .matrix-line-hit.measured .matrix-x { stroke: #1e3a5f; stroke-width: 2px; }
+        .cable-pill { display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid #cbd5e1; border-radius: 9999px; padding: 0.2rem 0.65rem; background: white; font-size: 0.82rem; font-weight: 700; color: #334155; }
+        .cable-dot { width: 0.8rem; height: 0.8rem; border-radius: 9999px; display: inline-block; border: 1px solid rgba(15,23,42,0.35); }
         .data-table { width: 100%; border-collapse: collapse; margin: 1rem 0; border-radius: 8px; overflow: hidden; font-size: 0.9rem; }
         .data-table th { background: #1e3a5f; color: white; padding: 0.65rem; text-align: center; }
         .data-table td { padding: 0.65rem; text-align: center; border-bottom: 1px solid #e2e8f0; }
@@ -177,7 +194,7 @@
     <div class="max-w-6xl mx-auto px-3 mb-4"><div class="flex gap-2 flex-wrap justify-center">
             <div class="achievement" id="ach1"><i class="fas fa-medal"></i> Principiante</div>
             <div class="achievement" id="ach2"><i class="fas fa-atom"></i> Galvanómetro</div>
-            <div class="achievement" id="ach3"><i class="fas fa-bolt"></i> Telurómetro</div>
+            <div class="achievement" id="ach3"><i class="fas fa-bolt"></i> Telurímetro</div>
             <div class="achievement" id="ach4"><i class="fas fa-globe"></i> Wenner</div>
             <div class="achievement" id="ach5"><i class="fas fa-layer-group"></i> Schlumberger</div>
             <div class="achievement" id="ach6"><i class="fas fa-crown"></i> Experto</div>
@@ -502,7 +519,7 @@
                             <stop offset="1" stop-color="#d97706"/>
                         </linearGradient>
                         <marker id="dimArrow3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#fde68a"></path>
                         </marker>
                     </defs>
                     <rect x="0" y="248" width="920" height="10" class="soil-top"></rect>
@@ -527,7 +544,7 @@
                         <text x="188" y="88" class="field-small">H</text>
                     </g>
                     <path d="M400 93 C330 130 232 146 140 214" class="wire-current"></path>
-                    <path d="M440 93 C452 140 420 174 384 214" class="wire-potential"></path>
+                    <path d="M440 93 C498 142 530 176 549 214" class="wire-potential"></path>
                     <path d="M520 93 C610 128 728 150 800 214" class="wire-current"></path>
                     <g transform="translate(130 200)">
                         <rect x="0" y="0" width="20" height="120" rx="4" fill="url(#probeSteel3)" stroke="#64748b"></rect>
@@ -536,7 +553,7 @@
                         <text x="10" y="-22" text-anchor="middle" class="field-label">E</text>
                         <text x="10" y="-40" text-anchor="middle" class="field-small">electrodo bajo prueba</text>
                     </g>
-                    <g transform="translate(374 218)">
+                    <g transform="translate(540 218)">
                         <rect x="0" y="0" width="18" height="96" rx="4" fill="url(#probeSteel3)" stroke="#64748b"></rect>
                         <path d="M0 92 L9 116 L18 92 Z" class="probe-tip"></path>
                         <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
@@ -552,11 +569,11 @@
                     </g>
                     <line x1="140" y1="334" x2="800" y2="334" class="dimension-line" marker-start="url(#dimArrow3)" marker-end="url(#dimArrow3)"></line>
                     <line x1="140" y1="318" x2="140" y2="344" class="dimension-tick"></line>
-                    <line x1="384" y1="318" x2="384" y2="344" class="dimension-tick"></line>
+                    <line x1="549" y1="318" x2="549" y2="344" class="dimension-tick"></line>
                     <line x1="800" y1="318" x2="800" y2="344" class="dimension-tick"></line>
-                    <text x="470" y="326" text-anchor="middle" class="field-label">distancia E-H</text>
-                    <line x1="140" y1="302" x2="384" y2="302" class="dimension-line" marker-start="url(#dimArrow3)" marker-end="url(#dimArrow3)"></line>
-                    <text x="262" y="294" text-anchor="middle" class="field-small">0,62 x E-H</text>
+                    <text x="470" y="326" text-anchor="middle" class="field-label dimension-label">distancia E-H</text>
+                    <line x1="140" y1="302" x2="549" y2="302" class="dimension-line" marker-start="url(#dimArrow3)" marker-end="url(#dimArrow3)"></line>
+                    <text x="344" y="294" text-anchor="middle" class="field-small dimension-label">E-S = 0,62 x E-H (18,6 m si E-H = 30 m)</text>
                 </svg>
                 <div class="diagram-stage-200 hidden">
                     <div class="electrode-row diagram-row diagram-row-80">
@@ -654,7 +671,7 @@
                             <stop offset="1" stop-color="#e2e8f0"/>
                         </linearGradient>
                         <marker id="dimArrowW" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#fde68a"></path>
                         </marker>
                     </defs>
                     <rect x="0" y="190" width="920" height="10" class="soil-top"></rect>
@@ -674,39 +691,39 @@
                         <rect x="0" y="0" width="20" height="124" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
                         <path d="M0 120 L10 148 L20 120 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">C1</text>
+                        <text x="-26" y="-20" text-anchor="end" class="field-label probe-tag">C1</text>
                     </g>
                     <g transform="translate(334 148)">
                         <rect x="0" y="0" width="20" height="104" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
                         <path d="M0 100 L10 128 L20 100 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-potential-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">P1</text>
+                        <text x="-24" y="-20" text-anchor="end" class="field-label probe-tag">P1</text>
                     </g>
                     <g transform="translate(566 148)">
                         <rect x="0" y="0" width="20" height="104" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
                         <path d="M0 100 L10 128 L20 100 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-potential-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">P2</text>
+                        <text x="44" y="-20" text-anchor="start" class="field-label probe-tag">P2</text>
                     </g>
                     <g transform="translate(736 128)">
                         <rect x="0" y="0" width="20" height="124" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
                         <path d="M0 120 L10 148 L20 120 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">C2</text>
+                        <text x="46" y="-20" text-anchor="start" class="field-label probe-tag">C2</text>
                     </g>
 
                     <line x1="174" y1="286" x2="344" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
                     <line x1="344" y1="286" x2="576" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
                     <line x1="576" y1="286" x2="746" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
-                    <text x="259" y="278" text-anchor="middle" class="field-label">a</text>
-                    <text x="460" y="278" text-anchor="middle" class="field-label">a</text>
-                    <text x="661" y="278" text-anchor="middle" class="field-label">a</text>
+                    <text x="259" y="278" text-anchor="middle" class="field-label dimension-label">a</text>
+                    <text x="460" y="278" text-anchor="middle" class="field-label dimension-label">a</text>
+                    <text x="661" y="278" text-anchor="middle" class="field-label dimension-label">a</text>
 
                     <line x1="110" y1="190" x2="110" y2="252" stroke="#f8fafc" stroke-width="3"></line>
                     <line x1="98" y1="190" x2="122" y2="190" class="dimension-tick"></line>
                     <line x1="98" y1="252" x2="122" y2="252" class="dimension-tick"></line>
-                    <text x="88" y="224" text-anchor="middle" class="field-small">b</text>
-                    <text x="164" y="310" class="field-note">Condicion: a &gt; 20b</text>
+                    <text x="88" y="224" text-anchor="middle" class="field-small dimension-label">b</text>
+                    <text x="164" y="310" class="field-note dimension-label">Condicion: a &gt; 20b</text>
                 </svg>
                 <div class="diagram-stage-180 hidden">
                     <div class="electrode-row diagram-row diagram-row-90">
@@ -730,7 +747,7 @@
                 $$\rho_a = 2 \pi a \cdot \frac{V}{I} = 2 \pi a R$$
                 <p class="mt-2 text-sm text-gray-600">
                     $\rho_a$ = resistividad aparente [$\Omega \cdot \text{m}$], $a$ = separación entre electrodos [m],
-                    $R$ = resistencia medida por el telurómetro [$\Omega$], $V$ = diferencia de potencial entre P1 y P2,
+                    $R$ = resistencia medida por el telurímetro [$\Omega$], $V$ = diferencia de potencial entre P1 y P2,
                     $I$ = corriente inyectada entre C1 y C2
                 </p>
             </div>
@@ -816,7 +833,7 @@
                             <stop offset="1" stop-color="#e2e8f0"/>
                         </linearGradient>
                         <marker id="dimArrowS" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#fde68a"></path>
                         </marker>
                     </defs>
                     <rect x="0" y="206" width="920" height="10" class="soil-top"></rect>
@@ -839,34 +856,34 @@
                         <rect x="0" y="0" width="20" height="126" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
                         <path d="M0 122 L10 150 L20 122 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">C1</text>
+                        <text x="-26" y="-20" text-anchor="end" class="field-label probe-tag">C1</text>
                     </g>
                     <g transform="translate(394 164)">
                         <rect x="0" y="0" width="18" height="98" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
                         <path d="M0 94 L9 120 L18 94 Z" class="probe-tip"></path>
                         <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
-                        <text x="9" y="-24" text-anchor="middle" class="field-label">P1</text>
+                        <text x="-24" y="-20" text-anchor="end" class="field-label probe-tag">P1</text>
                     </g>
                     <g transform="translate(507 164)">
                         <rect x="0" y="0" width="18" height="98" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
                         <path d="M0 94 L9 120 L18 94 Z" class="probe-tip"></path>
                         <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
-                        <text x="9" y="-24" text-anchor="middle" class="field-label">P2</text>
+                        <text x="42" y="-20" text-anchor="start" class="field-label probe-tag">P2</text>
                     </g>
                     <g transform="translate(796 142)">
                         <rect x="0" y="0" width="20" height="126" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
                         <path d="M0 122 L10 150 L20 122 Z" class="probe-tip"></path>
                         <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
-                        <text x="10" y="-24" text-anchor="middle" class="field-label">C2</text>
+                        <text x="46" y="-20" text-anchor="start" class="field-label probe-tag">C2</text>
                     </g>
 
                     <line x1="114" y1="304" x2="403" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
                     <line x1="403" y1="304" x2="516" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
                     <line x1="516" y1="304" x2="806" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
-                    <text x="258" y="296" text-anchor="middle" class="field-label">n a</text>
-                    <text x="460" y="296" text-anchor="middle" class="field-label">a</text>
-                    <text x="661" y="296" text-anchor="middle" class="field-label">n a</text>
-                    <text x="460" y="326" text-anchor="middle" class="field-note">solo se desplazan las picas exteriores C1 y C2</text>
+                    <text x="258" y="296" text-anchor="middle" class="field-label dimension-label">n a</text>
+                    <text x="460" y="296" text-anchor="middle" class="field-label dimension-label">a</text>
+                    <text x="661" y="296" text-anchor="middle" class="field-label dimension-label">n a</text>
+                    <text x="460" y="326" text-anchor="middle" class="field-note dimension-label">solo se desplazan las picas exteriores C1 y C2</text>
                 </svg>
                 <div class="diagram-stage-200 hidden">
                     <div class="electrode-row diagram-row diagram-row-95">
@@ -909,7 +926,7 @@
 
             <div class="info-box">
                 <i class="fas fa-times-circle"></i>
-                <strong>Desventaja:</strong> La fórmula es más compleja que la de Wenner. Requiere cálculo manual en la mayoría de los telurómetros.
+                <strong>Desventaja:</strong> La fórmula es más compleja que la de Wenner. Requiere cálculo manual en la mayoría de los telurímetros.
             </div>
         </div>
 
@@ -971,30 +988,116 @@
     <div id="matriz" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card p-4 mb-4">
             <h3><i class="fas fa-th"></i> Matriz de Medición de Resistividad</h3>
-            <p>Para caracterizar completamente un terreno, se realiza una <strong>matriz de mediciones</strong> barriendo en dos ejes perpendiculares (horizontal y vertical). Esto permite detectar <strong>anisotropías</strong> del suelo.</p>
+            <p>Para caracterizar completamente un terreno, se demarca una <strong>cuadrícula de medición</strong> y se barre el lote con el método de Wenner en dos sentidos perpendiculares. En el TP4 de Azcurra se trabajó sobre una matriz de 9 m × 9 m, con separación $a = 3\text{ m}$ entre estacas.</p>
 
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
-                <strong>Procedimiento:</strong> Se demarca una porción de terreno (ej. 10×15 m) y se realizan mediciones en líneas paralelas a los lados A y B, desplazando las 4 picas cada 3 m.
+                <strong>Procedimiento de campo:</strong> primero se miden cuatro líneas horizontales, paralelas al lado B, en las posiciones 0, 3, 6 y 9 m. Luego se repite el barrido en sentido vertical, paralelo al lado A. En cada línea se colocan cuatro picas separadas 3 m.
+            </div>
+            <div class="info-box">
+                <i class="fas fa-book"></i>
+                <strong>GRT300:</strong> el manual identifica las conexiones como C1 negro, P1 verde, P2 amarillo y C2 rojo. Conviene mantener los cables separados entre sí y verificar antes el voltaje de tierra: si supera 10 V pueden aparecer errores en la medición de resistencia.
             </div>
         </div>
 
         <div class="card p-4 mb-4">
-            <h3><i class="fas fa-border-all"></i> Simulador de Matriz 4×4 (Wenner)</h3>
-            <p class="mb-3">Haz clic en cada celda para "medir" la resistividad. Las rojas son el eje horizontal (// Lado B), las verdes el eje vertical (// Lado A).</p>
+            <h3><i class="fas fa-border-all"></i> Barrido de Campo 9 m × 9 m (Wenner)</h3>
+            <p class="mb-3">Haz clic en cada línea de medición para cargar el valor del TP. Los colores respetan los cables provistos por el GRT300 y el esquema usado en el informe de Azcurra.</p>
 
-            <div class="flex justify-center gap-10 mb-5 flex-wrap">
-                <div class="text-center">
-                    <div class="w-5 h-5 bg-red-500 rounded inline-block mr-2"></div>
-                    Eje Horizontal (// Lado B)
-                </div>
-                <div class="text-center">
-                    <div class="w-5 h-5 bg-green-600 rounded inline-block mr-2"></div>
-                    Eje Vertical (// Lado A)
-                </div>
+            <div class="flex justify-center gap-2 mb-4 flex-wrap">
+                <span class="cable-pill"><span class="cable-dot" style="background:#111827"></span>C1 negro</span>
+                <span class="cable-pill"><span class="cable-dot" style="background:#16a34a"></span>P1 verde</span>
+                <span class="cable-pill"><span class="cable-dot" style="background:#facc15"></span>P2 amarillo</span>
+                <span class="cable-pill"><span class="cable-dot" style="background:#ef4444"></span>C2 rojo</span>
             </div>
 
-            <div class="matrix-grid" id="measurementMatrix"></div>
+            <div id="measurementMatrix" class="diagram-container field-diagram-card">
+                <svg class="field-matrix" viewBox="0 0 980 430" role="img" aria-label="Matriz de medicion de resistividad segun TP4 de Azcurra">
+                    <rect x="0" y="0" width="980" height="430" rx="12" fill="#f8fafc"></rect>
+                    <text x="250" y="34" text-anchor="middle" class="field-title">Medición horizontal</text>
+                    <text x="250" y="52" text-anchor="middle" class="matrix-caption">4 líneas paralelas al lado B</text>
+                    <text x="730" y="34" text-anchor="middle" class="field-title">Medición vertical</text>
+                    <text x="730" y="52" text-anchor="middle" class="matrix-caption">4 líneas paralelas al lado A</text>
+
+                    <g id="matrixHorizontal" transform="translate(80 78)">
+                        <line x1="0" y1="270" x2="300" y2="270" class="matrix-line"></line>
+                        <line x1="0" y1="180" x2="300" y2="180" class="matrix-line"></line>
+                        <line x1="0" y1="90" x2="300" y2="90" class="matrix-line"></line>
+                        <line x1="0" y1="0" x2="300" y2="0" class="matrix-line"></line>
+                        <line x1="0" y1="0" x2="0" y2="270" class="matrix-line"></line>
+                        <line x1="100" y1="0" x2="100" y2="270" class="matrix-line"></line>
+                        <line x1="200" y1="0" x2="200" y2="270" class="matrix-line"></line>
+                        <line x1="300" y1="0" x2="300" y2="270" class="matrix-line"></line>
+                        <g class="matrix-line-hit" data-axis="H" data-line="9" data-r="8.1" data-rho="152.7" tabindex="0" role="button" aria-label="Horizontal línea 9 metros">
+                            <rect x="-24" y="-24" width="348" height="48" fill="transparent"></rect>
+                            <text x="0" y="8" class="matrix-x matrix-black">×</text><text x="100" y="8" class="matrix-x matrix-black">×</text><text x="200" y="8" class="matrix-x matrix-black">×</text><text x="300" y="8" class="matrix-x matrix-black">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="H" data-line="6" data-r="12.9" data-rho="243.2" tabindex="0" role="button" aria-label="Horizontal línea 6 metros">
+                            <rect x="-24" y="66" width="348" height="48" fill="transparent"></rect>
+                            <text x="0" y="98" class="matrix-x matrix-green">×</text><text x="100" y="98" class="matrix-x matrix-green">×</text><text x="200" y="98" class="matrix-x matrix-green">×</text><text x="300" y="98" class="matrix-x matrix-green">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="H" data-line="3" data-r="4.9" data-rho="92.4" tabindex="0" role="button" aria-label="Horizontal línea 3 metros">
+                            <rect x="-24" y="156" width="348" height="48" fill="transparent"></rect>
+                            <text x="0" y="188" class="matrix-x matrix-yellow">×</text><text x="100" y="188" class="matrix-x matrix-yellow">×</text><text x="200" y="188" class="matrix-x matrix-yellow">×</text><text x="300" y="188" class="matrix-x matrix-yellow">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="H" data-line="0" data-r="4.9" data-rho="92.4" tabindex="0" role="button" aria-label="Horizontal línea 0 metros">
+                            <rect x="-24" y="246" width="348" height="48" fill="transparent"></rect>
+                            <text x="0" y="278" class="matrix-x matrix-red">×</text><text x="100" y="278" class="matrix-x matrix-red">×</text><text x="200" y="278" class="matrix-x matrix-red">×</text><text x="300" y="278" class="matrix-x matrix-red">×</text>
+                        </g>
+                        <text x="-30" y="274" text-anchor="end" class="matrix-tick-label">0</text>
+                        <text x="-30" y="184" text-anchor="end" class="matrix-tick-label">3 m</text>
+                        <text x="-30" y="94" text-anchor="end" class="matrix-tick-label">6 m</text>
+                        <text x="-30" y="4" text-anchor="end" class="matrix-tick-label">9 m</text>
+                        <text x="0" y="302" text-anchor="middle" class="matrix-tick-label">0</text>
+                        <text x="100" y="302" text-anchor="middle" class="matrix-tick-label">3 m</text>
+                        <text x="200" y="302" text-anchor="middle" class="matrix-tick-label">6 m</text>
+                        <text x="300" y="302" text-anchor="middle" class="matrix-tick-label">9 m</text>
+                        <text x="150" y="344" text-anchor="middle" class="matrix-axis-label">LADO A</text>
+                        <line x1="0" y1="326" x2="300" y2="326" stroke="#475569" stroke-width="4"></line>
+                        <text x="382" y="140" class="matrix-axis-label">LADO B</text>
+                        <line x1="420" y1="0" x2="420" y2="270" stroke="#475569" stroke-width="3"></line>
+                    </g>
+
+                    <g id="matrixVertical" transform="translate(560 78)">
+                        <line x1="0" y1="270" x2="300" y2="270" class="matrix-line"></line>
+                        <line x1="0" y1="180" x2="300" y2="180" class="matrix-line"></line>
+                        <line x1="0" y1="90" x2="300" y2="90" class="matrix-line"></line>
+                        <line x1="0" y1="0" x2="300" y2="0" class="matrix-line"></line>
+                        <line x1="0" y1="0" x2="0" y2="270" class="matrix-line"></line>
+                        <line x1="100" y1="0" x2="100" y2="270" class="matrix-line"></line>
+                        <line x1="200" y1="0" x2="200" y2="270" class="matrix-line"></line>
+                        <line x1="300" y1="0" x2="300" y2="270" class="matrix-line"></line>
+                        <g class="matrix-line-hit" data-axis="V" data-line="0" data-r="5.6" data-rho="105.6" tabindex="0" role="button" aria-label="Vertical línea 0 metros">
+                            <rect x="-24" y="-24" width="48" height="318" fill="transparent"></rect>
+                            <text x="0" y="8" class="matrix-x matrix-red">×</text><text x="0" y="98" class="matrix-x matrix-red">×</text><text x="0" y="188" class="matrix-x matrix-red">×</text><text x="0" y="278" class="matrix-x matrix-red">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="V" data-line="3" data-r="5.4" data-rho="101.8" tabindex="0" role="button" aria-label="Vertical línea 3 metros">
+                            <rect x="76" y="-24" width="48" height="318" fill="transparent"></rect>
+                            <text x="100" y="8" class="matrix-x matrix-yellow">×</text><text x="100" y="98" class="matrix-x matrix-yellow">×</text><text x="100" y="188" class="matrix-x matrix-yellow">×</text><text x="100" y="278" class="matrix-x matrix-yellow">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="V" data-line="6" data-r="10.6" data-rho="199.8" tabindex="0" role="button" aria-label="Vertical línea 6 metros">
+                            <rect x="176" y="-24" width="48" height="318" fill="transparent"></rect>
+                            <text x="200" y="8" class="matrix-x matrix-green">×</text><text x="200" y="98" class="matrix-x matrix-green">×</text><text x="200" y="188" class="matrix-x matrix-green">×</text><text x="200" y="278" class="matrix-x matrix-green">×</text>
+                        </g>
+                        <g class="matrix-line-hit" data-axis="V" data-line="9" data-r="7.9" data-rho="148.9" tabindex="0" role="button" aria-label="Vertical línea 9 metros">
+                            <rect x="276" y="-24" width="48" height="318" fill="transparent"></rect>
+                            <text x="300" y="8" class="matrix-x matrix-black">×</text><text x="300" y="98" class="matrix-x matrix-black">×</text><text x="300" y="188" class="matrix-x matrix-black">×</text><text x="300" y="278" class="matrix-x matrix-black">×</text>
+                        </g>
+                        <text x="-30" y="274" text-anchor="end" class="matrix-tick-label">0</text>
+                        <text x="-30" y="184" text-anchor="end" class="matrix-tick-label">3 m</text>
+                        <text x="-30" y="94" text-anchor="end" class="matrix-tick-label">6 m</text>
+                        <text x="-30" y="4" text-anchor="end" class="matrix-tick-label">9 m</text>
+                        <text x="0" y="302" text-anchor="middle" class="matrix-tick-label">0</text>
+                        <text x="100" y="302" text-anchor="middle" class="matrix-tick-label">3 m</text>
+                        <text x="200" y="302" text-anchor="middle" class="matrix-tick-label">6 m</text>
+                        <text x="300" y="302" text-anchor="middle" class="matrix-tick-label">9 m</text>
+                        <text x="150" y="344" text-anchor="middle" class="matrix-axis-label">LADO A</text>
+                        <line x1="0" y1="326" x2="300" y2="326" stroke="#475569" stroke-width="4"></line>
+                        <text x="382" y="140" class="matrix-axis-label">LADO B</text>
+                        <line x1="420" y1="0" x2="420" y2="270" stroke="#475569" stroke-width="3"></line>
+                    </g>
+                </svg>
+            </div>
 
             <div class="text-center mt-5">
                 <button onclick="resetMatrix()" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
@@ -1094,7 +1197,7 @@
 
         <div class="card p-4 mb-4">
             <h3><i class="fas fa-question-circle"></i> Desafío 3: Wenner en Campo</h3>
-            <p>En una medición Wenner con $a = 4\text{m}$, el telurómetro marca $R = 12.5\Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
+            <p>En una medición Wenner con $a = 4\text{m}$, el telurímetro marca $R = 12.5\Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
             <div class="simulator-controls">
                 <div class="control-group">
                     <label>$\rho_a$ (Ω·m)</label>
@@ -1368,32 +1471,22 @@
         // Matrix handling
         let matrixData = {};
         let matrixCounter = 0;
+        let matrixChartInstance = null;
 
         function initMatrix() {
-            const grid = document.getElementById('measurementMatrix');
-            grid.innerHTML = '';
-
-            const positions = [
-                {x:0, y:0, axis:'H', line:0}, {x:1, y:0, axis:'H', line:3}, {x:2, y:0, axis:'H', line:6}, {x:3, y:0, axis:'H', line:9},
-                {x:0, y:1, axis:'V', line:0}, {x:1, y:1, axis:'V', line:3}, {x:2, y:1, axis:'V', line:6}, {x:3, y:1, axis:'V', line:9},
-                {x:0, y:2, axis:'H', line:0}, {x:1, y:2, axis:'H', line:3}, {x:2, y:2, axis:'H', line:6}, {x:3, y:2, axis:'H', line:9},
-                {x:0, y:3, axis:'V', line:0}, {x:1, y:3, axis:'V', line:3}, {x:2, y:3, axis:'V', line:6}, {x:3, y:3, axis:'V', line:9}
-            ];
-
-            positions.forEach((pos, idx) => {
-                const cell = document.createElement('div');
-                cell.className = 'matrix-cell';
-                cell.dataset.idx = idx;
-                cell.dataset.axis = pos.axis;
-                cell.dataset.line = pos.line;
-                cell.textContent = pos.axis + pos.line;
-                cell.style.borderColor = pos.axis === 'H' ? '#e74c3c' : '#27ae60';
-                cell.onclick = () => measureCell(cell, idx);
-                grid.appendChild(cell);
+            document.querySelectorAll('.matrix-line-hit').forEach(line => {
+                line.classList.remove('active', 'measured');
+                line.onclick = () => measureCell(line);
+                line.onkeydown = (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        measureCell(line);
+                    }
+                };
             });
         }
 
-        function measureCell(cell, idx) {
+        function measureCell(cell) {
             if (cell.classList.contains('measured')) return;
 
             cell.classList.add('active');
@@ -1402,10 +1495,9 @@
                 cell.classList.remove('active');
                 cell.classList.add('measured');
 
-                const baseR = 7.5;
-                const variation = (Math.random() - 0.5) * 8;
-                const R = Math.max(2, baseR + variation).toFixed(1);
-                const rho = (2 * Math.PI * 3 * R).toFixed(1);
+                const R = parseFloat(cell.dataset.r).toFixed(1);
+                const rho = parseFloat(cell.dataset.rho).toFixed(1);
+                const idx = cell.dataset.axis + cell.dataset.line;
 
                 matrixData[idx] = {
                     axis: cell.dataset.axis,
@@ -1431,10 +1523,10 @@
         }
 
         function autoFillMatrix() {
-            const cells = document.querySelectorAll('.matrix-cell');
+            const cells = document.querySelectorAll('.matrix-line-hit');
             cells.forEach((cell, idx) => {
                 if (!cell.classList.contains('measured')) {
-                    setTimeout(() => measureCell(cell, idx), idx * 200);
+                    setTimeout(() => measureCell(cell), idx * 200);
                 }
             });
         }
@@ -1446,6 +1538,7 @@
             if (indices.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="text-gray-400">Realiza mediciones en la matriz para completar...</td></tr>';
                 document.getElementById('avgResistivity').textContent = 'ρ promedio = --- Ω·m';
+                updateMatrixChart();
                 return;
             }
 
@@ -1581,7 +1674,11 @@
             const hValues = lines.map(l => hData[l] || null);
             const vValues = lines.map(l => vData[l] || null);
 
-            new Chart(ctx, {
+            if (matrixChartInstance) {
+                matrixChartInstance.destroy();
+            }
+
+            matrixChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: lines.map(l => l + 'm'),
