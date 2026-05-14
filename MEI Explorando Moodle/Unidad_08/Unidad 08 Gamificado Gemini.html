@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 8 · Transformadores para Medición</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="initKaTeX();"></script>
+<style>
+  :root { --primary:#1e3a5f; --secondary:#2980b9; --accent:#e74c3c; --success:#27ae60; --warning:#f39c12; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4f8; }
+  .tab-btn { transition:all 0.3s ease; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:not(.active) { background:#e2e8f0; color:#4a5568; }
+  .tab-btn:not(.active):hover { background:#cbd5e0; }
+  .card { background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size:0.85rem; color:#4a5568; }
+  input[type=range] { accent-color:#2980b9; }
+  .formula-box { background:#eef2ff; border-left:4px solid #2980b9; border-radius:6px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.95rem; color:#1e3a5f; }
+  .badge { display:inline-block; font-size:0.75rem; font-weight:700; border-radius:9999px; padding:2px 10px; }
+  .badge-blue { background:#dbeafe; color:#1e40af; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-green { background:#dcfce7; color:#166534; }
+  .badge-yellow { background:#fef3c7; color:#92400e; }
+  .info-box { background:#fffbeb; border:1px solid #fbbf24; border-radius:8px; padding:0.75rem; font-size:0.88rem; }
+  .section-header { background:linear-gradient(135deg,#1e3a5f 0%,#2980b9 100%); color:white; border-radius:10px 10px 0 0; padding:1rem 1.25rem; }
+  .nav-header { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  .lcd-display { font-family:'Courier New',monospace; background-color:#a3c2a3; color:#2d372d; border:inset 4px #7a8c7a; box-shadow:inset 0 0 10px rgba(0,0,0,0.2); }
+  .progress-bar { height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#2980b9,#27ae60); transition:width 0.5s ease; }
+  .achievement { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#fef3c7,#fde68a); border:2px solid #f59e0b; border-radius:20px; padding:4px 12px; font-size:0.8rem; font-weight:700; color:#92400e; transition:transform 0.2s; }
+  .achievement:hover { transform:scale(1.05); }
+  .achievement.locked { opacity:0.5; filter:grayscale(1); }
+  .quiz-option { border:2px solid #e2e8f0; border-radius:8px; padding:12px 16px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; text-align: left;}
+  .quiz-option:hover { border-color:#2980b9; background:#f0f7ff; }
+  .quiz-option.correct { border-color:#27ae60; background:#dcfce7; }
+  .quiz-option.wrong { border-color:#e74c3c; background:#fee2e2; }
+  .danger-zone { background: #fef2f2; border: 2px solid #ef4444; color: #991b1b; padding: 1rem; border-radius: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+</style>
+</head>
+<body>
+
+<div class="max-w-6xl mx-auto px-3 mt-2 mb-2">
+  <div class="card p-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🏆</span>
+      <div>
+        <div class="text-xs font-bold text-gray-500 uppercase">Estado de la Misión</div>
+        <div class="text-sm font-bold text-gray-800" id="progress-text">0% completado</div>
+      </div>
+    </div>
+    <div class="flex gap-2 flex-wrap" id="achievements-container">
+      <span class="achievement locked" id="ach-seguridad">🛡️ Seguridad TI</span>
+      <span class="achievement locked" id="ach-clase">📐 Clase 0.1 Master</span>
+      <span class="achievement locked" id="ach-calculo">🧮 Carga (VA) Pro</span>
+      <span class="achievement locked" id="ach-quiz">🎯 Quiz Champion</span>
+    </div>
+    <div class="w-full sm:w-48">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 8 · Transformadores para Medición · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge badge-yellow">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-amber-500">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🔌</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">Ampliando Horizontes: La Adaptación de Magnitudes</h2>
+        <p class="text-gray-600 text-sm">Los instrumentos de medida no están diseñados para soportar 10.000V o 500A directamente. Los transformadores de medida (TI y TV) actúan como traductores: reducen valores peligrosos a niveles normalizados (5A o 110V) y proporcionan aislamiento galvánico para proteger al operador. Aprendé a calcular sus errores, elegir su clase de precisión y, sobre todo, a operarlos sin riesgos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ti')">〰️ Intensidad (TI)</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-seguridad')">⚠️ Seguridad y Errores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-tv')">⚡ Tensión (TV)</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-clases')">📊 Clases y Carga (VA)</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-tipos')">🏗️ Tipos y Placas</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-desafios')">🎮 Desafíos</button>
+  </div>
+</div>
+
+<div id="tab-ti" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header bg-gradient-to-r from-blue-800 to-blue-600">
+      <h2 class="text-lg font-bold">〰️ Transformador de Intensidad (TI)</h2>
+      <p class="text-sm opacity-80 mt-1">Convirtiendo altas corrientes en señales de 5A (América) o 1A (Europa).</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div class="info-box mb-4">
+            <strong>Conexión:</strong> El primario se conecta en <strong>SERIE</strong> con la línea. El secundario se conecta a los instrumentos de corriente (amperímetros, bobinas amperométricas de vatímetros).
+          </div>
+          <div class="formula-box mb-4">
+            <strong>Relación Ideal:</strong><br>
+            \(N_1 \cdot I_1 = N_2 \cdot I_2\) \(\implies\) \(\frac{I_2}{I_1} = \frac{N_1}{N_2}\)<br><br>
+            <strong>Relación Nominal (Chapa):</strong><br>
+            \(k_{nom} = \frac{I_{1nom}}{I_{2nom}}\)
+          </div>
+          <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+            <div class="text-sm font-bold text-indigo-800">💡 Dato Clave:</div>
+            <p class="text-xs text-indigo-700">Un TI opera prácticamente en <strong>CORTOCIRCUITO</strong> debido a la baja impedancia de los instrumentos conectados.</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl">
+          <h3 class="font-bold text-gray-700 mb-4">🧮 Calculadora de Corriente TI</h3>
+          <div class="w-full space-y-4">
+            <div>
+              <label class="slider-label font-semibold">Relación del TI (\(I_{1n}/I_{2n}\)):</label>
+              <select id="ti-ratio-select" class="w-full p-2 border rounded text-sm" onchange="updateTICalc()">
+                <option value="20">100 / 5 A (k=20)</option>
+                <option value="50">250 / 5 A (k=50)</option>
+                <option value="100">500 / 5 A (k=100)</option>
+                <option value="200">1000 / 5 A (k=200)</option>
+              </select>
+            </div>
+            <div>
+              <label class="slider-label font-semibold">Lectura Amperímetro (\(I_2\)): <span id="i2-val" class="text-blue-700 font-bold">2.5</span> A</label>
+              <input type="range" id="i2-slider" min="0" max="5" step="0.1" value="2.5" class="w-full" oninput="updateTICalc()">
+            </div>
+            <div class="lcd-display p-4 rounded text-center">
+                <div class="text-xs text-gray-600 uppercase mb-1">Corriente Real en Línea (I₁)</div>
+                <div class="text-3xl font-bold" id="i1-result">50.0 A</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-seguridad" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header bg-gradient-to-r from-red-800 to-red-600">
+      <h2 class="text-lg font-bold">⚠️ Seguridad Crítica y Análisis de Errores</h2>
+      <p class="text-sm opacity-80 mt-1">Regla de oro: NUNCA dejes el secundario de un TI abierto.</p>
+    </div>
+    <div class="p-5">
+      <div class="danger-zone mb-6">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🚫</span>
+          <div>
+            <h3 class="font-bold">¡PELIGRO MORTAL! Secundario Abierto en TI</h3>
+            <p class="text-sm">Si se abre el circuito secundario con carga en el primario, desaparece el flujo opositor (\(\phi_2\)). El flujo total (\(\phi_T\)) se vuelve igual al primario, saturando el núcleo. Consecuencias: 
+              <br>1. <strong>Tensiones inducidas extremas</strong> (kV) peligrosas para personas.
+              <br>2. <strong>Calentamiento destructivo</strong> por corrientes parásitas.
+              <br>3. Magnetización remanente que arruina la precisión futura.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="card p-4 border border-gray-200">
+            <h4 class="font-bold text-gray-800 mb-2">📉 Error de Relación (\(e_\%\))</h4>
+            <div class="formula-box text-sm">
+                \(e_\% = \frac{k_{nom} \cdot I_2 - I_1}{I_1} \cdot 100\)
+            </div>
+            <p class="text-xs text-gray-600 mt-2">Es la desviación de la intensidad secundaria respecto al valor ideal por la relación de transformación.</p>
+          </div>
+          <div class="card p-4 border border-gray-200">
+            <h4 class="font-bold text-gray-800 mb-2">📐 Error Angular (\(\delta_i\))</h4>
+            <p class="text-xs text-gray-600">Debido a la corriente de excitación (\(I_o\)), \(I_1\) e \(I_2\) no están desfasadas exactamente 180°. Este ángulo (\(\delta_i\)) afecta principalmente las medidas de potencia (Vatímetros).</p>
+          </div>
+        </div>
+        <div class="card p-4 flex flex-col items-center justify-center">
+            <h4 class="font-bold text-gray-700 mb-2">Diagrama Vectorial Simplificado</h4>
+            <canvas id="vectorChart" width="300" height="300"></canvas>
+            <p class="text-[10px] text-gray-500 mt-2 italic">Representación exagerada de \(I_o\) para visualización del desfasaje \(\delta_i\).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-tv" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚡ Transformador de Tensión (TV)</h2>
+      <p class="text-sm opacity-80 mt-1">Reduciendo kV a niveles seguros de 110V o 120V.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>Conexión:</strong> Se conecta en <strong>PARALELO</strong> con la línea. Su secundario se conecta a voltímetros y bobinas voltimétricas.
+          </div>
+          <div class="formula-box">
+            \(k_{nom} = \frac{U_{1nom}}{U_{2nom}}\)
+          </div>
+          <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div class="text-sm font-bold text-red-800">⚠️ Seguridad TV:</div>
+            <p class="text-xs text-red-700">A diferencia del TI, el secundario del TV **NUNCA debe cortocircuitarse**. Se recomienda el uso de fusibles en el secundario (y a veces primario).</p>
+          </div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl border">
+          <h3 class="font-bold text-gray-700 mb-3">Relaciones de Fase TV</h3>
+          <p class="text-sm text-gray-600">El TV se comporta como un transformador de potencia trabajando casi en vacío. El error depende de las caídas óhmicas e inductivas de los arrollamientos primario y secundario.</p>
+          <div class="mt-4 p-3 bg-white border rounded">
+              <div class="text-xs font-bold text-gray-500">Valores de Tensión Secundaria</div>
+              <div class="flex justify-around mt-2">
+                  <div class="text-center">
+                      <div class="text-lg font-bold text-blue-600">110 V</div>
+                      <div class="text-[10px] uppercase">Europa</div>
+                  </div>
+                  <div class="text-center">
+                      <div class="text-lg font-bold text-indigo-600">120 V</div>
+                      <div class="text-[10px] uppercase">América</div>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-clases" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📊 Clase de Precisión y Potencia de Carga (Burden)</h2>
+      <p class="text-sm opacity-80 mt-1">Garantizando la exactitud bajo carga real.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3">Escala de Calidad (Clase)</h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2 bg-blue-50 rounded">
+              <span class="font-bold text-sm">Clase 0.1 / 0.2</span>
+              <span class="text-xs text-blue-700 italic">Laboratorio / Patrón</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-green-50 rounded">
+                <span class="font-bold text-sm">Clase 0.5</span>
+                <span class="text-xs text-green-700 italic">Vatímetros y Contadores</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span class="font-bold text-sm">Clase 1 / 3</span>
+                <span class="text-xs text-gray-500 italic">Mediciones de Tablero</span>
+            </div>
+          </div>
+          <div class="info-box mt-4">
+            <strong>Potencia de Precisión:</strong> Se expresa en <strong>VA</strong>. Es la carga máxima que puede soportar el secundario manteniendo su clase de error.
+          </div>
+        </div>
+        <div class="bg-gray-50 border rounded-xl p-4">
+            <h3 class="font-bold text-gray-700 mb-3">⚙️ Simulador de Carga (VA)</h3>
+            <p class="text-xs text-gray-500 mb-4">Calculá la carga total de un TI para asegurar que no supere su capacidad nominal.</p>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center text-xs">
+                    <span>Instrumento (Amperímetro/Vatímetro)</span>
+                    <select id="inst-va" class="p-1 border rounded" onchange="updateBurden()">
+                        <option value="1.5">Estándar (1.5 VA)</option>
+                        <option value="3.5">Registrador (3.5 VA)</option>
+                        <option value="0.4">Precisión (0.4 VA)</option>
+                    </select>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span>Longitud de Cable (m)</span>
+                    <input type="number" id="cable-len" value="5" min="1" class="w-16 p-1 border rounded" oninput="updateBurden()">
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span>Sección de Cable (\(mm^2\)) - \(I_{sn}=5A\)</span>
+                    <select id="cable-sect" class="p-1 border rounded" onchange="updateBurden()">
+                        <option value="0.18">2.5 mm² (0.18 VA/m)</option>
+                        <option value="0.11">4.0 mm² (0.11 VA/m)</option>
+                        <option value="0.07">6.0 mm² (0.07 VA/m)</option>
+                    </select>
+                </div>
+                <div class="lcd-display p-3 rounded text-center">
+                    <div class="text-xs text-gray-600">CARGA TOTAL CALCULADA</div>
+                    <div class="text-2xl font-bold" id="total-va">2.40 VA</div>
+                </div>
+                <div id="va-warning" class="text-[10px] text-center font-bold"></div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-tipos" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🏗️ Clasificación Constructiva y Datos de Placa</h2>
+      <p class="text-sm opacity-80 mt-1">De la teoría a los equipos reales en campo.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="p-3 border rounded-lg text-center bg-gray-50">
+          <div class="text-xl mb-1">📏</div>
+          <div class="text-xs font-bold uppercase">De Barra</div>
+          <p class="text-[10px] text-gray-500">Primario de una sola espira (la barra pasa por el centro).</p>
+        </div>
+        <div class="p-3 border rounded-lg text-center bg-gray-50">
+          <div class="text-xl mb-1">📦</div>
+          <div class="text-xs font-bold uppercase">Núcleo Rectangular</div>
+          <p class="text-[10px] text-gray-500">Para corrientes bajas, con varias espiras primarias.</p>
+        </div>
+        <div class="p-3 border rounded-lg text-center bg-gray-50">
+            <div class="text-xl mb-1">🏗️</div>
+            <div class="text-xs font-bold uppercase">Tipo Soporte</div>
+            <p class="text-[10px] text-gray-500">Uso interior o exterior, sirven de apoyo a la línea.</p>
+        </div>
+        <div class="p-3 border rounded-lg text-center bg-gray-50">
+            <div class="text-xl mb-1">🦀</div>
+            <div class="text-xs font-bold uppercase">De Tenaza</div>
+            <p class="text-[10px] text-gray-500">Portátiles, para mediciones sin interrumpir el circuito.</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-900 p-6 rounded-xl border-4 border-gray-700 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-2 text-white opacity-20 text-4xl">🏷️</div>
+        <h4 class="text-amber-400 font-bold mb-4 flex items-center gap-2">
+            Interpretación de Chapa de Características (TI)
+        </h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+            <div class="text-gray-400">Relación (AMP): <span class="text-white font-mono">25/5 A</span></div>
+            <div class="text-gray-400">Potencia (VA): <span class="text-white font-mono">10 VA</span></div>
+            <div class="text-gray-400">Clase (Cl): <span class="text-white font-mono">0.5</span></div>
+            <div class="text-gray-400">Freq (Hz): <span class="text-white font-mono">50 Hz</span></div>
+            <div class="text-gray-400">Lím. Térmica: <span class="text-white font-mono">2 kA (1s)</span></div>
+            <div class="text-gray-400">Lím. Dinámica: <span class="text-white font-mono">5 kA</span></div>
+        </div>
+        <div class="mt-4 p-2 bg-gray-800 rounded border border-gray-600 text-[10px] text-gray-300 italic">
+            Nota: La intensidad límite térmica (\(I_{ter}\)) suele ser \(100 \cdot I_n\).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-desafios" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎮 Campo de Entrenamiento</h2>
+      <p class="text-sm opacity-80 mt-1">Domina los transformadores de medida y desbloquea tus insignias.</p>
+    </div>
+    <div class="p-5 space-y-6">
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🛡️</span>
+          <div class="font-bold text-gray-700">Desafío 1: Protocolo de Emergencia</div>
+          <span class="badge badge-blue" id="badge-ch1">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Estás en mantenimiento y necesitás desconectar un amperímetro conectado a un TI en servicio. ¿Cuál es el procedimiento correcto?
+        </div>
+        <div class="grid grid-cols-1 gap-2">
+          <button onclick="checkChallenge1('a')" class="quiz-option text-xs" id="ch1-opt1">1. Abrir el secundario del TI, luego retirar el instrumento.</button>
+          <button onclick="checkChallenge1('b')" class="quiz-option text-xs" id="ch1-opt2">1. Puentear (cortocircuitar) los bornes secundarios del TI, luego retirar el instrumento.</button>
+          <button onclick="checkChallenge1('c')" class="quiz-option text-xs" id="ch1-opt3">1. Colocar un fusible en serie con el amperímetro antes de sacarlo.</button>
+        </div>
+        <div id="challenge1-result" class="text-sm font-bold mt-2"></div>
+      </div>
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">📐</span>
+          <div class="font-bold text-gray-700">Desafío 2: Selección de Clase</div>
+          <span class="badge badge-blue" id="badge-ch2">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Debés instalar un medidor de facturación (Contador de Energía) en una subestación. ¿Qué clase de precisión mínima debería tener el TI?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button onclick="checkChallenge2('a')" class="quiz-option text-xs" id="ch2-opt1">Clase 3 (Suficiente para potencia)</button>
+          <button onclick="checkChallenge2('b')" class="quiz-option text-xs" id="ch2-opt2">Clase 0.5 (Requerida para vatímetros y contadores)</button>
+          <button onclick="checkChallenge2('c')" class="quiz-option text-xs" id="ch2-opt3">Cualquier clase mientras el Burden sea bajo</button>
+        </div>
+        <div id="challenge2-result" class="text-sm font-bold mt-2"></div>
+      </div>
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🧮</span>
+          <div class="font-bold text-gray-700">Desafío 3: Constante de Lectura</div>
+          <span class="badge badge-blue" id="badge-ch3">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Un sistema de 10kV usa un TV de 10000/100V y un TI de 200/5A. Un vatímetro indica 400W. ¿Cuál es la potencia real de la red?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button onclick="checkChallenge3('a')" class="quiz-option text-xs" id="ch3-opt1">400 kW</button>
+          <button onclick="checkChallenge3('b')" class="quiz-option text-xs" id="ch3-opt2">800 kW</button>
+          <button onclick="checkChallenge3('c')" class="quiz-option text-xs" id="ch3-opt3">1.6 MW</button>
+        </div>
+        <div id="challenge3-result" class="text-sm font-bold mt-2"></div>
+      </div>
+
+      <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🏆</span>
+          <div class="font-bold text-indigo-800">Prueba de Egreso Unidad 8</div>
+          <span class="badge badge-purple" id="badge-chquiz">Pendiente</span>
+        </div>
+        <div id="quiz-container" class="space-y-4">
+            <div>
+                <p class="text-xs font-semibold mb-2">1. ¿Qué transformador se conecta en paralelo con la línea?</p>
+                <div class="flex gap-2">
+                    <button onclick="quizAnswer(1,'a')" class="quiz-option text-xs flex-1" id="q1-opt1">Transformador de Intensidad (TI)</button>
+                    <button onclick="quizAnswer(1,'b')" class="quiz-option text-xs flex-1" id="q1-opt2">Transformador de Tensión (TV)</button>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-semibold mb-2">2. ¿Qué sucede con el error de relación si superamos la potencia nominal (VA) de un TI?</p>
+                <div class="flex gap-2">
+                    <button onclick="quizAnswer(2,'a')" class="quiz-option text-xs flex-1" id="q2-opt1">El error disminuye por saturación.</button>
+                    <button onclick="quizAnswer(2,'b')" class="quiz-option text-xs flex-1" id="q2-opt2">El error aumenta, saliéndose de su clase de precisión.</button>
+                </div>
+            </div>
+        </div>
+        <div id="quiz-result" class="mt-4 text-sm font-bold"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 8. Año 2026</div>
+    <div class="mt-1 text-xs">Versión Interactiva Gamificada · Enfoque en Seguridad Industrial</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let challengesCompleted = { ch1:false, ch2:false, ch3:false, quiz:false };
+let quizScore = {};
+
+// =====================================================
+// KATEX & TABS
+// =====================================================
+function initKaTeX() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+    ],
+    throwOnError: false
+  });
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btnIdx = ['tab-ti','tab-seguridad','tab-tv','tab-clases','tab-tipos','tab-desafios'].indexOf(id);
+  document.querySelectorAll('.tab-btn')[btnIdx].classList.add('active');
+  
+  if (id === 'tab-seguridad') drawVectorDiagram();
+  renderMathInElement(document.getElementById(id));
+}
+
+// =====================================================
+// LOGIC: CALCULATORS
+// =====================================================
+function updateTICalc() {
+  const k = parseFloat(document.getElementById('ti-ratio-select').value);
+  const i2 = parseFloat(document.getElementById('i2-slider').value);
+  document.getElementById('i2-val').textContent = i2.toFixed(1);
+  document.getElementById('i1-result').textContent = (i2 * k).toFixed(1) + " A";
+}
+
+function updateBurden() {
+  const instVA = parseFloat(document.getElementById('inst-va').value);
+  const len = parseFloat(document.getElementById('cable-len').value);
+  const sectVA = parseFloat(document.getElementById('cable-sect').value);
+  
+  const total = instVA + (len * sectVA);
+  document.getElementById('total-va').textContent = total.toFixed(2) + " VA";
+  
+  const warn = document.getElementById('va-warning');
+  if (total > 5) {
+    warn.textContent = "⚠️ CARGA ALTA: Requiere TI de 10 VA o más.";
+    warn.className = "text-[10px] text-center font-bold text-red-600";
+  } else {
+    warn.textContent = "✅ CARGA ÓPTIMA para TI de 5 VA.";
+    warn.className = "text-[10px] text-center font-bold text-green-600";
+  }
+}
+
+// =====================================================
+// LOGIC: VECTOR DIAGRAM (CANVAS)
+// =====================================================
+function drawVectorDiagram() {
+    const canvas = document.getElementById('vectorChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cx = 150, cy = 150;
+    
+    ctx.clearRect(0,0,300,300);
+    
+    // Axes
+    ctx.strokeStyle = '#e2e8f0'; ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(300,cy); ctx.moveTo(cx,0); ctx.lineTo(cx,300); ctx.stroke();
+    
+    const drawArrow = (angle, len, label, color) => {
+        const rad = angle * Math.PI / 180;
+        const x = cx + len * Math.cos(rad);
+        const y = cy - len * Math.sin(rad);
+        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+        ctx.fillStyle = color; ctx.font = "bold 12px Arial"; ctx.fillText(label, x+5, y);
+    };
+
+    drawArrow(0, 100, "Φ", "#94a3b8"); // Flux
+    drawArrow(90, 80, "-U2", "#475569"); // V2
+    drawArrow(220, 110, "I2", "#10b981"); // I2
+    drawArrow(35, 120, "I1", "#3b82f6"); // I1
+    drawArrow(0, 40, "Im", "#f59e0b"); // Mag current
+}
+
+// =====================================================
+// GAMIFICATION
+// =====================================================
+function checkChallenge1(ans) {
+    const res = document.getElementById('challenge1-result');
+    if (ans === 'b') {
+        res.innerHTML = "✅ ¡EXCELENTE! Nunca se debe abrir el secundario. Puentearlo asegura que la corriente circule y el flujo se mantenga compensado.";
+        res.className = "text-sm font-bold mt-2 text-green-600";
+        challengesCompleted.ch1 = true;
+        document.getElementById('badge-ch1').textContent = "Completado";
+        document.getElementById('badge-ch1').className = "badge badge-green";
+    } else {
+        res.innerHTML = "❌ ¡ERROR CRÍTICO! Abrir el secundario causaría una sobretensión peligrosa y destruiría el transformador.";
+        res.className = "text-sm font-bold mt-2 text-red-600";
+    }
+    updateProgress();
+}
+
+function checkChallenge2(ans) {
+    const res = document.getElementById('challenge2-result');
+    if (ans === 'b') {
+        res.innerHTML = "✅ CORRECTO. La Clase 0.5 es el estándar para facturación industrial y uso de vatímetros fidedignos.";
+        res.className = "text-sm font-bold mt-2 text-green-600";
+        challengesCompleted.ch2 = true;
+        document.getElementById('badge-ch2').textContent = "Completado";
+        document.getElementById('badge-ch2').className = "badge badge-green";
+    } else {
+        res.innerHTML = "❌ Incorrecto. La Clase 3 tiene demasiado error angular para ser usada en medidores de energía.";
+        res.className = "text-sm font-bold mt-2 text-red-600";
+    }
+    updateProgress();
+}
+
+function checkChallenge3(ans) {
+    const res = document.getElementById('challenge3-result');
+    if (ans === 'b') {
+        res.innerHTML = "✅ ¡PERFECTO! Constante = \\(k_i \\cdot k_u = (200/5) \\cdot (10000/100) = 40 \\cdot 100 = 4000\\). Potencia = \(400W \\cdot 4000 = 1.6 MW\).";
+        res.className = "text-sm font-bold mt-2 text-green-600";
+        challengesCompleted.ch3 = true;
+        document.getElementById('badge-ch3').textContent = "Completado";
+        document.getElementById('badge-ch3').className = "badge badge-green";
+    } else {
+        res.innerHTML = "❌ Error de cálculo. Multiplicá los factores de transformación de ambos equipos por la lectura del vatímetro.";
+        res.className = "text-sm font-bold mt-2 text-red-600";
+    }
+    updateProgress();
+}
+
+function quizAnswer(q, ans) {
+    quizScore[q] = ans;
+    const btn1 = document.getElementById(`q${q}-opt1`);
+    const btn2 = document.getElementById(`q${q}-opt2`);
+    btn1.classList.add('opacity-50', 'pointer-events-none');
+    btn2.classList.add('opacity-50', 'pointer-events-none');
+    
+    if ((q===1 && ans==='b') || (q===2 && ans==='b')) {
+        document.getElementById(`q${q}-opt${ans==='a'?'1':'2'}`).classList.add('correct');
+    } else {
+        document.getElementById(`q${q}-opt${ans==='a'?'1':'2'}`).classList.add('wrong');
+    }
+
+    if (Object.keys(quizScore).length === 2) {
+        const correct = (quizScore[1]==='b' && quizScore[2]==='b');
+        const res = document.getElementById('quiz-result');
+        if (correct) {
+            res.textContent = "🏆 ¡Felicidades! Quiz completado al 100%. Master de la Unidad 8.";
+            res.className = "mt-4 text-sm font-bold text-green-600";
+            challengesCompleted.quiz = true;
+            document.getElementById('badge-chquiz').textContent = "Completado";
+            document.getElementById('badge-chquiz').className = "badge badge-green";
+        } else {
+            res.textContent = "Casi... revisá los conceptos de conexión y carga (VA) y reintentá.";
+            res.className = "mt-4 text-sm font-bold text-amber-600";
+        }
+        updateProgress();
+    }
+}
+
+function updateProgress() {
+    const total = Object.keys(challengesCompleted).length;
+    const done = Object.values(challengesCompleted).filter(v => v).length;
+    const perc = (done/total)*100;
+    document.getElementById('progress-bar').style.width = perc + "%";
+    document.getElementById('progress-text').textContent = Math.round(perc) + "% completado";
+    
+    if (challengesCompleted.ch1) document.getElementById('ach-seguridad').classList.remove('locked');
+    if (challengesCompleted.ch2) document.getElementById('ach-clase').classList.remove('locked');
+    if (challengesCompleted.ch3) document.getElementById('ach-calculo').classList.remove('locked');
+    if (challengesCompleted.quiz) document.getElementById('ach-quiz').classList.remove('locked');
+}
+
+// =====================================================
+// INIT
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initKaTeX();
+  updateTICalc();
+  updateBurden();
+});
+</script>
+</body>
+</html>
