@@ -7,6 +7,7 @@
 
     <!-- KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
@@ -15,7 +16,6 @@
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <style>
         :root {
             --primary: #1e3a5f;
@@ -27,135 +27,93 @@
             --utn-blue: var(--primary);
             --utn-light: var(--secondary);
             --utn-accent: #fef3c7;
-            --utn-white: #ffffff;
-            --card-bg: #ffffff;
-            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --danger: #dc3545;
             --formula-box: #eef2ff;
             --info-box: #fffbeb;
-            --danger: #dc3545;
             --lcd-green: #00ff41;
             --lcd-bg: #0d1b0d;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); color: #333; line-height: 1.6; }
-
-        /* Progress Bar Gamificada */
-        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: #dbe4ef; z-index: 1000; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); width: 0%; transition: width 0.3s ease; }
-        .achievement-popup { position: fixed; top: 20px; right: -300px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px 20px; border-radius: 8px; box-shadow: var(--shadow); z-index: 1001; transition: right 0.5s ease; display: flex; align-items: center; gap: 12px; }
-        .achievement-popup.show { right: 20px; }
-        .achievement-popup i { font-size: 24px; color: var(--utn-accent); }
-
-        /* Nav Header UTN */
-        .nav-header { background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%); color: white; padding: 1rem 1.25rem; margin-bottom: 1rem; box-shadow: 0 10px 18px rgba(30,58,95,0.16); }
-        .nav-header::before { display: none; }
-        .nav-inner { max-width: 1152px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; text-align: left; }
-        .nav-kicker { font-size: 0.75rem; font-weight: 700; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.08em; }
-        .nav-header h1 { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.2; margin: 0.125rem 0; position: relative; }
-        .nav-header p { font-size: 0.8rem; opacity: 0.84; position: relative; margin: 0; }
-        .header-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
-        .nav-header .badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; margin: 0; }
-        .nav-header .badge-year { background: #fef3c7; color: #92400e; }
-
-        /* Tab Buttons */
-        .tab-container { max-width: 1152px; margin: 0 auto 1rem; padding: 0 12px; }
-        .tab-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-start; background: transparent; padding: 0; border-radius: 0; box-shadow: none; }
-        .tab-btn { padding: 0.5rem 1rem; border: none; background: #e2e8f0; color: #4a5568; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.45rem; font-size: 0.875rem; }
-        .tab-btn:hover { background: #cbd5e0; color: #4a5568; transform: none; }
-        .tab-btn.active { background: var(--primary); color: white; box-shadow: none; }
-        .tab-btn i { font-size: 1em; }
-
-        /* Tab Content */
-        .tab-content { display: none; max-width: 1152px; margin: 0 auto 2rem; padding: 0 12px; background: transparent; border-radius: 0; box-shadow: none; }
-        .tab-content.active { display: block; animation: none; }
-        @keyframes fadeIn { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
-
-        /* Cards */
-        .card { background: var(--card-bg); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); border-left: 0; transition: none; }
-        .card:hover { transform: none; box-shadow: var(--shadow); }
-        .card h3 { color: var(--primary); margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.6rem; }
-        .card h3 i { color: var(--secondary); }
-
-        /* Formula Box */
-        .formula-box { background: var(--formula-box); border: 0; border-left: 4px solid var(--secondary); border-radius: 6px; padding: 0.75rem 1rem; margin: 1rem 0; text-align: center; position: relative; color: var(--primary); overflow-x: auto; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+        .tab-btn { transition: all 0.3s ease; }
+        .tab-btn.active { background: #1e3a5f; color: white; }
+        .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+        .tab-btn:not(.active):hover { background: #cbd5e0; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .card h3 { color: #1e3a5f; font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .card h3 i { color: #2980b9; }
+        .slider-label { font-size: 0.85rem; color: #4a5568; }
+        input[type=range] { accent-color: #2980b9; }
+        input[type=number], input[type=text], select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; }
+        canvas { max-width: 100%; }
+        .chart-container { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
+        .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.95rem; color: #1e3a5f; overflow-x: auto; margin: 0.75rem 0; }
         .formula-box::before { display: none; }
-        .formula-box .katex { font-size: 1.15em; }
-
-        /* Info Box */
-        .info-box { background: var(--info-box); border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; margin: 1rem 0; font-size: 0.9rem; }
-        .info-box i { color: var(--warning); margin-right: 10px; }
-
-        /* LCD Display */
-        .lcd-display { background: var(--lcd-bg); color: var(--lcd-green); font-family: 'Courier New', monospace; padding: 20px; border-radius: 8px; border: 3px solid #333; text-align: center; font-size: 2em; letter-spacing: 3px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); margin: 15px 0; text-shadow: 0 0 10px var(--lcd-green); }
-
-        /* Simulator Controls */
-        .simulator-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
-        .control-group { background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
-        .control-group label { display: block; font-weight: 600; color: var(--utn-blue); margin-bottom: 8px; }
-        .control-group input[type="range"] { width: 100%; margin-bottom: 5px; }
-        .control-group .value-display { text-align: center; font-weight: bold; color: var(--utn-light); }
-
-        /* Quiz */
-        .quiz-container { margin: 25px 0; }
-        .quiz-option { background: white; border: 2px solid #ddd; border-radius: 8px; padding: 15px; margin: 10px 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-        .quiz-option:hover { border-color: var(--utn-light); background: #f0f7ff; }
-        .quiz-option.correct { border-color: var(--success); background: #d4edda; }
-        .quiz-option.wrong { border-color: var(--danger); background: #f8d7da; }
-        .quiz-option i { font-size: 1.3em; }
-
-        /* Matrix Grid */
-        .matrix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 500px; margin: 20px auto; }
-        .matrix-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid var(--utn-light); border-radius: 8px; font-weight: bold; color: var(--utn-blue); cursor: pointer; transition: all 0.3s; }
-        .matrix-cell:hover { background: var(--formula-box); transform: scale(1.05); }
-        .matrix-cell.measured { background: var(--success); color: white; border-color: var(--success); }
-        .matrix-cell.active { background: var(--warning); color: var(--utn-blue); border-color: var(--warning); animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-        /* Achievements */
-        .achievements-bar { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
-        .achievement { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; padding: 10px 18px; border-radius: 20px; font-weight: 600; font-size: 0.9em; box-shadow: 0 2px 8px rgba(255,215,0,0.3); display: flex; align-items: center; gap: 8px; opacity: 0.4; transition: opacity 0.3s; }
-        .achievement.unlocked { opacity: 1; box-shadow: 0 4px 15px rgba(255,215,0,0.5); }
-        .achievement i { color: #b8860b; }
-
-        /* Diagram */
-        .diagram-container { background: white; border-radius: 12px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+        .formula-box .katex-display { margin: 0.15rem 0; }
+        .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; margin: 0.75rem 0; }
+        .info-box i { color: #f39c12; margin-right: 0.4rem; }
+        .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+        .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: #dbe4ef; z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #1e3a5f, #2980b9); width: 0%; transition: width 0.3s ease; }
+        .achievement-popup { position: fixed; top: 20px; right: -300px; background: linear-gradient(135deg, #1e3a5f, #2980b9); color: white; padding: 0.9rem 1.1rem; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); z-index: 1001; transition: right 0.5s ease; display: flex; align-items: center; gap: 0.75rem; }
+        .achievement-popup.show { right: 20px; }
+        .achievement-popup i { color: #fef3c7; font-size: 1.4rem; }
+        .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-year { background: #fef3c7; color: #92400e; }
+        .achievement { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; background: #e2e8f0; color: #4a5568; opacity: 0.75; transition: all 0.3s ease; }
+        .achievement.unlocked { background: #dcfce7; color: #166534; opacity: 1; }
+        .achievement i { color: currentColor; }
+        .simulator-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+        .control-group { background: #f8fafc; padding: 0.9rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
+        .control-group label { display: block; font-weight: 600; color: #374151; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .control-group input[type="range"] { width: 100%; margin-bottom: 0.25rem; }
+        .value-display { text-align: center; font-weight: 700; color: #1e3a5f; font-size: 0.875rem; }
+        .quiz-container { margin: 1rem 0; }
+        .quiz-option { background: white; border: 2px solid #e2e8f0; border-radius: 0.5rem; padding: 0.75rem; margin: 0.5rem 0; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.65rem; font-size: 0.92rem; }
+        .quiz-option:hover { border-color: #93c5fd; background: #eff6ff; }
+        .quiz-option.correct { border-color: #27ae60; background: #dcfce7; }
+        .quiz-option.wrong { border-color: #dc3545; background: #fee2e2; }
+        .lcd-display { background: #0d1b0d; color: #00ff41; font-family: 'Courier New', monospace; padding: 1rem; border-radius: 8px; border: 3px solid #333; text-align: center; font-size: 1.5rem; letter-spacing: 2px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); margin: 0.75rem 0; text-shadow: 0 0 10px #00ff41; }
+        .diagram-container { background: white; border-radius: 8px; padding: 1rem; margin: 1rem 0; box-shadow: none; border: 1px solid #e2e8f0; text-align: center; }
+        .diagram-stage-180 { position: relative; height: 180px; margin: 20px 0; }
+        .diagram-stage-200 { position: relative; height: 200px; margin: 20px 0; }
+        .electrode-row.diagram-row { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); margin: 0; }
+        .diagram-row-80 { width: 80%; }
+        .diagram-row-90 { width: 90%; }
+        .diagram-row-95 { width: 95%; }
+        .electrode-h-50 { height: 50px; }
+        .electrode-h-60 { height: 60px; }
+        .electrode-h-80 { height: 80px; }
+        .electrode-h-90 { height: 90px; }
+        .electrode-h-100 { height: 100px; }
+        .ground-line { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); height: 3px; background: #8B4513; border-radius: 2px; }
+        .ground-line-80 { width: 80%; }
+        .ground-line-90 { width: 90%; }
+        .ground-line-95 { width: 95%; }
+        .diagram-label { position: absolute; font-weight: 700; color: #1e3a5f; }
+        .diagram-label-blue { color: #2980b9; }
+        .diagram-label-sm { font-size: 0.9em; }
         .electrode-row { display: flex; justify-content: center; align-items: flex-end; gap: 30px; margin: 30px 0; position: relative; }
         .electrode { width: 12px; height: 80px; background: linear-gradient(to bottom, #888, #555); border-radius: 2px; position: relative; border: 2px solid #333; }
-        .electrode::after { content: attr(data-label); position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--utn-blue); white-space: nowrap; }
+        .electrode::after { content: attr(data-label); position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #1e3a5f; white-space: nowrap; }
         .electrode.current { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
         .electrode.potential { background: linear-gradient(to bottom, #3498db, #2980b9); }
-
-        /* Chart Container */
-        .chart-container { max-width: 600px; margin: 20px auto; }
-
-        /* Table */
-        .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: 8px; overflow: hidden; }
-        .data-table th { background: linear-gradient(135deg, var(--utn-blue), var(--utn-light)); color: white; padding: 12px; text-align: center; }
-        .data-table td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
-        .data-table tr:hover { background: #f0f7ff; }
-        .data-table tr:nth-child(even) { background: #f8f9fa; }
-        .data-table tr:nth-child(even):hover { background: #f0f7ff; }
-
-        /* Footer */
-        .footer { max-width: 1152px; margin: 0 auto 2rem; padding: 1rem; background: white; border-radius: 12px; box-shadow: var(--shadow); color: #6b7280; text-align: center; font-size: 0.875rem; }
-        .footer p { opacity: 1; margin: 0.25rem 0; }
-        .footer p:first-child { color: #374151; font-weight: 700; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-inner { text-align: center; justify-content: center; }
-            .tab-buttons { flex-direction: column; }
-            .tab-btn { width: 100%; justify-content: center; }
-            .matrix-grid { grid-template-columns: repeat(4, 1fr); max-width: 100%; }
-        }
-
-        /* Spin disk */
-        .spin-disk { width: 60px; height: 60px; border-radius: 50%; background: conic-gradient(var(--utn-blue) 0deg, var(--utn-light) 90deg, var(--utn-accent) 180deg, var(--utn-light) 270deg, var(--utn-blue) 360deg); animation: spin 3s linear infinite; margin: 20px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .matrix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; max-width: 500px; margin: 1rem auto; }
+        .matrix-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid #2980b9; border-radius: 0.5rem; font-weight: 700; color: #1e3a5f; cursor: pointer; transition: all 0.3s; }
+        .matrix-cell:hover { background: #eef2ff; transform: scale(1.03); }
+        .matrix-cell.measured { background: #27ae60; color: white; border-color: #27ae60; }
+        .matrix-cell.active { background: #f39c12; color: #1e3a5f; border-color: #f39c12; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 1rem 0; border-radius: 8px; overflow: hidden; font-size: 0.9rem; }
+        .data-table th { background: #1e3a5f; color: white; padding: 0.65rem; text-align: center; }
+        .data-table td { padding: 0.65rem; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .data-table tr:nth-child(even) { background: #f8fafc; }
+        .spin-disk { width: 60px; height: 60px; border-radius: 50%; background: conic-gradient(#1e3a5f 0deg, #2980b9 120deg, #f39c12 240deg, #1e3a5f 360deg); animation: spin 3s linear infinite; margin: 1rem auto; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* Slider result */
-        .slider-result { background: var(--formula-box); border-radius: 8px; padding: 15px; margin-top: 10px; text-align: center; font-weight: bold; color: var(--utn-blue); }
+        .slider-result { background: #eef2ff; border-radius: 8px; padding: 0.75rem; margin-top: 0.5rem; text-align: center; font-weight: 700; color: #1e3a5f; }
+        @media (max-width: 640px) { .chart-container { min-height: 200px; } }
     </style>
 </head>
 <body>
@@ -168,79 +126,75 @@
     <div class="achievement-popup" id="achievementPopup">
         <i class="fas fa-trophy"></i>
         <div>
-            <div style="font-weight: bold;">¡Logro Desbloqueado!</div>
-            <div id="achievementText" style="font-size: 0.9em; opacity: 0.9;"></div>
+            <div class="font-bold">¡Logro Desbloqueado!</div>
+            <div id="achievementText" class="text-sm opacity-90"></div>
         </div>
     </div>
-
-    <!-- Nav Header -->
-    <div class="nav-header">
-        <div class="nav-inner">
-            <div>
-                <div class="nav-kicker">UTN · Facultad Regional La Rioja</div>
-                <h1><i class="fas fa-bolt"></i> Medidas Electrónicas I</h1>
-                <p>Unidad 3 · Instrumentos Pasivos · Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</p>
-            </div>
-            <div class="header-badges">
-                <span class="badge">4º Año Ing. Electrónica</span>
-                <span class="badge badge-year">Año 2026</span>
-            </div>
+    <!-- HEADER -->
+    <div class="nav-header text-white p-4 mb-4 shadow-lg">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div>
+          <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+          <h1 class="text-xl sm:text-2xl font-bold mt-0.5"><i class="fas fa-bolt"></i> Medidas Electrónicas I</h1>
+          <div class="text-xs opacity-80 mt-0.5">Unidad 3 · Instrumentos Pasivos · Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</div>
         </div>
+        <div class="flex gap-2 flex-wrap justify-center">
+          <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+          <span class="badge badge-year">Año 2026</span>
+        </div>
+      </div>
     </div>
-
-    <!-- Achievements Bar -->
-    <div class="tab-container">
-        <div class="achievements-bar">
+    <!-- ACHIEVEMENTS -->
+    <div class="max-w-6xl mx-auto px-3 mb-4"><div class="flex gap-2 flex-wrap justify-center">
             <div class="achievement" id="ach1"><i class="fas fa-medal"></i> Principiante</div>
             <div class="achievement" id="ach2"><i class="fas fa-atom"></i> Galvanómetro</div>
             <div class="achievement" id="ach3"><i class="fas fa-bolt"></i> Telurómetro</div>
             <div class="achievement" id="ach4"><i class="fas fa-globe"></i> Wenner</div>
             <div class="achievement" id="ach5"><i class="fas fa-layer-group"></i> Schlumberger</div>
             <div class="achievement" id="ach6"><i class="fas fa-crown"></i> Experto</div>
-        </div>
-    </div>
+        </div></div>
 
-    <!-- Tab Buttons -->
-    <div class="tab-container">
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="openTab('intro')">
+    <!-- NAVIGATION TABS -->
+    <div class="max-w-6xl mx-auto px-3 mb-4">
+        <div class="flex flex-wrap gap-2">
+            <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('intro')">
                 <i class="fas fa-book-open"></i> Introducción
             </button>
-            <button class="tab-btn" onclick="openTab('galvanometro')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('galvanometro')">
                 <i class="fas fa-compass"></i> Galvanómetro
             </button>
-            <button class="tab-btn" onclick="openTab('amperimetro')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('amperimetro')">
                 <i class="fas fa-tachometer-alt"></i> Amperímetro
             </button>
-            <button class="tab-btn" onclick="openTab('voltimetro')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('voltimetro')">
                 <i class="fas fa-battery-full"></i> Voltímetro
             </button>
-            <button class="tab-btn" onclick="openTab('ohmmetro')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('ohmmetro')">
                 <i class="fas fa-wave-square"></i> Ohmmetro
             </button>
-            <button class="tab-btn" onclick="openTab('telurimetro')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('telurimetro')">
                 <i class="fas fa-globe-americas"></i> Telurímetro
             </button>
-            <button class="tab-btn" onclick="openTab('wenner')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('wenner')">
                 <i class="fas fa-ruler-combined"></i> Wenner
             </button>
-            <button class="tab-btn" onclick="openTab('schlumberger')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('schlumberger')">
                 <i class="fas fa-layer-group"></i> Schlumberger
             </button>
-            <button class="tab-btn" onclick="openTab('matriz')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('matriz')">
                 <i class="fas fa-th"></i> Matriz
             </button>
-            <button class="tab-btn" onclick="openTab('desafios')">
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="openTab('desafios')">
                 <i class="fas fa-trophy"></i> Desafíos
             </button>
         </div>
     </div>
 
     <!-- TAB: Introducción -->
-    <div id="intro" class="tab-content active">
-        <div class="card">
+    <div id="intro" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-bullseye"></i> Objetivos de la Unidad</h3>
-            <ul style="margin-left: 20px; line-height: 2;">
+            <ul class="ml-5 leading-8 list-disc">
                 <li>Distinguir diferentes tipos de instrumentos pasivos, sus componentes y modo de empleo</li>
                 <li>Analizar las diferencias entre instrumentos de medición de CA y CC</li>
                 <li>Diferenciar aspectos constructivos de instrumentos analógicos</li>
@@ -249,33 +203,33 @@
             </ul>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-flask"></i> Instrumentos a Estudiar</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid var(--utn-light);">
-                    <i class="fas fa-compass" style="font-size: 2em; color: var(--utn-light); margin-bottom: 10px;"></i>
-                    <div style="font-weight: bold; color: var(--utn-blue);">Galvanómetro</div>
-                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Instrumento base</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
+                <div class="bg-white p-4 rounded-lg text-center border-2 border-blue-300">
+                    <i class="fas fa-compass text-3xl text-blue-600 mb-2"></i>
+                    <div class="font-bold text-blue-900">Galvanómetro</div>
+                    <div class="text-sm text-gray-600 mt-1">Instrumento base</div>
                 </div>
-                <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid var(--utn-light);">
-                    <i class="fas fa-tachometer-alt" style="font-size: 2em; color: var(--utn-light); margin-bottom: 10px;"></i>
-                    <div style="font-weight: bold; color: var(--utn-blue);">Amperímetro</div>
-                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Medición de corriente</div>
+                <div class="bg-white p-4 rounded-lg text-center border-2 border-blue-300">
+                    <i class="fas fa-tachometer-alt text-3xl text-blue-600 mb-2"></i>
+                    <div class="font-bold text-blue-900">Amperímetro</div>
+                    <div class="text-sm text-gray-600 mt-1">Medición de corriente</div>
                 </div>
-                <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid var(--utn-light);">
-                    <i class="fas fa-battery-full" style="font-size: 2em; color: var(--utn-light); margin-bottom: 10px;"></i>
-                    <div style="font-weight: bold; color: var(--utn-blue);">Voltímetro</div>
-                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Medición de tensión</div>
+                <div class="bg-white p-4 rounded-lg text-center border-2 border-blue-300">
+                    <i class="fas fa-battery-full text-3xl text-blue-600 mb-2"></i>
+                    <div class="font-bold text-blue-900">Voltímetro</div>
+                    <div class="text-sm text-gray-600 mt-1">Medición de tensión</div>
                 </div>
-                <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid var(--utn-light);">
-                    <i class="fas fa-wave-square" style="font-size: 2em; color: var(--utn-light); margin-bottom: 10px;"></i>
-                    <div style="font-weight: bold; color: var(--utn-blue);">Ohmmetro</div>
-                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Medición de resistencia</div>
+                <div class="bg-white p-4 rounded-lg text-center border-2 border-blue-300">
+                    <i class="fas fa-wave-square text-3xl text-blue-600 mb-2"></i>
+                    <div class="font-bold text-blue-900">Ohmmetro</div>
+                    <div class="text-sm text-gray-600 mt-1">Medición de resistencia</div>
                 </div>
-                <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid var(--utn-light);">
-                    <i class="fas fa-globe-americas" style="font-size: 2em; color: var(--utn-light); margin-bottom: 10px;"></i>
-                    <div style="font-weight: bold; color: var(--utn-blue);">Telurímetro</div>
-                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Resistividad del suelo</div>
+                <div class="bg-white p-4 rounded-lg text-center border-2 border-blue-300">
+                    <i class="fas fa-globe-americas text-3xl text-blue-600 mb-2"></i>
+                    <div class="font-bold text-blue-900">Telurímetro</div>
+                    <div class="text-sm text-gray-600 mt-1">Resistividad del suelo</div>
                 </div>
             </div>
         </div>
@@ -287,14 +241,14 @@
     </div>
 
     <!-- TAB: Galvanómetro -->
-    <div id="galvanometro" class="tab-content">
-        <div class="card">
+    <div id="galvanometro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-compass"></i> Galvanómetro de D'Arsonval</h3>
             <p>El galvanómetro de D'Arsonval es el instrumento base sobre el cual se construyen la mayoría de los instrumentos analógicos. Consiste en una bobina móvil suspendida entre los polos de un imán permanente.</p>
 
             <div class="formula-box">
                 $$\tau = N \cdot B \cdot A \cdot I$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     donde $\tau$ = par motor, $N$ = número de espiras, $B$ = densidad de flujo magnético, 
                     $A$ = área de la bobina, $I$ = corriente
                 </p>
@@ -308,13 +262,13 @@
             <p>En equilibrio, ambos pares son iguales, por lo que la deflexión es proporcional a la corriente:</p>
             <div class="formula-box">
                 $$\theta = \frac{N \cdot B \cdot A}{K} \cdot I = S_I \cdot I$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $S_I$ = sensibilidad de corriente del instrumento [rad/A]
                 </p>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-cogs"></i> Simulador de Deflexión</h3>
             <div class="simulator-controls">
                 <div class="control-group">
@@ -329,8 +283,8 @@
                 </div>
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <canvas id="galvanometerCanvas" width="300" height="200" style="border-radius: 10px; background: #f8f9fa;"></canvas>
+            <div class="text-center my-6">
+                <canvas id="galvanometerCanvas" width="300" height="200" class="rounded-lg bg-slate-50"></canvas>
             </div>
 
             <div class="lcd-display" id="deflectionDisplay">
@@ -339,7 +293,7 @@
         </div>
 
         <div class="quiz-container">
-            <h3 style="color: var(--utn-blue); margin-bottom: 15px;"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+            <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
             <p><strong>¿Qué sucede si se invierte la polaridad de la corriente en un galvanómetro de D'Arsonval?</strong></p>
             <div class="quiz-option" onclick="checkAnswer(this, false)">
                 <i class="far fa-circle"></i> La deflexión se mantiene igual
@@ -354,14 +308,14 @@
     </div>
 
     <!-- TAB: Amperímetro -->
-    <div id="amperimetro" class="tab-content">
-        <div class="card">
+    <div id="amperimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-tachometer-alt"></i> Amperímetro Analógico</h3>
             <p>Para convertir un galvanómetro en amperímetro se debe agregar una <strong>resistencia en paralelo (shunt)</strong> que derive la corriente excedente.</p>
 
             <div class="formula-box">
                 $$R_{sh} = \frac{R_m}{\frac{I}{I_m} - 1} = \frac{R_m}{n - 1}$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $R_{sh}$ = resistencia shunt, $R_m$ = resistencia interna del galvanómetro, 
                     $I$ = corriente máxima de la escala, $I_m$ = corriente de fondo de escala del galvanómetro, $n$ = factor de multiplicación
                 </p>
@@ -373,7 +327,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-calculator"></i> Calculadora de Shunt</h3>
             <div class="simulator-controls">
                 <div class="control-group">
@@ -393,7 +347,7 @@
                 </div>
             </div>
 
-            <div class="formula-box" style="margin-top: 20px;">
+            <div class="formula-box mt-5">
                 $$R_{sh} = \frac{1000}{\frac{1}{0.0001} - 1} = 0.100 \ \Omega$$
                 <div class="slider-result" id="shuntResult">Rsh = 0.100 Ω</div>
             </div>
@@ -401,14 +355,14 @@
     </div>
 
     <!-- TAB: Voltímetro -->
-    <div id="voltimetro" class="tab-content">
-        <div class="card">
+    <div id="voltimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-battery-full"></i> Voltímetro Analógico</h3>
             <p>Para convertir un galvanómetro en voltímetro se debe agregar una <strong>resistencia en serie (multiplicadora)</strong> que limite la corriente.</p>
 
             <div class="formula-box">
                 $$R_s = \frac{V}{I_m} - R_m = R_m(n - 1)$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $R_s$ = resistencia serie multiplicadora, $V$ = tensión máxima de la escala,
                     $I_m$ = corriente de fondo de escala, $R_m$ = resistencia interna, $n = V/V_m$
                 </p>
@@ -420,9 +374,9 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-arrows-alt-v"></i> Simulador de Ampliación de Escala</h3>
-            <p style="margin-bottom: 15px;">Simula la ampliación de escala de un voltímetro de 10V a 25V como en el TP N°4:</p>
+            <p class="mb-3">Simula la ampliación de escala de un voltímetro de 10V a 25V como en el TP N°4:</p>
 
             <div class="simulator-controls">
                 <div class="control-group">
@@ -442,7 +396,7 @@
                 </div>
             </div>
 
-            <div class="formula-box" style="margin-top: 20px;">
+            <div class="formula-box mt-5">
                 $$R_s = \frac{V_2 - V_1}{V_1/R_V} = \frac{25 - 10}{10/200000} = 300 \ \text{k}\Omega$$
                 <div class="slider-result" id="voltmeterResult">Rs = 300 kΩ</div>
             </div>
@@ -453,7 +407,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-ruler"></i> Comparación de Escalas</h3>
             <div class="chart-container">
                 <canvas id="scaleChart"></canvas>
@@ -462,14 +416,14 @@
     </div>
 
     <!-- TAB: Ohmmetro -->
-    <div id="ohmmetro" class="tab-content">
-        <div class="card">
+    <div id="ohmmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-wave-square"></i> Ohmmetro en Serie</h3>
             <p>El ohmmetro mide resistencia aplicando una tensión conocida y midiendo la corriente resultante. En la escala el valor cero corresponde a corriente máxima (cortocircuito).</p>
 
             <div class="formula-box">
                 $$R_x = \frac{\mathcal{E}}{I} - (R_m + R_s + r)$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $\mathcal{E}$ = fem de la batería interna, $r$ = resistencia interna de la batería,
                     $R_s$ = resistencia de ajuste de cero, $R_m$ = resistencia del galvanómetro
                 </p>
@@ -481,7 +435,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-random"></i> Resistencia Medida vs Deflexión</h3>
             <div class="chart-container">
                 <canvas id="ohmmeterChart"></canvas>
@@ -490,8 +444,8 @@
     </div>
 
     <!-- TAB: Telurímetro -->
-    <div id="telurimetro" class="tab-content">
-        <div class="card">
+    <div id="telurimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-globe-americas"></i> Telurímetro y Medición de Resistividad del Terreno</h3>
             <p>La <strong>resistividad del terreno</strong> ($\rho$) es una propiedad física que mide la oposición que ofrece el suelo al paso de la corriente eléctrica. Se expresa en ohmios-metro ($\Omega \cdot \text{m}$) y es fundamental para diseñar sistemas de puesta a tierra eficaces.</p>
 
@@ -501,37 +455,37 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-bolt"></i> Método de Caída de Potencial (3 puntas)</h3>
             <p>Este es el método más empleado para medir la <strong>resistencia de puesta a tierra</strong> de un sistema existente.</p>
 
             <div class="diagram-container">
-                <div style="position: relative; height: 200px; margin: 20px 0;">
-                    <div class="electrode-row" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 80%;">
-                        <div class="electrode current" data-label="E (Tierra)" style="height: 100px;"></div>
-                        <div class="electrode potential" data-label="S (Potencial)" style="height: 60px;"></div>
-                        <div class="electrode current" data-label="H (Corriente)" style="height: 100px;"></div>
+                <div class="diagram-stage-200">
+                    <div class="electrode-row diagram-row diagram-row-80">
+                        <div class="electrode current electrode-h-100" data-label="E (Tierra)"></div>
+                        <div class="electrode potential electrode-h-60" data-label="S (Potencial)"></div>
+                        <div class="electrode current electrode-h-100" data-label="H (Corriente)"></div>
                     </div>
-                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 80%; height: 3px; background: #8B4513; border-radius: 2px;"></div>
-                    <div style="position: absolute; bottom: 140px; left: 20%; font-weight: bold; color: var(--utn-blue);">Fuente de Corriente</div>
-                    <div style="position: absolute; bottom: 140px; left: 50%; font-weight: bold; color: var(--utn-blue);">Voltímetro</div>
+                    <div class="ground-line ground-line-80"></div>
+                    <div class="diagram-label bottom-[140px] left-[20%]">Fuente de Corriente</div>
+                    <div class="diagram-label bottom-[140px] left-1/2">Voltímetro</div>
                 </div>
 
-                <div style="display: flex; justify-content: center; gap: 40px; margin-top: 30px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 1.5em; font-weight: bold; color: var(--utn-light);">62%</div>
-                        <div style="font-size: 0.9em; color: #666;">Posición óptima de S</div>
+                <div class="flex justify-center gap-10 mt-6 flex-wrap">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">62%</div>
+                        <div class="text-sm text-gray-600">Posición óptima de S</div>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 1.5em; font-weight: bold; color: var(--utn-light);">20 m</div>
-                        <div style="font-size: 0.9em; color: #666;">Distancia E-H típica</div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">20 m</div>
+                        <div class="text-sm text-gray-600">Distancia E-H típica</div>
                     </div>
                 </div>
             </div>
 
             <div class="formula-box">
                 $$R_E = \frac{V_{ES}}{I}$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $R_E$ = resistencia de puesta a tierra del electrodo bajo prueba, 
                     $V_{ES}$ = caída de tensión entre E y S, $I$ = corriente inyectada entre E y H
                 </p>
@@ -543,7 +497,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-calculator"></i> Simulador de Caída de Potencial</h3>
             <div class="simulator-controls">
                 <div class="control-group">
@@ -567,13 +521,13 @@
                 R = 1.50 Ω
             </div>
 
-            <div style="margin-top: 15px; text-align: center; color: var(--utn-blue); font-weight: 600;">
+            <div class="mt-3 text-center text-blue-900 font-semibold">
                 Posición óptima S: <span id="optimalS">12.4 m</span> desde E
             </div>
         </div>
 
         <div class="quiz-container">
-            <h3 style="color: var(--utn-blue); margin-bottom: 15px;"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+            <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
             <p><strong>¿Por qué la resistencia del electrodo auxiliar H no afecta la medición?</strong></p>
             <div class="quiz-option" onclick="checkAnswer(this, false)">
                 <i class="far fa-circle"></i> Porque H está muy lejos de E
@@ -588,33 +542,33 @@
     </div>
 
     <!-- TAB: Método Wenner -->
-    <div id="wenner" class="tab-content">
-        <div class="card">
+    <div id="wenner" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-ruler-combined"></i> Método de Wenner (4 Picas)</h3>
             <p>Desarrollado por <strong>Frank Wenner</strong> en 1915, es el método estándar para medir la resistividad del suelo. Utiliza cuatro electrodos alineados y equidistantes.</p>
 
             <div class="diagram-container">
-                <div style="position: relative; height: 180px; margin: 20px 0;">
-                    <div class="electrode-row" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 90%;">
-                        <div class="electrode current" data-label="C1" style="height: 80px;"></div>
-                        <div class="electrode potential" data-label="P1" style="height: 60px;"></div>
-                        <div class="electrode potential" data-label="P2" style="height: 60px;"></div>
-                        <div class="electrode current" data-label="C2" style="height: 80px;"></div>
+                <div class="diagram-stage-180">
+                    <div class="electrode-row diagram-row diagram-row-90">
+                        <div class="electrode current electrode-h-80" data-label="C1"></div>
+                        <div class="electrode potential electrode-h-60" data-label="P1"></div>
+                        <div class="electrode potential electrode-h-60" data-label="P2"></div>
+                        <div class="electrode current electrode-h-80" data-label="C2"></div>
                     </div>
-                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 90%; height: 3px; background: #8B4513; border-radius: 2px;"></div>
+                    <div class="ground-line ground-line-90"></div>
 
-                    <div style="position: absolute; bottom: 100px; left: 15%; right: 15%; display: flex; justify-content: space-between; font-weight: bold; color: var(--utn-light);">
+                    <div class="absolute bottom-[100px] left-[15%] right-[15%] flex justify-between font-bold text-blue-600">
                         <span>a</span><span>a</span><span>a</span>
                     </div>
-                    <div style="position: absolute; bottom: 130px; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--utn-blue);">
-                        I (corriente) <span style="margin: 0 20px;"></span> V (potencial)
+                    <div class="absolute bottom-[130px] left-1/2 -translate-x-1/2 font-bold text-blue-900">
+                        I (corriente) <span class="mx-5"></span> V (potencial)
                     </div>
                 </div>
             </div>
 
             <div class="formula-box">
                 $$\rho_a = 2 \pi a \cdot \frac{V}{I} = 2 \pi a R$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $\rho_a$ = resistividad aparente [$\Omega \cdot \text{m}$], $a$ = separación entre electrodos [m],
                     $R$ = resistencia medida por el telurómetro [$\Omega$], $V$ = diferencia de potencial entre P1 y P2,
                     $I$ = corriente inyectada entre C1 y C2
@@ -632,7 +586,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-calculator"></i> Calculadora Wenner</h3>
             <div class="simulator-controls">
                 <div class="control-group">
@@ -647,18 +601,18 @@
                 </div>
             </div>
 
-            <div class="formula-box" style="margin-top: 20px;">
+            <div class="formula-box mt-5">
                 $$\rho_a = 2 \pi \cdot 3 \cdot 7.49 = 141.1 \ \Omega \cdot \text{m}$$
                 <div class="slider-result" id="wennerResult">ρ = 141.1 Ω·m</div>
             </div>
 
-            <div style="margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid var(--success);">
-                <i class="fas fa-leaf" style="color: var(--success); margin-right: 8px;"></i>
+            <div class="mt-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <i class="fas fa-leaf text-green-600 mr-2"></i>
                 <strong>Tipo de suelo estimado:</strong> <span id="soilType">Arcilla húmeda / Humus</span>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-chart-area"></i> Perfil de Resistividad vs Profundidad</h3>
             <p>Variando la separación $a$ se obtienen valores de resistividad a diferentes profundidades:</p>
             <div class="chart-container">
@@ -666,7 +620,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-table"></i> Valores Típicos de Resistividad</h3>
             <table class="data-table">
                 <thead>
@@ -688,26 +642,26 @@
     </div>
 
     <!-- TAB: Schlumberger -->
-    <div id="schlumberger" class="tab-content">
-        <div class="card">
+    <div id="schlumberger" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-layer-group"></i> Método de Schlumberger</h3>
             <p>Variante del método Wenner que ofrece mayor sensibilidad para estudios a mayor profundidad. Los electrodos de potencial (P1, P2) permanecen <strong>fijos</strong> y separados una distancia pequeña $a$, mientras que los de corriente (C1, C2) se alejan simétricamente.</p>
 
             <div class="diagram-container">
-                <div style="position: relative; height: 200px; margin: 20px 0;">
-                    <div class="electrode-row" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 95%;">
-                        <div class="electrode current" data-label="C1" style="height: 90px;"></div>
-                        <div class="electrode potential" data-label="P1" style="height: 50px;"></div>
-                        <div class="electrode potential" data-label="P2" style="height: 50px;"></div>
-                        <div class="electrode current" data-label="C2" style="height: 90px;"></div>
+                <div class="diagram-stage-200">
+                    <div class="electrode-row diagram-row diagram-row-95">
+                        <div class="electrode current electrode-h-90" data-label="C1"></div>
+                        <div class="electrode potential electrode-h-50" data-label="P1"></div>
+                        <div class="electrode potential electrode-h-50" data-label="P2"></div>
+                        <div class="electrode current electrode-h-90" data-label="C2"></div>
                     </div>
-                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 95%; height: 3px; background: #8B4513; border-radius: 2px;"></div>
+                    <div class="ground-line ground-line-95"></div>
 
-                    <div style="position: absolute; bottom: 105px; left: 10%; font-weight: bold; color: var(--utn-light); font-size: 0.9em;">na</div>
-                    <div style="position: absolute; bottom: 105px; left: 35%; font-weight: bold; color: var(--utn-light); font-size: 0.9em;">a</div>
-                    <div style="position: absolute; bottom: 105px; right: 10%; font-weight: bold; color: var(--utn-light); font-size: 0.9em;">na</div>
+                    <div class="absolute bottom-[105px] left-[10%] font-bold text-blue-600 text-sm">na</div>
+                    <div class="absolute bottom-[105px] left-[35%] font-bold text-blue-600 text-sm">a</div>
+                    <div class="absolute bottom-[105px] right-[10%] font-bold text-blue-600 text-sm">na</div>
 
-                    <div style="position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%); font-weight: bold; color: var(--utn-blue); font-size: 0.9em;">
+                    <div class="absolute bottom-[140px] left-1/2 -translate-x-1/2 font-bold text-blue-900 text-sm">
                         n = factor de separación (típicamente n >> 1)
                     </div>
                 </div>
@@ -715,7 +669,7 @@
 
             <div class="formula-box">
                 $$\rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     $L$ = distancia desde el centro hasta C1 o C2, $l$ = distancia desde el centro hasta P1 o P2 (mitad de $a$),
                     $R$ = resistencia medida [$\Omega$]
                 </p>
@@ -723,7 +677,7 @@
 
             <div class="formula-box">
                 $$\rho_a = \pi R a n(n+1)$$
-                <p style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                <p class="mt-2 text-sm text-gray-600">
                     Alternativa: $\rho = 2\pi R \cdot \dfrac{(n+1)na}{2}$ donde $n = \dfrac{L}{l}$ y $a = 2l$ (separación entre P1 y P2)
                 </p>
             </div>
@@ -739,7 +693,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-calculator"></i> Calculadora Schlumberger</h3>
             <div class="simulator-controls">
                 <div class="control-group">
@@ -759,18 +713,18 @@
                 </div>
             </div>
 
-            <div style="margin-top: 15px; text-align: center; color: var(--utn-blue);">
+            <div class="mt-3 text-center text-blue-900">
                 <div>L = <span id="schlumL">5.0</span> m (distancia centro-C)</div>
                 <div>l = <span id="schlumL2">0.5</span> m (distancia centro-P)</div>
             </div>
 
-            <div class="formula-box" style="margin-top: 20px;">
+            <div class="formula-box mt-5">
                 $$\rho_a = \pi \cdot \frac{(5^2 - 0.5^2)}{2 \cdot 0.5} \cdot 3.5 = 274.8 \ \Omega \cdot \text{m}$$
                 <div class="slider-result" id="schlumResult">ρ = 274.8 Ω·m</div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-balance-scale"></i> Comparativa Wenner vs Schlumberger</h3>
             <table class="data-table">
                 <thead>
@@ -794,8 +748,8 @@
     </div>
 
     <!-- TAB: Matriz de Medición -->
-    <div id="matriz" class="tab-content">
-        <div class="card">
+    <div id="matriz" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-th"></i> Matriz de Medición de Resistividad</h3>
             <p>Para caracterizar completamente un terreno, se realiza una <strong>matriz de mediciones</strong> barriendo en dos ejes perpendiculares (horizontal y vertical). Esto permite detectar <strong>anisotropías</strong> del suelo.</p>
 
@@ -805,34 +759,34 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-border-all"></i> Simulador de Matriz 4×4 (Wenner)</h3>
-            <p style="margin-bottom: 15px;">Haz clic en cada celda para "medir" la resistividad. Las rojas son el eje horizontal (// Lado B), las verdes el eje vertical (// Lado A).</p>
+            <p class="mb-3">Haz clic en cada celda para "medir" la resistividad. Las rojas son el eje horizontal (// Lado B), las verdes el eje vertical (// Lado A).</p>
 
-            <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; flex-wrap: wrap;">
-                <div style="text-align: center;">
-                    <div style="width: 20px; height: 20px; background: #e74c3c; border-radius: 4px; display: inline-block; margin-right: 8px;"></div>
+            <div class="flex justify-center gap-10 mb-5 flex-wrap">
+                <div class="text-center">
+                    <div class="w-5 h-5 bg-red-500 rounded inline-block mr-2"></div>
                     Eje Horizontal (// Lado B)
                 </div>
-                <div style="text-align: center;">
-                    <div style="width: 20px; height: 20px; background: #27ae60; border-radius: 4px; display: inline-block; margin-right: 8px;"></div>
+                <div class="text-center">
+                    <div class="w-5 h-5 bg-green-600 rounded inline-block mr-2"></div>
                     Eje Vertical (// Lado A)
                 </div>
             </div>
 
             <div class="matrix-grid" id="measurementMatrix"></div>
 
-            <div style="text-align: center; margin-top: 20px;">
-                <button onclick="resetMatrix()" style="padding: 10px 25px; background: var(--utn-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <div class="text-center mt-5">
+                <button onclick="resetMatrix()" class="px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                     <i class="fas fa-redo"></i> Reiniciar Matriz
                 </button>
-                <button onclick="autoFillMatrix()" style="padding: 10px 25px; background: var(--success); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-left: 10px;">
+                <button onclick="autoFillMatrix()" class="ml-2 px-5 py-2 bg-green-600 hover:bg-green-700 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                     <i class="fas fa-magic"></i> Autocompletar
                 </button>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-table"></i> Tabla de Resultados</h3>
             <table class="data-table" id="resultsTable">
                 <thead>
@@ -844,26 +798,26 @@
                     </tr>
                 </thead>
                 <tbody id="resultsBody">
-                    <tr><td colspan="4" style="color: #999;">Realiza mediciones en la matriz para completar...</td></tr>
+                    <tr><td colspan="4" class="text-gray-400">Realiza mediciones en la matriz para completar...</td></tr>
                 </tbody>
             </table>
 
-            <div class="formula-box" style="margin-top: 20px;">
+            <div class="formula-box mt-5">
                 $$\bar{\rho} = 2\pi a \cdot \bar{R} = 2\pi \cdot 3 \cdot \frac{\sum R_i}{N}$$
                 <div class="slider-result" id="avgResistivity">ρ promedio = --- Ω·m</div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-chart-bar"></i> Gráfico Comparativo por Eje</h3>
             <div class="chart-container">
                 <canvas id="matrixChart"></canvas>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-map-marked-alt"></i> Interpretación de Resultados</h3>
-            <ul style="margin-left: 20px; line-height: 2;">
+            <ul class="ml-5 leading-8 list-disc">
                 <li><strong>Anisotropía:</strong> Si $\rho_H \neq \rho_V$, el terreno tiene estratificación preferencial o contenido de humedad direccional.</li>
                 <li><strong>Homogeneidad:</strong> Valores similares en todas las líneas indican suelo uniforme.</li>
                 <li><strong>Estratificación:</strong> Variaciones sistemáticas con la profundidad (aumentando $a$) revelan capas distintas.</li>
@@ -878,87 +832,89 @@
     </div>
 
     <!-- TAB: Desafíos -->
-    <div id="desafios" class="tab-content">
-        <div class="card">
+    <div id="desafios" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-trophy"></i> Desafíos de la Unidad</h3>
             <p>Completa estos desafíos para demostrar tu dominio de los instrumentos pasivos y la medición de resistividad:</p>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-question-circle"></i> Desafío 1: Galvanómetro</h3>
             <p>Un galvanómetro tiene $R_m = 1.2\text{k}\Omega$ y $I_{fs} = 50\mu\text{A}$. ¿Qué resistencia shunt se necesita para medir hasta 5A?</p>
             <div class="simulator-controls">
                 <div class="control-group">
                     <label>Tu respuesta (Ω)</label>
-                    <input type="number" id="chal1" placeholder="Ej: 0.012" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal1" placeholder="Ej: 0.012" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
             </div>
-            <button onclick="checkChallenge1()" style="margin-top: 10px; padding: 10px 25px; background: var(--utn-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <button onclick="checkChallenge1()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                 Verificar
             </button>
-            <div id="chal1Result" style="margin-top: 10px; font-weight: bold;"></div>
+            <div id="chal1Result" class="mt-2 font-bold"></div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-question-circle"></i> Desafío 2: Voltímetro Ampliado</h3>
             <p>Un voltímetro de 5V (con $R_V = 100\text{k}\Omega$) se quiere ampliar a 50V. Calcula $R_s$ y la relación $K$.</p>
             <div class="simulator-controls">
                 <div class="control-group">
                     <label>$R_s$ (kΩ)</label>
-                    <input type="number" id="chal2a" placeholder="Rs" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal2a" placeholder="Rs" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
                 <div class="control-group">
                     <label>$K$</label>
-                    <input type="number" id="chal2b" placeholder="K" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal2b" placeholder="K" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
             </div>
-            <button onclick="checkChallenge2()" style="margin-top: 10px; padding: 10px 25px; background: var(--utn-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <button onclick="checkChallenge2()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                 Verificar
             </button>
-            <div id="chal2Result" style="margin-top: 10px; font-weight: bold;"></div>
+            <div id="chal2Result" class="mt-2 font-bold"></div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-question-circle"></i> Desafío 3: Wenner en Campo</h3>
             <p>En una medición Wenner con $a = 4\text{m}$, el telurómetro marca $R = 12.5\Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
             <div class="simulator-controls">
                 <div class="control-group">
                     <label>$\rho_a$ (Ω·m)</label>
-                    <input type="number" id="chal3a" placeholder="ρ" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal3a" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
                 <div class="control-group">
                     <label>Profundidad aprox. (m)</label>
-                    <input type="number" id="chal3b" placeholder="h" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal3b" placeholder="h" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
             </div>
-            <button onclick="checkChallenge3()" style="margin-top: 10px; padding: 10px 25px; background: var(--utn-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <button onclick="checkChallenge3()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                 Verificar
             </button>
-            <div id="chal3Result" style="margin-top: 10px; font-weight: bold;"></div>
+            <div id="chal3Result" class="mt-2 font-bold"></div>
         </div>
 
-        <div class="card">
+        <div class="card p-4 mb-4">
             <h3><i class="fas fa-question-circle"></i> Desafío 4: Schlumberger</h3>
             <p>En una configuración Schlumberger: $a = 2\text{m}$ (P1-P2), $n = 8$ (factor), $R = 4.2\Omega$. Calcula $\rho_a$.</p>
             <div class="simulator-controls">
                 <div class="control-group">
                     <label>$\rho_a$ (Ω·m)</label>
-                    <input type="number" id="chal4" placeholder="ρ" style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 6px;">
+                    <input type="number" id="chal4" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md">
                 </div>
             </div>
-            <button onclick="checkChallenge4()" style="margin-top: 10px; padding: 10px 25px; background: var(--utn-light); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+            <button onclick="checkChallenge4()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">
                 Verificar
             </button>
-            <div id="chal4Result" style="margin-top: 10px; font-weight: bold;"></div>
+            <div id="chal4Result" class="mt-2 font-bold"></div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <p>Medidas Electrónicas I · UTN Facultad Regional La Rioja</p>
-        <p>Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</p>
-        <p>Guía de Estudios Unidad 3. Año 2026</p>
-        <p style="margin-top: 10px; opacity: 0.7;"><i class="fas fa-code"></i> Material Didáctico Interactivo</p>
+        <!-- FOOTER -->
+    <div class="max-w-6xl mx-auto px-3 mb-8">
+      <div class="card p-4 text-center text-sm text-gray-500">
+        <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+        <div>Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</div>
+        <div>Guía de Estudios Unidad 3. Año 2026</div>
+        <div class="mt-1 text-xs">Material Didáctico Interactivo</div>
+      </div>
     </div>
 
     <script>
@@ -1268,7 +1224,7 @@
             const indices = Object.keys(matrixData);
 
             if (indices.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="color: #999;">Realiza mediciones en la matriz para completar...</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-gray-400">Realiza mediciones en la matriz para completar...</td></tr>';
                 document.getElementById('avgResistivity').textContent = 'ρ promedio = --- Ω·m';
                 return;
             }
@@ -1438,10 +1394,10 @@
             const result = document.getElementById('chal1Result');
 
             if (Math.abs(val - correct) < 0.001) {
-                result.innerHTML = '<span style="color: var(--success);"><i class="fas fa-check"></i> ¡Correcto! Rsh ≈ 0.012 Ω</span>';
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Correcto! Rsh ≈ 0.012 Ω</span>';
                 unlockAchievement('ach1', '¡Desafío Completado!');
             } else {
-                result.innerHTML = '<span style="color: var(--danger);"><i class="fas fa-times"></i> Revisa: Rs = Rm/(n-1) donde n = I/Im</span>';
+                result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> Revisa: Rs = Rm/(n-1) donde n = I/Im</span>';
             }
         }
 
@@ -1454,9 +1410,9 @@
 
             const result = document.getElementById('chal2Result');
             if (Math.abs(rs - correctRs) < 10 && Math.abs(k - correctK) < 0.5) {
-                result.innerHTML = '<span style="color: var(--success);"><i class="fas fa-check"></i> ¡Perfecto! Rs = 900 kΩ, K = 10</span>';
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Perfecto! Rs = 900 kΩ, K = 10</span>';
             } else {
-                result.innerHTML = '<span style="color: var(--danger);"><i class="fas fa-times"></i> Rs = Rv*(V2/V1 - 1), K = V2/V1</span>';
+                result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> Rs = Rv*(V2/V1 - 1), K = V2/V1</span>';
             }
         }
 
@@ -1469,9 +1425,9 @@
 
             const result = document.getElementById('chal3Result');
             if (Math.abs(rho - correctRho) < 10 && Math.abs(h - correctH) < 1) {
-                result.innerHTML = '<span style="color: var(--success);"><i class="fas fa-check"></i> ¡Correcto! ρ ≈ 314 Ω·m, h ≈ 3 m</span>';
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Correcto! ρ ≈ 314 Ω·m, h ≈ 3 m</span>';
             } else {
-                result.innerHTML = '<span style="color: var(--danger);"><i class="fas fa-times"></i> ρ = 2πaR, h ≈ 3a/4</span>';
+                result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> ρ = 2πaR, h ≈ 3a/4</span>';
             }
         }
 
@@ -1481,9 +1437,9 @@
 
             const result = document.getElementById('chal4Result');
             if (Math.abs(val - correct) < 50) {
-                result.innerHTML = '<span style="color: var(--success);"><i class="fas fa-check"></i> ¡Correcto! ρ ≈ ' + correct.toFixed(0) + ' Ω·m</span>';
+                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Correcto! ρ ≈ ' + correct.toFixed(0) + ' Ω·m</span>';
             } else {
-                result.innerHTML = '<span style="color: var(--danger);"><i class="fas fa-times"></i> Usa: ρ = πR(L²-l²)/(2l)</span>';
+                result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> Usa: ρ = πR(L²-l²)/(2l)</span>';
             }
         }
     </script>

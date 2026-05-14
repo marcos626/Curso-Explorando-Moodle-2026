@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 9 · Puentes de Medición</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="initKaTeX();"></script>
+<style>
+  :root { --primary:#1e3a5f; --secondary:#2980b9; --accent:#e74c3c; --success:#27ae60; --warning:#f39c12; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4f8; }
+  .tab-btn { transition:all 0.3s ease; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:not(.active) { background:#e2e8f0; color:#4a5568; }
+  .tab-btn:not(.active):hover { background:#cbd5e0; }
+  .card { background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size:0.85rem; color:#4a5568; }
+  input[type=range] { accent-color:#2980b9; }
+  .formula-box { background:#eef2ff; border-left:4px solid #2980b9; border-radius:6px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.95rem; color:#1e3a5f; }
+  .badge { display:inline-block; font-size:0.75rem; font-weight:700; border-radius:9999px; padding:2px 10px; }
+  .badge-blue { background:#dbeafe; color:#1e40af; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-green { background:#dcfce7; color:#166534; }
+  .badge-purple { background:#f3e8ff; color:#6b21a8; }
+  .info-box { background:#fffbeb; border:1px solid #fbbf24; border-radius:8px; padding:0.75rem; font-size:0.88rem; }
+  .section-header { background:linear-gradient(135deg,#1e3a5f 0%,#2980b9 100%); color:white; border-radius:10px 10px 0 0; padding:1rem 1.25rem; }
+  .nav-header { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  @font-face { font-family:'DSEG7'; src:url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2'); }
+  .lcd-display { font-family:'DSEG7','Courier New',monospace; background-color:#a3c2a3; color:#2d372d; border:inset 4px #7a8c7a; box-shadow:inset 0 0 10px rgba(0,0,0,0.2); }
+  .progress-bar { height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#2980b9,#27ae60); transition:width 0.5s ease; }
+  .achievement { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#fef3c7,#fde68a); border:2px solid #f59e0b; border-radius:20px; padding:4px 12px; font-size:0.8rem; font-weight:700; color:#92400e; transition:transform 0.2s; }
+  .achievement:hover { transform:scale(1.05); }
+  .achievement.locked { opacity:0.5; filter:grayscale(1); }
+  .quiz-option { border:2px solid #e2e8f0; border-radius:8px; padding:12px 16px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; text-align: left; }
+  .quiz-option:hover { border-color:#2980b9; background:#f0f7ff; }
+  .quiz-option.correct { border-color:#27ae60; background:#dcfce7; }
+  .quiz-option.wrong { border-color:#e74c3c; background:#fee2e2; }
+  .quiz-option.disabled { pointer-events:none; opacity:0.7; }
+  
+  /* Galva specific styling */
+  .galva-container { position: relative; width: 200px; height: 100px; overflow: hidden; margin: 0 auto; background: #f8fafc; border: 2px solid #cbd5e0; border-radius: 100px 100px 0 0; }
+  .galva-needle { position: absolute; bottom: -5px; left: 50%; width: 4px; height: 90px; background: #e74c3c; transform-origin: bottom center; transform: translateX(-50%) rotate(0deg); transition: transform 0.3s ease-out; border-radius: 4px; }
+  .galva-scale { position: absolute; width: 100%; height: 100%; border-radius: 100px 100px 0 0; border-top: 4px dashed #94a3b8; box-sizing: border-box; top: 10px; }
+  
+  @media (max-width:640px) { .chart-wrap { min-height:200px; } }
+</style>
+</head>
+<body>
+
+<div class="max-w-6xl mx-auto px-3 mt-2 mb-2">
+  <div class="card p-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🏆</span>
+      <div>
+        <div class="text-xs font-bold text-gray-500 uppercase">Progreso de la Unidad</div>
+        <div class="text-sm font-bold text-gray-800" id="progress-text">0% completado</div>
+      </div>
+    </div>
+    <div class="flex gap-2 flex-wrap" id="achievements-container">
+      <span class="achievement locked" id="ach-wheatstone">⚖️ Equilibrista</span>
+      <span class="achievement locked" id="ach-kelvin">🔬 Baja Resistencia</span>
+      <span class="achievement locked" id="ach-ac">⚡ Maestro Alterna</span>
+      <span class="achievement locked" id="ach-quiz">🎯 Quiz Champion</span>
+    </div>
+    <div class="w-full sm:w-48">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 9 · Puentes de Medición · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-indigo-500">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🎯</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">El arte de medir por equilibrio: El Método de Cero</h2>
+        <p class="text-gray-600 text-sm">A diferencia de un multímetro tradicional (donde el error depende de la escala), los puentes de medida logran exactitudes extremas comparando la incógnita con patrones de alta precisión. A través de un detector de nulos (como un galvanómetro), ajustamos ramas conocidas hasta que la diferencia de potencial es cero. En esta unidad exploraremos puentes de Corriente Continua (resistencias) y Corriente Alterna (impedancias).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-wheatstone')">⚖️ Wheatstone</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-kelvin')">📏 Kirchhoff y Kelvin</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')">⚡ Puentes CA</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-laboratorio')">🔧 Laboratorio</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-desafios')">🎮 Desafíos</button>
+  </div>
+</div>
+
+<div id="tab-wheatstone" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header bg-gradient-to-r from-indigo-800 to-indigo-600">
+      <h2 class="text-lg font-bold">⚖️ Puente de Wheatstone</h2>
+      <p class="text-sm opacity-80 mt-1">El circuito fundamental para la medición de resistencias medias y altas en CC.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div class="info-box mb-4">
+            <strong>Fundamento:</strong> Cuatro resistencias en rombo. Una fuente en una diagonal, y un galvanómetro (G) en la otra. Se ajustan las resistencias patrones hasta que <strong>la corriente por G es cero</strong> (\(I_G = 0\)).
+          </div>
+          <div class="formula-box text-sm mb-4">
+            <strong>Condición de Equilibrio:</strong><br>
+            El producto de las resistencias enfrentadas es igual.<br>
+            \(R_x \cdot R_1 = R_3 \cdot R_2\)<br><br>
+            <strong>Fórmula Práctica:</strong><br>
+            \(R_x = R_3 \cdot \frac{R_2}{R_1}\)<br><br>
+            Donde:<br>
+            • \(R_3\) = Resistencia de <strong>Comparación</strong> (ajustable finamente).<br>
+            • \(\frac{R_2}{R_1}\) = Factor de <strong>Relación</strong> (multiplicador).
+          </div>
+          <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="font-bold text-blue-800 text-sm">💡 Independencia de la fuente</div>
+            <div class="text-xs text-blue-700 mt-1">El valor calculado de \(R_x\) no depende de la tensión de la fuente. Sin embargo, una mayor tensión mejora la <strong>sensibilidad</strong> del puente (más fácil ver desvíos pequeños).</div>
+          </div>
+        </div>
+        
+        <div class="flex flex-col items-center p-4 bg-gray-50 border rounded-xl">
+          <h3 class="font-bold text-gray-700 mb-2">🎛️ Simulador: Encontrá el Equilibrio</h3>
+          <p class="text-xs text-gray-500 mb-4 text-center">Ajustá la Relación y Comparación hasta anular la corriente en el galvanómetro. Hay una \(R_x\) oculta conectada.</p>
+          
+          <div class="galva-container mb-4">
+            <div class="galva-scale"></div>
+            <div id="galva-needle" class="galva-needle"></div>
+            <div class="absolute bottom-1 w-full text-center text-[10px] font-bold text-gray-400">- G +</div>
+          </div>
+          
+          <div class="w-full space-y-4">
+            <div>
+              <label class="slider-label font-semibold block">Relación (\(R_2/R_1\)):</label>
+              <select id="sim-ratio" class="w-full p-2 border rounded text-sm bg-white" onchange="updateWheatstoneSim()">
+                <option value="0.01">x 0.01</option>
+                <option value="0.1">x 0.1</option>
+                <option value="1" selected>x 1</option>
+                <option value="10">x 10</option>
+                <option value="100">x 100</option>
+              </select>
+            </div>
+            <div>
+              <label class="slider-label font-semibold block flex justify-between">
+                <span>Comparación (\(R_3\)):</span>
+                <span id="sim-comp-val" class="font-mono text-indigo-700 font-bold">5000 Ω</span>
+              </label>
+              <input type="range" id="sim-comp" min="1" max="10000" step="1" value="5000" class="w-full" oninput="updateWheatstoneSim()">
+            </div>
+          </div>
+          
+          <div id="sim-status" class="mt-4 p-2 w-full text-center rounded font-bold text-sm bg-gray-200 text-gray-600">
+            Desequilibrado
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-kelvin" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📏 Puentes de Hilo (Kirchhoff) y Doble (Kelvin)</h2>
+      <p class="text-sm opacity-80 mt-1">Variantes del Wheatstone para aplicaciones específicas y resistencias extremas.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="space-y-4">
+          <div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-4">
+            <h3 class="font-bold text-gray-800 mb-2">🧵 Puente de Kirchhoff (Hilo Calibrado)</h3>
+            <p class="text-xs text-gray-600 mb-3">Las resistencias \(R_1\) y \(R_2\) se reemplazan por un hilo conductor homogéneo de longitud \(l\). Un cursor deslizante (punto A) divide el hilo en dos tramos: \(l_{CA}\) y \(l_{AD}\).</p>
+            <div class="formula-box text-sm bg-white">
+              Como la resistencia es proporcional a la longitud:<br>
+              \(R_x = R_3 \cdot \frac{l_{AD}}{l_{CA}}\)
+            </div>
+            <p class="text-xs text-gray-500 mt-2"><strong>Ventaja:</strong> Equilibrio muy rápido deslizando el cursor.</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4">
+            <h3 class="font-bold text-yellow-800 mb-2">🔬 Puente de Kelvin (Doble Puente)</h3>
+            <p class="text-xs text-yellow-700 mb-3">El Wheatstone falla al medir resistencias < 1 Ω porque la resistencia de los cables de conexión y contactos se suma a la incógnita, induciendo gran error.</p>
+            <p class="text-xs text-yellow-700 mb-3">Kelvin soluciona esto agregando un segundo divisor de tensión (\(r_a\), \(r_b\)) que anula el efecto del conductor de unión (\(r\)).</p>
+            <div class="formula-box text-sm bg-white border-yellow-500">
+              <strong>Condición de ajuste doble:</strong><br>
+              \(\frac{r_b}{r_a} = \frac{r_2}{r_1}\)<br><br>
+              <strong>Fórmula final:</strong><br>
+              \(R_x = R \cdot \frac{r_a}{r_b}\)
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-alterna" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚡ Puentes de Corriente Alterna</h2>
+      <p class="text-sm opacity-80 mt-1">Medición de impedancias (Capacitancia e Inductancia).</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-6">
+        <strong>El doble desafío:</strong> En CA, las ramas son Impedancias (\(Z = R + jX\)). Para que el detector indique cero, <strong>deben anularse simultáneamente la parte Real y la Imaginaria</strong>. Esto hace que el equilibrio sea más laborioso (se deben iterar dos controles).<br>
+        <strong>Equilibrio General:</strong> \(Z_1 \cdot Z_3 = Z_2 \cdot Z_4\)
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+          <div class="text-2xl mb-2">🧲</div>
+          <h4 class="font-bold text-blue-800">Puente de Maxwell</h4>
+          <p class="text-xs text-blue-700 mt-1">Mide <strong>Inductancias</strong> (\(L_x\)) y su resistencia asociada (\(R_x\)). Compara con un inductor patrón (\(L_2\)).</p>
+          <div class="mt-3 text-xs font-mono bg-white p-2 rounded text-blue-900 border border-blue-100">
+            \(L_x = L_2 \frac{R_4}{R_3}\)<br><br>
+            \(R_x = R_2 \frac{R_4}{R_3}\)
+          </div>
+        </div>
+
+        <div class="bg-green-50 border-2 border-green-200 rounded-xl p-4">
+          <div class="text-2xl mb-2">🔋</div>
+          <h4 class="font-bold text-green-800">Puente Sauty-Wien</h4>
+          <p class="text-xs text-green-700 mt-1">Mide <strong>Capacitancias</strong> (\(C_x\)) y pérdidas dieléctricas (\(R_x\)). Compara con un capacitor patrón (\(C_4\)).</p>
+          <div class="mt-3 text-xs font-mono bg-white p-2 rounded text-green-900 border border-green-100">
+            \(C_x = C_4 \frac{R_3}{R_2}\)<br><br>
+            \(R_x = R_4 \frac{R_2}{R_3}\)
+          </div>
+        </div>
+
+        <div class="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
+          <div class="text-2xl mb-2">♾️</div>
+          <h4 class="font-bold text-purple-800">Puente de Heaviside</h4>
+          <p class="text-xs text-purple-700 mt-1">Derivado de Maxwell. Mide la <strong>Inductancia Mutua (M)</strong> de dos bobinas conectándolas a favor y en oposición.</p>
+          <div class="mt-3 text-xs font-mono bg-white p-2 rounded text-purple-900 border border-purple-100">
+            \(L_{a\_favor} = L_1 + L_2 + 2M\)<br>
+            \(L_{oposic} = L_1 + L_2 - 2M\)<br><br>
+            \(M = \frac{L_{a\_favor} - L_{oposic}}{4}\)
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-laboratorio" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔧 Trabajo Práctico: Puente B24A y Detector AL5401</h2>
+      <p class="text-sm opacity-80 mt-1">Configuración real de laboratorio para mediciones de precisión.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3">El Detector de Cero (AL5401)</h3>
+          <p class="text-sm text-gray-600 mb-4">Para lograr extrema precisión, no basta con un tester común. En los prácticos usamos el detector <strong>AL5401</strong> acoplado al puente B24A.</p>
+          <ul class="text-sm text-gray-700 space-y-2 mb-4">
+            <li>✅ <strong>Amplificador Chopper:</strong> Modula la señal de error a 320 Hz, la amplifica y la demodula. Esto elimina el ruido de muy baja frecuencia y la deriva del cero.</li>
+            <li>✅ <strong>Alta Sensibilidad:</strong> Posee rangos desde 10 mV hasta ±10 µV a fondo de escala.</li>
+            <li>✅ <strong>Modos de Excitación:</strong> Permite inyectar baja tensión CC (50V) para fallas de baja resistencia, alta tensión CC (300V) para fallas resistivas altas, o CA (1.25 Hz) para localizar cortes por capacidad (Murray/Varley).</li>
+          </ul>
+        </div>
+        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-white">
+          <h4 class="font-bold text-indigo-300 text-sm mb-3">Procedimiento de Medición (TP9)</h4>
+          <div class="space-y-3 text-xs">
+            <div class="flex items-start gap-2">
+              <span class="bg-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">1</span>
+              <p>Comprobar estado de baterías (K1 en posición Test).</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="bg-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">2</span>
+              <p>Ajuste de cero eléctrico: K1 en cero, ajustar potenciómetro P1 si hay desvío.</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="bg-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">3</span>
+              <p>Conectar incógnita (Rx) a terminales X1-T (o X1-X2). Setear B24A en Modo W (Wheatstone).</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="bg-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">4</span>
+              <p>Aplicar tensión (K2 a BT), Rango 10mV. Ajustar décadas R y multiplicador ρ hasta que el galvanómetro marque 0.</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="bg-indigo-600 rounded-full w-5 h-5 flex items-center justify-center font-bold">5</span>
+              <p>Bajar el rango a 1mV o µV para el ajuste fino final. Cálculo: \(R_x = R_{decadas} \cdot \rho\)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-desafios" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎮 Desafíos Interactivos</h2>
+      <p class="text-sm opacity-80 mt-1">Aplicá los conceptos de medición de puentes y desbloqueá logros.</p>
+    </div>
+    <div class="p-5 space-y-6">
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">⚖️</span>
+          <div class="font-bold text-gray-700">Desafío 1: Cálculo Wheatstone</div>
+          <span class="badge badge-blue" id="badge-ch1">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Estás midiendo una resistencia con el puente. Lográs el equilibrio con el selector de relación en <strong>x0.1</strong> y la resistencia de comparación marca <strong>4700 Ω</strong>. ¿Cuál es el valor de \(R_x\)?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3">
+          <button onclick="checkChallenge1('a')" class="quiz-option text-sm" id="ch1-opt1">47000 Ω</button>
+          <button onclick="checkChallenge1('b')" class="quiz-option text-sm" id="ch1-opt2">470 Ω</button>
+          <button onclick="checkChallenge1('c')" class="quiz-option text-sm" id="ch1-opt3">47 Ω</button>
+          <button onclick="checkChallenge1('d')" class="quiz-option text-sm" id="ch1-opt4">4.7 Ω</button>
+        </div>
+        <div id="challenge1-result" class="text-sm font-bold"></div>
+      </div>
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🔬</span>
+          <div class="font-bold text-gray-700">Desafío 2: Elección de Puente</div>
+          <span class="badge badge-blue" id="badge-ch2">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Necesitás medir la resistencia de contacto de un disyuntor que ronda los <strong>0.005 Ω</strong>. ¿Qué configuración utilizás para no tener error por los cables de prueba?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+          <button onclick="checkChallenge2('a')" class="quiz-option text-sm" id="ch2-opt1">Puente de Wheatstone con alta tensión</button>
+          <button onclick="checkChallenge2('b')" class="quiz-option text-sm" id="ch2-opt2">Multímetro digital en escala de 200 Ω</button>
+          <button onclick="checkChallenge2('c')" class="quiz-option text-sm" id="ch2-opt3">Puente de Kelvin (Doble puente)</button>
+        </div>
+        <div id="challenge2-result" class="text-sm font-bold"></div>
+      </div>
+
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">⚡</span>
+          <div class="font-bold text-gray-700">Desafío 3: Puentes de CA</div>
+          <span class="badge badge-blue" id="badge-ch3">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          ¿Por qué equilibrar un puente de Corriente Alterna (CA) es inherentemente más complejo que uno de Corriente Continua (CC)?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+          <button onclick="checkChallenge3('a')" class="quiz-option text-sm" id="ch3-opt1">Porque la ecuación de equilibrio exige anular simultáneamente la parte real (resistiva) y la imaginaria (reactiva).</button>
+          <button onclick="checkChallenge3('b')" class="quiz-option text-sm" id="ch3-opt2">Porque los galvanómetros de CA son menos sensibles y requieren voltajes peligrosamente altos.</button>
+        </div>
+        <div id="challenge3-result" class="text-sm font-bold"></div>
+      </div>
+
+      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🏆</span>
+          <div class="font-bold text-indigo-800">Desafío Final: Quiz Express</div>
+          <span class="badge badge-purple" id="badge-ch5">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Respondé correctamente las 3 preguntas para desbloquear <strong>Quiz Champion</strong>.
+        </div>
+        <div id="quiz-container" class="space-y-3">
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">1. ¿Qué parámetro mide el Puente de Maxwell?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(1,'a')" class="quiz-option text-sm" id="q1-opt1">Capacitancia (Cx)</button>
+              <button onclick="quizAnswer(1,'b')" class="quiz-option text-sm" id="q1-opt2">Inductancia (Lx)</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">2. Si modificás la tensión de la fuente en un puente Wheatstone equilibrado, ¿qué sucede con la lectura de la resistencia calculada?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(2,'a')" class="quiz-option text-sm" id="q2-opt1">Absolutamente nada, la condición de equilibrio es independiente de la fuente.</button>
+              <button onclick="quizAnswer(2,'b')" class="quiz-option text-sm" id="q2-opt2">El valor calculado de Rx aumenta proporcionalmente.</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">3. En el TP de laboratorio, ¿qué función cumple el AL5401 acoplado al puente B24A?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(3,'a')" class="quiz-option text-sm" id="q3-opt1">Actúa como detector de nulo de altísima sensibilidad (amplificador chopper) y provee las tensiones de excitación.</button>
+              <button onclick="quizAnswer(3,'b')" class="quiz-option text-sm" id="q3-opt2">Funciona como capacímetro digital directo sin necesidad de equilibrar el puente.</button>
+            </div>
+          </div>
+        </div>
+        <div id="quiz-result" class="mt-3 text-sm font-bold"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 9. Año 2026</div>
+    <div class="mt-1 text-xs">Simulación interactiva basada en el marco teórico oficial y TP9.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let challengesCompleted = { ch1:false, ch2:false, ch3:false, quiz:false };
+let quizAnswers = {};
+
+// Simulador Wheatstone State
+const HIDDEN_RX = 7240; // Ohms
+
+// =====================================================
+// KATEX INITIALIZATION
+// =====================================================
+function initKaTeX() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true},
+      {left: '$', right: '$', display: false}
+    ],
+    throwOnError: false,
+    errorColor: '#cc0000'
+  });
+}
+
+// =====================================================
+// TAB SWITCHING WITH KATEX RE-RENDER
+// =====================================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  var target = document.getElementById(id);
+  if (target) {
+    target.classList.add('active');
+    setTimeout(function() {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+      });
+    }, 10);
+  }
+
+  var tabNames = ['tab-wheatstone','tab-kelvin','tab-alterna','tab-laboratorio','tab-desafios'];
+  var idx = tabNames.indexOf(id);
+  var btns = document.querySelectorAll('.tab-btn');
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+}
+
+// =====================================================
+// PROGRESS TRACKING
+// =====================================================
+function updateProgress() {
+  const total = Object.keys(challengesCompleted).length;
+  const completed = Object.values(challengesCompleted).filter(v => v).length;
+  const percent = Math.round((completed / total) * 100);
+
+  document.getElementById('progress-bar').style.width = percent + '%';
+  document.getElementById('progress-text').textContent = percent + '% completado';
+
+  if (challengesCompleted.ch1) document.getElementById('ach-wheatstone').classList.remove('locked');
+  if (challengesCompleted.ch2) document.getElementById('ach-kelvin').classList.remove('locked');
+  if (challengesCompleted.ch3) document.getElementById('ach-ac').classList.remove('locked');
+  if (challengesCompleted.quiz) document.getElementById('ach-quiz').classList.remove('locked');
+}
+
+// =====================================================
+// WHEATSTONE SIMULATOR
+// =====================================================
+function updateWheatstoneSim() {
+  const ratio = parseFloat(document.getElementById('sim-ratio').value);
+  const comp = parseFloat(document.getElementById('sim-comp').value);
+  
+  document.getElementById('sim-comp-val').textContent = comp + ' Ω';
+  
+  const measuredRx = comp * ratio;
+  const error = measuredRx - HIDDEN_RX;
+  
+  const needle = document.getElementById('galva-needle');
+  const statusDiv = document.getElementById('sim-status');
+  
+  // Calculate angle (max +- 45 degrees)
+  // Let's say an error of 1000 ohms gives full deflection.
+  let angle = (error / (HIDDEN_RX * 0.5)) * 45;
+  if(angle > 45) angle = 45;
+  if(angle < -45) angle = -45;
+  
+  needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  
+  if (Math.abs(error) < 1) { // Acceptable tolerance
+    statusDiv.textContent = `✅ ¡Equilibrio Alcanzado! Rx = ${measuredRx} Ω`;
+    statusDiv.className = 'mt-4 p-2 w-full text-center rounded font-bold text-sm bg-green-100 text-green-700 border border-green-300';
+    
+    // Unlock achievement via simulation
+    if(!challengesCompleted.ch1) {
+        // Just visual encouragement, real achievement is in Desafios tab
+    }
+  } else {
+    statusDiv.textContent = `Desequilibrado (Desvío de aguja)`;
+    statusDiv.className = 'mt-4 p-2 w-full text-center rounded font-bold text-sm bg-gray-200 text-gray-600 border border-transparent';
+  }
+}
+
+// =====================================================
+// CHALLENGES
+// =====================================================
+function checkChallenge1(answer) {
+  const result = document.getElementById('challenge1-result');
+  const badge = document.getElementById('badge-ch1');
+  document.querySelectorAll('[id^="ch1-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'b') {
+    result.innerHTML = '✅ ¡Correcto! La fórmula es \(R_x = Relacion \\times Comparacion = 0.1 \\times 4700 = 470\\, \\Omega\).';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch1-opt2').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch1 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Recordá multiplicar el valor de comparación por el factor de relación.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch1-opt' + (answer === 'a' ? '1' : answer === 'c' ? '3' : '4')).classList.add('wrong');
+    document.getElementById('ch1-opt2').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge2(answer) {
+  const result = document.getElementById('challenge2-result');
+  const badge = document.getElementById('badge-ch2');
+  document.querySelectorAll('[id^="ch2-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'c') {
+    result.innerHTML = '✅ ¡Correcto! El Puente de Kelvin está diseñado con un doble divisor para eliminar el error introducido por la resistencia de los cables de medición, siendo ideal para valores < 1 Ω.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch2-opt3').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch2 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Un multímetro o un Wheatstone normal no sirven aquí porque la resistencia de sus propios cables de prueba (aprox. 0.1 a 0.5 Ω) enmascararía totalmente los 0.005 Ω.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch2-opt' + (answer === 'a' ? '1' : '2')).classList.add('wrong');
+    document.getElementById('ch2-opt3').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge3(answer) {
+  const result = document.getElementById('challenge3-result');
+  const badge = document.getElementById('badge-ch3');
+  document.querySelectorAll('[id^="ch3-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'a') {
+    result.innerHTML = '✅ ¡Correcto! Al trabajar con números complejos (impedancias), la ecuación de equilibrio se desdobla en dos igualdades que deben satisfacerse simultáneamente.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch3-opt1').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch3 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. La sensibilidad del galvanómetro no es el problema principal; el desafío radica en anular ambas componentes de la impedancia.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch3-opt2').classList.add('wrong');
+    document.getElementById('ch3-opt1').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function quizAnswer(qNum, answer) {
+  quizAnswers[qNum] = answer;
+  const options = document.querySelectorAll('[id^="q' + qNum + '-opt"]');
+  options.forEach(opt => opt.classList.add('disabled'));
+
+  const correctAnswers = { 1: 'b', 2: 'a', 3: 'a' };
+
+  if (answer === correctAnswers[qNum]) {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : '2')).classList.add('correct');
+  } else {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : '2')).classList.add('wrong');
+    const correctOpt = correctAnswers[qNum] === 'a' ? '1' : '2';
+    document.getElementById('q' + qNum + '-opt' + correctOpt).classList.add('correct');
+  }
+
+  if (Object.keys(quizAnswers).length === 3) {
+    let correct = 0;
+    for (let q in correctAnswers) {
+      if (quizAnswers[q] === correctAnswers[q]) correct++;
+    }
+
+    const result = document.getElementById('quiz-result');
+    const badge = document.getElementById('badge-ch5');
+
+    if (correct === 3) {
+      result.innerHTML = '🏆 ¡Perfecto! 3/3 correctas. ¡Desbloqueaste Quiz Champion!';
+      result.className = 'mt-3 text-sm font-bold text-green-600';
+      badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+      challengesCompleted.quiz = true;
+    } else {
+      result.innerHTML = 'Resultado: ' + correct + '/3 correctas. Revisá los conceptos e intentá de nuevo recargando la página.';
+      result.className = 'mt-3 text-sm font-bold text-orange-600';
+    }
+    updateProgress();
+  }
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  updateWheatstoneSim();
+  updateProgress();
+});
+</script>
+</body>
+</html>
