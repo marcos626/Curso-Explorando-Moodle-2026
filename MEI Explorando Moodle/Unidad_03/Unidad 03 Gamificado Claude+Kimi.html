@@ -101,6 +101,35 @@
         .electrode::after { content: attr(data-label); position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #1e3a5f; white-space: nowrap; }
         .electrode.current { background: linear-gradient(to bottom, #e74c3c, #c0392b); }
         .electrode.potential { background: linear-gradient(to bottom, #3498db, #2980b9); }
+        .field-diagram { width: 100%; max-width: 920px; margin: 0 auto; display: block; }
+        .field-diagram text { font-family: 'Segoe UI', sans-serif; }
+        .field-title { font-size: 18px; font-weight: 800; fill: #1e3a5f; }
+        .field-note { font-size: 12px; fill: #475569; }
+        .field-label { font-size: 13px; font-weight: 700; fill: #1e3a5f; }
+        .field-small { font-size: 11px; font-weight: 700; fill: #475569; }
+        .wire-current { fill: none; stroke: #dc2626; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .wire-potential { fill: none; stroke: #2563eb; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .dimension-line { stroke: #334155; stroke-width: 2; }
+        .dimension-tick { stroke: #334155; stroke-width: 2; }
+        .soil-top { fill: #84cc16; }
+        .soil-layer-1 { fill: #c99a5a; }
+        .soil-layer-2 { fill: #8a5529; }
+        .soil-layer-3 { fill: #5b351c; opacity: 0.88; }
+        .probe-metal { fill: #cbd5e1; stroke: #64748b; stroke-width: 1.2; }
+        .probe-tip { fill: #475569; }
+        .probe-current-head { fill: #ef4444; }
+        .probe-potential-head { fill: #3b82f6; }
+        .meter-case { fill: #f59e0b; stroke: #b45309; stroke-width: 3; }
+        .meter-face { fill: #111827; stroke: #78350f; stroke-width: 2; }
+        .meter-screen { fill: #12351d; stroke: #06160c; stroke-width: 1.5; }
+        .meter-screen-text { fill: #7cff8a; font-family: 'Courier New', monospace; font-weight: 800; }
+        .meter-label { fill: #fff7ed; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+        .terminal-red { fill: #dc2626; stroke: #7f1d1d; stroke-width: 1.5; }
+        .terminal-blue { fill: #2563eb; stroke: #1e3a8a; stroke-width: 1.5; }
+        .terminal-green { fill: #16a34a; stroke: #14532d; stroke-width: 1.5; }
+        .terminal-yellow { fill: #facc15; stroke: #854d0e; stroke-width: 1.5; }
+        .field-diagram-card { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem; }
+        .hidden { display: none !important; }
         .matrix-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; max-width: 500px; margin: 1rem auto; }
         .matrix-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid #2980b9; border-radius: 0.5rem; font-weight: 700; color: #1e3a5f; cursor: pointer; transition: all 0.3s; }
         .matrix-cell:hover { background: #eef2ff; transform: scale(1.03); }
@@ -459,8 +488,77 @@
             <h3><i class="fas fa-bolt"></i> Método de Caída de Potencial (3 puntas)</h3>
             <p>Este es el método más empleado para medir la <strong>resistencia de puesta a tierra</strong> de un sistema existente.</p>
 
-            <div class="diagram-container">
-                <div class="diagram-stage-200">
+            <div class="diagram-container field-diagram-card">
+                <svg class="field-diagram" viewBox="0 0 920 360" role="img" aria-label="Metodo de caida de potencial con telurimetro UTN FRLR y tres picas">
+                    <defs>
+                        <linearGradient id="probeSteel3" x1="0" x2="1">
+                            <stop offset="0" stop-color="#f8fafc"/>
+                            <stop offset="0.45" stop-color="#94a3b8"/>
+                            <stop offset="1" stop-color="#e2e8f0"/>
+                        </linearGradient>
+                        <linearGradient id="meterBody3" x1="0" x2="1" y1="0" y2="1">
+                            <stop offset="0" stop-color="#fbbf24"/>
+                            <stop offset="0.58" stop-color="#f59e0b"/>
+                            <stop offset="1" stop-color="#d97706"/>
+                        </linearGradient>
+                        <marker id="dimArrow3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                        </marker>
+                    </defs>
+                    <rect x="0" y="248" width="920" height="10" class="soil-top"></rect>
+                    <rect x="0" y="258" width="920" height="48" class="soil-layer-1"></rect>
+                    <rect x="0" y="306" width="920" height="54" class="soil-layer-2"></rect>
+                    <path d="M0 292 C100 272 190 320 290 296 S490 278 590 302 S790 322 920 292 L920 360 L0 360 Z" class="soil-layer-3"></path>
+                    <text x="28" y="34" class="field-title">Caida de potencial - tres picas</text>
+                    <text x="28" y="55" class="field-note">El telurimetro inyecta corriente por E-H y mide la tension E-S.</text>
+                    <g transform="translate(324 30)">
+                        <rect x="28" y="0" width="230" height="78" rx="12" fill="url(#meterBody3)" stroke="#b45309" stroke-width="3"></rect>
+                        <rect x="42" y="12" width="202" height="38" rx="5" class="meter-face"></rect>
+                        <rect x="68" y="21" width="96" height="18" rx="3" class="meter-screen"></rect>
+                        <text x="76" y="35" class="meter-screen-text" font-size="13">R = 1.50</text>
+                        <text x="176" y="35" class="meter-label">UTN FRLR</text>
+                        <circle cx="76" cy="63" r="8" class="terminal-red"></circle>
+                        <circle cx="116" cy="63" r="8" class="terminal-blue"></circle>
+                        <circle cx="156" cy="63" r="8" class="terminal-green"></circle>
+                        <circle cx="196" cy="63" r="8" class="terminal-yellow"></circle>
+                        <text x="69" y="88" class="field-small">E</text>
+                        <text x="109" y="88" class="field-small">S</text>
+                        <text x="149" y="88" class="field-small">ES</text>
+                        <text x="188" y="88" class="field-small">H</text>
+                    </g>
+                    <path d="M400 93 C330 130 232 146 140 214" class="wire-current"></path>
+                    <path d="M440 93 C452 140 420 174 384 214" class="wire-potential"></path>
+                    <path d="M520 93 C610 128 728 150 800 214" class="wire-current"></path>
+                    <g transform="translate(130 200)">
+                        <rect x="0" y="0" width="20" height="120" rx="4" fill="url(#probeSteel3)" stroke="#64748b"></rect>
+                        <path d="M0 116 L10 142 L20 116 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-22" text-anchor="middle" class="field-label">E</text>
+                        <text x="10" y="-40" text-anchor="middle" class="field-small">electrodo bajo prueba</text>
+                    </g>
+                    <g transform="translate(374 218)">
+                        <rect x="0" y="0" width="18" height="96" rx="4" fill="url(#probeSteel3)" stroke="#64748b"></rect>
+                        <path d="M0 92 L9 116 L18 92 Z" class="probe-tip"></path>
+                        <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
+                        <text x="9" y="-22" text-anchor="middle" class="field-label">S</text>
+                        <text x="9" y="-40" text-anchor="middle" class="field-small">potencial 62%</text>
+                    </g>
+                    <g transform="translate(790 200)">
+                        <rect x="0" y="0" width="20" height="120" rx="4" fill="url(#probeSteel3)" stroke="#64748b"></rect>
+                        <path d="M0 116 L10 142 L20 116 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-22" text-anchor="middle" class="field-label">H</text>
+                        <text x="10" y="-40" text-anchor="middle" class="field-small">corriente auxiliar</text>
+                    </g>
+                    <line x1="140" y1="334" x2="800" y2="334" class="dimension-line" marker-start="url(#dimArrow3)" marker-end="url(#dimArrow3)"></line>
+                    <line x1="140" y1="318" x2="140" y2="344" class="dimension-tick"></line>
+                    <line x1="384" y1="318" x2="384" y2="344" class="dimension-tick"></line>
+                    <line x1="800" y1="318" x2="800" y2="344" class="dimension-tick"></line>
+                    <text x="470" y="326" text-anchor="middle" class="field-label">distancia E-H</text>
+                    <line x1="140" y1="302" x2="384" y2="302" class="dimension-line" marker-start="url(#dimArrow3)" marker-end="url(#dimArrow3)"></line>
+                    <text x="262" y="294" text-anchor="middle" class="field-small">0,62 x E-H</text>
+                </svg>
+                <div class="diagram-stage-200 hidden">
                     <div class="electrode-row diagram-row diagram-row-80">
                         <div class="electrode current electrode-h-100" data-label="E (Tierra)"></div>
                         <div class="electrode potential electrode-h-60" data-label="S (Potencial)"></div>
@@ -547,8 +645,70 @@
             <h3><i class="fas fa-ruler-combined"></i> Método de Wenner (4 Picas)</h3>
             <p>Desarrollado por <strong>Frank Wenner</strong> en 1915, es el método estándar para medir la resistividad del suelo. Utiliza cuatro electrodos alineados y equidistantes.</p>
 
-            <div class="diagram-container">
-                <div class="diagram-stage-180">
+            <div class="diagram-container field-diagram-card">
+                <svg class="field-diagram" viewBox="0 0 920 330" role="img" aria-label="Metodo Wenner con cuatro picas equidistantes">
+                    <defs>
+                        <linearGradient id="probeSteelW" x1="0" x2="1">
+                            <stop offset="0" stop-color="#f8fafc"/>
+                            <stop offset="0.45" stop-color="#94a3b8"/>
+                            <stop offset="1" stop-color="#e2e8f0"/>
+                        </linearGradient>
+                        <marker id="dimArrowW" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                        </marker>
+                    </defs>
+                    <rect x="0" y="190" width="920" height="10" class="soil-top"></rect>
+                    <rect x="0" y="200" width="920" height="50" class="soil-layer-1"></rect>
+                    <rect x="0" y="250" width="920" height="80" class="soil-layer-2"></rect>
+                    <path d="M0 254 C120 236 190 282 290 256 S490 230 590 266 S790 292 920 248 L920 330 L0 330 Z" class="soil-layer-3"></path>
+
+                    <text x="30" y="34" class="field-title">Metodo Wenner</text>
+                    <text x="30" y="55" class="field-note">Cuatro picas alineadas con igual separacion: a, a, a.</text>
+
+                    <path d="M174 120 V72 H746 V120" class="wire-current"></path>
+                    <text x="460" y="66" text-anchor="middle" class="field-label">I</text>
+                    <path d="M344 132 V98 H576 V132" class="wire-potential"></path>
+                    <text x="460" y="94" text-anchor="middle" class="field-label">V</text>
+
+                    <g transform="translate(164 128)">
+                        <rect x="0" y="0" width="20" height="124" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
+                        <path d="M0 120 L10 148 L20 120 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">C1</text>
+                    </g>
+                    <g transform="translate(334 148)">
+                        <rect x="0" y="0" width="20" height="104" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
+                        <path d="M0 100 L10 128 L20 100 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-potential-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">P1</text>
+                    </g>
+                    <g transform="translate(566 148)">
+                        <rect x="0" y="0" width="20" height="104" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
+                        <path d="M0 100 L10 128 L20 100 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-potential-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">P2</text>
+                    </g>
+                    <g transform="translate(736 128)">
+                        <rect x="0" y="0" width="20" height="124" rx="4" fill="url(#probeSteelW)" stroke="#64748b"></rect>
+                        <path d="M0 120 L10 148 L20 120 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">C2</text>
+                    </g>
+
+                    <line x1="174" y1="286" x2="344" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
+                    <line x1="344" y1="286" x2="576" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
+                    <line x1="576" y1="286" x2="746" y2="286" class="dimension-line" marker-start="url(#dimArrowW)" marker-end="url(#dimArrowW)"></line>
+                    <text x="259" y="278" text-anchor="middle" class="field-label">a</text>
+                    <text x="460" y="278" text-anchor="middle" class="field-label">a</text>
+                    <text x="661" y="278" text-anchor="middle" class="field-label">a</text>
+
+                    <line x1="110" y1="190" x2="110" y2="252" stroke="#f8fafc" stroke-width="3"></line>
+                    <line x1="98" y1="190" x2="122" y2="190" class="dimension-tick"></line>
+                    <line x1="98" y1="252" x2="122" y2="252" class="dimension-tick"></line>
+                    <text x="88" y="224" text-anchor="middle" class="field-small">b</text>
+                    <text x="164" y="310" class="field-note">Condicion: a &gt; 20b</text>
+                </svg>
+                <div class="diagram-stage-180 hidden">
                     <div class="electrode-row diagram-row diagram-row-90">
                         <div class="electrode current electrode-h-80" data-label="C1"></div>
                         <div class="electrode potential electrode-h-60" data-label="P1"></div>
@@ -647,8 +807,68 @@
             <h3><i class="fas fa-layer-group"></i> Método de Schlumberger</h3>
             <p>Variante del método Wenner que ofrece mayor sensibilidad para estudios a mayor profundidad. Los electrodos de potencial (P1, P2) permanecen <strong>fijos</strong> y separados una distancia pequeña $a$, mientras que los de corriente (C1, C2) se alejan simétricamente.</p>
 
-            <div class="diagram-container">
-                <div class="diagram-stage-200">
+            <div class="diagram-container field-diagram-card">
+                <svg class="field-diagram" viewBox="0 0 920 350" role="img" aria-label="Metodo Schlumberger con picas de potencial fijas y corriente separada">
+                    <defs>
+                        <linearGradient id="probeSteelS" x1="0" x2="1">
+                            <stop offset="0" stop-color="#f8fafc"/>
+                            <stop offset="0.45" stop-color="#94a3b8"/>
+                            <stop offset="1" stop-color="#e2e8f0"/>
+                        </linearGradient>
+                        <marker id="dimArrowS" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,0 L8,4 L0,8 Z" fill="#334155"></path>
+                        </marker>
+                    </defs>
+                    <rect x="0" y="206" width="920" height="10" class="soil-top"></rect>
+                    <rect x="0" y="216" width="920" height="48" class="soil-layer-1"></rect>
+                    <rect x="0" y="264" width="920" height="86" class="soil-layer-2"></rect>
+                    <path d="M0 270 C120 244 210 300 315 266 S515 238 630 280 S800 302 920 264 L920 350 L0 350 Z" class="soil-layer-3"></path>
+
+                    <text x="30" y="34" class="field-title">Metodo Schlumberger</text>
+                    <text x="30" y="55" class="field-note">P1 y P2 quedan cerca del centro; C1 y C2 se alejan para aumentar la profundidad explorada.</text>
+
+                    <path d="M114 134 V76 H806 V134" class="wire-current"></path>
+                    <text x="460" y="70" text-anchor="middle" class="field-label">I</text>
+                    <path d="M404 144 V105 H516 V144" class="wire-potential"></path>
+                    <text x="460" y="101" text-anchor="middle" class="field-label">V</text>
+
+                    <line x1="460" y1="88" x2="460" y2="312" stroke="#1e3a5f" stroke-width="1.5" stroke-dasharray="6 7" opacity="0.55"></line>
+                    <text x="470" y="195" class="field-small">centro</text>
+
+                    <g transform="translate(104 142)">
+                        <rect x="0" y="0" width="20" height="126" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
+                        <path d="M0 122 L10 150 L20 122 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">C1</text>
+                    </g>
+                    <g transform="translate(394 164)">
+                        <rect x="0" y="0" width="18" height="98" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
+                        <path d="M0 94 L9 120 L18 94 Z" class="probe-tip"></path>
+                        <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
+                        <text x="9" y="-24" text-anchor="middle" class="field-label">P1</text>
+                    </g>
+                    <g transform="translate(507 164)">
+                        <rect x="0" y="0" width="18" height="98" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
+                        <path d="M0 94 L9 120 L18 94 Z" class="probe-tip"></path>
+                        <rect x="-8" y="-12" width="34" height="16" rx="8" class="probe-potential-head"></rect>
+                        <text x="9" y="-24" text-anchor="middle" class="field-label">P2</text>
+                    </g>
+                    <g transform="translate(796 142)">
+                        <rect x="0" y="0" width="20" height="126" rx="4" fill="url(#probeSteelS)" stroke="#64748b"></rect>
+                        <path d="M0 122 L10 150 L20 122 Z" class="probe-tip"></path>
+                        <rect x="-9" y="-12" width="38" height="16" rx="8" class="probe-current-head"></rect>
+                        <text x="10" y="-24" text-anchor="middle" class="field-label">C2</text>
+                    </g>
+
+                    <line x1="114" y1="304" x2="403" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
+                    <line x1="403" y1="304" x2="516" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
+                    <line x1="516" y1="304" x2="806" y2="304" class="dimension-line" marker-start="url(#dimArrowS)" marker-end="url(#dimArrowS)"></line>
+                    <text x="258" y="296" text-anchor="middle" class="field-label">n a</text>
+                    <text x="460" y="296" text-anchor="middle" class="field-label">a</text>
+                    <text x="661" y="296" text-anchor="middle" class="field-label">n a</text>
+                    <text x="460" y="326" text-anchor="middle" class="field-note">solo se desplazan las picas exteriores C1 y C2</text>
+                </svg>
+                <div class="diagram-stage-200 hidden">
                     <div class="electrode-row diagram-row diagram-row-95">
                         <div class="electrode current electrode-h-90" data-label="C1"></div>
                         <div class="electrode potential electrode-h-50" data-label="P1"></div>
