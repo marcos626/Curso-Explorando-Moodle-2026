@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 5 - UTN FRL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --light-bg: #f0f4f8;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  input[type=range] { accent-color: #2980b9; }
+  .chart-wrap { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-family: 'Courier New', monospace; font-size: 0.95rem; color: #1e3a5f; }
+  .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.92rem; margin: 2px; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-yellow { background: #fef9c3; color: #854d0e; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  .zone-btn { transition: all 0.25s; cursor: pointer; }
+  .zone-btn:hover { opacity: 0.85; transform: scale(1.03); }
+  .zone-btn.selected { ring: 3px solid white; filter: brightness(1.15); }
+  .quiz-opt { cursor: pointer; transition: all 0.2s; border: 2px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.9rem; }
+  .quiz-opt:hover { border-color: #2980b9; background: #eff6ff; }
+  .quiz-opt.correct { background: #dcfce7; border-color: #16a34a; color: #166534; }
+  .quiz-opt.wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .osc-screen { background: #001a00; border: 3px solid #334155; border-radius: 8px; position: relative; }
+  @media (max-width: 640px) { .chart-wrap { min-height: 200px; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 5 · Osciloscopios de Rayos Catódicos · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">📺</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">¿Cómo se hace visible lo invisible?</h2>
+        <p class="text-gray-600 text-sm">Una señal eléctrica que cambia millones de veces por segundo es completamente invisible a cualquier instrumento convencional. El osciloscopio lo resuelve con un truco asombroso: disparar electrones sin masa apreciable contra una pantalla fluorescente. Explora aquí cómo funciona cada parte de este instrumento, desde el cañón de electrones hasta los controles del panel frontal.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-intro')">🔭 Intro & Tipos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-trc')">⚡ Tubo de Rayos Catódicos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-deflexion')">📐 Deflexión & Fórmulas</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-barrido')">📈 Base de Tiempo</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-controles')">🎛️ Controles & Sondas</button>
+        <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-xy')">📊 Modo X-Y</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-quiz')">🧠 Quiz</button>
+  </div>
+</div>
+
+<!-- =================== TAB 1: INTRO & TIPOS =================== -->
+<div id="tab-intro" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔭 El Osciloscopio — Introducción y Clasificación</h2>
+      <p class="text-sm opacity-80 mt-1">¿Qué mide y cómo se clasifican los osciloscopios? Explora el mapa interactivo.</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-4">
+        <strong>Definición clave:</strong> El osciloscopio es esencialmente un <em>voltímetro con mecanismo de despliegue de velocidad súper alta</em>. Funciona mediante un haz de electrones que carece virtualmente de masa, lo que le permite representar fenómenos del orden de kHz, MHz y GHz.
+      </div>
+      <!-- Comparativa de instrumentos -->
+      <h3 class="font-bold text-gray-800 mb-3 text-base">¿Por qué un osciloscopio y no un voltímetro?</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <div class="card p-4 border-t-4 border-gray-400">
+          <div class="text-2xl mb-2">🔢</div>
+          <h4 class="font-bold text-gray-700 mb-1">Voltímetro / Contador</h4>
+          <p class="text-xs text-gray-600">Mide un <strong>parámetro puntual</strong>: valor eficaz, frecuencia, energía consumida. Muy exacto pero limitado.</p>
+          <div class="mt-2 flex flex-wrap gap-1">
+            <span class="badge badge-green">Alta exactitud</span>
+            <span class="badge badge-red">Sin forma de onda</span>
+          </div>
+        </div>
+        <div class="card p-4 border-t-4 border-orange-400">
+          <div class="text-2xl mb-2">✏️</div>
+          <h4 class="font-bold text-orange-700 mb-1">Oscilógrafo</h4>
+          <p class="text-xs text-gray-600">Grafica señales con plumas mecánicas. Limitado por <strong>inercia mecánica</strong> — no puede seguir señales de alta frecuencia.</p>
+          <div class="mt-2 flex flex-wrap gap-1">
+            <span class="badge badge-yellow">Baja frecuencia</span>
+            <span class="badge badge-red">Inercia mecánica</span>
+          </div>
+        </div>
+        <div class="card p-4 border-t-4 border-blue-500">
+          <div class="text-2xl mb-2">📺</div>
+          <h4 class="font-bold text-blue-700 mb-1">Osciloscopio (TRC)</h4>
+          <p class="text-xs text-gray-600">Haz de electrones sin masa apreciable. Visualiza <strong>forma, amplitud, frecuencia, desfasaje</strong> hasta GHz.</p>
+          <div class="mt-2 flex flex-wrap gap-1">
+            <span class="badge badge-blue">Hasta GHz</span>
+            <span class="badge badge-green">Sin inercia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clasificación interactiva -->
+      <h3 class="font-bold text-gray-800 mb-3 text-base">Clasificación de Osciloscopios — haz clic para explorar</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <!-- Por frecuencia -->
+        <div>
+          <h4 class="font-semibold text-blue-800 mb-2 text-sm">📡 Por Frecuencia Máxima</h4>
+          <div class="space-y-2">
+            <div class="cursor-pointer rounded-lg p-3 bg-blue-50 border-2 border-blue-200 hover:border-blue-500 transition" onclick="showTypeDetail('baja-freq')">
+              <div class="font-bold text-blue-800 text-sm">Baja Frecuencia</div>
+              <div class="text-xs text-gray-600">Hasta 20 MHz</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-blue-50 border-2 border-blue-200 hover:border-blue-500 transition" onclick="showTypeDetail('alta-freq')">
+              <div class="font-bold text-blue-800 text-sm">Alta Frecuencia</div>
+              <div class="text-xs text-gray-600">Hasta 500 MHz</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-500 transition" onclick="showTypeDetail('muestreo')">
+              <div class="font-bold text-indigo-800 text-sm">Muestreo (Sampling)</div>
+              <div class="text-xs text-gray-600">&gt; 1 GHz — Efecto estroboscópico</div>
+            </div>
+          </div>
+        </div>
+        <!-- Por canales -->
+        <div>
+          <h4 class="font-semibold text-green-800 mb-2 text-sm">📺 Por Canales Verticales</h4>
+          <div class="space-y-2">
+            <div class="cursor-pointer rounded-lg p-3 bg-green-50 border-2 border-green-200 hover:border-green-500 transition" onclick="showTypeDetail('un-canal')">
+              <div class="font-bold text-green-800 text-sm">Un Canal</div>
+              <div class="text-xs text-gray-600">Una señal a la vez</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-green-50 border-2 border-green-200 hover:border-green-500 transition" onclick="showTypeDetail('doble-canon')">
+              <div class="font-bold text-green-800 text-sm">Doble Cañón</div>
+              <div class="text-xs text-gray-600">Dos cañones independientes — mayor costo</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-green-50 border-2 border-green-200 hover:border-green-500 transition" onclick="showTypeDetail('doble-haz')">
+              <div class="font-bold text-green-800 text-sm">Doble Haz</div>
+              <div class="text-xs text-gray-600">Rayo dividido por cuña (rayo compartido)</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-emerald-50 border-2 border-emerald-300 hover:border-emerald-600 transition" onclick="showTypeDetail('doble-trazo')">
+              <div class="font-bold text-emerald-800 text-sm">Doble Trazo ⭐</div>
+              <div class="text-xs text-gray-600">Conmutación electrónica — solución actual</div>
+            </div>
+          </div>
+        </div>
+        <!-- Por pantalla -->
+        <div>
+          <h4 class="font-semibold text-purple-800 mb-2 text-sm">🖥️ Por Tipo de Pantalla</h4>
+          <div class="space-y-2">
+            <div class="cursor-pointer rounded-lg p-3 bg-purple-50 border-2 border-purple-200 hover:border-purple-500 transition" onclick="showTypeDetail('pantalla-pasiva')">
+              <div class="font-bold text-purple-800 text-sm">Pantalla Pasiva</div>
+              <div class="text-xs text-gray-600">Persistencia 1–60 ms (fósforo)</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-purple-50 border-2 border-purple-200 hover:border-purple-500 transition" onclick="showTypeDetail('pantalla-memoria')">
+              <div class="font-bold text-purple-800 text-sm">Memoria</div>
+              <div class="text-xs text-gray-600">Persistencia casi indefinida</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-violet-50 border-2 border-violet-200 hover:border-violet-500 transition" onclick="showTypeDetail('mem-digital')">
+              <div class="font-bold text-violet-800 text-sm">Memoria Digital</div>
+              <div class="text-xs text-gray-600">ADC + microprocesador + DAC</div>
+            </div>
+            <div class="cursor-pointer rounded-lg p-3 bg-violet-50 border-2 border-violet-200 hover:border-violet-500 transition" onclick="showTypeDetail('digital')">
+              <div class="font-bold text-violet-800 text-sm">Digital (DSO)</div>
+              <div class="text-xs text-gray-600">Sin TRC, captura transitorios</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail panel -->
+      <div id="type-detail" class="hidden card border-2 border-blue-300 p-4 mb-4">
+        <div class="flex items-start gap-3">
+          <span id="td-icon" class="text-3xl"></span>
+          <div>
+            <h4 id="td-title" class="font-bold text-blue-800 text-base mb-1"></h4>
+            <p id="td-desc" class="text-sm text-gray-700 mb-2"></p>
+            <div id="td-badges" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagrama de partes -->
+      <h3 class="font-bold text-gray-800 mb-3 text-base">Partes principales del Osciloscopio</h3>
+      <div class="overflow-x-auto">
+        <svg viewBox="0 0 700 200" class="w-full" style="min-height:160px; max-height:260px;">
+          <!-- Instrumento box -->
+          <rect x="20" y="30" width="660" height="140" rx="12" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+          <text x="350" y="22" text-anchor="middle" fill="#1e3a5f" font-size="13" font-weight="bold">OSCILOSCOPIO</text>
+          <!-- TRC -->
+          <rect x="40" y="50" width="160" height="100" rx="8" fill="#1e3a5f"/>
+          <text x="120" y="90" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Tubo de Rayos</text>
+          <text x="120" y="106" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Catódicos</text>
+          <text x="120" y="140" text-anchor="middle" fill="#93c5fd" font-size="9">(Pantalla)</text>
+          <!-- Panel -->
+          <rect x="220" y="50" width="140" height="100" rx="8" fill="#2563eb"/>
+          <text x="290" y="95" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Panel de</text>
+          <text x="290" y="111" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Controles</text>
+          <!-- Circuitos -->
+          <rect x="380" y="50" width="140" height="100" rx="8" fill="#7c3aed"/>
+          <text x="450" y="95" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Circuitos</text>
+          <text x="450" y="111" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Internos</text>
+          <!-- Conexion -->
+          <rect x="540" y="50" width="120" height="100" rx="8" fill="#059669"/>
+          <text x="600" y="95" text-anchor="middle" fill="white" font-size="11" font-weight="bold">Elementos</text>
+          <text x="600" y="111" text-anchor="middle" fill="white" font-size="11" font-weight="bold">de Conexión</text>
+          <!-- Arrows -->
+          <line x1="200" y1="100" x2="220" y2="100" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <line x1="360" y1="100" x2="380" y2="100" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <line x1="520" y1="100" x2="540" y2="100" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#arrow)"/>
+          <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill="#fbbf24"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 2: TRC =================== -->
+<div id="tab-trc" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚡ Tubo de Rayos Catódicos — Zonas de Funcionamiento</h2>
+      <p class="text-sm opacity-80 mt-1">Haz clic en cada zona para explorar su función en detalle.</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-4">
+        <strong>El TRC:</strong> dispositivo de vidrio hermético con vacío interior, que convierte una señal eléctrica en imagen. Es el componente más distintivo del osciloscopio. Su forma troncocónica tiene una parte cilíndrica más estrecha que aloja el cañón electrónico.
+      </div>
+
+      <!-- TRC interactive diagram -->
+      <h3 class="font-bold text-gray-800 mb-3 text-sm">Haz clic en una zona del TRC para ver su descripción:</h3>
+      <div class="overflow-x-auto mb-4">
+        <svg id="trc-svg" viewBox="0 0 700 220" class="w-full cursor-pointer" style="min-height:160px; max-height:280px;">
+          <!-- Envolvente del tubo -->
+          <path d="M30,80 L30,140 L300,170 L500,175 L680,160 L680,60 L500,45 L300,50 L30,80 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+          <!-- Zona 1: Generación (cátodo + rejilla) -->
+          <rect id="z1-rect" x="35" y="85" width="85" height="50" rx="6" fill="#1e3a5f" class="zone-btn" onclick="showZone(1)"/>
+          <text x="77" y="107" text-anchor="middle" fill="white" font-size="10" font-weight="bold" pointer-events="none">ZONA 1</text>
+          <text x="77" y="120" text-anchor="middle" fill="#93c5fd" font-size="8" pointer-events="none">Generación</text>
+          <text x="77" y="132" text-anchor="middle" fill="#bfdbfe" font-size="7" pointer-events="none">Cátodo · Rejilla · A₁</text>
+          <!-- Zona 2: Enfoque -->
+          <rect id="z2-rect" x="130" y="80" width="90" height="60" rx="6" fill="#2563eb" class="zone-btn" onclick="showZone(2)"/>
+          <text x="175" y="103" text-anchor="middle" fill="white" font-size="10" font-weight="bold" pointer-events="none">ZONA 2</text>
+          <text x="175" y="116" text-anchor="middle" fill="#bfdbfe" font-size="8" pointer-events="none">Enfoque</text>
+          <text x="175" y="129" text-anchor="middle" fill="#bfdbfe" font-size="7" pointer-events="none">A₂ · Anillo · A₃</text>
+          <!-- Zona 3: Deflexión -->
+          <rect id="z3-rect" x="230" y="72" width="130" height="76" rx="6" fill="#7c3aed" class="zone-btn" onclick="showZone(3)"/>
+          <text x="295" y="101" text-anchor="middle" fill="white" font-size="10" font-weight="bold" pointer-events="none">ZONA 3</text>
+          <text x="295" y="115" text-anchor="middle" fill="#ddd6fe" font-size="8" pointer-events="none">Deflexión</text>
+          <text x="295" y="128" text-anchor="middle" fill="#ddd6fe" font-size="7" pointer-events="none">PDV · PDH</text>
+          <!-- Zona 4: Post-aceleración -->
+          <rect id="z4-rect" x="370" y="60" width="150" height="100" rx="6" fill="#b45309" class="zone-btn" onclick="showZone(4)"/>
+          <text x="445" y="102" text-anchor="middle" fill="white" font-size="10" font-weight="bold" pointer-events="none">ZONA 4</text>
+          <text x="445" y="116" text-anchor="middle" fill="#fde68a" font-size="8" pointer-events="none">Post-aceleración</text>
+          <text x="445" y="129" text-anchor="middle" fill="#fde68a" font-size="7" pointer-events="none">Aquadag · Alto Vp</text>
+          <!-- Zona 5: Pantalla -->
+          <rect id="z5-rect" x="530" y="50" width="140" height="120" rx="6" fill="#059669" class="zone-btn" onclick="showZone(5)"/>
+          <text x="600" y="104" text-anchor="middle" fill="white" font-size="10" font-weight="bold" pointer-events="none">ZONA 5</text>
+          <text x="600" y="118" text-anchor="middle" fill="#a7f3d0" font-size="8" pointer-events="none">Pantalla</text>
+          <text x="600" y="131" text-anchor="middle" fill="#a7f3d0" font-size="7" pointer-events="none">Fósforo · Retícula</text>
+          <!-- Haz de electrones -->
+          <line x1="120" y1="110" x2="530" y2="110" stroke="#facc15" stroke-width="2" stroke-dasharray="6,3" pointer-events="none"/>
+          <polygon points="530,106 540,110 530,114" fill="#facc15" pointer-events="none"/>
+          <text x="330" y="165" text-anchor="middle" fill="#78716c" font-size="9" pointer-events="none">→ Haz de electrones</text>
+          <!-- Zone labels above -->
+          <text x="77" y="78" text-anchor="middle" fill="#1e3a5f" font-size="8" font-weight="bold">①</text>
+          <text x="175" y="73" text-anchor="middle" fill="#2563eb" font-size="8" font-weight="bold">②</text>
+          <text x="295" y="65" text-anchor="middle" fill="#7c3aed" font-size="8" font-weight="bold">③</text>
+          <text x="445" y="52" text-anchor="middle" fill="#b45309" font-size="8" font-weight="bold">④</text>
+          <text x="600" y="43" text-anchor="middle" fill="#059669" font-size="8" font-weight="bold">⑤</text>
+        </svg>
+      </div>
+
+      <!-- Zone detail panel -->
+      <div id="zone-detail" class="card border-2 p-4 mb-4 hidden">
+        <div class="flex items-start gap-3">
+          <span id="zd-icon" class="text-3xl"></span>
+          <div class="flex-1">
+            <h4 id="zd-title" class="font-bold text-lg mb-1"></h4>
+            <p id="zd-desc" class="text-sm text-gray-700 mb-2"></p>
+            <div id="zd-formula" class="formula-box text-sm hidden"></div>
+            <div id="zd-badges" class="flex flex-wrap gap-2 mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clasificación TRC -->
+      <h3 class="font-bold text-gray-800 mb-3 text-base">Clasificación del TRC</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div class="card p-3 text-center border-t-4 border-blue-500">
+          <div class="text-xl mb-1">💡</div>
+          <div class="font-bold text-blue-700 text-xs">Nº de Haces</div>
+          <div class="text-xs text-gray-600 mt-1">Un haz / Dos haces</div>
+        </div>
+        <div class="card p-3 text-center border-t-4 border-purple-500">
+          <div class="text-xl mb-1">🧲</div>
+          <div class="font-bold text-purple-700 text-xs">Deflexión</div>
+          <div class="text-xs text-gray-600 mt-1">Electrostática / Electromagnética</div>
+        </div>
+        <div class="card p-3 text-center border-t-4 border-yellow-500">
+          <div class="text-xl mb-1">⚡</div>
+          <div class="font-bold text-yellow-700 text-xs">Aceleración</div>
+          <div class="text-xs text-gray-600 mt-1">Mono-acelerado / Post-acelerado</div>
+        </div>
+        <div class="card p-3 text-center border-t-4 border-red-500">
+          <div class="text-xl mb-1">🔴</div>
+          <div class="font-bold text-red-700 text-xs">Borrado del Haz</div>
+          <div class="text-xs text-gray-600 mt-1">Por grilla / Por deflexión</div>
+        </div>
+        <div class="card p-3 text-center border-t-4 border-green-500">
+          <div class="text-xl mb-1">⏱️</div>
+          <div class="font-bold text-green-700 text-xs">Persistencia</div>
+          <div class="text-xs text-gray-600 mt-1">Baja / Media / Alta</div>
+        </div>
+      </div>
+
+      <!-- Tabla de fósforos -->
+      <h3 class="font-bold text-gray-800 mt-5 mb-3 text-base">Sustancias usadas en pantallas de TRC</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-2 border text-left">Sustancia</th>
+              <th class="p-2 border text-center">Color</th>
+              <th class="p-2 border text-center">Persistencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border">Óxido de zinc + silicato de Magnesio</td>
+              <td class="p-2 border text-center"><span class="badge" style="background:#d1fae5;color:#065f46;">Verde</span></td>
+              <td class="p-2 border text-center font-mono">0,005 s</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border">Sulfato de zinc + Cobre</td>
+              <td class="p-2 border text-center"><span class="badge" style="background:#dbeafe;color:#1e40af;">Azul-verde</span></td>
+              <td class="p-2 border text-center font-mono">0,05 s</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border">Tungstanato de Calcio</td>
+              <td class="p-2 border text-center"><span class="badge" style="background:#ede9fe;color:#5b21b6;">Azul-violeta</span></td>
+              <td class="p-2 border text-center font-mono">10⁻⁵ s</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border">Fosfato de zinc + Cobre</td>
+              <td class="p-2 border text-center"><span class="badge" style="background:#fee2e2;color:#991b1b;">Rojo</span></td>
+              <td class="p-2 border text-center font-mono">10 s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 3: DEFLEXIÓN & FÓRMULAS =================== -->
+<div id="tab-deflexion" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📐 Deflexión Electrostática — Simulador Interactivo</h2>
+      <p class="text-sm opacity-80 mt-1">Modifica los parámetros del TRC y observa cómo varía la desviación Y y la sensibilidad S_D.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Controles -->
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>Fórmula de deflexión electrostática:</strong><br>
+            <span class="font-mono text-blue-800">Y = (Vd · l · L) / (2 · b · Vp)</span><br>
+            <span class="font-mono text-blue-800">S_D = Y / Vd = (l · L) / (2 · b · Vp)</span>
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Tensión de deflexión Vd (V): <span id="vd-val" class="text-blue-700 font-bold">50</span> V</label>
+            <input type="range" id="vd-slider" min="1" max="300" value="50" class="w-full" oninput="updateDeflexion()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Longitud de placas l (mm): <span id="l-val" class="text-blue-700 font-bold">30</span> mm</label>
+            <input type="range" id="l-slider" min="5" max="80" value="30" class="w-full" oninput="updateDeflexion()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Distancia placas-pantalla L (mm): <span id="L-val" class="text-blue-700 font-bold">150</span> mm</label>
+            <input type="range" id="L-slider" min="50" max="400" value="150" class="w-full" oninput="updateDeflexion()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Separación entre placas b (mm): <span id="b-val" class="text-blue-700 font-bold">10</span> mm</label>
+            <input type="range" id="b-slider" min="3" max="30" value="10" class="w-full" oninput="updateDeflexion()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Tensión de pantalla Vp (V): <span id="vp-val" class="text-blue-700 font-bold">1000</span> V</label>
+            <input type="range" id="vp-slider" min="200" max="5000" value="1000" step="100" class="w-full" oninput="updateDeflexion()">
+          </div>
+          <!-- Results -->
+          <div class="bg-blue-50 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Desviación Y:</span>
+              <span id="res-Y" class="result-pill">-- mm</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Sensibilidad S_D:</span>
+              <span id="res-SD" class="result-pill">-- mm/V</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Factor deflexión (1/S_D):</span>
+              <span id="res-FD" class="result-pill">-- V/mm</span>
+            </div>
+          </div>
+        </div>
+        <!-- Visualizacion -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Trayectoria del haz</h4>
+          <div class="chart-wrap"><canvas id="deflexChart"></canvas></div>
+          <div class="mt-3">
+            <h4 class="font-semibold text-gray-700 mb-2 text-sm">Sensibilidad vs Tensión de pantalla Vp</h4>
+            <div class="chart-wrap" style="min-height:200px;max-height:260px;"><canvas id="sensChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deflexión electromagnética -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧲 Deflexión Electromagnética</h2>
+      <p class="text-sm opacity-80 mt-1">Bobinas externas al cuello del tubo — solo para baja frecuencia (&lt; 20 kHz)</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div class="info-box mb-3">
+            <strong>Ley de Lorentz:</strong> Al haz de electrones (conductor con corriente) en el campo magnético B de las bobinas se le aplica la regla de la mano izquierda (Fleming), produciendo una fuerza F que deflecta el haz en arco de circunferencia.
+          </div>
+          <div class="formula-box mb-3">
+            R = m·v / (e·B)  →  Radio del arco<br>
+            α = e·B·l / (m·v)  →  Ángulo de deflexión<br>
+            Y = e·B·l·L / (m·v)  →  Desviación<br>
+            S = Y/B = e·l·L / (m·v)  →  Sensibilidad
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="card p-3 border-l-4 border-green-500">
+              <div class="font-bold text-green-700 text-sm mb-1">✅ Ventajas</div>
+              <p class="text-xs text-gray-600">Mayor ángulo de deflexión (hasta 110°). Menor costo. Uso en TV y monitores médicos.</p>
+            </div>
+            <div class="card p-3 border-l-4 border-red-500">
+              <div class="font-bold text-red-700 text-sm mb-1">❌ Desventajas</div>
+              <p class="text-xs text-gray-600">Solo hasta ~20 kHz. Requiere grandes corrientes a alta frecuencia → mayor disipación.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Comparativa -->
+        <div>
+          <h4 class="font-bold text-gray-800 mb-3 text-sm">Comparativa: Electrostática vs Electromagnética</h4>
+          <div class="chart-wrap" style="min-height:220px;max-height:300px;"><canvas id="compChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 4: BASE DE TIEMPO =================== -->
+<div id="tab-barrido" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📈 Base de Tiempo — Simulador de Sincronismo</h2>
+      <p class="text-sm opacity-80 mt-1">Ajusta la frecuencia del diente de sierra y observa si la señal se estabiliza en pantalla.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>Condición de sincronismo:</strong> El período del diente de sierra debe ser <em>igual</em> al de la señal a graficar, o uno de sus <em>múltiplos enteros</em>, para que el barrido siempre comience en el mismo punto de la señal.
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Frecuencia señal (Hz): <span id="fsig-val" class="text-blue-700 font-bold">100</span></label>
+            <input type="range" id="fsig-slider" min="50" max="400" value="100" class="w-full" oninput="updateBarrido()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Frecuencia barrido (Hz): <span id="fbarr-val" class="text-blue-700 font-bold">100</span></label>
+            <input type="range" id="fbarr-slider" min="40" max="500" value="100" class="w-full" oninput="updateBarrido()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Amplitud señal: <span id="amp-val" class="text-blue-700 font-bold">1.0</span></label>
+            <input type="range" id="amp-slider" min="0.2" max="2" value="1" step="0.1" class="w-full" oninput="updateBarrido()">
+          </div>
+          <!-- Preset buttons -->
+          <div>
+            <label class="font-semibold text-gray-700 text-sm block mb-2">Preajustes de sincronismo:</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="setBarridoPreset('sync1')" class="rounded-lg p-2 text-xs font-bold bg-green-100 border-2 border-green-400 text-green-800 hover:bg-green-200 transition">✅ Sincronizado (1:1)</button>
+              <button onclick="setBarridoPreset('sync2')" class="rounded-lg p-2 text-xs font-bold bg-blue-100 border-2 border-blue-400 text-blue-800 hover:bg-blue-200 transition">📗 Sincronizado (1:2)</button>
+              <button onclick="setBarridoPreset('unsync')" class="rounded-lg p-2 text-xs font-bold bg-red-100 border-2 border-red-400 text-red-800 hover:bg-red-200 transition">❌ Desincronizado</button>
+              <button onclick="setBarridoPreset('partial')" class="rounded-lg p-2 text-xs font-bold bg-yellow-100 border-2 border-yellow-400 text-yellow-800 hover:bg-yellow-200 transition">⚠️ Parcialmente Sinc.</button>
+            </div>
+          </div>
+          <!-- Status -->
+          <div id="sync-status" class="rounded-xl p-3 text-center font-bold text-base"></div>
+          <div id="sync-desc" class="text-sm text-gray-600"></div>
+        </div>
+        <!-- Pantalla osciloscopio simulada -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Pantalla del Osciloscopio (simulada)</h4>
+          <div class="osc-screen p-2" style="height:260px;">
+            <canvas id="oscScreen" style="width:100%;height:100%;"></canvas>
+          </div>
+          <div class="mt-3">
+            <h4 class="font-semibold text-gray-700 mb-2 text-sm">Onda diente de sierra (base de tiempo)</h4>
+            <div class="chart-wrap" style="min-height:160px;max-height:220px;"><canvas id="sawChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bases de tiempo: relajada vs disparada -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+    <div class="card p-4 border-t-4 border-blue-500">
+      <h3 class="font-bold text-blue-700 mb-2">🔄 Base de Tiempo Relajada (Recurrente)</h3>
+      <p class="text-sm text-gray-600 mb-2">El diente de sierra se genera continuamente. El sincronismo se logra cuando su período es igual o múltiplo entero del de la señal.</p>
+      <div class="formula-box text-sm">T_barrido = n · T_señal  (n = 1, 2, 3, ...)</div>
+      <div class="mt-2">
+        <span class="badge badge-green">Simple</span>
+        <span class="badge badge-blue">Señales periódicas</span>
+        <span class="badge badge-red">No ideal para alta frecuencia</span>
+      </div>
+      <div class="info-box mt-2 text-xs">
+        <strong>Circuito:</strong> Multivibrador astable asimétrico (Trigger de Schmitt) → Integrador RC → Diente de sierra
+      </div>
+    </div>
+    <div class="card p-4 border-t-4 border-purple-500">
+      <h3 class="font-bold text-purple-700 mb-2">🎯 Base de Tiempo Disparada</h3>
+      <p class="text-sm text-gray-600 mb-2">El barrido se inicia <em>solo</em> cuando la señal alcanza un nivel y pendiente de referencia. Garantiza estabilidad para señales complejas.</p>
+      <div class="formula-box text-sm">3 condiciones de disparo:<br>1) Retroceso terminado<br>2) Misma pendiente<br>3) Mismo nivel de referencia</div>
+      <div class="mt-2">
+        <span class="badge" style="background:#ede9fe;color:#5b21b6;">Estable</span>
+        <span class="badge badge-blue">Alta frecuencia</span>
+        <span class="badge badge-green">Señales complejas/TV/digital</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagrama de bloques base de tiempo disparada -->
+  <div class="card overflow-hidden">
+    <div class="section-header">
+      <h2 class="text-base font-bold">📦 Diagrama de Bloques — Base de Tiempo Disparada</h2>
+    </div>
+    <div class="p-4 overflow-x-auto">
+      <svg viewBox="0 0 720 140" class="w-full" style="min-height:120px;max-height:200px;">
+        <!-- Señal entrada -->
+        <rect x="10" y="50" width="90" height="40" rx="6" fill="#1e3a5f"/>
+        <text x="55" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Amplif.</text>
+        <text x="55" y="78" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Vertical</text>
+        <text x="55" y="105" text-anchor="middle" fill="#94a3b8" font-size="8">Señal entrada</text>
+        <!-- Trigger Schmitt -->
+        <rect x="120" y="50" width="100" height="40" rx="6" fill="#7c3aed"/>
+        <text x="170" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Trigger de</text>
+        <text x="170" y="78" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Schmitt</text>
+        <!-- Diferenciador -->
+        <rect x="240" y="50" width="100" height="40" rx="6" fill="#059669"/>
+        <text x="290" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Diferenciador</text>
+        <text x="290" y="78" text-anchor="middle" fill="#a7f3d0" font-size="8">→ pulsos cortos</text>
+        <!-- Recortador -->
+        <rect x="360" y="50" width="90" height="40" rx="6" fill="#dc2626"/>
+        <text x="405" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Recortador</text>
+        <text x="405" y="78" text-anchor="middle" fill="#fca5a5" font-size="8">→ pulsos +</text>
+        <!-- Monoestable / Biestable -->
+        <rect x="470" y="50" width="110" height="40" rx="6" fill="#b45309"/>
+        <text x="525" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Monoestable</text>
+        <text x="525" y="78" text-anchor="middle" fill="#fde68a" font-size="8">o Biestable</text>
+        <!-- Integrador -->
+        <rect x="600" y="50" width="100" height="40" rx="6" fill="#2563eb"/>
+        <text x="650" y="65" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Integrador</text>
+        <text x="650" y="78" text-anchor="middle" fill="#bfdbfe" font-size="8">→ Diente sierra</text>
+        <!-- Arrows -->
+        <line x1="100" y1="70" x2="120" y2="70" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="220" y1="70" x2="240" y2="70" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="340" y1="70" x2="360" y2="70" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="450" y1="70" x2="470" y2="70" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="580" y1="70" x2="600" y2="70" stroke="#fbbf24" stroke-width="2"/>
+        <!-- Waveform hints -->
+        <text x="55" y="128" text-anchor="middle" fill="#64748b" font-size="7">∿</text>
+        <text x="170" y="128" text-anchor="middle" fill="#a78bfa" font-size="7">⊓⊓</text>
+        <text x="290" y="128" text-anchor="middle" fill="#6ee7b7" font-size="7">↑↓</text>
+        <text x="405" y="128" text-anchor="middle" fill="#fca5a5" font-size="7">↑</text>
+        <text x="650" y="128" text-anchor="middle" fill="#93c5fd" font-size="7">/|/|</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 5: CONTROLES & SONDAS =================== -->
+<div id="tab-controles" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎛️ Panel de Controles del Osciloscopio</h2>
+      <p class="text-sm opacity-80 mt-1">Haz clic en cada área del panel para explorar sus controles.</p>
+    </div>
+    <div class="p-5">
+      <!-- Panel visual interactivo -->
+      <div class="mb-4">
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button onclick="showPanelArea('trc')" class="panel-btn rounded-lg px-3 py-2 text-xs font-bold bg-blue-700 text-white hover:bg-blue-800 transition">📺 Área TRC</button>
+          <button onclick="showPanelArea('vert')" class="panel-btn rounded-lg px-3 py-2 text-xs font-bold bg-purple-700 text-white hover:bg-purple-800 transition">↕️ Sistema Vertical</button>
+          <button onclick="showPanelArea('horiz')" class="panel-btn rounded-lg px-3 py-2 text-xs font-bold bg-green-700 text-white hover:bg-green-800 transition">↔️ Sistema Horizontal</button>
+          <button onclick="showPanelArea('sync')" class="panel-btn rounded-lg px-3 py-2 text-xs font-bold bg-orange-600 text-white hover:bg-orange-700 transition">🔁 Sincronismo</button>
+          <button onclick="showPanelArea('multi')" class="panel-btn rounded-lg px-3 py-2 text-xs font-bold bg-red-700 text-white hover:bg-red-800 transition">📊 Canales Múltiples</button>
+        </div>
+        <div id="panel-detail" class="card border-2 border-blue-300 p-4"></div>
+      </div>
+
+      <!-- Doble trazo: modos Alt y Chop -->
+      <h3 class="font-bold text-gray-800 mb-3 text-base">Osciloscopio de Doble Trazo — Modos de Conmutación</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="card p-4 border-t-4 border-blue-500">
+          <h4 class="font-bold text-blue-700 mb-2">🔀 Modo Alternado (ALT)</h4>
+          <p class="text-sm text-gray-600 mb-2">Por cada barrido completo se muestra <em>una</em> de las señales. El cambio coincide con el retorno del diente de sierra.</p>
+          <div class="info-box text-xs"><strong>Cuándo usar:</strong> Señales rápidas (bases de tiempo ≤ 500 ms/div)</div>
+          <div class="mt-2 formula-box text-xs">
+            Barrido 1 → Canal 1<br>
+            Barrido 2 → Canal 2<br>
+            Barrido 3 → Canal 1 ... etc.
+          </div>
+        </div>
+        <div class="card p-4 border-t-4 border-orange-500">
+          <h4 class="font-bold text-orange-700 mb-2">✂️ Modo Chopeado (CHOP)</h4>
+          <p class="text-sm text-gray-600 mb-2">En un mismo barrido, el conmutador bascula numerosas veces entre canal 1 y 2, tomando muestras alternadas de cada señal.</p>
+          <div class="info-box text-xs"><strong>Cuándo usar:</strong> Señales lentas (bases de tiempo ≥ 500 ms/div)</div>
+          <div class="mt-2 formula-box text-xs">
+            ΔT_barrido &gt;&gt; 1 / f_conmutación<br>
+            → se ven dos trazos "continuos"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sondas -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔌 Sondas (Puntas de Prueba) — Modelo de Compensación</h2>
+      <p class="text-sm opacity-80 mt-1">Simula el efecto de la capacitancia del cable en la medición.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="info-box mb-2">
+            <strong>Problema:</strong> Un cable coaxial de 1 m tiene ~100 pF de capacitancia parásita. En paralelo con los 20 pF del osciloscopio, a 1 MHz la impedancia resultante es solo ~1,3 kΩ → carga excesiva al circuito bajo prueba.
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Capacitancia del cable Cc (pF): <span id="cc-val" class="text-blue-700 font-bold">100</span></label>
+            <input type="range" id="cc-slider" min="10" max="200" value="100" class="w-full" oninput="updateSonda()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Frecuencia de señal (MHz): <span id="fsond-val" class="text-blue-700 font-bold">1.0</span></label>
+            <input type="range" id="fsond-slider" min="0.1" max="20" value="1" step="0.1" class="w-full" oninput="updateSonda()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Atenuación de sonda (x): <span id="aten-val" class="text-blue-700 font-bold">10</span>×</label>
+            <input type="range" id="aten-slider" min="1" max="100" value="10" class="w-full" oninput="updateSonda()">
+          </div>
+          <div class="bg-blue-50 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">C total (Cc ∥ Ci):</span>
+              <span id="ct-val" class="result-pill">-- pF</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Reactancia Xc:</span>
+              <span id="xc-val" class="result-pill">-- Ω</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Impedancia de entrada:</span>
+              <span id="zi-val" class="result-pill">-- kΩ</span>
+            </div>
+          </div>
+          <div class="formula-box text-sm">
+            Xc = 1 / (2π·f·C) = 1 / (2π · <span id="f-formula">1×10⁶</span> · <span id="c-formula">120×10⁻¹²</span>)
+            <div id="xc-formula" class="mt-1 font-bold"></div>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Impedancia de entrada vs Frecuencia</h4>
+          <div class="chart-wrap"><canvas id="sondaChart"></canvas></div>
+          <!-- Tipos de sondas -->
+          <h4 class="font-semibold text-gray-700 mb-2 mt-3 text-sm">Tipos de Sondas</h4>
+          <div class="space-y-2">
+            <div class="card p-3 border-l-4 border-blue-500">
+              <div class="font-bold text-blue-700 text-sm">Pasivas de voltaje</div>
+              <p class="text-xs text-gray-600">Atenuación necesaria para aumentar impedancia de entrada. Relaciones 1:1, 10:1, 100:1</p>
+            </div>
+            <div class="card p-3 border-l-4 border-purple-500">
+              <div class="font-bold text-purple-700 text-sm">Activas de voltaje (FET)</div>
+              <p class="text-xs text-gray-600">Amplificador miniaturizado FET en la punta. Z entrada elevada, capacidad ~3 pF. Ganancia 1:1 o 1:10</p>
+            </div>
+            <div class="card p-3 border-l-4 border-green-500">
+              <div class="font-bold text-green-700 text-sm">Sondas de corriente</div>
+              <p class="text-xs text-gray-600">Pinza que abraza el cable. No se coloca en serie. Para AC y DC. Mínima perturbación del circuito.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 6: QUIZ =================== -->
+<!-- =================== TAB X-Y: MODO X-Y =================== -->
+<div id="tab-xy" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <!-- SECCIÓN 1: FIGURAS DE LISSAJOUS -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📐 Figuras de Lissajous — Simulador Interactivo</h2>
+      <p class="text-sm opacity-80 mt-1">Ajusta frecuencias, amplitudes y fase para explorar las figuras de Lissajous en modo X-Y del osciloscopio.</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-4">
+        <strong>Principio:</strong> En modo X-Y, el osciloscopio desactiva la base de tiempo interna. La señal del <strong>Canal 1 (X)</strong> controla la deflexión horizontal y la del <strong>Canal 2 (Y)</strong> la vertical. Al aplicar dos señales sinusoidales, se obtienen las <em>figuras de Lissajous</em>, cuya forma revela la relación de frecuencias y el desfasaje.
+      </div>
+
+      <div class="formula-box mb-4">
+        <strong>Relación de frecuencias:</strong>  f<sub>Y</sub> / f<sub>X</sub> = N<sub>X</sub> / N<sub>Y</sub><br>
+        <strong>Donde:</strong> N<sub>X</sub> = picos horizontales tocados · N<sub>Y</sub> = picos verticales tocados
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Controles Lissajous -->
+        <div class="space-y-4">
+          <div class="card p-4 border-l-4 border-blue-500">
+            <h4 class="font-bold text-blue-700 mb-3 text-sm">🔵 Canal X (Horizontal)</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="slider-label font-semibold">Frecuencia f<sub>X</sub> (Hz): <span id="fx-val" class="text-blue-700 font-bold">100</span></label>
+                <input type="range" id="fx-slider" min="10" max="500" value="100" class="w-full" oninput="updateLissajous()">
+              </div>
+              <div>
+                <label class="slider-label font-semibold">Amplitud A<sub>X</sub>: <span id="ax-val" class="text-blue-700 font-bold">1.0</span></label>
+                <input type="range" id="ax-slider" min="0.1" max="2" value="1" step="0.1" class="w-full" oninput="updateLissajous()">
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-4 border-l-4 border-purple-500">
+            <h4 class="font-bold text-purple-700 mb-3 text-sm">🟣 Canal Y (Vertical)</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="slider-label font-semibold">Frecuencia f<sub>Y</sub> (Hz): <span id="fy-val" class="text-purple-700 font-bold">100</span></label>
+                <input type="range" id="fy-slider" min="10" max="500" value="100" class="w-full" oninput="updateLissajous()">
+              </div>
+              <div>
+                <label class="slider-label font-semibold">Amplitud A<sub>Y</sub>: <span id="ay-val" class="text-purple-700 font-bold">1.0</span></label>
+                <input type="range" id="ay-slider" min="0.1" max="2" value="1" step="0.1" class="w-full" oninput="updateLissajous()">
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-4 border-l-4 border-yellow-500">
+            <h4 class="font-bold text-yellow-700 mb-3 text-sm">🟡 Parámetros Comunes</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="slider-label font-semibold">Desfasaje φ (°): <span id="phi-val" class="text-yellow-700 font-bold">0</span>°</label>
+                <input type="range" id="phi-slider" min="0" max="360" value="0" class="w-full" oninput="updateLissajous()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Presets -->
+          <div>
+            <label class="font-semibold text-gray-700 text-sm block mb-2">Preajustes de relación f<sub>Y</sub>:f<sub>X</sub>:</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setLissajousPreset(1,1,0)" class="rounded-lg p-2 text-xs font-bold bg-blue-100 border-2 border-blue-400 text-blue-800 hover:bg-blue-200 transition">1:1 · φ=0°</button>
+              <button onclick="setLissajousPreset(1,1,90)" class="rounded-lg p-2 text-xs font-bold bg-purple-100 border-2 border-purple-400 text-purple-800 hover:bg-purple-200 transition">1:1 · φ=90°</button>
+              <button onclick="setLissajousPreset(1,2,0)" class="rounded-lg p-2 text-xs font-bold bg-green-100 border-2 border-green-400 text-green-800 hover:bg-green-200 transition">1:2 · φ=0°</button>
+              <button onclick="setLissajousPreset(2,1,0)" class="rounded-lg p-2 text-xs font-bold bg-orange-100 border-2 border-orange-400 text-orange-800 hover:bg-orange-200 transition">2:1 · φ=0°</button>
+              <button onclick="setLissajousPreset(1,3,0)" class="rounded-lg p-2 text-xs font-bold bg-red-100 border-2 border-red-400 text-red-800 hover:bg-red-200 transition">1:3 · φ=0°</button>
+              <button onclick="setLissajousPreset(3,2,45)" class="rounded-lg p-2 text-xs font-bold bg-indigo-100 border-2 border-indigo-400 text-indigo-800 hover:bg-indigo-200 transition">3:2 · φ=45°</button>
+            </div>
+          </div>
+
+          <!-- Resultados -->
+          <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Relación f<sub>Y</sub>/f<sub>X</sub>:</span>
+              <span id="res-ratio" class="result-pill">1:1</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Picos horizontales N<sub>X</sub>:</span>
+              <span id="res-nx" class="result-pill">--</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Picos verticales N<sub>Y</sub>:</span>
+              <span id="res-ny" class="result-pill">--</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Desfasaje estimado:</span>
+              <span id="res-phase" class="result-pill">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visualización Lissajous -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Pantalla del Osciloscopio — Modo X-Y</h4>
+          <div class="osc-screen p-2" style="height:320px;">
+            <canvas id="lissajousCanvas" style="width:100%;height:100%;"></canvas>
+          </div>
+          <div class="mt-3 text-center">
+            <span class="badge badge-blue">Canal 1 → Eje X</span>
+            <span class="badge badge-purple">Canal 2 → Eje Y</span>
+            <span class="badge badge-yellow">Base de tiempo OFF</span>
+          </div>
+
+          <!-- Mini gráficos de las señales individuales -->
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <div>
+              <h5 class="text-xs font-bold text-blue-700 mb-1">Señal X(t)</h5>
+              <div class="chart-wrap" style="min-height:100px;max-height:140px;"><canvas id="signalXCanvas"></canvas></div>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-purple-700 mb-1">Señal Y(t)</h5>
+              <div class="chart-wrap" style="min-height:100px;max-height:140px;"><canvas id="signalYCanvas"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de figuras típicas -->
+      <h3 class="font-bold text-gray-800 mt-6 mb-3 text-base">Catálogo de Figuras de Lissajous Típicas</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-2 border text-left">Relación f<sub>Y</sub>:f<sub>X</sub></th>
+              <th class="p-2 border text-center">φ = 0°</th>
+              <th class="p-2 border text-center">φ = 45°</th>
+              <th class="p-2 border text-center">φ = 90°</th>
+              <th class="p-2 border text-center">φ = 180°</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-mono font-bold">1:1</td>
+              <td class="p-2 border text-center text-gray-500">Línea diagonal ↗</td>
+              <td class="p-2 border text-center text-gray-500">Elipse inclinada</td>
+              <td class="p-2 border text-center text-gray-500">Círculo (A<sub>X</sub>=A<sub>Y</sub>)</td>
+              <td class="p-2 border text-center text-gray-500">Línea diagonal ↘</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-mono font-bold">1:2</td>
+              <td class="p-2 border text-center text-gray-500">∞ horizontal</td>
+              <td class="p-2 border text-center text-gray-500">∞ inclinada</td>
+              <td class="p-2 border text-center text-gray-500">Parábola</td>
+              <td class="p-2 border text-center text-gray-500">∞ invertida</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-mono font-bold">2:1</td>
+              <td class="p-2 border text-center text-gray-500">∞ vertical</td>
+              <td class="p-2 border text-center text-gray-500">∞ rotada</td>
+              <td class="p-2 border text-center text-gray-500">Parábola tumbada</td>
+              <td class="p-2 border text-center text-gray-500">∞ invertida</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-mono font-bold">1:3</td>
+              <td class="p-2 border text-center text-gray-500">3 lobos horiz.</td>
+              <td class="p-2 border text-center text-gray-500">Figura compleja</td>
+              <td class="p-2 border text-center text-gray-500">3 lobos rotados</td>
+              <td class="p-2 border text-center text-gray-500">3 lobos invert.</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-mono font-bold">3:2</td>
+              <td class="p-2 border text-center text-gray-500">3×2 malla</td>
+              <td class="p-2 border text-center text-gray-500">Figura retorcida</td>
+              <td class="p-2 border text-center text-gray-500">3×2 rotada</td>
+              <td class="p-2 border text-center text-gray-500">3×2 invertida</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box mt-4">
+        <strong>💡 Aplicación práctica:</strong> Medición de frecuencia desconocida. Se conecta una señal de frecuencia <strong>conocida</strong> (f<sub>X</sub>) al eje X y la señal <strong>desconocida</strong> (f<sub>Y</sub>) al eje Y. Se ajusta f<sub>X</sub> hasta obtener una figura estable. Contando los picos N<sub>X</sub> y N<sub>Y</sub>, se calcula: <span class="font-mono">f<sub>Y</sub> = f<sub>X</sub> · (N<sub>X</sub>/N<sub>Y</sub>)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: MEDICIÓN DE COMPONENTES EN MODO X-Y -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔧 Medición de Componentes — Trazador de Curvas (Octopus)</h2>
+      <p class="text-sm opacity-80 mt-1">Simula las "firmas" de componentes electrónicos en modo X-Y usando un divisor resistivo con señal AC.</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-4">
+        <strong>Método del "Octopus" (Trazador de Curvas):</strong> Se aplica una señal AC (tipicamente 5V/50Hz o 6.3V/60Hz) a un divisor resistivo. El voltaje de la fuente va al eje X (representa la tensión aplicada al componente). La caída de tensión en una resistencia de referencia R<sub>ref</sub> (eje Y) representa la <strong>corriente</strong> que circula por el DUT (Device Under Test). La forma de la curva I-V revela la naturaleza del componente.
+      </div>
+
+      <!-- Diagrama del circuito -->
+      <div class="mb-4 overflow-x-auto">
+        <svg viewBox="0 0 700 200" class="w-full" style="min-height:140px;max-height:200px;">
+          <!-- Fuente AC -->
+          <circle cx="60" cy="100" r="30" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+          <text x="60" y="95" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">~</text>
+          <text x="60" y="108" text-anchor="middle" fill="#92400e" font-size="8">5V / 50Hz</text>
+          <text x="60" y="148" text-anchor="middle" fill="#78716c" font-size="8">Fuente AC</text>
+          <!-- R1 -->
+          <rect x="130" y="85" width="60" height="30" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="160" y="104" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="bold">R₁ = 1kΩ</text>
+          <text x="160" y="138" text-anchor="middle" fill="#64748b" font-size="8">Res. limitadora</text>
+          <!-- Nodo -->
+          <circle cx="230" cy="100" r="4" fill="#1e3a5f"/>
+          <!-- DUT -->
+          <rect x="280" y="70" width="100" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="330" y="95" text-anchor="middle" fill="#166534" font-size="10" font-weight="bold">DUT</text>
+          <text x="330" y="108" text-anchor="middle" fill="#166534" font-size="8">Componente</text>
+          <text x="330" y="120" text-anchor="middle" fill="#166534" font-size="8">bajo prueba</text>
+          <!-- R2 ref -->
+          <rect x="420" y="85" width="60" height="30" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+          <text x="450" y="104" text-anchor="middle" fill="#854d0e" font-size="10" font-weight="bold">R₂ = 10Ω</text>
+          <text x="450" y="138" text-anchor="middle" fill="#64748b" font-size="8">Res. referencia</text>
+          <!-- Conexiones -->
+          <line x1="90" y1="100" x2="130" y2="100" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="190" y1="100" x2="230" y2="100" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="230" y1="100" x2="280" y2="100" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="380" y1="100" x2="420" y2="100" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="480" y1="100" x2="520" y2="100" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="520" y1="100" x2="520" y2="160" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="60" y1="130" x2="60" y2="160" stroke="#1e3a5f" stroke-width="2"/>
+          <line x1="60" y1="160" x2="520" y2="160" stroke="#1e3a5f" stroke-width="2"/>
+          <!-- Osciloscopio -->
+          <rect x="540" y="50" width="140" height="100" rx="8" fill="#1e3a5f"/>
+          <text x="610" y="75" text-anchor="middle" fill="white" font-size="10" font-weight="bold">OSCILOSCOPIO</text>
+          <text x="610" y="90" text-anchor="middle" fill="#93c5fd" font-size="8">Modo X-Y</text>
+          <text x="610" y="105" text-anchor="middle" fill="#93c5fd" font-size="8">CH1 → X</text>
+          <text x="610" y="118" text-anchor="middle" fill="#93c5fd" font-size="8">CH2 → Y</text>
+          <!-- Flechas de conexión al osciloscopio -->
+          <line x1="230" y1="100" x2="230" y2="40" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="230" y1="40" x2="540" y2="40" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="540" y1="40" x2="540" y2="50" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="380" y="35" text-anchor="middle" fill="#d97706" font-size="8">→ Eje X (tensión DUT)</text>
+          <line x1="450" y1="100" x2="450" y2="30" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="450" y1="30" x2="610" y2="30" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <line x1="610" y1="30" x2="610" y2="50" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="520" y="25" text-anchor="middle" fill="#9333ea" font-size="8">→ Eje Y (corriente ∝ V<sub>R2</sub>)</text>
+        </svg>
+      </div>
+
+      <!-- Selector de componente -->
+      <div class="mb-4">
+        <label class="font-semibold text-gray-700 text-sm block mb-2">Selecciona el componente a analizar:</label>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="setComponent('resistor')" id="btn-resistor" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Resistencia</button>
+          <button onclick="setComponent('capacitor')" id="btn-capacitor" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Capacitor</button>
+          <button onclick="setComponent('inductor')" id="btn-inductor" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Inductor</button>
+          <button onclick="setComponent('diode')" id="btn-diode" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Diodo</button>
+          <button onclick="setComponent('zener')" id="btn-zener" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Diodo Zener</button>
+          <button onclick="setComponent('open')" id="btn-open" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Circuito Abierto</button>
+          <button onclick="setComponent('short')" id="btn-short" class="component-btn rounded-lg px-4 py-2 text-sm font-bold bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 transition">Cortocircuito</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Controles de componente -->
+        <div class="space-y-4">
+          <div id="component-controls" class="card p-4 border-l-4 border-green-500">
+            <h4 id="comp-title" class="font-bold text-green-700 mb-3 text-sm">⚙️ Parámetros del Componente</h4>
+            <div id="comp-sliders" class="space-y-3">
+              <!-- Dinámico según componente -->
+            </div>
+          </div>
+
+          <!-- Descripción del componente -->
+          <div id="comp-description" class="card p-4 border-l-4 border-blue-300">
+            <h4 class="font-bold text-blue-700 mb-2 text-sm">📖 Descripción de la Firma</h4>
+            <p id="comp-desc-text" class="text-sm text-gray-700">Selecciona un componente para ver su descripción.</p>
+          </div>
+
+          <!-- Resultados -->
+          <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Tipo de curva:</span>
+              <span id="res-curve-type" class="result-pill">--</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Impedancia @ 50Hz:</span>
+              <span id="res-impedance" class="result-pill">--</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-700 text-sm">Ángulo de fase:</span>
+              <span id="res-phase-angle" class="result-pill">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visualización de la firma -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Firma del Componente — Característica I-V</h4>
+          <div class="osc-screen p-2" style="height:320px;">
+            <canvas id="componentCanvas" style="width:100%;height:100%;"></canvas>
+          </div>
+          <div class="mt-3 text-center">
+            <span class="badge badge-blue">Eje X = Tensión V<sub>DUT</sub></span>
+            <span class="badge badge-purple">Eje Y = Corriente I ∝ V<sub>R2</sub></span>
+          </div>
+
+          <!-- Comparativa de todas las firmas -->
+          <h4 class="font-semibold text-gray-700 mb-2 mt-4 text-sm">Catálogo de Firmas de Componentes</h4>
+          <div class="grid grid-cols-4 gap-2">
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('resistor')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Resistencia</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <line x1="5" y1="55" x2="55" y2="5" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('capacitor')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Capacitor</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <ellipse cx="30" cy="30" rx="25" ry="20" fill="none" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('inductor')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Inductor</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <ellipse cx="30" cy="30" rx="22" ry="18" fill="none" stroke="#22c55e" stroke-width="2" transform="rotate(30 30 30)"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('diode')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Diodo</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <polyline points="5,55 30,55 30,5 55,5" fill="none" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('zener')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Zener</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <polyline points="5,55 20,55 20,30 40,30 40,5 55,5" fill="none" stroke="#22c55e" stroke-width="2"/>
+                <line x1="20" y1="30" x2="40" y2="30" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('open')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Abierto</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <line x1="5" y1="30" x2="55" y2="30" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="card p-2 text-center cursor-pointer hover:bg-blue-50 transition" onclick="setComponent('short')">
+              <div class="text-xs font-bold text-gray-700 mb-1">Corto</div>
+              <svg viewBox="0 0 60 60" class="w-full" style="height:50px;">
+                <line x1="30" y1="5" x2="30" y2="55" stroke="#22c55e" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de firmas -->
+      <h3 class="font-bold text-gray-800 mt-6 mb-3 text-base">Tabla de Firmas de Componentes en Modo X-Y</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-2 border text-left">Componente</th>
+              <th class="p-2 border text-center">Forma de la curva I-V</th>
+              <th class="p-2 border text-center">Característica</th>
+              <th class="p-2 border text-center">Ángulo de fase</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Resistencia</td>
+              <td class="p-2 border text-center text-gray-600">Línea recta por el origen</td>
+              <td class="p-2 border text-center"><span class="badge badge-green">Ohmica</span></td>
+              <td class="p-2 border text-center font-mono">0°</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Capacitor</td>
+              <td class="p-2 border text-center text-gray-600">Elipse / Círculo</td>
+              <td class="p-2 border text-center"><span class="badge badge-blue">Desfasaje 90°</span></td>
+              <td class="p-2 border text-center font-mono">-90°</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Inductor</td>
+              <td class="p-2 border text-center text-gray-600">Elipse inclinada</td>
+              <td class="p-2 border text-center"><span class="badge badge-yellow">Desfasaje +90°</span></td>
+              <td class="p-2 border text-center font-mono">+90°</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Diodo</td>
+              <td class="p-2 border text-center text-gray-600">L con esquina en origen</td>
+              <td class="p-2 border text-center"><span class="badge badge-red">Rectificador</span></td>
+              <td class="p-2 border text-center font-mono">0° / ∞</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Diodo Zener</td>
+              <td class="p-2 border text-center text-gray-600">Z con dos esquinas</td>
+              <td class="p-2 border text-center"><span class="badge badge-purple">Regulación</span></td>
+              <td class="p-2 border text-center font-mono">0° / ∞</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Circuito Abierto</td>
+              <td class="p-2 border text-center text-gray-600">Línea horizontal</td>
+              <td class="p-2 border text-center"><span class="badge badge-blue">I = 0</span></td>
+              <td class="p-2 border text-center font-mono">--</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="p-2 border font-bold">Cortocircuito</td>
+              <td class="p-2 border text-center text-gray-600">Línea vertical</td>
+              <td class="p-2 border text-center"><span class="badge badge-red">V = 0</span></td>
+              <td class="p-2 border text-center font-mono">--</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box mt-4">
+        <strong>🔍 Interpretación:</strong> En el modo X-Y del osciloscopio con el circuito "Octopus":<br>
+        • <strong>Eje X</strong> = Tensión aplicada al componente (proporcional a V<sub>fuente</sub> - V<sub>R1</sub>)<br>
+        • <strong>Eje Y</strong> = Corriente por el componente (proporcional a V<sub>R2</sub>)<br>
+        • Una <strong>resistencia</strong> da una línea recta (ley de Ohm: I = V/R)<br>
+        • Un <strong>capacitor</strong> da una elipse (corriente adelantada 90° respecto a la tensión)<br>
+        • Un <strong>diodo</strong> da una "L" (conduce solo en un sentido, corte en inversa hasta V<sub>zener</sub>)
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: QUIZ X-Y -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧠 Quiz — Modo X-Y & Figuras de Lissajous</h2>
+      <p class="text-sm opacity-80 mt-1">Pon a prueba tus conocimientos sobre el modo X-Y y el trazador de curvas.</p>
+    </div>
+    <div class="p-5">
+      <!-- Score bar -->
+      <div class="flex items-center gap-4 mb-5 bg-gray-50 rounded-xl p-3">
+        <div class="text-3xl font-bold text-purple-700" id="quiz-xy-score">0</div>
+        <div class="flex-1">
+          <div class="text-sm text-gray-600 mb-1">Puntos acumulados · <span id="quiz-xy-answered">0</span>/<span id="quiz-xy-total">8</span> respondidas</div>
+          <div class="w-full bg-gray-200 rounded-full h-3">
+            <div id="quiz-xy-progress" class="bg-purple-600 h-3 rounded-full transition-all" style="width:0%"></div>
+          </div>
+        </div>
+        <button onclick="resetQuizXY()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition">🔄 Reiniciar</button>
+      </div>
+      <!-- Questions -->
+      <div id="quiz-xy-container" class="space-y-6"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 6: QUIZ =================== -->
+<div id="tab-quiz" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧠 Quiz — Unidad 5: Osciloscopios</h2>
+      <p class="text-sm opacity-80 mt-1">Pon a prueba tus conocimientos. Selecciona la respuesta correcta en cada pregunta.</p>
+    </div>
+    <div class="p-5">
+      <!-- Score bar -->
+      <div class="flex items-center gap-4 mb-5 bg-gray-50 rounded-xl p-3">
+        <div class="text-3xl font-bold text-blue-700" id="quiz-score">0</div>
+        <div class="flex-1">
+          <div class="text-sm text-gray-600 mb-1">Puntos acumulados · <span id="quiz-answered">0</span>/<span id="quiz-total">10</span> respondidas</div>
+          <div class="w-full bg-gray-200 rounded-full h-3">
+            <div id="quiz-progress" class="bg-blue-600 h-3 rounded-full transition-all" style="width:0%"></div>
+          </div>
+        </div>
+        <button onclick="resetQuiz()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition">🔄 Reiniciar</button>
+      </div>
+      <!-- Questions -->
+      <div id="quiz-container" class="space-y-6"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 5 · Año 2026</div>
+    <div class="mt-1 text-xs">Herramienta educativa interactiva basada en la guía de estudios oficial de la cátedra.</div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// TAB SWITCHING
+// =============================================
+function switchTab(id) {
+  try {
+    document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    var t = document.getElementById(id);
+    if(t) t.classList.add('active');
+    var ids = ['tab-intro','tab-trc','tab-deflexion','tab-barrido','tab-controles','tab-xy','tab-quiz'];
+    var idx = ids.indexOf(id);
+    var btns = document.querySelectorAll('.tab-btn');
+    if(idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+    setTimeout(function(){
+      if(id==='tab-deflexion'){ updateDeflexion(); initCompChart(); }
+      if(id==='tab-barrido'){ updateBarrido(); }
+      if(id==='tab-controles'){ showPanelArea('trc'); updateSonda(); initSondaChart(); }
+      if(id==='tab-xy'){ updateLissajous(); setComponent('resistor'); buildQuizXY(); }
+      if(id==='tab-quiz'){ buildQuiz(); }
+    }, 120);
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 1: TIPOS
+// =============================================
+var typeDetails = {
+  'baja-freq': { icon:'📻', title:'Baja Frecuencia (hasta 20 MHz)', desc:'Osciloscopios de uso general en laboratorio. Tecnología TRC estándar. Adecuados para señales de audio, RF de baja frecuencia y circuitos analógicos habituales.', badges:[{t:'Hasta 20 MHz',c:'badge-blue'},{t:'TRC estándar',c:'badge-green'}] },
+  'alta-freq': { icon:'⚡', title:'Alta Frecuencia (hasta 500 MHz)', desc:'Diseñados con amplificadores de gran ancho de banda. Placas segmentadas y distribuidas para reducir el efecto capacitivo. Ideales para telecomunicaciones y RF.', badges:[{t:'Hasta 500 MHz',c:'badge-blue'},{t:'Placas distribuidas',c:'badge-yellow'}] },
+  'muestreo': { icon:'🔬', title:'Osciloscopios de Muestreo (> 1 GHz)', desc:'Basados en el efecto estroboscópico: toman muestras de la señal en instantes ligeramente avanzados respecto de su período. No miden en tiempo real sino reconstruyen la señal. Usados en microondas y radio frecuencia.', badges:[{t:'> 1 GHz',c:'badge-blue'},{t:'Estroboscópico',c:'badge-yellow'},{t:'Microondas',c:'badge-red'}] },
+  'un-canal': { icon:'📺', title:'Un Canal', desc:'Visualiza una sola señal a la vez. La configuración más simple. Suficiente para la mayoría de mediciones básicas.', badges:[{t:'Simple',c:'badge-green'},{t:'1 señal',c:'badge-blue'}] },
+  'doble-canon': { icon:'🔫', title:'Doble Cañón', desc:'TRC con dos cañones electrónicos y dos pares de placas de deflexión vertical, excitados en forma independiente e ininterrumpida. Precio muy alto. Fue superado rápidamente por el doble trazo.', badges:[{t:'2 cañones',c:'badge-blue'},{t:'Alto costo',c:'badge-red'},{t:'Obsoleto',c:'badge-yellow'}] },
+  'doble-haz': { icon:'✂️', title:'Doble Haz (Rayo Compartido)', desc:'Un solo cañón cuyo rayo se divide con una cuña en dos partes. Cada haz se desvía con sistemas de deflexión vertical independientes. Menor costo que el doble cañón pero aún requiere dos circuitos verticales y horizontales.', badges:[{t:'1 cañón',c:'badge-green'},{t:'Rayo compartido',c:'badge-blue'}] },
+  'doble-trazo': { icon:'⭐', title:'Doble Trazo (Conmutación) — Solución Actual', desc:'Un solo cañón, sin división geométrica del haz. Un interruptor electrónico conmuta la señal aplicada a las placas verticales entre dos canales. Modos: alternado (señales rápidas) y chopeado (señales lentas). La persistencia retiniana hace que se perciban dos trazos continuos.', badges:[{t:'Actual',c:'badge-green'},{t:'Bajo costo',c:'badge-blue'},{t:'ALT + CHOP',c:'badge-yellow'}] },
+  'pantalla-pasiva': { icon:'🟢', title:'Pantalla Pasiva', desc:'La más común. Fósforo con persistencia de 1 a 60 ms dependiendo del compuesto. La persistencia se define como el tiempo al que la luminosidad cae al 1% del valor inicial tras cesar la excitación. El ojo humano es más sensible al amarillo-verde.', badges:[{t:'1-60 ms',c:'badge-blue'},{t:'Fósforo',c:'badge-green'}] },
+  'pantalla-memoria': { icon:'💾', title:'Pantalla de Memoria', desc:'Compuestos especiales (sulfuro, fluoruro) basados en emisión secundaria y aislación contra emigración. Persistencia casi indefinida. Útiles para capturar transitorios lentos o eventos únicos.', badges:[{t:'Persistencia ∞',c:'badge-green'},{t:'Sulfuro/Fluoruro',c:'badge-blue'}] },
+  'mem-digital': { icon:'💻', title:'Memoria Digital', desc:'Osciloscopio analógico con ADC que digitaliza la señal de entrada y la almacena en memoria. Un DAC reconstruye la señal analógica para su representación. Controlado por microprocesador. Permite almacenar y comparar formas de onda.', badges:[{t:'ADC + DAC',c:'badge-blue'},{t:'Microprocesador',c:'badge-yellow'},{t:'Almacenamiento',c:'badge-green'}] },
+  'digital': { icon:'🖥️', title:'Osciloscopio Digital (DSO)', desc:'Digitaliza completamente la señal. Usa pantallas LCD/TFT en vez de TRC. Captura y visualiza transitorios no repetitivos. Incluye funciones de medida automática, cálculo matemático, FFT y conexión a PC.', badges:[{t:'Sin TRC',c:'badge-red'},{t:'Transitorios',c:'badge-blue'},{t:'FFT',c:'badge-green'}] }
+};
+
+function showTypeDetail(key) {
+  try {
+    var d = typeDetails[key]; if(!d) return;
+    document.getElementById('td-icon').textContent = d.icon;
+    document.getElementById('td-title').textContent = d.title;
+    document.getElementById('td-desc').textContent = d.desc;
+    var bEl = document.getElementById('td-badges');
+    bEl.innerHTML = d.badges.map(function(b){ return '<span class="badge '+b.c+'">'+b.t+'</span>'; }).join('');
+    document.getElementById('type-detail').classList.remove('hidden');
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 2: TRC ZONAS
+// =============================================
+var zoneData = [
+  null,
+  { icon:'🔴', title:'Zona 1 — Generación', border:'border-blue-500', desc:'Cátodo emisor (acero/níquel recubierto de óxido de bario y estroncio). La emisividad térmica genera electrones al calentar el filamento con corriente alterna. La rejilla (cilindro de Wehnelt) se polariza negativamente y controla la densidad del haz. El ánodo A₁ acelera los electrones hacia la pantalla.', formula:'Emisividad: calor → fuerza electroestática → nube de electrones\nControl de intensidad: Vrilla-cátodo → controla densidad del haz', badges:['Cátodo → Rejilla → A₁','BaO + SrO','Filamento AC'] },
+  { icon:'🔵', title:'Zona 2 — Enfoque', border:'border-blue-400', desc:'El haz divergente del primer ánodo pasa por el anillo de enfoque y el segundo ánodo (A₂/A₃). Actúa como lente óptica electrostática. El potenciómetro de enfoque varía el campo electrostático y concentra el haz. El electrodo de astigmatismo hace que el punto sea redondo y acelera más el haz. El resultado es el "spot" o punto focal.', formula:'ΔV(cátodo-electrodos de enfoque) = 200 a 500 V\nSpot: punto pequeño, brillante y redondo', badges:['Anillo de enfoque','Astigmatismo','200-500 V'] },
+  { icon:'🟣', title:'Zona 3 — Deflexión', border:'border-purple-400', desc:'Dos pares de placas: verticales (PDV, más cercanas al cañón) y horizontales (PDH, más cercanas a la pantalla). La deflexión electrostática usa placas internas al tubo y es la estándar en osciloscopios. La señal a observar se aplica a las placas verticales, el barrido diente de sierra a las horizontales.', formula:'Y = (Vd · l · L) / (2 · b · Vp)\nS_D = Y/Vd = (l·L)/(2·b·Vp)', badges:['PDV + PDH','Electrostática','Sistema XY'] },
+  { icon:'🟡', title:'Zona 4 — Post-aceleración', border:'border-yellow-400', desc:'Electrones acelerados a baja velocidad garantizan buena sensibilidad al atravesar las placas. Luego se post-aceleran con alto potencial en las paredes (capa de Aquadag, nombre comercial de grafito coloidal). Esto les confiere alta energía cinética al impactar la pantalla, produciendo alta luminiscencia. Dos sistemas: campo conformado (espiral +10 kV) y campo enrejado (Aquadag +20 kV + malla cóncava 2 kV).', formula:'Post-aceleración: varios kV en capa de Aquadag\nResultado: alta luminiscencia + buena sensibilidad', badges:['Aquadag','Campo conformado','Campo enrejado'] },
+  { icon:'🟢', title:'Zona 5 — Pantalla', border:'border-green-400', desc:'Capa fluorescente y fosforescente visible al operario. Fluorescencia: se enciende al impactar el haz (energía cinética). Fosforescencia/persistencia: se mantiene encendida un tiempo tras cesar la excitación (definida como caída al 1% del valor inicial). La retícula es la cuadrícula de líneas horizontales y verticales separadas 1 cm (10 divisiones × 8 divisiones). Marcas de 0%, 10%, 90%, 100% para medir tiempos de subida y bajada.', formula:'Persistencia: tiempo hasta caer al 1% luminosidad inicial\nRetícula: 10 div (H) × 8 div (V), separadas 1 cm', badges:['Fósforo','Retícula 10×8','Aquadag (disipador)'] }
+];
+
+function showZone(n) {
+  try {
+    var d = zoneData[n]; if(!d) return;
+    var el = document.getElementById('zone-detail');
+    el.classList.remove('hidden');
+    el.className = el.className.replace(/border-\w+-\d+/g, '') + ' ' + d.border;
+    document.getElementById('zd-icon').textContent = d.icon;
+    document.getElementById('zd-title').textContent = d.title;
+    document.getElementById('zd-desc').textContent = d.desc;
+    var fEl = document.getElementById('zd-formula');
+    fEl.textContent = d.formula;
+    fEl.classList.remove('hidden');
+    var bEl = document.getElementById('zd-badges');
+    bEl.innerHTML = d.badges.map(function(b){ return '<span class="badge badge-blue">'+b+'</span>'; }).join('');
+    // highlight selected zone
+    for(var i=1;i<=5;i++){
+      var r = document.getElementById('z'+i+'-rect');
+      if(r) r.setAttribute('opacity', i===n ? '1' : '0.6');
+    }
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 3: DEFLEXIÓN
+// =============================================
+var deflexChartInst = null, sensChartInst = null, compChartInst = null;
+
+function updateDeflexion() {
+  try {
+    var Vd = parseFloat(document.getElementById('vd-slider').value);
+    var l  = parseFloat(document.getElementById('l-slider').value)/1000;
+    var L  = parseFloat(document.getElementById('L-slider').value)/1000;
+    var b  = parseFloat(document.getElementById('b-slider').value)/1000;
+    var Vp = parseFloat(document.getElementById('vp-slider').value);
+
+    document.getElementById('vd-val').textContent = Math.round(Vd);
+    document.getElementById('l-val').textContent  = Math.round(l*1000);
+    document.getElementById('L-val').textContent  = Math.round(L*1000);
+    document.getElementById('b-val').textContent  = Math.round(b*1000);
+    document.getElementById('vp-val').textContent = Math.round(Vp);
+
+    var Y  = (Vd*l*L)/(2*b*Vp)*1000; // mm
+    var SD = (l*L)/(2*b*Vp)*1000;     // mm/V
+    var FD = 1/SD;
+
+    document.getElementById('res-Y').textContent  = Y.toFixed(2)+' mm';
+    document.getElementById('res-SD').textContent = SD.toFixed(4)+' mm/V';
+    document.getElementById('res-FD').textContent = FD.toFixed(2)+' V/mm';
+
+    // Draw trajectory chart
+    drawDeflexChart(Vd, l*1000, L*1000, b*1000, Vp);
+
+    // Sensibilidad vs Vp chart
+    drawSensChart(l*1000, L*1000, b*1000);
+  } catch(e){ console.error(e); }
+}
+
+function drawDeflexChart(Vd, l, L, b, Vp) {
+  try {
+    var canvas = document.getElementById('deflexChart');
+    if(!canvas) return;
+    if(deflexChartInst){ deflexChartInst.destroy(); deflexChartInst=null; }
+    // Simulate trajectory: before plates (uniform), inside plates (parabolic), after plates (linear)
+    var points = [];
+    var steps = 60;
+    var Y_final = (Vd*l*L)/(2*b*Vp);
+    // phase 1: approach (x from -L/3 to 0)
+    for(var i=0;i<=10;i++){
+      points.push({x: -L/3 + i*(L/3)/10, y: 0});
+    }
+    // phase 2: inside plates (x from 0 to l), parabola
+    for(var i=0;i<=20;i++){
+      var xi = i*l/20;
+      var yi = (Vd*xi*xi)/(4*b*Vp); // simplified parabola
+      points.push({x: xi, y: yi});
+    }
+    // phase 3: after plates (x from l to L), linear extrapolation
+    var vy_exit = (Vd*l)/(2*b*Vp);
+    var y_exit  = (Vd*l*l)/(4*b*Vp);
+    for(var i=1;i<=30;i++){
+      var xi = l + i*(L-l)/30;
+      var yi = y_exit + vy_exit*(xi-l);
+      points.push({x: xi, y: yi});
+    }
+
+    var ctx = canvas.getContext('2d');
+    deflexChartInst = new Chart(ctx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Trayectoria del haz',
+          data: points,
+          showLine: true,
+          borderColor: '#facc15',
+          backgroundColor: 'transparent',
+          pointRadius: 0,
+          borderWidth: 2.5
+        },{
+          label: 'Eje horizontal',
+          data: [{x:-L/3,y:0},{x:L,y:0}],
+          showLine: true,
+          borderColor: '#94a3b8',
+          backgroundColor: 'transparent',
+          pointRadius: 0,
+          borderWidth: 1,
+          borderDash: [4,4]
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        animation: { duration: 300 },
+        plugins: {
+          legend: { display: true, labels: { font: { size: 10 } } },
+          tooltip: { enabled: false }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Posición horizontal (mm)' }, ticks: { font: { size: 10 } } },
+          y: { title: { display: true, text: 'Desviación Y (mm)' }, ticks: { font: { size: 10 } } }
+        }
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+
+function drawSensChart(l, L, b) {
+  try {
+    var canvas = document.getElementById('sensChart');
+    if(!canvas) return;
+    if(sensChartInst){ sensChartInst.destroy(); sensChartInst=null; }
+    var Vps = [], SDs = [];
+    for(var vp=200; vp<=5000; vp+=100){
+      Vps.push(vp);
+      SDs.push((l*L)/(2*b*vp)*1000);
+    }
+    var ctx = canvas.getContext('2d');
+    sensChartInst = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Vps,
+        datasets: [{
+          label: 'S_D (mm/V)',
+          data: SDs,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.1)',
+          fill: true,
+          pointRadius: 0,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        animation: { duration: 200 },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { title: { display: true, text: 'Vp (V)' }, ticks: { maxTicksLimit: 8, font: { size: 10 } } },
+          y: { title: { display: true, text: 'S_D (mm/V)' }, ticks: { font: { size: 10 } } }
+        }
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+
+function initCompChart() {
+  try {
+    var canvas = document.getElementById('compChart');
+    if(!canvas) return;
+    if(compChartInst){ compChartInst.destroy(); compChartInst=null; }
+    var ctx = canvas.getContext('2d');
+    compChartInst = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['Frec. máxima','Ángulo deflexión','Sensibilidad','Costo bajo','Sin corriente'],
+        datasets: [{
+          label: 'Electrostática',
+          data: [10, 5, 9, 7, 10],
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.15)',
+          pointBackgroundColor: '#2563eb'
+        },{
+          label: 'Electromagnética',
+          data: [3, 10, 6, 9, 2],
+          borderColor: '#dc2626',
+          backgroundColor: 'rgba(220,38,38,0.15)',
+          pointBackgroundColor: '#dc2626'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
+        scales: { r: { beginAtZero: true, max: 10, ticks: { font: { size: 9 } } } }
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 4: BASE DE TIEMPO
+// =============================================
+var sawChartInst = null, oscScreenAnim = null;
+
+function setBarridoPreset(preset) {
+  var presets = {
+    'sync1':   { sig: 100, barr: 100 },
+    'sync2':   { sig: 100, barr: 50  },
+    'unsync':  { sig: 100, barr: 137 },
+    'partial': { sig: 100, barr: 115 }
+  };
+  var p = presets[preset]; if(!p) return;
+  document.getElementById('fsig-slider').value  = p.sig;
+  document.getElementById('fbarr-slider').value = p.barr;
+  updateBarrido();
+}
+
+function updateBarrido() {
+  try {
+    var fsig  = parseFloat(document.getElementById('fsig-slider').value);
+    var fbarr = parseFloat(document.getElementById('fbarr-slider').value);
+    var amp   = parseFloat(document.getElementById('amp-slider').value);
+    document.getElementById('fsig-val').textContent  = Math.round(fsig);
+    document.getElementById('fbarr-val').textContent = Math.round(fbarr);
+    document.getElementById('amp-val').textContent   = amp.toFixed(1);
+
+    // Determine sync status
+    var ratio = fsig / fbarr;
+    var nearInt = Math.abs(ratio - Math.round(ratio)) < 0.05;
+    var statusEl = document.getElementById('sync-status');
+    var descEl   = document.getElementById('sync-desc');
+    if(nearInt){
+      statusEl.textContent = '✅ SINCRONIZADO — la señal se ve estable en pantalla';
+      statusEl.className = 'rounded-xl p-3 text-center font-bold text-base bg-green-100 text-green-800 border border-green-300';
+      descEl.textContent = 'La relación Tserra/Tseñal es ≈ '+Math.round(ratio)+':1. Cada barrido comienza en el mismo punto homólogo de la señal.';
+    } else {
+      statusEl.textContent = '❌ DESINCRONIZADO — la señal se desplaza en pantalla';
+      statusEl.className = 'rounded-xl p-3 text-center font-bold text-base bg-red-100 text-red-800 border border-red-300';
+      descEl.textContent = 'Relación ≈ '+ratio.toFixed(2)+' (no entera). Los oscilogramas de cada barrido están desfasados y se ven múltiples trazos desplazados.';
+    }
+
+    drawOscScreen(fsig, fbarr, amp);
+    drawSawChart(fbarr);
+  } catch(e){ console.error(e); }
+}
+
+function drawOscScreen(fsig, fbarr, amp) {
+  try {
+    var canvas = document.getElementById('oscScreen');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.offsetWidth || 400;
+    var H = canvas.offsetHeight || 240;
+    canvas.width = W; canvas.height = H;
+    ctx.clearRect(0,0,W,H);
+    // Background
+    ctx.fillStyle = '#001a00'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle = 'rgba(0,255,0,0.12)';
+    ctx.lineWidth = 0.5;
+    var divW = W/10, divH = H/8;
+    for(var i=0;i<=10;i++){ ctx.beginPath(); ctx.moveTo(i*divW,0); ctx.lineTo(i*divW,H); ctx.stroke(); }
+    for(var j=0;j<=8;j++){ ctx.beginPath(); ctx.moveTo(0,j*divH); ctx.lineTo(W,j*divH); ctx.stroke(); }
+    // Axes
+    ctx.strokeStyle = 'rgba(0,255,0,0.3)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+
+    // Simulate multiple sweeps
+    var nSweeps = 4;
+    var Tsig  = 1/fsig;
+    var Tbarr = 1/fbarr;
+    var nPts = 300;
+    var alpha = 0.7;
+    ctx.lineWidth = 1.8;
+    for(var sweep=0; sweep<nSweeps; sweep++){
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(0,255,70,'+alpha+')';
+      for(var pt=0; pt<nPts; pt++){
+        var t = pt/nPts * Tbarr;
+        var x = pt/nPts * W;
+        var y = H/2 - amp*(H/2-10)*Math.sin(2*Math.PI*fsig*(t + sweep*Tbarr));
+        if(pt===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      alpha -= 0.12;
+    }
+  } catch(e){ console.error(e); }
+}
+
+function drawSawChart(fbarr) {
+  try {
+    var canvas = document.getElementById('sawChart');
+    if(!canvas) return;
+    if(sawChartInst){ sawChartInst.destroy(); sawChartInst=null; }
+    var T = 1/fbarr;
+    var nCycles = 3;
+    var pts = [], xs = [];
+    var nPts = 200;
+    for(var i=0; i<nPts*nCycles; i++){
+      var t = i/(nPts*nCycles) * nCycles*T;
+      var phase = (t % T)/T;
+      var v = phase < 0.9 ? phase/0.9 : 1-(phase-0.9)/0.1;
+      pts.push(v);
+      xs.push(+(t*1000).toFixed(3));
+    }
+    var ctx = canvas.getContext('2d');
+    sawChartInst = new Chart(ctx, {
+      type:'line',
+      data:{ labels:xs, datasets:[{
+        label:'Diente de sierra (barrido)',
+        data:pts,
+        borderColor:'#facc15',
+        backgroundColor:'rgba(250,204,21,0.08)',
+        pointRadius:0, borderWidth:2, fill:true
+      }]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        animation:{ duration:200 },
+        plugins:{ legend:{ display:false } },
+        scales:{
+          x:{ title:{display:true, text:'Tiempo (ms)'}, ticks:{maxTicksLimit:8,font:{size:9}} },
+          y:{ title:{display:true, text:'Amplitud'}, min:0, max:1.2, ticks:{font:{size:9}} }
+        }
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 5: CONTROLES & SONDAS
+// =============================================
+var panelData = {
+  'trc': {
+    title:'📺 Área TRC — Controles del Tubo',
+    items:[
+      { name:'Power (Encendido)', desc:'Conecta la energía al equipo. Posición ON/OFF o I/O.', badge:'badge-blue' },
+      { name:'Intensity (Intensidad)', desc:'Controla el brillo del haz variando la tensión negativa de la rejilla del TRC. ⚠️ Punto estacionario → intensidad muy baja para no quemar la pantalla.', badge:'badge-red' },
+      { name:'Focus (Enfoque)', desc:'Concentra el haz en un punto. Modifica el potencial del ánodo de enfoque. El resultado visible es la nitidez del trazo.', badge:'badge-blue' },
+      { name:'ILLUM (Iluminación)', desc:'Varía la iluminación del fondo de la pantalla y la retícula, con luz lateral.', badge:'badge-green' },
+      { name:'Trace Rotation', desc:'Corrige la horizontalidad del trazo. Compensa el efecto del campo magnético terrestre.', badge:'badge-yellow' },
+      { name:'Beam Find', desc:'Pulsador localizador: reduce voltajes de deflexión para encontrar el haz fuera de pantalla.', badge:'badge-blue' }
+    ]
+  },
+  'vert': {
+    title:'↕️ Sistema Vertical — Controles de Amplitud',
+    items:[
+      { name:'VOLTS/DIV (Sensibilidad)', desc:'Ganancia del atenuador + amplificador vertical. Calibrada en pasos 1-2-5 (×10ⁿ): 0,01 / 0,02 / 0,05 / 0,1 / 0,2 / 0,5 / 1 / 2 / 5 / 10 / 20 / 50 V/div.', badge:'badge-blue' },
+      { name:'Position (Posición Vertical)', desc:'Desplaza la señal verticalmente añadiendo una tensión continua. Permite centrar la señal en pantalla.', badge:'badge-green' },
+      { name:'VAR (Vernier)', desc:'Calibración continua de la sensibilidad. Para que sea válida la escala VOLTS/DIV, el Vernier debe estar en la posición enclavada (clic).', badge:'badge-yellow' },
+      { name:'Acoplamiento AC/GND/DC', desc:'AC: condensador en serie → elimina componente continua. GND: entrada a masa → marca el cero. DC: señal directa incluyendo la componente continua.', badge:'badge-red' },
+      { name:'Input BNC', desc:'Conector hembra BNC para el cable coaxial con la señal a observar.', badge:'badge-blue' }
+    ]
+  },
+  'horiz': {
+    title:'↔️ Sistema Horizontal — Controles de Tiempo',
+    items:[
+      { name:'TIME/DIV (Tiempo de Barrido)', desc:'Velocidad del barrido horizontal. Pasos 1-2-5 en 18 posiciones. Rango: 0,5 µs/div a 5 s/div. Determina cuántos ciclos se ven en pantalla.', badge:'badge-blue' },
+      { name:'Position (Posición Horizontal)', desc:'Desplaza el inicio del trazo horizontalmente añadiendo tensión continua al barrido.', badge:'badge-green' },
+      { name:'SWP VAR (Vernier Horizontal)', desc:'Ajuste fino continuo de la velocidad de barrido. No calibrado en tiempo/div. Identificado como VAR.', badge:'badge-yellow' },
+      { name:'Selector X-Y', desc:'La señal del canal 2 produce el barrido horizontal del canal 1. Permite ver figuras de Lissajous (tensión vs tensión).', badge:'badge-red' },
+      { name:'Single / Reset', desc:'Single: un solo barrido (para ondas aperiódicas o fotografías). Reset: inicia un nuevo barrido single.', badge:'badge-blue' },
+      { name:'×10 MAG (Magnificador)', desc:'Amplía la escala de tiempo en ×5 o ×10 aumentando la ganancia del amplificador horizontal. El tiempo real = valor leído ÷ 5 (o ÷ 10).', badge:'badge-green' }
+    ]
+  },
+  'sync': {
+    title:'🔁 Sistema de Sincronismo — Controles de Disparo',
+    items:[
+      { name:'LEVEL (Nivel de Disparo)', desc:'Potenciómetro continuo que selecciona el valor de tensión de la señal donde se inicia el barrido.', badge:'badge-blue' },
+      { name:'SLOPE (Pendiente)', desc:'Selector de dos posiciones: ⊕ positiva (flanco de subida) o ⊖ negativa (flanco de bajada). Determina si el barrido empieza en punto 1 o punto 2 de la señal.', badge:'badge-yellow' },
+      { name:'SOURCE (Fuente)', desc:'INT: usa la señal de entrada (canal 1 o 2). LINE: usa la red de 50 Hz (útil cuando la señal está relacionada con la red). EXT: señal externa en la entrada BNC TRIG IN. TV-V/TV-H: sincronismo de televisión.', badge:'badge-red' },
+      { name:'MODE (Modo)', desc:'AUTO: siempre hay trazo visible en pantalla (disparo automático). NORM: solo hay trazo si se alcanza el nivel de disparo (útil para señales lentas < 10 Hz). SINGLE: un solo barrido tras pulsar RESET.', badge:'badge-blue' },
+      { name:'Coupling (Acoplamiento)', desc:'DC: señal de disparo completa. AC: elimina componente continua. HF REJ / LF REJ: filtros para evitar que ruidos espurios disparen el Schmitt trigger.', badge:'badge-green' },
+      { name:'Hold Off', desc:'Aumenta el tiempo de inhabilitación del generador de barrido. Permite sincronizar señales con envolventes complejas o pulsos con guardas.', badge:'badge-yellow' }
+    ]
+  },
+  'multi': {
+    title:'📊 Canales Múltiples — Modos de Visualización',
+    items:[
+      { name:'CH1 / CH2', desc:'Selecciona cuál canal se visualiza individualmente. Cada canal tiene su propio VOLTS/DIV, posición vertical y acoplamiento.', badge:'badge-blue' },
+      { name:'ALT (Alternado)', desc:'Por cada barrido se muestra una señal. Usado para fenómenos rápidos (base de tiempo ≤ 500 ms/div).', badge:'badge-green' },
+      { name:'CHOP (Chopeado)', desc:'En cada barrido el conmutador bascula muchas veces entre canales. Para señales lentas (base de tiempo ≥ 500 ms/div).', badge:'badge-yellow' },
+      { name:'ADD (Suma)', desc:'Suma algebraica de las dos señales: CH1 + CH2 → se ve la señal resultante.', badge:'badge-blue' },
+      { name:'INVERT (Inversión)', desc:'Invierte la señal del canal 2. Combinado con ADD produce la diferencia: CH1 − CH2. Útil para medición de señales diferenciales.', badge:'badge-red' },
+      { name:'INT TRIG', desc:'Permite seleccionar que sincronice CH1 o CH2, o en modo alternado que cada canal sincronice su propio barrido.', badge:'badge-blue' }
+    ]
+  }
+};
+
+function showPanelArea(key) {
+  try {
+    var d = panelData[key]; if(!d) return;
+    var el = document.getElementById('panel-detail');
+    var html = '<h4 class="font-bold text-gray-800 text-base mb-3">'+d.title+'</h4>';
+    html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+    d.items.forEach(function(item){
+      html += '<div class="rounded-lg p-3 bg-gray-50 border border-gray-200">';
+      html += '<div class="font-bold text-gray-800 text-sm mb-1">'+item.name+'</div>';
+      html += '<p class="text-xs text-gray-600">'+item.desc+'</p>';
+      html += '</div>';
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  } catch(e){ console.error(e); }
+}
+
+// Sondas
+var sondaChartInst = null;
+function initSondaChart() {
+  try {
+    var canvas = document.getElementById('sondaChart');
+    if(!canvas) return;
+    if(sondaChartInst){ sondaChartInst.destroy(); sondaChartInst=null; }
+    updateSonda();
+  } catch(e){ console.error(e); }
+}
+
+function updateSonda() {
+  try {
+    var Cc = parseFloat(document.getElementById('cc-slider').value);
+    var fMhz = parseFloat(document.getElementById('fsond-slider').value);
+    var aten = parseFloat(document.getElementById('aten-slider').value);
+    document.getElementById('cc-val').textContent  = Math.round(Cc);
+    document.getElementById('fsond-val').textContent = fMhz.toFixed(1);
+    document.getElementById('aten-val').textContent = Math.round(aten);
+
+    var Ci = 20; // pF osciloscopio
+    var Ct = Cc + Ci;
+    var f  = fMhz * 1e6;
+    var Xc = 1/(2*Math.PI*f*Ct*1e-12);
+    var Ri = 1e6; // 1 MΩ
+    var Zi = (Ri*Xc)/Math.sqrt(Ri*Ri+Xc*Xc)/1000; // kΩ
+
+    document.getElementById('ct-val').textContent  = Ct.toFixed(0)+' pF';
+    document.getElementById('xc-val').textContent  = Xc >= 1000 ? (Xc/1000).toFixed(1)+' kΩ' : Xc.toFixed(0)+' Ω';
+    document.getElementById('zi-val').textContent  = Zi.toFixed(2)+' kΩ';
+    document.getElementById('f-formula').textContent  = fMhz.toFixed(1)+'×10⁶';
+    document.getElementById('c-formula').textContent  = Ct+'×10⁻¹²';
+    document.getElementById('xc-formula').textContent = 'Xc = '+Xc.toFixed(0)+' Ω';
+
+    drawSondaChart(Cc, aten);
+  } catch(e){ console.error(e); }
+}
+
+function drawSondaChart(Cc, aten) {
+  try {
+    var canvas = document.getElementById('sondaChart');
+    if(!canvas) return;
+    if(sondaChartInst){ sondaChartInst.destroy(); sondaChartInst=null; }
+    var Ci = 20, Ri = 1e6;
+    var freqs = [], xc1s = [], xc2s = [];
+    for(var fmhz=0.05; fmhz<=20; fmhz+=0.25){
+      var f = fmhz*1e6;
+      var Ct1 = Cc+Ci;
+      var Xc1 = 1/(2*Math.PI*f*Ct1*1e-12);
+      var Ct2 = Ct1/aten + Ci; // compensada
+      var Xc2 = 1/(2*Math.PI*f*Ct2*1e-12);
+      freqs.push(fmhz.toFixed(2));
+      xc1s.push((1/(2*Math.PI*f*(Ct1)*1e-12))/1000);
+      xc2s.push((1/(2*Math.PI*f*(Ct2)*1e-12))/1000);
+    }
+    var ctx = canvas.getContext('2d');
+    sondaChartInst = new Chart(ctx, {
+      type:'line',
+      data:{ labels: freqs, datasets:[
+        { label:'Sin compensar', data:xc1s, borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,0.08)', pointRadius:0, borderWidth:2, fill:true },
+        { label:'Con compensación (×'+Math.round(aten)+')', data:xc2s, borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.08)', pointRadius:0, borderWidth:2, fill:true }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom', labels:{ font:{ size:10 } } } },
+        scales:{
+          x:{ title:{display:true,text:'Frecuencia (MHz)'}, ticks:{maxTicksLimit:10,font:{size:9}} },
+          y:{ title:{display:true,text:'Xc (kΩ)'}, ticks:{font:{size:9}} }
+        }
+      }
+    });
+  } catch(e){ console.error(e); }
+}
+
+// =============================================
+// TAB 6: QUIZ
+// =============================================
+var quizData = [
+  { q:'¿Cuál es la ventaja fundamental del osciloscopio sobre el oscilógrafo de plumas mecánicas?',
+    opts:['Mayor exactitud en DC','El haz de electrones carece de masa, eliminando la inercia mecánica','Menor costo de fabricación','Puede medir resistencias directamente'],
+    ans:1, exp:'El osciloscopio usa un haz de electrones de masa despreciable, lo que permite representar fenómenos hasta GHz sin limitación por inercia.' },
+  { q:'En el TRC, la zona de generación incluye el cátodo recubierto con óxido de bario y estroncio. ¿Cuál es su función?',
+    opts:['Acelerar los electrones hacia la pantalla','Deflectar el haz verticalmente','Emitir electrones por efecto termoiónico al calentarse con el filamento','Enfocar el haz en un punto pequeño'],
+    ans:2, exp:'El cátodo emite electrones por emisividad térmica cuando se calienta. El recubrimiento de BaO y SrO aumenta la emisividad.' },
+  { q:'La rejilla de control (cilindro de Wehnelt) en el TRC:',
+    opts:['Se polariza positivamente para atraer electrones','Se polariza negativamente y controla la densidad del haz (intensidad)','Divide el haz en dos partes','Produce el campo magnético de deflexión'],
+    ans:1, exp:'La rejilla se polariza negativamente. Al variar su tensión se controla cuántos electrones pasan, regulando la intensidad del trazo.' },
+  { q:'Para que un osciloscopio muestre una señal estable (base de tiempo relajada), la relación entre el período del diente de sierra T\' y el de la señal T debe ser:',
+    opts:['T\' = T/2 siempre','T\' = n·T, donde n es un entero positivo','T\' > 3·T en todos los casos','No existe condición de sincronismo'],
+    ans:1, exp:'Condición de sincronismo: T_barrido = n × T_señal (n = 1, 2, 3...). Así cada barrido comienza en el mismo punto homólogo de la señal.' },
+  { q:'La fórmula de la desviación electrostática es Y = (Vd·l·L)/(2·b·Vp). ¿Qué ocurre con la sensibilidad S_D si se aumenta Vp?',
+    opts:['Aumenta porque hay más energía cinética','Disminuye porque Vp aparece en el denominador','Se mantiene constante','Depende solo de b y l'],
+    ans:1, exp:'S_D = (l·L)/(2·b·Vp). Al aumentar Vp (post-aceleración), los electrones son más rápidos y difíciles de desviar → S_D disminuye.' },
+  { q:'La post-aceleración en el TRC sirve para:',
+    opts:['Aumentar la sensibilidad de deflexión','Enfocar mejor el haz en el spot','Aumentar la luminosidad de la pantalla sin perjudicar la sensibilidad','Generar el diente de sierra'],
+    ans:2, exp:'La post-aceleración aplica alto voltaje (varios kV) en la capa de Aquadag DESPUÉS de las placas. Los electrones se aceleran ya desviados → alta luminiscencia sin perder sensibilidad.' },
+  { q:'En el modo "Chopeado" del osciloscopio de doble trazo:',
+    opts:['Cada barrido muestra completo un solo canal','El conmutador bascula numerosas veces entre canales durante cada barrido','Solo funciona para señales rápidas','Se necesitan dos cañones independientes'],
+    ans:1, exp:'En modo Chopeado, el conmutador alterna entre canales muchas veces en un solo barrido. Es ideal para señales lentas (base de tiempo ≥ 500 ms/div).' },
+  { q:'En la base de tiempo disparada, ¿cuáles son las tres condiciones que deben cumplirse para producir un nuevo disparo?',
+    opts:['Amplitud > nivel, pendiente cualquiera, frecuencia estable','Retroceso terminado + misma pendiente + mismo nivel de referencia','Señal de AC, sincronismo interno, modo AUTO','Voltaje de DC constante, AC rechazado, modo NORM'],
+    ans:1, exp:'Las 3 condiciones: 1) que el retroceso haya terminado, 2) que la señal tenga la misma pendiente (subida o bajada), 3) que alcance el mismo nivel de referencia que produjo el primer disparo.' },
+  { q:'Un cable coaxial de 100 pF en paralelo con la entrada del osciloscopio (20 pF) produce a 1 MHz una reactancia de ~1,3 kΩ. ¿Cómo se compensa este problema?',
+    opts:['Usando cables más cortos únicamente','Conectando en serie una red RC (resistencia y capacitor en paralelo) en la punta de prueba','Aumentando la ganancia del amplificador vertical','Reduciendo la sensibilidad VOLTS/DIV'],
+    ans:1, exp:'La sonda compensada agrega en serie un paralelo R-C que eleva la impedancia de entrada. En una sonda ×10, la capacitancia total cae de 120 pF a ~16 pF, aumentando la reactancia.' },
+  { q:'El control LEVEL (nivel de disparo) en el sistema de sincronismo sirve para:',
+    opts:['Ajustar el brillo del haz en el TRC','Seleccionar la amplitud de la señal donde se inicia el barrido','Cambiar la escala VOLTS/DIV del canal seleccionado','Activar el modo de muestreo digital'],
+    ans:1, exp:'LEVEL es un potenciómetro que selecciona el valor de tensión de la señal de entrada en el que se dispara el barrido. Determina el punto de inicio de la representación.' }
+];
+
+var quizAnswered = [];
+var quizScore = 0;
+
+function buildQuiz() {
+  try {
+    if(quizAnswered.length === quizData.length && quizAnswered.every(function(a){ return a !== null && a !== undefined; })) return;
+    quizAnswered = new Array(quizData.length).fill(null);
+    quizScore = 0;
+    var container = document.getElementById('quiz-container');
+    document.getElementById('quiz-total').textContent = quizData.length;
+    var html = '';
+    quizData.forEach(function(q, qi){
+      html += '<div class="card p-4 border-l-4 border-blue-300" id="q-card-'+qi+'">';
+      html += '<div class="flex items-start gap-2 mb-3"><span class="badge badge-blue">'+( qi+1)+'</span><p class="font-semibold text-gray-800 text-sm flex-1">'+q.q+'</p></div>';
+      html += '<div class="space-y-2" id="opts-'+qi+'">';
+      q.opts.forEach(function(opt, oi){
+        html += '<div class="quiz-opt" id="opt-'+qi+'-'+oi+'" onclick="selectOpt('+qi+','+oi+')">'+opt+'</div>';
+      });
+      html += '</div>';
+      html += '<div id="exp-'+qi+'" class="hidden mt-3 info-box text-sm"></div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    updateQuizScore();
+  } catch(e){ console.error(e); }
+}
+
+function selectOpt(qi, oi) {
+  try {
+    if(quizAnswered[qi] !== null) return;
+    quizAnswered[qi] = oi;
+    var correct = quizData[qi].ans;
+    var card = document.getElementById('q-card-'+qi);
+    // Mark options
+    for(var i=0;i<quizData[qi].opts.length;i++){
+      var el = document.getElementById('opt-'+qi+'-'+i);
+      if(i===correct){ el.classList.add('correct'); }
+      else if(i===oi && oi!==correct){ el.classList.add('wrong'); }
+      el.style.pointerEvents='none';
+    }
+    // Color card border
+    if(oi===correct){
+      quizScore++;
+      card.style.borderLeftColor = '#16a34a';
+    } else {
+      card.style.borderLeftColor = '#dc2626';
+    }
+    // Show explanation
+    var expEl = document.getElementById('exp-'+qi);
+    expEl.textContent = (oi===correct?'✅ ':'❌ ')+quizData[qi].exp;
+    expEl.classList.remove('hidden');
+    updateQuizScore();
+  } catch(e){ console.error(e); }
+}
+
+function updateQuizScore() {
+  var answered = quizAnswered.filter(function(a){ return a!==null; }).length;
+  document.getElementById('quiz-score').textContent = quizScore;
+  document.getElementById('quiz-answered').textContent = answered;
+  var pct = quizData.length ? (answered/quizData.length)*100 : 0;
+  document.getElementById('quiz-progress').style.width = pct+'%';
+}
+
+function resetQuiz() {
+  quizAnswered = new Array(quizData.length).fill(null);
+  quizScore = 0;
+  buildQuiz();
+  // Force rebuild
+  var container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizAnswered = [];
+  buildQuiz();
+}
+
+
+// =============================================
+// TAB X-Y: LISSAJOUS & COMPONENTES
+// =============================================
+var lissCtx = null, signalXCtx = null, signalYCtx = null;
+var lissajousAnimFrame = null;
+var currentComponent = 'resistor';
+var compValue = 1000; // valor por defecto (ohms, uF, mH, etc.)
+
+// --- LISSAJOUS ---
+function updateLissajous() {
+  try {
+    var fx = parseFloat(document.getElementById('fx-slider').value);
+    var fy = parseFloat(document.getElementById('fy-slider').value);
+    var ax = parseFloat(document.getElementById('ax-slider').value);
+    var ay = parseFloat(document.getElementById('ay-slider').value);
+    var phi = parseFloat(document.getElementById('phi-slider').value) * Math.PI / 180;
+
+    document.getElementById('fx-val').textContent = Math.round(fx);
+    document.getElementById('fy-val').textContent = Math.round(fy);
+    document.getElementById('ax-val').textContent = ax.toFixed(1);
+    document.getElementById('ay-val').textContent = ay.toFixed(1);
+    document.getElementById('phi-val').textContent = Math.round(phi * 180 / Math.PI);
+
+    // Calcular relación simplificada
+    var g = gcd(Math.round(fx), Math.round(fy));
+    var nx = Math.round(fy) / g;
+    var ny = Math.round(fx) / g;
+    document.getElementById('res-ratio').textContent = Math.round(fx) + ':' + Math.round(fy);
+    document.getElementById('res-nx').textContent = nx;
+    document.getElementById('res-ny').textContent = ny;
+
+    // Estimar desfasaje visual
+    var phaseDesc = Math.round(phi * 180 / Math.PI) + '°';
+    if (Math.abs(phi) < 0.1) phaseDesc += ' (en fase)';
+    else if (Math.abs(phi - Math.PI/2) < 0.1) phaseDesc += ' (cuadratura)';
+    else if (Math.abs(phi - Math.PI) < 0.1) phaseDesc += ' (oposición)';
+    document.getElementById('res-phase').textContent = phaseDesc;
+
+    drawLissajous(fx, fy, ax, ay, phi);
+    drawSignals(fx, fy, ax, ay, phi);
+  } catch(e) { console.error(e); }
+}
+
+function gcd(a, b) {
+  a = Math.abs(a); b = Math.abs(b);
+  while (b) { var t = b; b = a % b; a = t; }
+  return a;
+}
+
+function setLissajousPreset(ratioX, ratioY, phiDeg) {
+  var base = 100;
+  document.getElementById('fx-slider').value = base;
+  document.getElementById('fy-slider').value = Math.round(base * ratioY / ratioX);
+  document.getElementById('phi-slider').value = phiDeg;
+  document.getElementById('ax-slider').value = 1;
+  document.getElementById('ay-slider').value = 1;
+  updateLissajous();
+}
+
+function drawLissajous(fx, fy, ax, ay, phi) {
+  try {
+    var canvas = document.getElementById('lissajousCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.offsetWidth || 400;
+    var H = canvas.offsetHeight || 300;
+    canvas.width = W; canvas.height = H;
+
+    // Fondo oscuro tipo osciloscopio
+    ctx.fillStyle = '#001a00';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grilla
+    ctx.strokeStyle = 'rgba(0, 255, 70, 0.12)';
+    ctx.lineWidth = 0.5;
+    var divW = W / 10, divH = H / 8;
+    for (var i = 0; i <= 10; i++) { ctx.beginPath(); ctx.moveTo(i * divW, 0); ctx.lineTo(i * divW, H); ctx.stroke(); }
+    for (var j = 0; j <= 8; j++) { ctx.beginPath(); ctx.moveTo(0, j * divH); ctx.lineTo(W, j * divH); ctx.stroke(); }
+
+    // Ejes
+    ctx.strokeStyle = 'rgba(0, 255, 70, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+
+    // Dibujar figura de Lissajous
+    ctx.strokeStyle = '#00ff46';
+    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#00ff46';
+    ctx.beginPath();
+
+    var steps = 1000;
+    var T = 1 / gcd(Math.round(fx), Math.round(fy)); // período común
+
+    for (var i = 0; i <= steps; i++) {
+      var t = i / steps * T;
+      var x = ax * Math.sin(2 * Math.PI * fx * t);
+      var y = ay * Math.sin(2 * Math.PI * fy * t + phi);
+      var px = W / 2 + x * (W / 2 - 20);
+      var py = H / 2 - y * (H / 2 - 20);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Punto actual (animado)
+    var now = Date.now() / 1000;
+    var t_anim = (now % T);
+    var x_anim = ax * Math.sin(2 * Math.PI * fx * t_anim);
+    var y_anim = ay * Math.sin(2 * Math.PI * fy * t_anim + phi);
+    var px_anim = W / 2 + x_anim * (W / 2 - 20);
+    var py_anim = H / 2 - y_anim * (H / 2 - 20);
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(px_anim, py_anim, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Solicitar siguiente frame para animación
+    if (lissajousAnimFrame) cancelAnimationFrame(lissajousAnimFrame);
+    lissajousAnimFrame = requestAnimationFrame(function() {
+      drawLissajous(fx, fy, ax, ay, phi);
+    });
+  } catch(e) { console.error(e); }
+}
+
+function drawSignals(fx, fy, ax, ay, phi) {
+  try {
+    // Señal X
+    var canvasX = document.getElementById('signalXCanvas');
+    if (canvasX) {
+      var ctxX = canvasX.getContext('2d');
+      var Wx = canvasX.offsetWidth || 200;
+      var Hx = canvasX.offsetHeight || 100;
+      canvasX.width = Wx; canvasX.height = Hx;
+      ctxX.fillStyle = '#f0f4f8'; ctxX.fillRect(0, 0, Wx, Hx);
+      ctxX.strokeStyle = '#2563eb'; ctxX.lineWidth = 2;
+      ctxX.beginPath();
+      for (var i = 0; i <= 200; i++) {
+        var t = i / 200 * 2 / fx;
+        var y = ax * Math.sin(2 * Math.PI * fx * t);
+        var px = i / 200 * Wx;
+        var py = Hx / 2 - y * (Hx / 2 - 10);
+        if (i === 0) ctxX.moveTo(px, py); else ctxX.lineTo(px, py);
+      }
+      ctxX.stroke();
+      ctxX.strokeStyle = '#94a3b8'; ctxX.lineWidth = 0.5;
+      ctxX.beginPath(); ctxX.moveTo(0, Hx / 2); ctxX.lineTo(Wx, Hx / 2); ctxX.stroke();
+    }
+
+    // Señal Y
+    var canvasY = document.getElementById('signalYCanvas');
+    if (canvasY) {
+      var ctxY = canvasY.getContext('2d');
+      var Wy = canvasY.offsetWidth || 200;
+      var Hy = canvasY.offsetHeight || 100;
+      canvasY.width = Wy; canvasY.height = Hy;
+      ctxY.fillStyle = '#f0f4f8'; ctxY.fillRect(0, 0, Wy, Hy);
+      ctxY.strokeStyle = '#7c3aed'; ctxY.lineWidth = 2;
+      ctxY.beginPath();
+      for (var i = 0; i <= 200; i++) {
+        var t = i / 200 * 2 / fy;
+        var y = ay * Math.sin(2 * Math.PI * fy * t + phi);
+        var px = i / 200 * Wy;
+        var py = Hy / 2 - y * (Hy / 2 - 10);
+        if (i === 0) ctxY.moveTo(px, py); else ctxY.lineTo(px, py);
+      }
+      ctxY.stroke();
+      ctxY.strokeStyle = '#94a3b8'; ctxY.lineWidth = 0.5;
+      ctxY.beginPath(); ctxY.moveTo(0, Hy / 2); ctxY.lineTo(Wy, Hy / 2); ctxY.stroke();
+    }
+  } catch(e) { console.error(e); }
+}
+
+// --- COMPONENTES (Octopus) ---
+var componentData = {
+  'resistor': {
+    title: 'Resistencia',
+    desc: 'Una resistencia pura obedece la Ley de Ohm: I = V/R. En modo X-Y, la curva I-V es una línea recta que pasa por el origen. La pendiente depende del valor de R: resistencias pequeñas dan líneas casi verticales (mucha corriente), resistencias grandes dan líneas casi horizontales (poca corriente).',
+    unit: 'Ω',
+    min: 10, max: 10000, default: 1000, step: 10,
+    getCurve: function(R, t) {
+      // V_fuente = 5*sin(2π*50*t), R1=1k, R2=10
+      var Vf = 5 * Math.sin(2 * Math.PI * 50 * t);
+      var I = Vf / (1000 + R + 10);
+      var Vdut = I * R;
+      var Vr2 = I * 10;
+      return { x: Vdut / 5, y: Vr2 / 0.5 }; // normalizado
+    },
+    impedance: function(R) { return R + ' Ω'; },
+    phase: '0°',
+    curveType: 'Línea recta'
+  },
+  'capacitor': {
+    title: 'Capacitor',
+    desc: 'Un capacitor presenta reactancia capacitiva Xc = 1/(2πfC). La corriente se adelanta 90° respecto a la tensión. En modo X-Y se observa una elipse o círculo (si las amplitudes X e Y están balanceadas). A mayor capacitancia, la elipse es más ancha (mayor corriente).',
+    unit: 'μF',
+    min: 0.01, max: 100, default: 4.7, step: 0.1,
+    getCurve: function(C, t) {
+      var f = 50;
+      var w = 2 * Math.PI * f;
+      var Xc = 1 / (w * C * 1e-6);
+      var Z = Math.sqrt(1000 * 1000 + Xc * Xc); // simplificado
+      var Vf = 5 * Math.sin(w * t);
+      var I = Vf / Z;
+      var phi = Math.atan(-Xc / 1000); // ángulo de corriente
+      var Vdut = I * Xc * Math.sin(w * t + phi + Math.PI / 2);
+      var Vr2 = I * 10 * Math.sin(w * t + phi);
+      return { x: Vdut / 5, y: Vr2 / 0.05 };
+    },
+    impedance: function(C) {
+      var Xc = 1 / (2 * Math.PI * 50 * C * 1e-6);
+      return Xc.toFixed(0) + ' Ω @ 50Hz';
+    },
+    phase: '-90°',
+    curveType: 'Elipse / Círculo'
+  },
+  'inductor': {
+    title: 'Inductor',
+    desc: 'Un inductor presenta reactancia inductiva XL = 2πfL. La corriente se retrasa 90° respecto a la tensión. En modo X-Y se observa una elipse inclinada en sentido opuesto al capacitor. A mayor inductancia, la elipse es más ancha.',
+    unit: 'mH',
+    min: 1, max: 1000, default: 100, step: 1,
+    getCurve: function(L, t) {
+      var f = 50;
+      var w = 2 * Math.PI * f;
+      var Xl = w * L * 1e-3;
+      var Z = Math.sqrt(1000 * 1000 + Xl * Xl);
+      var Vf = 5 * Math.sin(w * t);
+      var I = Vf / Z;
+      var phi = Math.atan(Xl / 1000);
+      var Vdut = I * Xl * Math.sin(w * t + phi - Math.PI / 2);
+      var Vr2 = I * 10 * Math.sin(w * t - phi);
+      return { x: Vdut / 5, y: Vr2 / 0.05 };
+    },
+    impedance: function(L) {
+      var Xl = 2 * Math.PI * 50 * L * 1e-3;
+      return Xl.toFixed(0) + ' Ω @ 50Hz';
+    },
+    phase: '+90°',
+    curveType: 'Elipse inclinada'
+  },
+  'diode': {
+    title: 'Diodo',
+    desc: 'El diodo conduce solo en polarización directa (V > ~0.7V para silicio). En inversa bloquea la corriente. En modo X-Y se ve una "L": línea horizontal en inversa (I≈0), y línea vertical en directa una vez superada la tensión de umbral. La resistencia de referencia limita la corriente.',
+    unit: 'V',
+    min: 0.1, max: 1.0, default: 0.7, step: 0.05,
+    getCurve: function(Vd, t) {
+      var Vf = 5 * Math.sin(2 * Math.PI * 50 * t);
+      var I = 0;
+      if (Vf > Vd) {
+        I = (Vf - Vd) / 1010; // R1 + R2
+      } else if (Vf < -0.1) {
+        I = (Vf + 0.1) / 1010; // pequeña corriente de fuga
+      }
+      var Vdut = Vf - I * 1000;
+      var Vr2 = I * 10;
+      return { x: Vdut / 5, y: Vr2 / 0.5 };
+    },
+    impedance: function(Vd) { return '∞ (inversa) / baja (directa)'; },
+    phase: '0° / ∞',
+    curveType: 'L rectificadora'
+  },
+  'zener': {
+    title: 'Diodo Zener',
+    desc: 'El diodo Zener conduce en directa como un diodo normal (V > 0.7V) y también en inversa cuando se supera la tensión Zener (Vz). En modo X-Y se ve una "Z": dos codos, uno en +0.7V y otro en -Vz. Entre ambos, la corriente es casi nula.',
+    unit: 'V',
+    min: 2.0, max: 15.0, default: 5.1, step: 0.1,
+    getCurve: function(Vz, t) {
+      var Vf = 5 * Math.sin(2 * Math.PI * 50 * t);
+      var I = 0;
+      var Vd = 0.7;
+      if (Vf > Vd) {
+        I = (Vf - Vd) / 1010;
+      } else if (Vf < -Vz) {
+        I = (Vf + Vz) / 1010;
+      }
+      var Vdut = Vf - I * 1000;
+      var Vr2 = I * 10;
+      return { x: Vdut / 5, y: Vr2 / 0.5 };
+    },
+    impedance: function(Vz) { return 'Regulación @ ' + Vz + 'V'; },
+    phase: '0° / ∞',
+    curveType: 'Z con regulación'
+  },
+  'open': {
+    title: 'Circuito Abierto',
+    desc: 'Sin componente conectado (R = ∞). No circula corriente, por lo que V_R2 = 0 en todo momento. La curva es una línea horizontal sobre el eje X (I = 0 para cualquier V).',
+    unit: '',
+    min: 0, max: 1, default: 1, step: 1,
+    getCurve: function(_, t) {
+      var Vf = 5 * Math.sin(2 * Math.PI * 50 * t);
+      return { x: Vf / 5, y: 0 };
+    },
+    impedance: function() { return '∞ Ω'; },
+    phase: '--',
+    curveType: 'Línea horizontal'
+  },
+  'short': {
+    title: 'Cortocircuito',
+    desc: 'Bornes en corto (R = 0). La tensión en el componente es cero, pero circula corriente máxima limitada por R1. La curva es una línea vertical sobre el eje Y (V = 0, I máxima).',
+    unit: '',
+    min: 0, max: 1, default: 1, step: 1,
+    getCurve: function(_, t) {
+      var Vf = 5 * Math.sin(2 * Math.PI * 50 * t);
+      var I = Vf / 1010;
+      var Vr2 = I * 10;
+      return { x: 0, y: Vr2 / 0.5 };
+    },
+    impedance: function() { return '0 Ω'; },
+    phase: '--',
+    curveType: 'Línea vertical'
+  }
+};
+
+function setComponent(type) {
+  try {
+    currentComponent = type;
+    var data = componentData[type];
+    if (!data) return;
+
+    // Actualizar botones activos
+    document.querySelectorAll('.component-btn').forEach(function(btn) {
+      btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+      btn.classList.add('bg-gray-100', 'text-gray-700', 'border-gray-300');
+    });
+    var activeBtn = document.getElementById('btn-' + type);
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-gray-100', 'text-gray-700', 'border-gray-300');
+      activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+    }
+
+    // Actualizar controles
+    document.getElementById('comp-title').textContent = '⚙️ ' + data.title;
+    var slidersDiv = document.getElementById('comp-sliders');
+
+    if (type === 'open' || type === 'short') {
+      slidersDiv.innerHTML = '<p class="text-sm text-gray-600">Este componente no tiene parámetros ajustables.</p>';
+    } else {
+      var unitLabel = data.unit ? ' (' + data.unit + ')' : '';
+      slidersDiv.innerHTML = 
+        '<div>' +
+        '<label class="slider-label font-semibold">Valor del componente' + unitLabel + ': <span id="comp-val" class="text-green-700 font-bold">' + data.default + '</span></label>' +
+        '<input type="range" id="comp-slider" min="' + data.min + '" max="' + data.max + '" value="' + data.default + '" step="' + data.step + '" class="w-full" oninput="updateComponent()">' +
+        '</div>';
+    }
+
+    // Actualizar descripción
+    document.getElementById('comp-desc-text').textContent = data.desc;
+
+    // Actualizar resultados
+    document.getElementById('res-curve-type').textContent = data.curveType;
+    document.getElementById('res-impedance').textContent = data.impedance(data.default);
+    document.getElementById('res-phase-angle').textContent = data.phase;
+
+    compValue = data.default;
+    updateComponent();
+  } catch(e) { console.error(e); }
+}
+
+function updateComponent() {
+  try {
+    var slider = document.getElementById('comp-slider');
+    if (slider) {
+      compValue = parseFloat(slider.value);
+      document.getElementById('comp-val').textContent = compValue;
+    }
+
+    var data = componentData[currentComponent];
+    if (data) {
+      document.getElementById('res-impedance').textContent = data.impedance(compValue);
+    }
+
+    drawComponentCurve();
+  } catch(e) { console.error(e); }
+}
+
+function drawComponentCurve() {
+  try {
+    var canvas = document.getElementById('componentCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.offsetWidth || 400;
+    var H = canvas.offsetHeight || 300;
+    canvas.width = W; canvas.height = H;
+
+    // Fondo oscuro
+    ctx.fillStyle = '#001a00';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grilla
+    ctx.strokeStyle = 'rgba(0, 255, 70, 0.12)';
+    ctx.lineWidth = 0.5;
+    var divW = W / 10, divH = H / 8;
+    for (var i = 0; i <= 10; i++) { ctx.beginPath(); ctx.moveTo(i * divW, 0); ctx.lineTo(i * divW, H); ctx.stroke(); }
+    for (var j = 0; j <= 8; j++) { ctx.beginPath(); ctx.moveTo(0, j * divH); ctx.lineTo(W, j * divH); ctx.stroke(); }
+
+    // Ejes
+    ctx.strokeStyle = 'rgba(0, 255, 70, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+
+    // Etiquetas de ejes
+    ctx.fillStyle = '#6ee7b7';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('+V', W - 20, H / 2 - 5);
+    ctx.fillText('-V', 5, H / 2 - 5);
+    ctx.fillText('+I', W / 2 + 5, 15);
+    ctx.fillText('-I', W / 2 + 5, H - 5);
+
+    // Dibujar curva del componente
+    var data = componentData[currentComponent];
+    if (!data) return;
+
+    ctx.strokeStyle = '#00ff46';
+    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#00ff46';
+    ctx.beginPath();
+
+    var steps = 400;
+    for (var i = 0; i <= steps; i++) {
+      var t = i / steps / 50; // un período de 50Hz
+      var pt = data.getCurve(compValue, t);
+      var px = W / 2 + pt.x * (W / 2 - 25);
+      var py = H / 2 - pt.y * (H / 2 - 25);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Punto animado
+    var now = Date.now() / 1000;
+    var t_anim = (now % (1/50));
+    var pt_anim = data.getCurve(compValue, t_anim);
+    var px_anim = W / 2 + pt_anim.x * (W / 2 - 25);
+    var py_anim = H / 2 - pt_anim.y * (H / 2 - 25);
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(px_anim, py_anim, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Loop animation
+    requestAnimationFrame(drawComponentCurve);
+  } catch(e) { console.error(e); }
+}
+
+// --- QUIZ X-Y ---
+var quizXYData = [
+  { q: 'En modo X-Y del osciloscopio, ¿qué señal controla la deflexión horizontal?',
+    opts: ['La base de tiempo interna', 'La señal del Canal 1 (CH1)', 'La señal del Canal 2 (CH2)', 'La señal de sincronismo'],
+    ans: 1, exp: 'En modo X-Y se desactiva la base de tiempo. El Canal 1 (CH1) controla el eje X y el Canal 2 (CH2) controla el eje Y.' },
+  { q: 'Si una figura de Lissajous muestra 2 picos horizontales y 3 picos verticales, ¿cuál es la relación fY:fX?',
+    opts: ['2:3', '3:2', '1:1', '6:1'],
+    ans: 1, exp: 'La relación es fY/fX = NX/NY = 2/3. Por lo tanto fY:fX = 2:3.' },
+  { q: 'Una figura de Lissajous con relación 1:1 y desfasaje de 90° se ve como:',
+    opts: ['Una línea diagonal', 'Una elipse', 'Un círculo (si amplitudes iguales)', 'Una parábola'],
+    ans: 2, exp: 'Con fY=fX y φ=90°, si AX=AY se obtiene un círculo. Si las amplitudes son diferentes, una elipse.' },
+  { q: 'En el trazador de curvas (Octopus), ¿qué representa el eje Y?',
+    opts: ['La tensión aplicada al componente', 'La corriente que circula (proporcional a VR2)', 'La resistencia del componente', 'La frecuencia de la fuente'],
+    ans: 1, exp: 'El eje Y muestra la caída de tensión en R2, que es proporcional a la corriente por el DUT (I = VR2/R2).' },
+  { q: '¿Qué firma esperarías al conectar un capacitor en el trazador de curvas?',
+    opts: ['Línea recta por el origen', 'Elipse o círculo', 'Línea en forma de L', 'Línea horizontal'],
+    ans: 1, exp: 'El capacitor produce una elipse o círculo porque la corriente se adelanta 90° respecto a la tensión.' },
+  { q: 'Un inductor en el trazador de curvas produce una elipse inclinada en sentido:',
+    opts: ['Igual que un capacitor', 'Opuesto al capacitor', 'Horizontal', 'Vertical'],
+    ans: 1, exp: 'El inductor retrasa la corriente 90° (fase +90°), mientras que el capacitor la adelanta 90° (fase -90°). Las elipses tienen inclinación opuesta.' },
+  { q: 'Un diodo en polarización directa en el trazador de curvas muestra:',
+    opts: ['Línea recta por el origen', 'Línea horizontal (I=0)', 'L con conducción después de ~0.7V', 'Círculo'],
+    ans: 2, exp: 'El diodo conduce solo cuando V > 0.7V (silicio). Antes de eso I≈0 (línea horizontal), luego conduce (línea vertical en la curva I-V).' },
+  { q: '¿Cuál es la principal ventaja del método de Lissajous para medir frecuencia?',
+    opts: ['Mayor precisión que un contador digital', 'No requiere conocer la frecuencia de referencia', 'Permite comparar dos señales sin necesidad de instrumentos adicionales', 'Solo funciona con señales cuadradas'],
+    ans: 2, exp: 'El método de Lissajous permite comparar una frecuencia desconocida con una conocida visualmente, sin necesidad de contadores ni frecuencímetros adicionales.' }
+];
+
+var quizXYAnswered = [];
+var quizXYScore = 0;
+
+function buildQuizXY() {
+  try {
+    if (quizXYAnswered.length === quizXYData.length) return;
+    quizXYAnswered = new Array(quizXYData.length).fill(null);
+    quizXYScore = 0;
+    var container = document.getElementById('quiz-xy-container');
+    document.getElementById('quiz-xy-total').textContent = quizXYData.length;
+    var html = '';
+    quizXYData.forEach(function(q, qi) {
+      html += '<div class="card p-4 border-l-4 border-purple-300" id="q-xy-card-' + qi + '">';
+      html += '<div class="flex items-start gap-2 mb-3"><span class="badge badge-purple">' + (qi + 1) + '</span><p class="font-semibold text-gray-800 text-sm flex-1">' + q.q + '</p></div>';
+      html += '<div class="space-y-2" id="xy-opts-' + qi + '">';
+      q.opts.forEach(function(opt, oi) {
+        html += '<div class="quiz-opt" id="xy-opt-' + qi + '-' + oi + '" onclick="selectOptXY(' + qi + ',' + oi + ')">' + opt + '</div>';
+      });
+      html += '</div>';
+      html += '<div id="xy-exp-' + qi + '" class="hidden mt-3 info-box text-sm"></div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    updateQuizXYScore();
+  } catch(e) { console.error(e); }
+}
+
+function selectOptXY(qi, oi) {
+  try {
+    if (quizXYAnswered[qi] !== null) return;
+    quizXYAnswered[qi] = oi;
+    var correct = quizXYData[qi].ans;
+    var card = document.getElementById('q-xy-card-' + qi);
+    for (var i = 0; i < quizXYData[qi].opts.length; i++) {
+      var el = document.getElementById('xy-opt-' + qi + '-' + i);
+      if (i === correct) { el.classList.add('correct'); }
+      else if (i === oi && oi !== correct) { el.classList.add('wrong'); }
+      el.style.pointerEvents = 'none';
+    }
+    if (oi === correct) {
+      quizXYScore++;
+      card.style.borderLeftColor = '#16a34a';
+    } else {
+      card.style.borderLeftColor = '#dc2626';
+    }
+    var expEl = document.getElementById('xy-exp-' + qi);
+    expEl.textContent = (oi === correct ? '✅ ' : '❌ ') + quizXYData[qi].exp;
+    expEl.classList.remove('hidden');
+    updateQuizXYScore();
+  } catch(e) { console.error(e); }
+}
+
+function updateQuizXYScore() {
+  var answered = quizXYAnswered.filter(function(a) { return a !== null; }).length;
+  document.getElementById('quiz-xy-score').textContent = quizXYScore;
+  document.getElementById('quiz-xy-answered').textContent = answered;
+  var pct = quizXYData.length ? (answered / quizXYData.length) * 100 : 0;
+  document.getElementById('quiz-xy-progress').style.width = pct + '%';
+}
+
+function resetQuizXY() {
+  quizXYAnswered = [];
+  quizXYScore = 0;
+  buildQuizXY();
+}
+
+// =============================================
+// INITIALIZATION
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    showPanelArea('trc');
+    updateDeflexion();
+    updateBarrido();
+    updateSonda();
+    // Inicializar modo X-Y
+    setTimeout(function(){
+      updateLissajous();
+      setComponent('resistor');
+      buildQuizXY();
+    }, 200);
+    console.log('Medidas Electronicas I Unidad 5 - cargado correctamente.');
+  } catch(e){ console.error(e); }
+});
+</script>
+</body>
+</html>

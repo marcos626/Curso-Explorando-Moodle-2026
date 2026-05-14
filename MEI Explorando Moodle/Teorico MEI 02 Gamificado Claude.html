@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 2 - UTN FRL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --light-bg: #f0f4f8;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  input[type=range] { accent-color: #2980b9; }
+  .chart-wrap { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-family: 'Courier New', monospace; font-size: 0.95rem; color: #1e3a5f; }
+  .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.92rem; margin: 2px; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .scale-bar { height: 24px; border-radius: 6px; position: relative; overflow: visible; margin: 8px 0; }
+  .needle { position: absolute; top: -8px; width: 3px; height: 40px; background: #e74c3c; border-radius: 2px; transform: translateX(-50%); transition: left 0.4s ease; }
+  .quiz-btn { transition: all 0.2s; }
+  .quiz-btn:hover { transform: scale(1.03); }
+  .quiz-btn.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #166534 !important; }
+  .quiz-btn.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #991b1b !important; }
+  .sym-card { transition: all 0.2s; cursor: pointer; }
+  .sym-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .sym-card.selected { border-color: #2563eb !important; background: #eff6ff; }
+  @media (max-width: 640px) {
+    .chart-wrap { min-height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 2 · Instrumentos · Exploración Interactiva · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🔌</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">¿Qué dice realmente tu instrumento?</h2>
+        <p class="text-gray-600 text-sm">Un voltímetro de clase 2,5 con escala de 500 V te indica 320 V. ¿Cuánto confías en esa lectura? ¿Importa en qué zona de la escala está la aguja? ¿Qué significan los símbolos del cuadrante? En esta unidad lo descubrirás a través de simulaciones y exploraciones interactivas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-clase')">📏 Clase y Error</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-sens')">🔍 Sensibilidad y Resolución</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ident')">🏷️ Código de Identificación</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-escalas')">📈 Tipos de Escala</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-errores')">⚠️ Errores por Sector</button>
+  </div>
+</div>
+
+<!-- =================== TAB 1: CLASE Y ERROR =================== -->
+<div id="tab-clase" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📏 Clase de Instrumentos — Calculadora Interactiva</h2>
+      <p class="text-sm opacity-80 mt-1">Ajustá los parámetros del instrumento y la lectura para ver el error máximo garantizado por el fabricante.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Controls -->
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>¿Cómo funciona?</strong> La <em>clase</em> de un instrumento representa el porcentaje máximo de error absoluto respecto al fondo de escala (A): <br>
+            <code class="font-mono text-blue-800">CLASE = (ΔX / A) × 100</code><br>
+            Por lo tanto: <code class="font-mono text-blue-800">ΔX = (A × C) / 100</code>
+          </div>
+
+          <!-- Clase selector -->
+          <div>
+            <label class="slider-label font-semibold block mb-2">Clase del instrumento (C):</label>
+            <div class="grid grid-cols-4 gap-2" id="clase-btns">
+              <button onclick="setClase(0.5)" class="clase-btn rounded-lg p-2 text-xs font-bold border-2 border-green-400 bg-green-50 text-green-800">0,5 — Lab.</button>
+              <button onclick="setClase(1)" class="clase-btn rounded-lg p-2 text-xs font-bold border-2 border-blue-300 bg-blue-50 text-blue-800 active-clase">1 — Servicio</button>
+              <button onclick="setClase(1.5)" class="clase-btn rounded-lg p-2 text-xs font-bold border-2 border-yellow-400 bg-yellow-50 text-yellow-800">1,5 — Tablero</button>
+              <button onclick="setClase(2.5)" class="clase-btn rounded-lg p-2 text-xs font-bold border-2 border-red-400 bg-red-50 text-red-800">2,5 — Portátil</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="slider-label font-semibold">Fondo de escala / Alcance (A): <span id="fde-val" class="text-blue-700 font-bold">500</span> unidades</label>
+            <input type="range" id="fde-slider" min="10" max="1000" value="500" step="10" class="w-full" oninput="updateClaseSim()">
+          </div>
+
+          <div>
+            <label class="slider-label font-semibold">Lectura del instrumento (X): <span id="lectura-val" class="text-blue-700 font-bold">320</span> unidades</label>
+            <input type="range" id="lectura-slider" min="1" max="1000" value="320" step="1" class="w-full" oninput="updateClaseSim()">
+          </div>
+
+          <!-- Escala visual -->
+          <div>
+            <label class="slider-label font-semibold block mb-1">Posición de la aguja en la escala:</label>
+            <div class="bg-gray-100 rounded-lg p-3">
+              <div class="flex justify-between text-xs text-gray-500 mb-1">
+                <span>0</span>
+                <span id="fde-label-esc">500</span>
+              </div>
+              <div class="scale-bar bg-gradient-to-r from-red-200 via-yellow-100 to-green-200 border border-gray-300">
+                <div class="needle" id="needle-pos" style="left:64%"></div>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500 mt-2">
+                <span class="text-red-500">⚠️ Zona baja (evitar)</span>
+                <span class="text-green-600">✅ Zona óptima (50%→100%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results panel -->
+        <div class="space-y-3">
+          <div id="clase-results" class="space-y-3"></div>
+          <div class="chart-wrap" style="min-height:200px;max-height:260px;">
+            <canvas id="claseChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conceptual cards: Rango, Alcance, Fondo de Escala, Zona muerta -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+    <div class="card p-4 border-t-4 border-blue-500">
+      <h3 class="font-bold text-blue-700 mb-1">📐 Rango</h3>
+      <p class="text-xs text-gray-600">Conjunto de valores entre límites inferior y superior que puede medir el instrumento. Se indica con dos números: el valor mínimo y máximo.</p>
+      <div class="mt-2 formula-box text-sm">Ej: Termómetro → Rango: 50–150 °C</div>
+    </div>
+    <div class="card p-4 border-t-4 border-green-500">
+      <h3 class="font-bold text-green-700 mb-1">↔️ Alcance (Span)</h3>
+      <p class="text-xs text-gray-600">Diferencia entre el valor máximo y mínimo de la escala. Indica la capacidad de medición independientemente de los valores extremos.</p>
+      <div class="mt-2 formula-box text-sm">Span = X_máx − X_mín<br>Ej: 150°C − 50°C = 100°C</div>
+    </div>
+    <div class="card p-4 border-t-4 border-purple-500">
+      <h3 class="font-bold text-purple-700 mb-1">🔝 Fondo de Escala</h3>
+      <p class="text-xs text-gray-600">Valor máximo que puede medir el instrumento. También denominado <em>valor fiduciario</em>. Es el parámetro A en la fórmula de clase.</p>
+      <div class="mt-2 formula-box text-sm">A = X_máximo de la escala</div>
+    </div>
+    <div class="card p-4 border-t-4 border-orange-500">
+      <h3 class="font-bold text-orange-700 mb-1">🗺️ Campo de Indicación</h3>
+      <p class="text-xs text-gray-600">Todo el rango marcado en la escala (desde el valor inicial hasta el final), sin importar si las indicaciones son válidas en todo ese campo.</p>
+      <div class="mt-2 formula-box text-sm">Ej: 0 — 800 A (toda la escala)</div>
+    </div>
+    <div class="card p-4 border-t-4 border-red-400">
+      <h3 class="font-bold text-red-700 mb-1">🚫 Zona Muerta</h3>
+      <p class="text-xs text-gray-600">Diferencia entre el campo de indicación y el campo de medida. Región que debe evitarse. El fabricante usualmente no la gradúa.</p>
+      <div class="mt-2 formula-box text-sm">Z. Muerta = Campo indic. − Campo medida</div>
+    </div>
+    <div class="card p-4 border-t-4 border-yellow-500">
+      <h3 class="font-bold text-yellow-700 mb-1">📊 Clases IRAM / CEI</h3>
+      <p class="text-xs text-gray-600">IRAM 2039: 0,25 – 0,5 – 1 – 1,5 – 2 – 3. Menor número = mayor calidad. Entre 0,05 y 0,2: patrones; 0,2 a 0,5: laboratorio; 1 a 5: servicio.</p>
+      <div class="mt-2 formula-box text-sm">CEI: 0,05–0,1–0,2–0,5–1–1,5–2,5–5</div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 2: SENSIBILIDAD Y RESOLUCIÓN =================== -->
+<div id="tab-sens" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔍 Sensibilidad y Resolución — Simulador</h2>
+      <p class="text-sm opacity-80 mt-1">Explorá cómo responde un instrumento ante pequeños cambios en la magnitud medida.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Sensibilidad -->
+        <div class="space-y-4">
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <h3 class="font-bold text-blue-800 mb-2">⚡ Sensibilidad</h3>
+            <p class="text-xs text-gray-700 mb-3">Relación entre el desplazamiento de la aguja (Δi) y la variación de la magnitud medida (ΔM):</p>
+            <div class="formula-box text-sm mb-3">S = Δi / ΔM</div>
+            <div class="space-y-2">
+              <div>
+                <label class="slider-label font-semibold">Variación de la magnitud (ΔM): <span id="dm-val" class="text-blue-700 font-bold">10</span> mA</label>
+                <input type="range" id="dm-slider" min="1" max="100" value="10" class="w-full" oninput="updateSensSim()">
+              </div>
+              <div>
+                <label class="slider-label font-semibold">Desplazamiento de la aguja (Δi): <span id="di-val" class="text-blue-700 font-bold">50</span> mm</label>
+                <input type="range" id="di-slider" min="5" max="150" value="50" class="w-full" oninput="updateSensSim()">
+              </div>
+              <div id="sens-result" class="formula-box text-center text-base mt-2"></div>
+            </div>
+          </div>
+
+          <!-- Analogical meter simulation -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <h4 class="font-semibold text-gray-700 mb-3 text-sm">🪡 Simulación de aguja analógica</h4>
+            <div class="flex flex-col items-center">
+              <canvas id="meterCanvas" width="280" height="160" style="max-width:280px;"></canvas>
+              <div class="mt-2 w-full">
+                <label class="slider-label font-semibold">Magnitud medida (M): <span id="m-val" class="text-blue-700 font-bold">50</span> %</label>
+                <input type="range" id="m-slider" min="0" max="100" value="50" class="w-full" oninput="updateMeter()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Resolución -->
+        <div class="space-y-4">
+          <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+            <h3 class="font-bold text-green-800 mb-2">🔬 Resolución</h3>
+            <p class="text-xs text-gray-700 mb-3">El menor cambio en la entrada que produce un cambio observable en la salida. Se expresa en unidades de la variable o en % del fondo de escala:</p>
+            <div class="formula-box text-sm mb-3">Res (%) = (Res_abs / A) × 100</div>
+            <div class="space-y-2">
+              <div>
+                <label class="slider-label font-semibold">Fondo de escala (A): <span id="res-a-val" class="text-green-700 font-bold">100</span> V</label>
+                <input type="range" id="res-a-slider" min="10" max="500" value="100" step="10" class="w-full" oninput="updateResSim()">
+              </div>
+              <div>
+                <label class="slider-label font-semibold">Resolución absoluta: <span id="res-abs-val" class="text-green-700 font-bold">0.5</span> V</label>
+                <input type="range" id="res-abs-slider" min="0.1" max="10" value="0.5" step="0.1" class="w-full" oninput="updateResSim()">
+              </div>
+              <div>
+                <label class="slider-label font-semibold">Número de divisiones: <span id="res-div-val" class="text-green-700 font-bold">200</span></label>
+                <input type="range" id="res-div-slider" min="10" max="500" value="200" step="10" class="w-full" oninput="updateResSim()">
+              </div>
+              <div id="res-result" class="formula-box text-sm mt-2"></div>
+            </div>
+          </div>
+
+          <!-- Incertidumbre info -->
+          <div class="bg-purple-50 border border-purple-200 rounded-xl p-4">
+            <h3 class="font-bold text-purple-800 mb-2">❓ Incertidumbre</h3>
+            <p class="text-xs text-gray-700">Parámetro que <strong>cuantifica la duda</strong> sobre la validez de un valor medido. Caracteriza la dispersión o separación máxima posible entre el valor medido y el valor verdadero.</p>
+            <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-white rounded-lg p-2 border">
+                <div class="font-bold text-purple-700">Sentido general</div>
+                <div class="text-gray-600">Duda sobre la validez de un resultado</div>
+              </div>
+              <div class="bg-white rounded-lg p-2 border">
+                <div class="font-bold text-purple-700">Sentido técnico</div>
+                <div class="text-gray-600">Parámetro que cuantifica esa dispersión</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison chart -->
+      <div class="mt-4">
+        <h4 class="font-semibold text-gray-700 mb-2 text-sm">Comparación: resolución en distintos instrumentos</h4>
+        <div class="chart-wrap" style="max-height:240px;">
+          <canvas id="resCompChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classification cards -->
+  <div class="card overflow-hidden">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📋 Clasificación de Instrumentos</h2>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
+          <div class="font-bold text-blue-800 text-sm mb-2">⚡ Por tipo de corriente</div>
+          <ul class="text-xs text-gray-700 space-y-1">
+            <li>→ Solo corriente continua (CC)</li>
+            <li>→ Solo corriente alterna (CA)</li>
+            <li>→ CC y CA</li>
+          </ul>
+        </div>
+        <div class="bg-green-50 rounded-xl p-3 border border-green-200">
+          <div class="font-bold text-green-800 text-sm mb-2">🔢 Por magnitud medida</div>
+          <ul class="text-xs text-gray-700 space-y-1">
+            <li>→ Voltímetro (tensión)</li>
+            <li>→ Amperímetro (corriente)</li>
+            <li>→ Ohmímetro (resistencia)</li>
+            <li>→ Megóhmetro, mVoltímetro…</li>
+          </ul>
+        </div>
+        <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200">
+          <div class="font-bold text-yellow-800 text-sm mb-2">🏗️ Por construcción</div>
+          <ul class="text-xs text-gray-700 space-y-1">
+            <li>→ Fijos (tableros)</li>
+            <li>→ Portátiles (laboratorio)</li>
+            <li>→ Caja cuadrada / redonda</li>
+            <li>→ Indicador central / lateral</li>
+          </ul>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+          <div class="font-bold text-purple-800 text-sm mb-2">⚙️ Por principio de funcionamiento</div>
+          <ul class="text-xs text-gray-700 space-y-1">
+            <li>→ Magnetoeléctrico</li>
+            <li>→ Electromagnético</li>
+            <li>→ Electrodinámico</li>
+            <li>→ Inductivo, electrostático…</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 3: CÓDIGO DE IDENTIFICACIÓN =================== -->
+<div id="tab-ident" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🏷️ Código de Identificación — Explorador de Símbolos</h2>
+      <p class="text-sm opacity-80 mt-1">Los instrumentos llevan inscripciones normalizadas en su cuadrante. Explorá cada símbolo y poné a prueba tus conocimientos.</p>
+    </div>
+    <div class="p-4">
+      <!-- Symbol category tabs -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="showSymCategory('sistema')" id="sym-btn-sistema" class="sym-cat-btn active bg-blue-700 text-white rounded-lg px-3 py-1.5 text-xs font-semibold">⚙️ Sistema de medida</button>
+        <button onclick="showSymCategory('corriente')" id="sym-btn-corriente" class="sym-cat-btn bg-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-xs font-semibold">⚡ Clase de corriente</button>
+        <button onclick="showSymCategory('posicion')" id="sym-btn-posicion" class="sym-cat-btn bg-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-xs font-semibold">📐 Posición de trabajo</button>
+        <button onclick="showSymCategory('aislacion')" id="sym-btn-aislacion" class="sym-cat-btn bg-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-xs font-semibold">⭐ Tensión de ensayo</button>
+        <button onclick="showSymCategory('especial')" id="sym-btn-especial" class="sym-cat-btn bg-gray-200 text-gray-700 rounded-lg px-3 py-1.5 text-xs font-semibold">🔔 Observaciones especiales</button>
+      </div>
+
+      <!-- Symbol grids -->
+      <div id="sym-sistema" class="sym-cat-content">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="sym-grid-sistema"></div>
+      </div>
+      <div id="sym-corriente" class="sym-cat-content hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="sym-grid-corriente"></div>
+      </div>
+      <div id="sym-posicion" class="sym-cat-content hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="sym-grid-posicion"></div>
+      </div>
+      <div id="sym-aislacion" class="sym-cat-content hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="sym-grid-aislacion"></div>
+      </div>
+      <div id="sym-especial" class="sym-cat-content hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="sym-grid-especial"></div>
+      </div>
+
+      <!-- Detail panel -->
+      <div id="sym-detail" class="hidden mt-4 card border-2 border-blue-300 p-4">
+        <div class="flex items-start gap-4">
+          <div id="sym-detail-icon" class="text-5xl flex-shrink-0 flex items-center justify-center w-20 h-20 bg-blue-50 rounded-xl border border-blue-200"></div>
+          <div>
+            <h4 id="sym-detail-name" class="font-bold text-blue-900 text-base mb-1"></h4>
+            <p id="sym-detail-desc" class="text-sm text-gray-700"></p>
+            <div id="sym-detail-note" class="mt-2 text-xs text-purple-700 font-medium"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Example instrument decoding -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔎 Decodificador de Instrumento</h2>
+      <p class="text-sm opacity-80 mt-1">Construí una rotulación de instrumento como la del ejemplo del teórico y leé su significado.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-3">
+          <div>
+            <label class="slider-label font-semibold block mb-2">Sistema de medida:</label>
+            <select id="dec-sistema" class="w-full border border-gray-300 rounded-lg p-2 text-sm" onchange="updateDecoder()">
+              <option value="magneto">Magnetoeléctrico (bobina móvil + imán permanente)</option>
+              <option value="ferro" selected>Ferromagnético (hierro móvil + bobina fija)</option>
+              <option value="electro">Electrodinámico (sin hierro)</option>
+              <option value="induccion">Inductivo</option>
+              <option value="electrostat">Electrostático</option>
+            </select>
+          </div>
+          <div>
+            <label class="slider-label font-semibold block mb-2">Tipo de corriente:</label>
+            <select id="dec-corriente" class="w-full border border-gray-300 rounded-lg p-2 text-sm" onchange="updateDecoder()">
+              <option value="cc">Solo corriente continua (—)</option>
+              <option value="ca">Solo corriente alterna (~)</option>
+              <option value="ccca" selected>CC y CA (— ~)</option>
+            </select>
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Clase de exactitud: <span id="dec-clase-val" class="text-blue-700 font-bold">1,5</span></label>
+            <input type="range" id="dec-clase" min="0" max="5" step="1" value="3" class="w-full" oninput="updateDecoder()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold block mb-2">Posición de uso:</label>
+            <select id="dec-posicion" class="w-full border border-gray-300 rounded-lg p-2 text-sm" onchange="updateDecoder()">
+              <option value="vert" selected>Vertical (⊥)</option>
+              <option value="horiz">Horizontal (⊤)</option>
+              <option value="60">Inclinado 60°</option>
+            </select>
+          </div>
+          <div>
+            <label class="slider-label font-semibold block mb-2">Tensión de ensayo:</label>
+            <select id="dec-tension" class="w-full border border-gray-300 rounded-lg p-2 text-sm" onchange="updateDecoder()">
+              <option value="500">500 V (☆)</option>
+              <option value="2000" selected>2 kV (2 en estrella)</option>
+              <option value="0">Sin ensayo dieléctrico (0 en estrella)</option>
+            </select>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+          <h4 class="font-semibold text-gray-700 mb-3 text-sm text-center">Rotulación del instrumento</h4>
+          <div id="decoder-display" class="flex gap-4 items-center justify-center flex-wrap mb-4" style="min-height:80px;font-size:2.5rem;"></div>
+          <div class="h-px bg-gray-200 mb-3"></div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Significado:</h4>
+          <div id="decoder-meaning" class="space-y-1 text-sm text-gray-700"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card overflow-hidden">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧠 Quiz: Identificá el Símbolo</h2>
+      <p class="text-sm opacity-80 mt-1">Ponete a prueba: ¿cuántos símbolos podés reconocer?</p>
+    </div>
+    <div class="p-4">
+      <div class="text-center mb-4">
+        <div id="quiz-score" class="text-sm font-semibold text-gray-600 mb-2">Puntuación: <span id="quiz-pts">0</span> / <span id="quiz-total">0</span></div>
+        <div id="quiz-symbol-display" class="text-6xl mb-4 p-4 bg-gray-50 rounded-xl inline-block border-2 border-gray-200" style="min-width:120px;min-height:120px;display:flex;align-items:center;justify-content:center;"></div>
+      </div>
+      <div id="quiz-options" class="grid grid-cols-2 gap-3 mb-4"></div>
+      <div id="quiz-feedback" class="hidden info-box text-center font-semibold"></div>
+      <div class="flex gap-3 justify-center mt-4">
+        <button onclick="nextQuizQuestion()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg py-2 px-6 transition">➡️ Siguiente pregunta</button>
+        <button onclick="resetQuiz()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg py-2 px-6 transition">🔄 Reiniciar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 4: TIPOS DE ESCALA =================== -->
+<div id="tab-escalas" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📈 Tipos de Escala — Explorador Visual</h2>
+      <p class="text-sm opacity-80 mt-1">Observá cómo varía la posición de la aguja según el tipo de escala para el mismo valor medido.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>¿Qué tipo de escala tiene tu instrumento?</strong> Depende del principio físico: los instrumentos magnetoeléctricos tienen escala lineal; los de hierro móvil, cuadrática; los ohmímetros, logarítmica. Las escalas ampliadas son una corrección de las cuadráticas/logarítmicas.
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Valor de la magnitud (%): <span id="scale-val" class="text-blue-700 font-bold">60</span>%</label>
+            <input type="range" id="scale-slider" min="0" max="100" value="60" class="w-full" oninput="updateScaleSim()">
+          </div>
+          <div class="space-y-3">
+            <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
+              <div class="font-bold text-blue-800 text-sm mb-1">🔵 Escala Lineal (Uniforme)</div>
+              <div class="text-xs text-gray-700 mb-2">y = x. División igualmente espaciada. Sensibilidad constante. Propia de instrumentos magnetoeléctricos.</div>
+              <div id="scale-linear-bar" class="relative bg-gradient-to-r from-blue-100 to-blue-300 rounded border border-blue-300" style="height:20px;">
+                <div id="needle-linear" class="needle bg-blue-600" style="height:32px;top:-6px;"></div>
+              </div>
+              <div class="text-xs text-right text-blue-700 mt-1">Posición aguja: <span id="pos-linear">60</span>%</div>
+            </div>
+            <div class="bg-orange-50 rounded-xl p-3 border border-orange-200">
+              <div class="font-bold text-orange-800 text-sm mb-1">🟠 Escala Cuadrática</div>
+              <div class="text-xs text-gray-700 mb-2">y = x². Marcas juntas cerca del cero, separadas al final. Propia de instrumentos de hierro móvil (CA).</div>
+              <div id="scale-quad-bar" class="relative bg-gradient-to-r from-orange-100 to-orange-300 rounded border border-orange-300" style="height:20px;">
+                <div id="needle-quad" class="needle bg-orange-600" style="height:32px;top:-6px;"></div>
+              </div>
+              <div class="text-xs text-right text-orange-700 mt-1">Posición aguja: <span id="pos-quad">36</span>%</div>
+            </div>
+            <div class="bg-green-50 rounded-xl p-3 border border-green-200">
+              <div class="font-bold text-green-800 text-sm mb-1">🟢 Escala Logarítmica</div>
+              <div class="text-xs text-gray-700 mb-2">y = log(x). Comportamiento opuesto a la cuadrática: marcas separadas al inicio, juntas al final. Típica de ohmímetros.</div>
+              <div id="scale-log-bar" class="relative bg-gradient-to-r from-green-100 to-green-300 rounded border border-green-300" style="height:20px;">
+                <div id="needle-log" class="needle bg-green-600" style="height:32px;top:-6px;"></div>
+              </div>
+              <div class="text-xs text-right text-green-700 mt-1">Posición aguja: <span id="pos-log">78</span>%</div>
+            </div>
+            <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+              <div class="font-bold text-purple-800 text-sm mb-1">🟣 Escala Ampliada (Expandida)</div>
+              <div class="text-xs text-gray-700 mb-2">Escala cuadrática o logarítmica con expansión en la zona de menor separación. Reduce la zona muerta.</div>
+              <div id="scale-amp-bar" class="relative bg-gradient-to-r from-purple-100 to-purple-300 rounded border border-purple-300" style="height:20px;">
+                <div id="needle-amp" class="needle bg-purple-600" style="height:32px;top:-6px;"></div>
+              </div>
+              <div class="text-xs text-right text-purple-700 mt-1">Posición aguja: <span id="pos-amp">48</span>%</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Función escala: posición aguja vs. magnitud medida</h4>
+          <div class="chart-wrap">
+            <canvas id="scaleChart"></canvas>
+          </div>
+          <div class="mt-3 text-xs text-gray-500 text-center">La línea vertical roja indica el valor actual del slider</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scale classification -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="card p-4">
+      <h3 class="font-bold text-gray-800 mb-3">📌 Clasificación de escalas por posición del cero</h3>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+          <span class="text-xl">⬅️</span>
+          <div><strong>Cero a la izquierda</strong> — La más común en instrumentos estándar</div>
+        </div>
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+          <span class="text-xl">➡️</span>
+          <div><strong>Cero a la derecha</strong> — Usada en instrumentos con lectura invertida</div>
+        </div>
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+          <span class="text-xl">↔️</span>
+          <div><strong>Cero al centro</strong> — Permite medir valores positivos y negativos (galvanómetros)</div>
+        </div>
+        <div class="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+          <span class="text-xl">🚫</span>
+          <div><strong>Cero suprimido</strong> — La escala no comienza en cero (cuando los valores bajos son zona muerta)</div>
+        </div>
+      </div>
+    </div>
+    <div class="card p-4">
+      <h3 class="font-bold text-gray-800 mb-3">🔭 Error de paralaje</h3>
+      <p class="text-sm text-gray-700 mb-3">Ocurre cuando el observador no mira la aguja perpendicularmente a la escala. La aguja parece desplazada respecto a la marca real.</p>
+      <div class="bg-yellow-50 border border-yellow-300 rounded-xl p-3 text-sm">
+        <strong>Solución del fabricante:</strong> espejo detrás de la escala. Si se puede ver el reflejo de la aguja, el ángulo de visión no es perpendicular → leer nuevamente.
+      </div>
+      <div class="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm">
+        <strong>Acuidad visiva:</strong> el ojo humano puede discriminar a 30 cm una separación mínima de <strong>0,1 mm</strong> entre marcas de la escala.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 5: ERRORES POR SECTOR =================== -->
+<div id="tab-errores" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚠️ Errores Según el Tipo y Sector de Escala</h2>
+      <p class="text-sm opacity-80 mt-1">El error no es igual en toda la escala. Aprendé a elegir el rango óptimo para minimizar el error de lectura.</p>
+    </div>
+    <div class="p-4">
+      <div class="info-box mb-4">
+        <strong>Regla de oro:</strong> Usar el instrumento con un rango tal que la indicación se ubique en la <strong>mitad de la escala o más</strong> (50%–100%), donde los errores son considerablemente menores.
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+        <!-- Error simulator -->
+        <div class="space-y-4">
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <h4 class="font-semibold text-gray-700 mb-3 text-sm">🧮 Calculadora de error por sector</h4>
+            <div>
+              <label class="slider-label font-semibold">Posición de lectura en la escala: <span id="sector-val" class="text-blue-700 font-bold">65</span>%</label>
+              <input type="range" id="sector-slider" min="1" max="100" value="65" class="w-full" oninput="updateErrorSector()">
+            </div>
+            <div class="mt-3 space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-blue-500 flex-shrink-0"></div>
+                <span class="text-xs font-semibold">Escala uniforme:</span>
+                <span id="err-uniforme" class="text-xs font-bold text-blue-700 ml-auto"></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-orange-500 flex-shrink-0"></div>
+                <span class="text-xs font-semibold">Escala cuadrática:</span>
+                <span id="err-cuadratica" class="text-xs font-bold text-orange-700 ml-auto"></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-purple-500 flex-shrink-0"></div>
+                <span class="text-xs font-semibold">Escala ampliada:</span>
+                <span id="err-ampliada" class="text-xs font-bold text-purple-700 ml-auto"></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-green-500 flex-shrink-0"></div>
+                <span class="text-xs font-semibold">Escala logarítmica:</span>
+                <span id="err-logaritmica" class="text-xs font-bold text-green-700 ml-auto"></span>
+              </div>
+            </div>
+            <div id="sector-advice" class="mt-3 text-sm font-semibold text-center p-2 rounded-lg"></div>
+          </div>
+
+          <!-- Sector legend -->
+          <div class="space-y-2">
+            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-xl text-sm">
+              <strong class="text-red-700">1er tercio (0–33%):</strong> Errores muy altos en todos los tipos. Las indicaciones en este tramo deben descartarse o evitarse.
+            </div>
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-xl text-sm">
+              <strong class="text-yellow-700">2do tercio (33–67%):</strong> La escala lineal aventaja a la cuadrática y ampliada. Error moderado pero aceptable con el instrumento correcto.
+            </div>
+            <div class="bg-green-50 border-l-4 border-green-500 p-3 rounded-r-xl text-sm">
+              <strong class="text-green-700">3er tercio (67–100%):</strong> El menor error corresponde a la escala cuadrática o ampliada. Zona ideal para las mediciones.
+            </div>
+          </div>
+        </div>
+
+        <!-- Error comparison chart -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Porcentaje de error vs. posición en la escala</h4>
+          <div class="chart-wrap">
+            <canvas id="errorSectorChart"></canvas>
+          </div>
+          <div id="sector-marker-info" class="text-xs text-center text-gray-500 mt-1"></div>
+        </div>
+      </div>
+
+      <!-- Summary table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-center border-collapse rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-blue-800 text-white">
+              <th class="p-3 text-left">Tipo de Escala</th>
+              <th class="p-3">1er Tercio<br><span class="text-xs font-normal opacity-80">(0–33%)</span></th>
+              <th class="p-3">2do Tercio<br><span class="text-xs font-normal opacity-80">(33–67%)</span></th>
+              <th class="p-3">3er Tercio<br><span class="text-xs font-normal opacity-80">(67–100%)</span></th>
+              <th class="p-3">Instrumentos típicos</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-blue-50">
+              <td class="p-3 text-left font-semibold text-blue-800">🔵 Lineal (uniforme)</td>
+              <td class="p-3 text-red-600 font-bold">Alto</td>
+              <td class="p-3 text-yellow-600 font-bold">Moderado ✓</td>
+              <td class="p-3 text-green-600 font-bold">Bajo ✓✓</td>
+              <td class="p-3 text-xs text-gray-600">Magnetoeléctrico, galvanómetro</td>
+            </tr>
+            <tr class="bg-orange-50">
+              <td class="p-3 text-left font-semibold text-orange-800">🟠 Cuadrática</td>
+              <td class="p-3 text-red-600 font-bold">Muy alto</td>
+              <td class="p-3 text-red-500 font-bold">Alto</td>
+              <td class="p-3 text-green-600 font-bold">Muy bajo ✓✓✓</td>
+              <td class="p-3 text-xs text-gray-600">Hierro móvil, electrodinámico</td>
+            </tr>
+            <tr class="bg-purple-50">
+              <td class="p-3 text-left font-semibold text-purple-800">🟣 Ampliada</td>
+              <td class="p-3 text-red-600 font-bold">Alto</td>
+              <td class="p-3 text-yellow-600 font-bold">Moderado</td>
+              <td class="p-3 text-green-600 font-bold">Muy bajo ✓✓✓</td>
+              <td class="p-3 text-xs text-gray-600">Hierro móvil modificado</td>
+            </tr>
+            <tr class="bg-green-50">
+              <td class="p-3 text-left font-semibold text-green-800">🟢 Logarítmica</td>
+              <td class="p-3 text-yellow-600 font-bold">Moderado</td>
+              <td class="p-3 text-green-600 font-bold">Bajo ✓✓</td>
+              <td class="p-3 text-green-700 font-bold">Muy bajo ✓✓✓</td>
+              <td class="p-3 text-xs text-gray-600">Ohmímetro, medidor de dB</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 2 · 2026</div>
+    <div class="mt-1 text-xs">Herramienta educativa interactiva basada en la guía de estudios oficial de la cátedra.</div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// TAB SWITCHING
+// =============================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  var tabs = ['tab-clase','tab-sens','tab-ident','tab-escalas','tab-errores'];
+  var idx = tabs.indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  // lazy init
+  if (id === 'tab-sens') { initSensTab(); }
+  if (id === 'tab-ident') { initIdentTab(); }
+  if (id === 'tab-escalas') { initScaleTab(); }
+  if (id === 'tab-errores') { initErrorSectorTab(); }
+}
+
+// =============================================
+// TAB 1: CLASE Y ERROR
+// =============================================
+var claseValue = 1;
+var claseChartInst = null;
+var claseClases = [0.25, 0.5, 1, 1.5, 2, 2.5, 3, 5];
+
+function setClase(c) {
+  claseValue = c;
+  document.querySelectorAll('.clase-btn').forEach(function(b) {
+    b.classList.remove('active-clase');
+  });
+  updateClaseSim();
+}
+
+function updateClaseSim() {
+  var A = parseInt(document.getElementById('fde-slider').value);
+  var X = parseInt(document.getElementById('lectura-slider').value);
+  if (X > A) { X = A; document.getElementById('lectura-slider').value = A; }
+
+  document.getElementById('fde-val').textContent = A;
+  document.getElementById('lectura-val').textContent = X;
+  document.getElementById('fde-label-esc').textContent = A;
+
+  var pct = X / A;
+  document.getElementById('needle-pos').style.left = (pct * 100) + '%';
+
+  var C = claseValue;
+  var claseClasses = [0.5, 1, 1.5, 2.5];
+  if (!claseClasses.includes(C)) C = 1;
+
+  var deltaX = (A * C) / 100;
+  var errRel = (deltaX / X * 100).toFixed(1);
+  var pctEscala = (X / A * 100).toFixed(0);
+
+  var sector = pct < 0.33 ? 'red' : pct < 0.67 ? 'yellow' : 'green';
+  var sectorMsg = pct < 0.33
+    ? '⚠️ Zona baja — errores altos. Se recomienda cambiar a una escala menor.'
+    : pct < 0.67
+    ? '⚡ Zona media — error aceptable pero no óptimo.'
+    : '✅ Zona óptima — errores mínimos para este instrumento.';
+
+  var html = [
+    '<div class="formula-box">CLASE = ' + C + ' | A = ' + A + ' unidades</div>',
+    '<div class="bg-blue-50 rounded-xl p-3 border border-blue-200 space-y-1">',
+    '<div class="text-sm"><strong>Error absoluto máximo:</strong></div>',
+    '<div class="formula-box text-lg text-center">ΔX = (A × C) / 100 = (' + A + ' × ' + C + ') / 100 = <strong>' + deltaX.toFixed(2) + '</strong> unidades</div>',
+    '<div class="text-sm mt-2"><strong>Lectura:</strong> ' + X + ' ± ' + deltaX.toFixed(2) + ' unidades</div>',
+    '<div class="text-sm"><strong>Valor verdadero:</strong> entre ' + (X - deltaX).toFixed(1) + ' y ' + (X + deltaX).toFixed(1) + '</div>',
+    '<div class="text-sm"><strong>Error relativo en esta lectura:</strong> <span class="font-bold text-red-700">' + errRel + '%</span></div>',
+    '<div class="text-sm"><strong>Posición en escala:</strong> ' + pctEscala + '%</div>',
+    '</div>',
+    '<div class="p-3 rounded-xl text-sm font-semibold border-2 ' + (sector==='red'?'bg-red-50 border-red-400 text-red-700':sector==='yellow'?'bg-yellow-50 border-yellow-400 text-yellow-700':'bg-green-50 border-green-400 text-green-700') + '">' + sectorMsg + '</div>'
+  ].join('');
+  document.getElementById('clase-results').innerHTML = html;
+
+  // Bar chart: error vs lectura positions
+  var positions = [10, 25, 50, 75, 100];
+  var errors = positions.map(function(p) {
+    return parseFloat(((deltaX / (A * p / 100)) * 100).toFixed(2));
+  });
+
+  if (claseChartInst) { claseChartInst.destroy(); }
+  var ctx = document.getElementById('claseChart').getContext('2d');
+  claseChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: positions.map(function(p) { return p + '% escala'; }),
+      datasets: [{
+        label: 'Error relativo (%)',
+        data: errors,
+        backgroundColor: positions.map(function(p) {
+          return p < 33 ? '#fca5a5' : p < 67 ? '#fde68a' : '#86efac';
+        }),
+        borderColor: positions.map(function(p) {
+          return p < 33 ? '#dc2626' : p < 67 ? '#ca8a04' : '#16a34a';
+        }),
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Error relativo según posición de lectura (Clase ' + C + ', A=' + A + ')' }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Error relativo (%)' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// =============================================
+// TAB 2: SENSIBILIDAD Y RESOLUCIÓN
+// =============================================
+var sensInited = false;
+var resCompChartInst = null;
+var meterAnimFrame = null;
+
+function initSensTab() {
+  if (sensInited) return;
+  sensInited = true;
+  updateSensSim();
+  updateMeter();
+  updateResSim();
+  initResCompChart();
+}
+
+function updateSensSim() {
+  var dm = parseInt(document.getElementById('dm-slider').value);
+  var di = parseInt(document.getElementById('di-slider').value);
+  document.getElementById('dm-val').textContent = dm;
+  document.getElementById('di-val').textContent = di;
+  var S = (di / dm).toFixed(3);
+  document.getElementById('sens-result').innerHTML =
+    'S = Δi / ΔM = ' + di + ' mm / ' + dm + ' mA = <strong>' + S + ' mm/mA</strong>';
+}
+
+function updateMeter() {
+  var m = parseInt(document.getElementById('m-slider').value);
+  document.getElementById('m-val').textContent = m;
+  drawMeter(m / 100);
+}
+
+function drawMeter(fraction) {
+  var canvas = document.getElementById('meterCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, w, h);
+
+  var cx = w / 2, cy = h - 20;
+  var R = Math.min(w, h) * 0.75;
+  var startAngle = Math.PI;
+  var endAngle = 0;
+  var angle = startAngle + fraction * Math.PI;
+
+  // Scale arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, startAngle, endAngle);
+  ctx.strokeStyle = '#cbd5e0';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Colored arc (red to green)
+  var grad = ctx.createConicGradient(startAngle, cx, cy);
+  grad.addColorStop(0, '#ef4444');
+  grad.addColorStop(0.5, '#f59e0b');
+  grad.addColorStop(1, '#22c55e');
+  ctx.beginPath();
+  ctx.arc(cx, cy, R - 2, startAngle, angle);
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 6;
+  ctx.stroke();
+
+  // Tick marks
+  for (var i = 0; i <= 10; i++) {
+    var a = Math.PI + (i / 10) * Math.PI;
+    var isMajor = i % 2 === 0;
+    var r1 = R - (isMajor ? 18 : 10);
+    var r2 = R;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+    ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = isMajor ? 2 : 1;
+    ctx.stroke();
+    if (isMajor) {
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 10px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.fillText(i * 10, cx + Math.cos(a) * (r1 - 14), cy + Math.sin(a) * (r1 - 14) + 4);
+    }
+  }
+
+  // Needle
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle - Math.PI / 2);
+  ctx.beginPath();
+  ctx.moveTo(0, 10);
+  ctx.lineTo(-3, 0);
+  ctx.lineTo(0, -R + 15);
+  ctx.lineTo(3, 0);
+  ctx.closePath();
+  ctx.fillStyle = '#e74c3c';
+  ctx.fill();
+  ctx.restore();
+
+  // Center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 7, 0, 2 * Math.PI);
+  ctx.fillStyle = '#1e3a5f';
+  ctx.fill();
+
+  // Value label
+  ctx.fillStyle = '#1e3a5f';
+  ctx.font = 'bold 14px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText(Math.round(fraction * 100) + ' %', cx, cy - 30);
+}
+
+function updateResSim() {
+  var A = parseInt(document.getElementById('res-a-slider').value);
+  var abs = parseFloat(document.getElementById('res-abs-slider').value);
+  var divs = parseInt(document.getElementById('res-div-slider').value);
+  document.getElementById('res-a-val').textContent = A;
+  document.getElementById('res-abs-val').textContent = abs.toFixed(1);
+  document.getElementById('res-div-val').textContent = divs;
+  var pct = (abs / A * 100).toFixed(3);
+  var divSize = (A / divs).toFixed(3);
+  document.getElementById('res-result').innerHTML =
+    'Resolución relativa: ' + pct + '%<br>' +
+    'Tamaño de cada división: ' + divSize + ' V<br>' +
+    'Lecturas distinguibles: ~' + Math.round(A / abs);
+}
+
+function initResCompChart() {
+  var instruments = ['Galvanómetro\nde lab.', 'Voltímetro\nclase 1', 'Amperímetro\nclase 1.5', 'Multímetro\nportátil', 'Ohmímetro\nservicio'];
+  var resolutions = [0.02, 0.1, 0.2, 0.5, 1.0];
+  var fondos = [10, 100, 50, 200, 500];
+  var relRes = resolutions.map(function(r, i) { return (r / fondos[i] * 100).toFixed(3); });
+
+  if (resCompChartInst) { resCompChartInst.destroy(); }
+  var ctx = document.getElementById('resCompChart').getContext('2d');
+  resCompChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: instruments,
+      datasets: [{
+        label: 'Resolución relativa (%)',
+        data: relRes,
+        backgroundColor: ['#2563eb','#16a34a','#d97706','#7c3aed','#dc2626'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, title: { display: true, text: 'Resolución relativa de distintos instrumentos típicos' } },
+      scales: { y: { title: { display: true, text: 'Resolución (% del fondo de escala)' }, beginAtZero: true } }
+    }
+  });
+}
+
+// =============================================
+// TAB 3: CÓDIGO DE IDENTIFICACIÓN
+// =============================================
+var identInited = false;
+var quizQuestions = [];
+var quizIdx = 0;
+var quizPts = 0;
+var quizTotal = 0;
+var quizAnswered = false;
+
+var symbolsData = {
+  sistema: [
+    { icon: '⊡', label: 'Magnetoeléctrico', desc: 'Bobina móvil e imán permanente. Solo CC. Alta precisión, escala lineal. El instrumento más común para laboratorio.', note: 'Símbolo: rectángulo con bobina en el centro' },
+    { icon: '⊡⊡', label: 'Magnetoeléctrico diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: doble rectángulo' },
+    { icon: '⊗', label: 'Cocientímetro magneto.', desc: 'Dos bobinas cruzadas e imán permanente. Usado en ohmímetros de relación.', note: 'Símbolo: rectángulo con X interior' },
+    { icon: '⋀⋀', label: 'Imán móvil, bobina fija', desc: 'El elemento móvil es un imán permanente dentro de una bobina fija. Mide CA y CC.', note: 'Símbolo: dos triángulos enfrentados' },
+    { icon: '≡', label: 'Hierro móvil (ferromagnético)', desc: 'Bobina fija y núcleo de hierro móvil. Usado en CA. Escala cuadrática.', note: 'Símbolo: hierro dentro de bobina' },
+    { icon: '⊞', label: 'Hierro móvil + imán fijo', desc: 'Hierro móvil con bobina e imán fijos. Variante del ferromagnético.', note: 'Símbolo: rectángulo con cruz' },
+    { icon: '≡≡', label: 'Cocientímetro ferromagnético', desc: 'Dos sistemas de hierro móvil para medir cocientes de magnitudes.', note: 'Símbolo: doble sistema' },
+    { icon: '⊕', label: 'Electrodinámico sin hierro', desc: 'Bobina fija y bobina móvil sin hierro. Alta precisión en CA y CC.', note: 'Símbolo: cruz en rectángulo' },
+    { icon: '⊕̈', label: 'Ferrodinámico (con hierro)', desc: 'Electrodinámico con núcleo de hierro. Más sensible pero menos exacto.', note: 'Símbolo: cruz con puntos' },
+    { icon: '⦾', label: 'Inductivo (inducción)', desc: 'Basado en efectos de inducción electromagnética. Usado en contadores de energía.', note: 'Símbolo: punto en círculo' },
+    { icon: '⩚', label: 'Térmico de dilatación', desc: 'Basado en los efectos caloríficos de la corriente. Mide valores eficaces.', note: 'Símbolo: dos puntos con flecha' },
+    { icon: '⏚', label: 'Electrostático', desc: 'Basado en la fuerza entre placas cargadas. Mide tensiones sin consumir corriente.', note: 'Símbolo: condensador' }
+  ],
+  corriente: [
+    { icon: '⎯⎯', label: 'Corriente continua (CC)', desc: 'El instrumento solo puede usarse para medir corriente continua (CC / DC).', note: 'Símbolo: línea continua horizontal' },
+    { icon: '∿', label: 'Corriente alterna (CA)', desc: 'El instrumento solo puede usarse para medir corriente alterna (CA / AC).', note: 'Símbolo: onda sinusoidal' },
+    { icon: '⎯∿', label: 'CC y CA', desc: 'El instrumento puede utilizarse para medir tanto corriente continua como alterna.', note: 'Símbolo: línea + onda' },
+    { icon: '≋', label: 'Monofásico 2I+1V', desc: 'Instrumento monofásico con dos circuitos de intensidad y un circuito de tensión.', note: 'Símbolo: onda doble' },
+    { icon: '≋≋', label: 'Trifásico 1I+1V', desc: 'Instrumento trifásico con un circuito de intensidad y uno de tensión.', note: 'Símbolo: triple onda simple' },
+    { icon: '≋≋≋', label: 'Trifásico 2I+1V', desc: 'Instrumento trifásico con dos circuitos de intensidad y un circuito de tensión.', note: 'Símbolo: triple onda doble' },
+  ],
+  posicion: [
+    { icon: '⊥', label: 'Posición vertical', desc: 'El instrumento debe usarse con el cuadrante en posición vertical. La más común en tableros.', note: 'Símbolo: línea perpendicular al piso' },
+    { icon: '⊥±1°', label: 'Vertical ±1°', desc: 'Posición vertical con tolerancia de inclinación de ±1°. Instrumento muy sensible a la posición.', note: 'Símbolo: perpendicular con ángulo indicado' },
+    { icon: '⊤', label: 'Posición horizontal', desc: 'El instrumento debe usarse con el cuadrante en posición horizontal (acostado).', note: 'Símbolo: línea paralela al piso' },
+    { icon: '⊤±15°', label: 'Horizontal ±15°', desc: 'Posición horizontal con tolerancia de ±15°.', note: 'Símbolo: horizontal con ángulo' },
+    { icon: '/60°', label: 'Inclinado 60°', desc: 'El instrumento debe usarse con el cuadrante inclinado 60° respecto a la horizontal.', note: 'Símbolo: línea inclinada con ángulo' },
+  ],
+  aislacion: [
+    { icon: '☆', label: 'Tensión de ensayo 500 V', desc: 'La aislación del instrumento fue ensayada a 500 V. Tensión de trabajo limitada.', note: 'Símbolo: estrella vacía' },
+    { icon: '②', label: 'Tensión de ensayo > 500 V (ej. 2 kV)', desc: 'La aislación fue ensayada a una tensión superior a 500 V. El número indica los kilovolts del ensayo.', note: 'Símbolo: número dentro de estrella' },
+    { icon: '⓪', label: 'Sin ensayo dieléctrico', desc: 'El instrumento no está previsto para ensayo dieléctrico. Cuidado con las tensiones de trabajo.', note: 'Símbolo: cero dentro de estrella' },
+  ],
+  especial: [
+    { icon: '⚠', label: 'Instrucciones especiales', desc: 'Llama la atención sobre la existencia de instrucciones especiales, esquemas o notas de uso.', note: 'Símbolo: triángulo de advertencia' },
+    { icon: '○', label: 'Apantallado magnético', desc: 'El instrumento posee apantallamiento magnético. Este símbolo rodea al del sistema de medida.', note: 'Símbolo: círculo sólido rodeando al símbolo' },
+    { icon: '◌', label: 'Apantallado electrostático', desc: 'El instrumento posee apantallamiento electrostático.', note: 'Símbolo: círculo punteado' },
+    { icon: '↺', label: 'Regulación de cero', desc: 'El instrumento posee dispositivo de regulación (ajuste) del cero.', note: 'Símbolo: flecha circular' },
+    { icon: '↺⚡', label: 'Ajuste cero (peligroso con tensión)', desc: 'Regulación de cero peligrosa de accionar con tensión aplicada. Ajustar solo sin señal.', note: 'Símbolo: flecha circular con rayo' },
+  ]
+};
+
+var claseLabels = [0.25, 0.5, 1, 1.5, 2, 2.5, 3, 5];
+
+function initIdentTab() {
+  if (identInited) return;
+  identInited = true;
+  Object.keys(symbolsData).forEach(function(cat) {
+    var grid = document.getElementById('sym-grid-' + cat);
+    if (!grid) return;
+    grid.innerHTML = symbolsData[cat].map(function(sym, idx) {
+      return '<div class="sym-card card p-3 border-2 border-transparent flex flex-col items-center text-center" onclick="showSymDetail(\'' + cat + '\',' + idx + ')">' +
+        '<div style="font-size:2rem;min-height:50px;display:flex;align-items:center;justify-content:center;" class="mb-2">' + sym.icon + '</div>' +
+        '<div class="text-xs font-semibold text-gray-800">' + sym.label + '</div>' +
+        '</div>';
+    }).join('');
+  });
+  buildQuiz();
+  nextQuizQuestion();
+  updateDecoder();
+}
+
+function showSymCategory(cat) {
+  document.querySelectorAll('.sym-cat-content').forEach(function(el) { el.classList.add('hidden'); });
+  document.querySelectorAll('.sym-cat-btn').forEach(function(el) {
+    el.classList.remove('bg-blue-700','text-white');
+    el.classList.add('bg-gray-200','text-gray-700');
+  });
+  document.getElementById('sym-' + cat).classList.remove('hidden');
+  var btn = document.getElementById('sym-btn-' + cat);
+  btn.classList.add('bg-blue-700','text-white');
+  btn.classList.remove('bg-gray-200','text-gray-700');
+  document.getElementById('sym-detail').classList.add('hidden');
+}
+
+function showSymDetail(cat, idx) {
+  var sym = symbolsData[cat][idx];
+  document.getElementById('sym-detail-icon').textContent = sym.icon;
+  document.getElementById('sym-detail-name').textContent = sym.label;
+  document.getElementById('sym-detail-desc').textContent = sym.desc;
+  document.getElementById('sym-detail-note').textContent = sym.note;
+  document.getElementById('sym-detail').classList.remove('hidden');
+}
+
+// Decoder
+var claseDecoderLabels = [0.25, 0.5, 1, 1.5, 2, 2.5];
+function updateDecoder() {
+  var sistema = document.getElementById('dec-sistema').value;
+  var corriente = document.getElementById('dec-corriente').value;
+  var claseIdx = parseInt(document.getElementById('dec-clase').value);
+  var posicion = document.getElementById('dec-posicion').value;
+  var tension = document.getElementById('dec-tension').value;
+
+  var claseVal = claseDecoderLabels[claseIdx] || 1.5;
+  document.getElementById('dec-clase-val').textContent = claseVal;
+
+  var sistMap = { magneto: { icon: '⊡', name: 'Magnetoeléctrico (bobina móvil + imán permanente)' }, ferro: { icon: '≡', name: 'Ferromagnético (hierro móvil + bobina fija)' }, electro: { icon: '⊕', name: 'Electrodinámico (sin hierro)' }, induccion: { icon: '⦾', name: 'Inductivo' }, electrostat: { icon: '⏚', name: 'Electrostático' } };
+  var corMap = { cc: { icon: '⎯⎯', name: 'Corriente continua (CC)' }, ca: { icon: '∿', name: 'Corriente alterna (CA)' }, ccca: { icon: '⎯∿', name: 'Corriente continua y alterna (CC/CA)' } };
+  var posMap = { vert: { icon: '⊥', name: 'Posición vertical' }, horiz: { icon: '⊤', name: 'Posición horizontal' }, '60': { icon: '/60°', name: 'Posición inclinada 60°' } };
+  var tenMap = { '500': { icon: '☆', name: 'Tensión de ensayo: 500 V' }, '2000': { icon: '②', name: 'Tensión de ensayo: 2 kV' }, '0': { icon: '⓪', name: 'Sin ensayo dieléctrico' } };
+
+  var s = sistMap[sistema], c = corMap[corriente], p = posMap[posicion], t = tenMap[tension];
+
+  var displayHTML = [s.icon, c.icon, '<span style="font-size:1.2rem;font-weight:900;font-family:monospace;background:#eef2ff;padding:4px 12px;border-radius:8px;color:#1e40af;">' + claseVal + '</span>', p.icon, t.icon]
+    .map(function(ic) { return '<span style="font-size:2rem;padding:4px 8px;background:white;border-radius:8px;border:1px solid #e2e8f0;">' + ic + '</span>'; })
+    .join('<span style="font-size:1.5rem;color:#94a3b8;">·</span>');
+
+  document.getElementById('decoder-display').innerHTML = displayHTML;
+  document.getElementById('decoder-meaning').innerHTML = [
+    '<div>① <strong>' + s.icon + '</strong> → ' + s.name + '</div>',
+    '<div>② <strong>' + c.icon + '</strong> → ' + c.name + '</div>',
+    '<div>③ <strong>' + claseVal + '</strong> → Clase de exactitud ' + claseVal + ' (error máx. ' + claseVal + '% del fondo de escala)</div>',
+    '<div>④ <strong>' + p.icon + '</strong> → ' + p.name + '</div>',
+    '<div>⑤ <strong>' + t.icon + '</strong> → ' + t.name + '</div>',
+  ].join('');
+}
+
+// Quiz
+function buildQuiz() {
+  quizQuestions = [];
+  Object.keys(symbolsData).forEach(function(cat) {
+    symbolsData[cat].forEach(function(sym) {
+      quizQuestions.push({ icon: sym.icon, correct: sym.label, category: cat, desc: sym.desc });
+    });
+  });
+  // Shuffle
+  for (var i = quizQuestions.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = quizQuestions[i]; quizQuestions[i] = quizQuestions[j]; quizQuestions[j] = tmp;
+  }
+  quizIdx = 0; quizPts = 0; quizTotal = 0; quizAnswered = false;
+}
+
+function nextQuizQuestion() {
+  if (quizIdx >= quizQuestions.length) {
+    buildQuiz();
+  }
+  quizAnswered = false;
+  document.getElementById('quiz-feedback').classList.add('hidden');
+  var q = quizQuestions[quizIdx];
+  document.getElementById('quiz-symbol-display').textContent = q.icon;
+  document.getElementById('quiz-pts').textContent = quizPts;
+  document.getElementById('quiz-total').textContent = quizTotal;
+
+  // Build wrong options
+  var allLabels = [];
+  Object.keys(symbolsData).forEach(function(cat) {
+    symbolsData[cat].forEach(function(s) { allLabels.push(s.label); });
+  });
+  var wrongs = allLabels.filter(function(l) { return l !== q.correct; });
+  for (var i = wrongs.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = wrongs[i]; wrongs[i] = wrongs[j]; wrongs[j] = tmp;
+  }
+  var options = [q.correct, wrongs[0], wrongs[1], wrongs[2]];
+  for (var i = options.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = options[i]; options[i] = options[j]; options[j] = tmp;
+  }
+
+  var html = options.map(function(opt) {
+    return '<button class="quiz-btn w-full p-3 text-sm font-semibold rounded-xl border-2 border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-400 text-left" onclick="checkQuiz(\'' + opt.replace(/'/g, "\\'") + '\')">' + opt + '</button>';
+  }).join('');
+  document.getElementById('quiz-options').innerHTML = html;
+  quizIdx++;
+}
+
+function checkQuiz(answer) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  quizTotal++;
+  var q = quizQuestions[quizIdx - 1];
+  var correct = answer === q.correct;
+  if (correct) quizPts++;
+  document.getElementById('quiz-pts').textContent = quizPts;
+  document.getElementById('quiz-total').textContent = quizTotal;
+
+  document.querySelectorAll('.quiz-btn').forEach(function(btn) {
+    if (btn.textContent === q.correct) btn.classList.add('correct');
+    else if (btn.textContent === answer && !correct) btn.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('quiz-feedback');
+  fb.classList.remove('hidden');
+  fb.className = 'info-box text-center font-semibold ' + (correct ? 'bg-green-50 border-green-400 text-green-800' : 'bg-red-50 border-red-400 text-red-800');
+  fb.textContent = correct ? '✅ ¡Correcto! ' + q.desc : '❌ Era: ' + q.correct + '. ' + q.desc;
+}
+
+function resetQuiz() {
+  buildQuiz();
+  nextQuizQuestion();
+}
+
+// =============================================
+// TAB 4: TIPOS DE ESCALA
+// =============================================
+var scaleInited = false;
+var scaleChartInst = null;
+
+function initScaleTab() {
+  if (scaleInited) return;
+  scaleInited = true;
+  initScaleChart();
+  updateScaleSim();
+}
+
+function initScaleChart() {
+  var xs = [];
+  for (var i = 0; i <= 100; i++) xs.push(i);
+  var linear = xs.map(function(x) { return x; });
+  var quad = xs.map(function(x) { return x * x / 100; });
+  var log10 = xs.map(function(x) { return x === 0 ? 0 : Math.log10(x + 1) / Math.log10(101) * 100; });
+  var amp = xs.map(function(x) { 
+    // Escala ampliada: cuadrática con expansión en zona baja
+    var q = x * x / 100;
+    return Math.min(100, q * 1.3 - (q > 30 ? (q - 30) * 0.3 : 0));
+  });
+
+  if (scaleChartInst) { scaleChartInst.destroy(); }
+  var ctx = document.getElementById('scaleChart').getContext('2d');
+  scaleChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xs,
+      datasets: [
+        { label: 'Lineal', data: linear, borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0 },
+        { label: 'Cuadrática', data: quad, borderColor: '#ea580c', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Logarítmica', data: log10, borderColor: '#16a34a', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Ampliada', data: amp, borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0, tension: 0.3, borderDash: [5,3] }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Magnitud medida (%)' }, ticks: { maxTicksLimit: 11 } },
+        y: { title: { display: true, text: 'Posición de la aguja (%)' }, beginAtZero: true, max: 100 }
+      }
+    }
+  });
+}
+
+function updateScaleSim() {
+  var val = parseInt(document.getElementById('scale-slider').value);
+  document.getElementById('scale-val').textContent = val;
+
+  var lin = val;
+  var quad = Math.min(100, val * val / 100);
+  var log10 = val === 0 ? 0 : Math.log10(val + 1) / Math.log10(101) * 100;
+  var amp = Math.min(100, quad * 1.3 - (quad > 30 ? (quad - 30) * 0.3 : 0));
+
+  function setNeedle(id, pct) {
+    document.getElementById(id).style.left = Math.max(0, Math.min(100, pct)) + '%';
+  }
+  setNeedle('needle-linear', lin);
+  setNeedle('needle-quad', quad);
+  setNeedle('needle-log', log10);
+  setNeedle('needle-amp', amp);
+
+  document.getElementById('pos-linear').textContent = lin.toFixed(1);
+  document.getElementById('pos-quad').textContent = quad.toFixed(1);
+  document.getElementById('pos-log').textContent = log10.toFixed(1);
+  document.getElementById('pos-amp').textContent = amp.toFixed(1);
+
+  // Update chart vertical marker if possible
+  if (scaleChartInst) {
+    scaleChartInst.options.plugins.annotation = {
+      annotations: { line1: { type: 'line', xMin: val, xMax: val, borderColor: '#e74c3c', borderWidth: 2 } }
+    };
+  }
+}
+
+// =============================================
+// TAB 5: ERRORES POR SECTOR
+// =============================================
+var errSectorInited = false;
+var errSectorChartInst = null;
+
+function initErrorSectorTab() {
+  if (errSectorInited) return;
+  errSectorInited = true;
+  initErrSectorChart();
+  updateErrorSector();
+}
+
+function errUniforme(x) { return x < 2 ? 999 : 100 / x; }
+function errCuadratica(x) { return x < 3 ? 999 : 100 / (x * x / 100); }
+function errAmpliada(x) { 
+  var q = x * x / 100;
+  var amp = Math.min(100, q * 1.3 - (q > 30 ? (q - 30) * 0.3 : 0));
+  return amp < 1 ? 999 : 100 / amp;
+}
+function errLogaritmica(x) { 
+  var log10 = x <= 0 ? 0 : Math.log10(x + 1) / Math.log10(101) * 100;
+  return log10 < 1 ? 999 : 100 / log10;
+}
+
+function initErrSectorChart() {
+  var xs = [];
+  for (var i = 1; i <= 100; i++) xs.push(i);
+
+  var cap = function(v) { return Math.min(v, 1.5); };
+
+  if (errSectorChartInst) { errSectorChartInst.destroy(); }
+  var ctx = document.getElementById('errorSectorChart').getContext('2d');
+  errSectorChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: xs,
+      datasets: [
+        { label: 'Uniforme', data: xs.map(function(x) { return cap(errUniforme(x)); }), borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Cuadrática', data: xs.map(function(x) { return cap(errCuadratica(x)); }), borderColor: '#ea580c', borderWidth: 2, pointRadius: 0, tension: 0.3 },
+        { label: 'Ampliada', data: xs.map(function(x) { return cap(errAmpliada(x)); }), borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0, tension: 0.3, borderDash: [5,3] },
+        { label: 'Logarítmica', data: xs.map(function(x) { return cap(errLogaritmica(x)); }), borderColor: '#16a34a', borderWidth: 2, pointRadius: 0, tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Posición en la escala (%)' }, ticks: { maxTicksLimit: 11 } },
+        y: { title: { display: true, text: 'Error relativo normalizado' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function updateErrorSector() {
+  var x = parseInt(document.getElementById('sector-slider').value);
+  document.getElementById('sector-val').textContent = x;
+
+  var eu = errUniforme(x), ec = errCuadratica(x), ea = errAmpliada(x), el = errLogaritmica(x);
+  var fmt = function(v) { return v >= 99 ? 'Muy alto ⚠️' : (v > 0.5 ? v.toFixed(2) + ' (mod.)' : v.toFixed(3) + ' (bajo ✓)'); };
+
+  document.getElementById('err-uniforme').textContent = fmt(eu);
+  document.getElementById('err-cuadratica').textContent = fmt(ec);
+  document.getElementById('err-ampliada').textContent = fmt(ea);
+  document.getElementById('err-logaritmica').textContent = fmt(el);
+
+  var advice = x < 33
+    ? { text: '⚠️ Zona baja — ¡Evitar! Cambiar a una escala de menor fondo de escala.', cls: 'bg-red-100 text-red-800 border border-red-300' }
+    : x < 67
+    ? { text: '⚡ Zona media — Aceptable. La escala lineal es mejor aquí.', cls: 'bg-yellow-100 text-yellow-800 border border-yellow-300' }
+    : { text: '✅ Zona óptima — Errores mínimos. Ideal para todas las escalas.', cls: 'bg-green-100 text-green-800 border border-green-300' };
+
+  var adv = document.getElementById('sector-advice');
+  adv.textContent = advice.text;
+  adv.className = 'mt-3 text-sm font-semibold text-center p-2 rounded-lg ' + advice.cls;
+  document.getElementById('sector-marker-info').textContent = 'Posición actual: ' + x + '% de la escala';
+}
+
+// =============================================
+// INITIALIZATION
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    updateClaseSim();
+    console.log('MEI Unidad 2 - Simulación cargada correctamente.');
+  } catch(e) { console.error('Init error:', e); }
+});
+</script>
+</body>
+</html>

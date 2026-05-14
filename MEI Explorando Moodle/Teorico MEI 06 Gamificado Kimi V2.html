@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 6 · Potencia y Energía</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+  :root { --primary:#1e3a5f; --secondary:#2980b9; --accent:#e74c3c; --success:#27ae60; --warning:#f39c12; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4f8; }
+  .tab-btn { transition:all 0.3s ease; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:not(.active) { background:#e2e8f0; color:#4a5568; }
+  .tab-btn:not(.active):hover { background:#cbd5e0; }
+  .card { background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size:0.85rem; color:#4a5568; }
+  input[type=range] { accent-color:#2980b9; }
+  .chart-wrap { position:relative; min-height:260px; max-height:380px; width:100%; margin-bottom:1rem; }
+  .formula-box { background:#eef2ff; border-left:4px solid #2980b9; border-radius:6px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.95rem; color:#1e3a5f; }
+  .badge { display:inline-block; font-size:0.75rem; font-weight:700; border-radius:9999px; padding:2px 10px; }
+  .badge-blue { background:#dbeafe; color:#1e40af; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-green { background:#dcfce7; color:#166534; }
+  .badge-purple { background:#f3e8ff; color:#6b21a8; }
+  .info-box { background:#fffbeb; border:1px solid #fbbf24; border-radius:8px; padding:0.75rem; font-size:0.88rem; }
+  .section-header { background:linear-gradient(135deg,#1e3a5f 0%,#2980b9 100%); color:white; border-radius:10px 10px 0 0; padding:1rem 1.25rem; }
+  .nav-header { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  @font-face { font-family:'DSEG7'; src:url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2'); }
+  .lcd-display { font-family:'DSEG7','Courier New',monospace; background-color:#a3c2a3; color:#2d372d; border:inset 4px #7a8c7a; box-shadow:inset 0 0 10px rgba(0,0,0,0.2); }
+  .lcd-bg { opacity:0.1; position:absolute; left:0; top:0; z-index:1; letter-spacing:inherit; }
+  .lcd-fg { position:relative; z-index:2; letter-spacing:inherit; }
+  @keyframes spin { 100% { transform:rotate(360deg); } }
+  .spin-disk { animation:spin linear infinite; transform-origin:center; }
+  .progress-bar { height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#2980b9,#27ae60); transition:width 0.5s ease; }
+  .achievement { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#fef3c7,#fde68a); border:2px solid #f59e0b; border-radius:20px; padding:4px 12px; font-size:0.8rem; font-weight:700; color:#92400e; transition:transform 0.2s; }
+  .achievement:hover { transform:scale(1.05); }
+  .achievement.locked { opacity:0.5; filter:grayscale(1); }
+  .quiz-option { border:2px solid #e2e8f0; border-radius:8px; padding:12px 16px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
+  .quiz-option:hover { border-color:#2980b9; background:#f0f7ff; }
+  .quiz-option.correct { border-color:#27ae60; background:#dcfce7; }
+  .quiz-option.wrong { border-color:#e74c3c; background:#fee2e2; }
+  .quiz-option.disabled { pointer-events:none; opacity:0.7; }
+  @media (max-width:640px) { .chart-wrap { min-height:200px; } }
+</style>
+</head>
+<body>
+
+<!-- Gamification Progress Header -->
+<div class="max-w-6xl mx-auto px-3 mt-2 mb-2">
+  <div class="card p-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🏆</span>
+      <div>
+        <div class="text-xs font-bold text-gray-500 uppercase">Progreso de la Unidad</div>
+        <div class="text-sm font-bold text-gray-800" id="progress-text">0% completado</div>
+      </div>
+    </div>
+    <div class="flex gap-2 flex-wrap" id="achievements-container">
+      <span class="achievement locked" id="ach-aron">🔺 Aron Master</span>
+      <span class="achievement locked" id="ach-fp">⚡ FP Expert</span>
+      <span class="achievement locked" id="ach-energia">💡 Energía Pro</span>
+      <span class="achievement locked" id="ach-quiz">🎯 Quiz Champion</span>
+    </div>
+    <div class="w-full sm:w-48">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 6 · Potencia y Energía · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-indigo-500">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">⚡</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">El costo de la energía: Midiendo Potencia</h2>
+        <p class="text-gray-600 text-sm">Desde la atracción de dos cables paralelos (efecto electrodinámico) hasta la rotación del disco en el medidor de tu casa (corrientes de Foucault). Esta unidad explora cómo interactúan la tensión y la corriente para generar cuplas mecánicas que nos permiten medir los Watts y los Joules.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-electrodinamico')">🧲 Efecto Electrodinámico</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-vatimetro')">📈 Vatímetro (CA)</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-aron')">🔺 Método de Aron</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-induccion')">💿 Medidores de Energía</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-desafios')">🎮 Desafíos</button>
+  </div>
+</div>
+
+<!-- TAB 1: EFECTO ELECTRODINÁMICO -->
+<div id="tab-electrodinamico" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header bg-gradient-to-r from-indigo-800 to-indigo-600">
+      <h2 class="text-lg font-bold">🧲 Efecto Electrodinámico — Principio Base</h2>
+      <p class="text-sm opacity-80 mt-1">El funcionamiento se basa en la acción mecánica entre conductores o bobinas por los que circulan corrientes.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div>
+          <div class="info-box mb-4">
+            <strong>Fuerza de Ampère entre conductores paralelos:</strong> Dos conductores paralelos se <strong>atraen</strong> si sus corrientes tienen igual sentido, y se <strong>repelen</strong> si tienen sentido opuesto. Este es el motor detrás de la bobina móvil dentro de la bobina fija.
+          </div>
+          <div class="mb-4">
+            <label class="font-semibold block mb-2 text-sm text-gray-700">Corriente Bobina Fija ($I_f$):</label>
+            <div class="flex items-center gap-4">
+              <button onclick="setWireCurrent(1,1)" id="btn-wf-up" class="px-4 py-2 bg-blue-100 text-blue-800 rounded font-bold hover:bg-blue-200 border-2 border-transparent">⬆️ Positiva</button>
+              <button onclick="setWireCurrent(1,-1)" id="btn-wf-down" class="px-4 py-2 bg-red-100 text-red-800 rounded font-bold hover:bg-red-200 border-2 border-transparent">⬇️ Negativa</button>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="font-semibold block mb-2 text-sm text-gray-700">Corriente Bobina Móvil ($I_m$):</label>
+            <div class="flex items-center gap-4">
+              <button onclick="setWireCurrent(2,1)" id="btn-wm-up" class="px-4 py-2 bg-blue-100 text-blue-800 rounded font-bold hover:bg-blue-200 border-2 border-transparent">⬆️ Positiva</button>
+              <button onclick="setWireCurrent(2,-1)" id="btn-wm-down" class="px-4 py-2 bg-red-100 text-red-800 rounded font-bold hover:bg-red-200 border-2 border-transparent">⬇️ Negativa</button>
+            </div>
+          </div>
+          <div class="formula-box text-sm text-center">
+            Momento Motor:<br>
+            <span class="text-lg font-bold">$M_m = i_f \cdot i_m \cdot \frac{\partial M}{\partial \alpha}$</span><br>
+            <span class="text-xs text-gray-600 mt-2 block">(El producto de las corrientes determina el momento motor).</span>
+          </div>
+          <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="text-xs font-bold text-blue-800 mb-1">💡 Aplicación práctica:</div>
+            <p class="text-xs text-blue-700">En un vatímetro electrodinámico, la bobina fija (gruesa, poca resistencia) mide corriente, mientras la bobina móvil (fina, alta resistencia) mide tensión. El par motor resultante es proporcional al producto instantáneo $v(t) \cdot i(t)$, cuyo promedio es la potencia activa.</p>
+          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center p-6 bg-white border-2 border-gray-200 rounded-xl">
+          <h3 class="text-md font-bold text-gray-700 mb-6 text-center" id="ed-status-title">Atracción (Igual Sentido)</h3>
+          <div class="relative w-64 h-64 flex justify-center items-center">
+            <div id="wire-1" class="absolute w-4 h-48 bg-gray-400 rounded-full transition-all duration-500 flex flex-col justify-center items-center" style="transform:translateX(-40px);">
+              <div id="arr-1" class="text-white text-xl">⬆</div>
+              <span class="absolute -bottom-6 text-xs font-bold text-gray-500">Fija</span>
+            </div>
+            <div id="wire-2" class="absolute w-4 h-48 bg-gray-400 rounded-full transition-all duration-500 flex flex-col justify-center items-center" style="transform:translateX(40px);">
+              <div id="arr-2" class="text-white text-xl">⬆</div>
+              <span class="absolute -bottom-6 text-xs font-bold text-gray-500">Móvil</span>
+            </div>
+            <div id="force-arrows" class="absolute w-full flex justify-between items-center px-12 transition-opacity duration-300 opacity-100">
+              <span class="text-2xl text-indigo-600 font-bold" id="fa-left">→</span>
+              <span class="text-2xl text-indigo-600 font-bold" id="fa-right">←</span>
+            </div>
+          </div>
+          <div class="mt-8 text-center">
+            <div class="inline-block px-4 py-2 rounded-full text-sm font-bold" id="force-badge" style="background:#dbeafe;color:#1e40af;">Fuerza de Atracción</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: VATÍMETRO CA -->
+<div id="tab-vatimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📈 El Vatímetro en Corriente Alterna</h2>
+      <p class="text-sm opacity-80 mt-1">Descubrí por qué la potencia real no es solo $V \times I$, sino que depende del ángulo de fase $\varphi$.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 space-y-4">
+          <div class="info-box">
+            La bobina fija (gruesa) mide <strong>Corriente</strong>. La bobina móvil (fina) mide <strong>Tensión</strong>. El instrumento multiplica instantáneamente ambas señales e indica el promedio (Potencia Activa).
+          </div>
+          <div>
+            <label class="slider-label font-semibold block">Tensión ($V_{ef}$): <span id="v-val" class="text-blue-700 font-bold">220</span> V</label>
+            <input type="range" id="v-slider" min="0" max="380" value="220" class="w-full" oninput="updateWattmeterSim()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold block">Corriente ($I_{ef}$): <span id="i-val" class="text-red-700 font-bold">10</span> A</label>
+            <input type="range" id="i-slider" min="0" max="25" value="10" class="w-full" oninput="updateWattmeterSim()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold block">Desfasaje ($\varphi$): <span id="phi-val" class="text-purple-700 font-bold">0</span>°</label>
+            <input type="range" id="phi-slider" min="-90" max="90" value="0" class="w-full" oninput="updateWattmeterSim()">
+            <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+              <span>-90° (Capacitivo)</span>
+              <span>0° (Resistivo)</span>
+              <span>+90° (Inductivo)</span>
+            </div>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <div class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Lectura del Vatímetro</div>
+            <div class="text-3xl font-bold text-gray-800 font-mono" id="p-val">2200 W</div>
+            <div class="text-xs text-gray-500 mt-1">$P = V \cdot I \cdot \cos(\varphi)$</div>
+            <div class="text-xs font-bold text-indigo-700 mt-2" id="pf-val">Factor de Potencia: 1.00</div>
+          </div>
+          <!-- Triángulo de Potencias - NOW INSIDE TAB -->
+          <div class="mt-4 bg-white border rounded-xl p-4">
+            <h3 class="font-bold text-gray-700 mb-3 text-sm">⚡ Triángulo de Potencias</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span><strong>Activa ($P$):</strong></span><span id="p-activa" class="font-mono font-bold text-green-700">0</span><span class="text-xs text-gray-500">W</span></div>
+              <div class="flex justify-between"><span><strong>Reactiva ($Q$):</strong></span><span id="q-reactiva" class="font-mono font-bold text-orange-700">0</span><span class="text-xs text-gray-500">VAR</span></div>
+              <div class="flex justify-between"><span><strong>Aparente ($S$):</strong></span><span id="s-aparente" class="font-mono font-bold text-blue-700">0</span><span class="text-xs text-gray-500">VA</span></div>
+            </div>
+            <div class="formula-box text-center mt-3 text-xs">$$S^2 = P^2 + Q^2$$</div>
+            <div class="mt-3 p-2 bg-purple-50 rounded text-xs text-purple-800">
+              <strong>Tipo de carga:</strong> <span id="load-type">Resistiva pura</span>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-2">
+          <div class="chart-wrap bg-white border rounded p-2" style="min-height:350px;">
+            <canvas id="wattChart"></canvas>
+            <div class="text-xs text-gray-500 mt-2 italic text-center">La corriente y la potencia instantánea fueron escaladas para facilitar la visualización simultánea.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: MÉTODO DE ARON -->
+<div id="tab-aron" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔺 Método de los Dos Vatímetros (Aron)</h2>
+      <p class="text-sm opacity-80 mt-1">Cálculo de la potencia en sistemas trifásicos trifilares sin importar si la carga está equilibrada (Teorema de Blondel).</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div class="space-y-4">
+          <p class="text-sm text-gray-700">Ajustá las características de una carga trifásica <strong>equilibrada</strong> para ver cómo responden los dos vatímetros conectados a las líneas.</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Tensión de Línea ($V_L$)</label>
+              <input type="number" id="aron-v" value="380" class="w-full p-2 border rounded font-mono" oninput="calcAron()">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Corriente de Línea ($I_L$)</label>
+              <input type="number" id="aron-i" value="15" class="w-full p-2 border rounded font-mono" oninput="calcAron()">
+            </div>
+          </div>
+          <div>
+            <label class="slider-label font-semibold block mb-2">Desfasaje de la Carga ($\varphi$): <span id="aron-phi-disp" class="text-blue-700 font-bold">30</span>°</label>
+            <input type="range" id="aron-phi" min="-90" max="90" value="30" class="w-full" oninput="calcAron()">
+          </div>
+          <div class="formula-box text-sm">
+            $$W_1 = V_L \cdot I_L \cdot \cos(30° - \varphi)$$<br>
+            $$W_2 = V_L \cdot I_L \cdot \cos(30° + \varphi)$$<br>
+            <strong>$$P_{Total} = W_1 + W_2 = \sqrt{3} \cdot V_L \cdot I_L \cdot \cos(\varphi)$$</strong>
+          </div>
+          <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+            <div class="text-xs font-bold text-indigo-800 mb-1">📐 Potencia Reactiva:</div>
+            <div class="text-sm text-indigo-700 font-mono">$Q = \sqrt{3}(W_1 - W_2)$ <span class="text-xs">(Secuencia directa, carga inductiva)</span></div>
+          </div>
+        </div>
+        <div class="bg-gray-100 p-6 rounded-xl border-2 border-gray-300 relative">
+          <div class="absolute top-4 right-4 opacity-10">
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="black" stroke-width="4">
+              <line x1="10" y1="20" x2="90" y2="20"/><line x1="10" y1="50" x2="90" y2="50"/><line x1="10" y1="80" x2="90" y2="80"/>
+              <circle cx="30" cy="20" r="10" fill="white"/><circle cx="60" cy="80" r="10" fill="white"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">Lecturas de Instrumentos</h3>
+          <div class="flex justify-between items-center mb-3 bg-white p-3 rounded shadow-sm">
+            <div class="text-sm font-bold text-gray-600">Vatímetro 1 ($W_1$)</div>
+            <div class="font-mono text-lg font-bold text-blue-700" id="w1-val">0 W</div>
+          </div>
+          <div class="flex justify-between items-center mb-4 bg-white p-3 rounded shadow-sm">
+            <div class="text-sm font-bold text-gray-600">Vatímetro 2 ($W_2$)</div>
+            <div class="font-mono text-lg font-bold text-orange-700" id="w2-val">0 W</div>
+          </div>
+          <div class="flex justify-between items-center bg-gray-800 text-white p-4 rounded-lg shadow">
+            <div class="text-sm font-bold uppercase tracking-wide">Potencia Activa Total</div>
+            <div class="font-mono text-2xl font-bold text-green-400" id="w-tot-val">0 W</div>
+          </div>
+          <div class="mt-3 bg-white p-3 rounded shadow-sm">
+            <div class="text-sm font-bold text-gray-600">Potencia Reactiva ($Q$)</div>
+            <div class="font-mono text-lg font-bold text-purple-700" id="q-aron-val">0 VAR</div>
+          </div>
+          <p id="aron-note" class="text-xs text-center mt-3 text-red-600 font-bold hidden">
+            ¡Atención! Cuando $|arphi| > 60°$, uno de los vatímetros invierte su lectura (debe invertirse una bobina).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fasores Trifásicos - NOW INSIDE TAB -->
+  <div class="card overflow-hidden">
+    <div class="p-5">
+      <h3 class="font-bold text-gray-700 mb-3 text-center">Diagrama Fasorial de Tensiones Trifásicas</h3>
+      <div class="flex justify-center">
+        <svg width="280" height="280" viewBox="0 0 280 280">
+          <circle cx="140" cy="140" r="30" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+          <circle cx="140" cy="140" r="60" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+          <circle cx="140" cy="140" r="90" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+          <line x1="20" y1="140" x2="260" y2="140" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="4"/>
+          <line x1="140" y1="20" x2="140" y2="260" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="4"/>
+          <line x1="140" y1="140" x2="230" y2="140" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowblue)"/>
+          <text x="235" y="135" font-size="12" fill="#2563eb" font-weight="bold">$V_R$ (0°)</text>
+          <line x1="140" y1="140" x2="95" y2="62" stroke="#dc2626" stroke-width="3" marker-end="url(#arrowred)"/>
+          <text x="70" y="55" font-size="12" fill="#dc2626" font-weight="bold">$V_S$ (-120°)</text>
+          <line x1="140" y1="140" x2="95" y2="218" stroke="#16a34a" stroke-width="3" marker-end="url(#arrowgreen)"/>
+          <text x="70" y="230" font-size="12" fill="#16a34a" font-weight="bold">$V_T$ (+120°)</text>
+          <line x1="140" y1="140" x2="185" y2="62" stroke="#7c3aed" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowpurple)"/>
+          <text x="190" y="55" font-size="10" fill="#7c3aed">$V_{RS}$</text>
+          <circle cx="140" cy="140" r="4" fill="black"/>
+          <text x="145" y="155" font-size="10" fill="#666">N</text>
+          <defs>
+            <marker id="arrowblue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker>
+            <marker id="arrowred" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/></marker>
+            <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/></marker>
+            <marker id="arrowpurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"/></marker>
+          </defs>
+        </svg>
+      </div>
+      <div class="text-center text-xs text-gray-500 mt-2">Sistema trifásico equilibrado con secuencia directa (RST). Tensiones de fase desfasadas 120°.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: MEDIDORES DE ENERGÍA -->
+<div id="tab-induccion" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">💿 Medidores de Energía (Inducción vs Electrónicos)</h2>
+      <p class="text-sm opacity-80 mt-1">La evolución desde el disco de Ferraris (analógico) al Microprocesador (digital).</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center">
+          <h3 class="font-bold text-gray-800 text-lg mb-2 text-center">Medidor de Inducción (Disco)</h3>
+          <p class="text-xs text-gray-600 text-center mb-4">Principio motor de <strong>Ferraris</strong> (1889): dos flujos magnéticos desfasados inducen corrientes de Foucault en el disco de aluminio, generando un par motor proporcional a la potencia. Un imán permanente proporciona par de frenado proporcional a la velocidad, logrando equilibrio dinámico.</p>
+          <div class="relative w-48 h-48 mb-4 bg-gray-200 rounded-full border-4 border-gray-400 shadow-inner flex items-center justify-center overflow-hidden">
+            <div class="absolute top-0 w-16 h-8 bg-red-700 rounded-b-lg z-10 border-b-2 border-gray-900 flex items-center justify-center">
+              <span class="text-[8px] text-white font-bold">Bobina Tensión</span>
+            </div>
+            <div class="absolute bottom-2 left-4 w-10 h-10 bg-blue-800 rounded-t-lg z-10 border-t-2 border-gray-900 flex items-center justify-center">
+              <span class="text-[7px] text-white font-bold text-center leading-tight">Bobina<br>Corriente</span>
+            </div>
+            <div class="absolute bottom-2 right-4 w-10 h-10 bg-blue-800 rounded-t-lg z-10 border-t-2 border-gray-900 flex items-center justify-center">
+              <span class="text-[7px] text-white font-bold text-center leading-tight">Bobina<br>Corriente</span>
+            </div>
+            <div class="absolute left-0 top-1/2 w-6 h-16 bg-gray-700 -translate-y-1/2 z-10 rounded-r-md border-r-2 border-gray-900">
+              <span class="text-[6px] text-white absolute -left-1 top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap">Imán Freno</span>
+            </div>
+            <div id="medidor-disco" class="w-40 h-40 rounded-full spin-disk relative shadow-xl" style="background:radial-gradient(circle,#e2e8f0 0%,#94a3b8 100%);">
+              <div class="absolute top-1/2 left-1/2 w-1 h-20 bg-black opacity-20 origin-bottom -translate-x-1/2 -translate-y-full"></div>
+              <div class="absolute top-0 left-1/2 w-3 h-5 bg-red-600 -translate-x-1/2"></div>
+            </div>
+            <div class="absolute w-4 h-4 bg-gray-800 rounded-full border-2 border-gray-300 z-20 shadow"></div>
+          </div>
+          <div class="w-full mb-4">
+            <div class="flex justify-between text-xs text-gray-500 mb-1">
+              <span>Parado</span>
+              <span id="rpm-display">0 RPM</span>
+              <span>Máx</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div id="speed-bar" class="h-full bg-gradient-to-r from-green-400 to-red-500 transition-all duration-300" style="width:20%"></div>
+            </div>
+          </div>
+          <div class="w-full">
+            <label class="slider-label font-semibold block text-center mb-2">Carga de la vivienda: <span id="carga-val" class="text-indigo-700 font-bold">2.0</span> kW</label>
+            <input type="range" id="carga-slider" min="0" max="10" step="0.5" value="2" class="w-full" oninput="updateMedidorSim()">
+          </div>
+          <div class="mt-3 text-xs text-gray-500 text-center">
+            <strong>Constante del medidor:</strong> $C = \frac{E}{N}$ [kWh/rev]<br>
+            Energía proporcional al número de revoluciones
+          </div>
+        </div>
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-white text-lg mb-2 text-center">Medidor Estático (Digital)</h3>
+            <p class="text-xs text-gray-400 text-center mb-4">Utiliza sensores de efecto Hall, conversores A/D, DSP y memoria EEPROM. Mide energía activa, reactiva, armónicos, calidad de energía, y permite telegestión.</p>
+          </div>
+          <div class="flex justify-center w-full mb-4">
+            <div class="bg-gray-300 p-2 rounded-lg border-2 border-gray-400 w-full max-w-xs relative shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+              <div class="absolute top-2 right-2 flex gap-1">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Conectado"></div>
+                <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+              </div>
+              <div class="lcd-display p-3 rounded h-20 flex flex-col justify-between mt-4 relative">
+                <div class="text-[10px] font-bold text-gray-700 flex justify-between">
+                  <span id="lcd-mode">TOT kWh</span>
+                  <span class="text-[8px]" id="lcd-phase">L1-L2-L3</span>
+                </div>
+                <div class="text-3xl font-bold text-right tracking-widest relative">
+                  <span class="lcd-bg absolute right-0">888888</span>
+                  <span class="lcd-fg" id="lcd-val">005432</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mt-3 px-2">
+                <div class="text-[8px] font-bold uppercase text-gray-500">Clase 1.0 · 50Hz</div>
+                <div class="flex gap-1">
+                  <button class="w-6 h-6 bg-blue-600 rounded shadow border border-blue-800 active:bg-blue-800 hover:bg-blue-500 transition" onclick="cycleLCD()" title="Cambiar pantalla"></button>
+                  <button class="w-6 h-6 bg-gray-600 rounded shadow border border-gray-800 active:bg-gray-800" title="Menú"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div class="bg-gray-700 rounded p-2 text-center">
+              <div class="text-[10px] text-gray-400">FP</div>
+              <div class="text-sm font-bold text-green-400" id="lcd-fp">0.95</div>
+            </div>
+            <div class="bg-gray-700 rounded p-2 text-center">
+              <div class="text-[10px] text-gray-400">Demanda</div>
+              <div class="text-sm font-bold text-yellow-400" id="lcd-demand">2.1 kW</div>
+            </div>
+          </div>
+          <div class="info-box bg-gray-700 border-gray-600 text-gray-300 text-xs">
+            <strong>Funciones adicionales:</strong> Detección de fraudes, registros horarios (tarifas), alarmas por sobrecarga, comunicación PLC/RF para lectura remota.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Comparison Table -->
+  <div class="card overflow-hidden">
+    <div class="p-5">
+      <h3 class="font-bold text-gray-700 mb-3">📊 Comparativa: Inducción vs Electrónico</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-2 text-left border">Característica</th>
+              <th class="p-2 text-center border">Inducción (Ferraris)</th>
+              <th class="p-2 text-center border">Electrónico (Estático)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="p-2 border font-medium">Principio de medición</td><td class="p-2 border text-center">Par electromagnético + freno magnético</td><td class="p-2 border text-center">Muestreo digital + procesamiento DSP</td></tr>
+            <tr class="bg-gray-50"><td class="p-2 border font-medium">Partes móviles</td><td class="p-2 border text-center text-red-600">Sí (disco, engranajes)</td><td class="p-2 border text-center text-green-600">No</td></tr>
+            <tr><td class="p-2 border font-medium">Desgaste mecánico</td><td class="p-2 border text-center text-red-600">Alto (fricción, cojinetes)</td><td class="p-2 border text-center text-green-600">Nulo</td></tr>
+            <tr class="bg-gray-50"><td class="p-2 border font-medium">Precisión típica</td><td class="p-2 border text-center">Clase 2.0</td><td class="p-2 border text-center">Clase 1.0 o 0.5S</td></tr>
+            <tr><td class="p-2 border font-medium">Mide reactiva</td><td class="p-2 border text-center text-red-600">No (requiere varímetro)</td><td class="p-2 border text-center text-green-600">Sí (integrado)</td></tr>
+            <tr class="bg-gray-50"><td class="p-2 border font-medium">Telegestión</td><td class="p-2 border text-center text-red-600">No</td><td class="p-2 border text-center text-green-600">Sí (PLC, RF, GPRS)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: DESAFÍOS -->
+<div id="tab-desafios" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎮 Desafíos Interactivos</h2>
+      <p class="text-sm opacity-80 mt-1">Aplicá los conceptos para resolver problemas reales y desbloquear logros.</p>
+    </div>
+    <div class="p-5 space-y-6">
+      <!-- Desafío 1: Factor de Potencia -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">⚡</span>
+          <div class="font-bold text-gray-700">Desafío 1: Ajuste de Factor de Potencia</div>
+          <span class="badge badge-blue" id="badge-ch1">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          En la pestaña <strong>Vatímetro (CA)</strong>, ajustá el desfasaje $arphi$ para obtener un factor de potencia igual a <strong>0.80</strong> (carga inductiva).
+        </div>
+        <button onclick="checkChallenge1()" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">Verificar Resultado</button>
+        <div id="challenge1-result" class="mt-3 text-sm font-bold"></div>
+      </div>
+      <!-- Desafío 2: Método de Aron -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🔺</span>
+          <div class="font-bold text-gray-700">Desafío 2: Condición Crítica de Aron</div>
+          <span class="badge badge-blue" id="badge-ch2">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          En la pestaña <strong>Método de Aron</strong>, encontrá el ángulo $arphi$ donde uno de los vatímetros marca <strong>cero</strong>. ¿Qué significa esto para el factor de potencia?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+          <button onclick="checkChallenge2('60')" class="quiz-option text-sm" id="ch2-opt1">$\varphi = 60°$ (FP = 0.5)</button>
+          <button onclick="checkChallenge2('45')" class="quiz-option text-sm" id="ch2-opt2">$\varphi = 45°$ (FP = 0.707)</button>
+          <button onclick="checkChallenge2('30')" class="quiz-option text-sm" id="ch2-opt3">$\varphi = 30°$ (FP = 0.866)</button>
+        </div>
+        <div id="challenge2-result" class="text-sm font-bold"></div>
+      </div>
+      <!-- Desafío 3: Tipo de Carga -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">💡</span>
+          <div class="font-bold text-gray-700">Desafío 3: Identificación de Carga</div>
+          <span class="badge badge-blue" id="badge-ch3">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Un motor trifásico consume $P = 10$ kW con $Q = 7.5$ kVAR. ¿Cuál es su factor de potencia?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3">
+          <button onclick="checkChallenge3('0.6')" class="quiz-option text-sm" id="ch3-opt1">0.60</button>
+          <button onclick="checkChallenge3('0.8')" class="quiz-option text-sm" id="ch3-opt2">0.80</button>
+          <button onclick="checkChallenge3('0.9')" class="quiz-option text-sm" id="ch3-opt3">0.90</button>
+          <button onclick="checkChallenge3('0.5')" class="quiz-option text-sm" id="ch3-opt4">0.50</button>
+        </div>
+        <div id="challenge3-result" class="text-sm font-bold"></div>
+      </div>
+      <!-- Desafío 4: Medidor de Energía -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">💿</span>
+          <div class="font-bold text-gray-700">Desafío 4: Velocidad del Disco</div>
+          <span class="badge badge-blue" id="badge-ch4">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Si la potencia consumida se duplica, ¿qué le sucede a la velocidad de rotación del disco en un medidor de inducción?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+          <button onclick="checkChallenge4('doble')" class="quiz-option text-sm" id="ch4-opt1">Se duplica (par motor $\propto P$)</button>
+          <button onclick="checkChallenge4('igual')" class="quiz-option text-sm" id="ch4-opt2">Permanece igual (regulación automática)</button>
+          <button onclick="checkChallenge4('mitad')" class="quiz-option text-sm" id="ch4-opt3">Se reduce a la mitad (eficiencia decreciente)</button>
+        </div>
+        <div id="challenge4-result" class="text-sm font-bold"></div>
+      </div>
+      <!-- Desafío 5: Quiz Final -->
+      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🏆</span>
+          <div class="font-bold text-indigo-800">Desafío Final: Quiz Express</div>
+          <span class="badge badge-purple" id="badge-ch5">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Respondé correctamente las 3 preguntas para desbloquear el logro <strong>Quiz Champion</strong>.
+        </div>
+        <div id="quiz-container" class="space-y-3">
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">1. ¿Qué mide un vatímetro electrodinámico en CA?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(1,'a')" class="quiz-option text-sm" id="q1-opt1">Potencia aparente ($V \cdot I$)</button>
+              <button onclick="quizAnswer(1,'b')" class="quiz-option text-sm" id="q1-opt2">Potencia activa ($V \cdot I \cdot \cos\varphi$)</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">2. ¿Cuántos vatímetros necesito para medir potencia en un sistema trifásico a 3 hilos desequilibrado?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button onclick="quizAnswer(2,'a')" class="quiz-option text-sm" id="q2-opt1">1 (con neutro artificial)</button>
+              <button onclick="quizAnswer(2,'b')" class="quiz-option text-sm" id="q2-opt2">2 (Método de Aron)</button>
+              <button onclick="quizAnswer(2,'c')" class="quiz-option text-sm" id="q2-opt3">3 (uno por fase)</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">3. En un medidor de inducción, ¿qué produce el par de frenado?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(3,'a')" class="quiz-option text-sm" id="q3-opt1">El imán permanente</button>
+              <button onclick="quizAnswer(3,'b')" class="quiz-option text-sm" id="q3-opt2">La bobina de tensión</button>
+            </div>
+          </div>
+        </div>
+        <div id="quiz-result" class="mt-3 text-sm font-bold"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 6. Año 2026</div>
+    <div class="mt-1 text-xs">Simulación interactiva basada en el marco teórico oficial.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let wattChartInst = null;
+let currentWire1 = 1;
+let currentWire2 = 1;
+let lcdState = 0;
+let energiaAcumulada = 5432;
+
+// Gamification state
+let challengesCompleted = { ch1:false, ch2:false, ch3:false, ch4:false, quiz:false };
+let quizAnswers = {};
+
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  var target = document.getElementById(id);
+  if (target) target.classList.add('active');
+
+  var tabNames = ['tab-electrodinamico','tab-vatimetro','tab-aron','tab-induccion','tab-desafios'];
+  var idx = tabNames.indexOf(id);
+  var btns = document.querySelectorAll('.tab-btn');
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+
+  if (id === 'tab-vatimetro') setTimeout(updateWattmeterSim, 50);
+}
+
+// =====================================================
+// PROGRESS TRACKING
+// =====================================================
+function updateProgress() {
+  const total = Object.keys(challengesCompleted).length;
+  const completed = Object.values(challengesCompleted).filter(v => v).length;
+  const percent = Math.round((completed / total) * 100);
+
+  document.getElementById('progress-bar').style.width = percent + '%';
+  document.getElementById('progress-text').textContent = percent + '% completado';
+
+  if (challengesCompleted.ch2) document.getElementById('ach-aron').classList.remove('locked');
+  if (challengesCompleted.ch1) document.getElementById('ach-fp').classList.remove('locked');
+  if (challengesCompleted.ch4) document.getElementById('ach-energia').classList.remove('locked');
+  if (challengesCompleted.quiz) document.getElementById('ach-quiz').classList.remove('locked');
+}
+
+// =====================================================
+// TAB 1: EFECTO ELECTRODINAMICO
+// =====================================================
+function setWireCurrent(wire, val) {
+  if (wire === 1) currentWire1 = val;
+  if (wire === 2) currentWire2 = val;
+
+  document.getElementById('btn-wf-up').className = currentWire1 === 1 ? 'px-4 py-2 bg-blue-600 text-white rounded font-bold' : 'px-4 py-2 bg-blue-100 text-blue-800 rounded font-bold hover:bg-blue-200 border-2 border-transparent';
+  document.getElementById('btn-wf-down').className = currentWire1 === -1 ? 'px-4 py-2 bg-red-600 text-white rounded font-bold' : 'px-4 py-2 bg-red-100 text-red-800 rounded font-bold hover:bg-red-200 border-2 border-transparent';
+  document.getElementById('btn-wm-up').className = currentWire2 === 1 ? 'px-4 py-2 bg-blue-600 text-white rounded font-bold' : 'px-4 py-2 bg-blue-100 text-blue-800 rounded font-bold hover:bg-blue-200 border-2 border-transparent';
+  document.getElementById('btn-wm-down').className = currentWire2 === -1 ? 'px-4 py-2 bg-red-600 text-white rounded font-bold' : 'px-4 py-2 bg-red-100 text-red-800 rounded font-bold hover:bg-red-200 border-2 border-transparent';
+
+  document.getElementById('arr-1').innerHTML = currentWire1 === 1 ? '⬆' : '⬇';
+  document.getElementById('arr-2').innerHTML = currentWire2 === 1 ? '⬆' : '⬇';
+
+  let isAttraction = (currentWire1 * currentWire2) > 0;
+  let w1 = document.getElementById('wire-1');
+  let w2 = document.getElementById('wire-2');
+  let fLeft = document.getElementById('fa-left');
+  let fRight = document.getElementById('fa-right');
+  let title = document.getElementById('ed-status-title');
+  let badge = document.getElementById('force-badge');
+
+  if (isAttraction) {
+    w1.style.transform = 'translateX(-20px)';
+    w2.style.transform = 'translateX(20px)';
+    fLeft.innerHTML = '→'; fRight.innerHTML = '←';
+    title.innerHTML = '🧲 Atracción (Igual Sentido)';
+    title.className = 'text-md font-bold text-blue-700 mb-6 text-center';
+    badge.textContent = 'Fuerza de Atracción';
+    badge.style.background = '#dbeafe'; badge.style.color = '#1e40af';
+  } else {
+    w1.style.transform = 'translateX(-60px)';
+    w2.style.transform = 'translateX(60px)';
+    fLeft.innerHTML = '←'; fRight.innerHTML = '→';
+    title.innerHTML = '🛑 Repulsión (Sentido Opuesto)';
+    title.className = 'text-md font-bold text-red-700 mb-6 text-center';
+    badge.textContent = 'Fuerza de Repulsión';
+    badge.style.background = '#fee2e2'; badge.style.color = '#991b1b';
+  }
+}
+
+// =====================================================
+// TAB 2: VATIMETRO CA
+// =====================================================
+function updateWattmeterSim() {
+  const v = parseFloat(document.getElementById('v-slider').value);
+  const i = parseFloat(document.getElementById('i-slider').value);
+  const phiDeg = parseFloat(document.getElementById('phi-slider').value);
+
+  document.getElementById('v-val').textContent = v;
+  document.getElementById('i-val').textContent = i;
+  document.getElementById('phi-val').textContent = phiDeg;
+
+  const phiRad = phiDeg * (Math.PI / 180);
+  const cosPhi = Math.cos(phiRad);
+  const power = v * i * cosPhi;
+  const apparent = v * i;
+  const reactive = apparent * Math.sin(phiRad);
+
+  document.getElementById('p-val').textContent = Math.round(power) + ' W';
+  document.getElementById('pf-val').textContent = 'Factor de Potencia (cos φ): ' + cosPhi.toFixed(2);
+  document.getElementById('p-activa').textContent = Math.round(power);
+  document.getElementById('q-reactiva').textContent = Math.round(Math.abs(reactive));
+  document.getElementById('s-aparente').textContent = Math.round(apparent);
+
+  let loadType = 'Resistiva pura (FP ≈ 1)';
+  if (Math.abs(phiDeg) < 2) loadType = 'Resistiva pura (FP ≈ 1)';
+  else if (phiDeg > 2) loadType = 'Inductiva (motor, transformador, reactor)';
+  else if (phiDeg < -2) loadType = 'Capacitiva (banco de capacitores)';
+  document.getElementById('load-type').textContent = loadType;
+
+  const canvas = document.getElementById('wattChart');
+  if (!canvas) return;
+
+  const labels = [], vData = [], iData = [], pData = [];
+  const vPeak = v * Math.SQRT2, iPeak = i * Math.SQRT2;
+
+  for(let n = 0; n <= 100; n++) {
+    let wt = (n / 100) * 4 * Math.PI;
+    let instV = vPeak * Math.sin(wt);
+    let instI = iPeak * Math.sin(wt - phiRad);
+    let instP = (instV * instI) / 10;
+    labels.push(n);
+    vData.push(instV);
+    iData.push(instI * 10);
+    pData.push(instP);
+  }
+
+  if (wattChartInst) {
+    wattChartInst.data.datasets[0].data = vData;
+    wattChartInst.data.datasets[1].data = iData;
+    wattChartInst.data.datasets[2].data = pData;
+    wattChartInst.update();
+  } else {
+    const ctx = canvas.getContext('2d');
+    wattChartInst = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Tensión v(t)', data: vData, borderColor: '#3b82f6', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+          { label: 'Corriente i(t) [Escalada]', data: iData, borderColor: '#ef4444', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, tension: 0.4 },
+          { label: 'Potencia p(t)', data: pData, borderColor: '#22c55e',
+            backgroundColor: function(ctx) { return ctx.raw >= 0 ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)'; },
+            fill: true, borderWidth: 3, pointRadius: 0, tension: 0.4 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: { tooltip: { enabled: false }, legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+        scales: { x: { display: false }, y: { title: { display: true, text: 'Amplitud' }, grid: { color: '#e2e8f0' } } }
+      }
+    });
+  }
+}
+
+// =====================================================
+// TAB 3: METODO DE ARON
+// =====================================================
+function calcAron() {
+  const vL = parseFloat(document.getElementById('aron-v').value) || 0;
+  const iL = parseFloat(document.getElementById('aron-i').value) || 0;
+  const phiDeg = parseFloat(document.getElementById('aron-phi').value) || 0;
+  document.getElementById('aron-phi-disp').textContent = phiDeg;
+
+  const phiRad = phiDeg * (Math.PI / 180);
+  const ang30Rad = 30 * (Math.PI / 180);
+
+  const w1 = vL * iL * Math.cos(ang30Rad - phiRad);
+  const w2 = vL * iL * Math.cos(ang30Rad + phiRad);
+  const pTot = w1 + w2;
+  const qTot = Math.sqrt(3) * (w1 - w2); // Reactive power formula
+
+  const w1El = document.getElementById('w1-val');
+  const w2El = document.getElementById('w2-val');
+
+  w1El.textContent = Math.round(w1) + ' W';
+  w2El.textContent = Math.round(w2) + ' W';
+  w1El.style.color = w1 < 0 ? '#dc2626' : '#1d4ed8';
+  w2El.style.color = w2 < 0 ? '#dc2626' : '#ea580c';
+  document.getElementById('w-tot-val').textContent = Math.round(pTot) + ' W';
+  document.getElementById('q-aron-val').textContent = Math.round(qTot) + ' VAR';
+
+  const note = document.getElementById('aron-note');
+  if (phiDeg > 60 || phiDeg < -60) note.classList.remove('hidden');
+  else note.classList.add('hidden');
+}
+
+// =====================================================
+// TAB 4: MEDIDOR DE INDUCCION Y DIGITAL
+// =====================================================
+function updateMedidorSim() {
+  const carga = parseFloat(document.getElementById('carga-slider').value);
+  document.getElementById('carga-val').textContent = carga.toFixed(1);
+
+  const disco = document.getElementById('medidor-disco');
+  const rpmDisplay = document.getElementById('rpm-display');
+  const speedBar = document.getElementById('speed-bar');
+
+  if (carga === 0) {
+    disco.style.animationPlayState = 'paused';
+    rpmDisplay.textContent = '0 RPM';
+    speedBar.style.width = '0%';
+  } else {
+    disco.style.animationPlayState = 'running';
+    const speed = 5 / carga;
+    disco.style.animationDuration = speed + 's';
+    const rpm = Math.round(carga * 30); // Approximate RPM calculation
+    rpmDisplay.textContent = rpm + ' RPM';
+    speedBar.style.width = (carga * 10) + '%';
+  }
+
+  // Update LCD demand display
+  document.getElementById('lcd-demand').textContent = carga.toFixed(1) + ' kW';
+}
+
+function cycleLCD() {
+  lcdState = (lcdState + 1) % 4;
+  const modeLabel = document.getElementById('lcd-mode');
+  const valLabel = document.getElementById('lcd-val');
+  const carga = parseFloat(document.getElementById('carga-slider').value) || 2.0;
+
+  switch(lcdState) {
+    case 0: modeLabel.textContent = "TOT kWh"; valLabel.textContent = "005432"; break;
+    case 1: modeLabel.textContent = "TOT kVArh"; valLabel.textContent = "000845"; break;
+    case 2: modeLabel.textContent = "L1 Volts"; valLabel.textContent = "000224"; break;
+    case 3: modeLabel.textContent = "L1 Amps"; 
+      let amps = (carga * 1000) / 220;
+      valLabel.textContent = amps.toFixed(1).padStart(6, '0');
+      break;
+  }
+}
+
+// =====================================================
+// TAB 5: DESAFIOS Y GAMIFICACION
+// =====================================================
+function checkChallenge1() {
+  const phiDeg = parseFloat(document.getElementById('phi-slider').value);
+  const pf = Math.cos(phiDeg * Math.PI / 180);
+  const result = document.getElementById('challenge1-result');
+  const badge = document.getElementById('badge-ch1');
+
+  if (Math.abs(pf - 0.8) < 0.03) {
+    result.innerHTML = '✅ ¡Correcto! cosφ = ' + pf.toFixed(2) + '. Excelente ajuste del factor de potencia.';
+    result.className = 'mt-3 text-sm font-bold text-green-600';
+    badge.textContent = 'Completado';
+    badge.className = 'badge badge-green';
+    challengesCompleted.ch1 = true;
+  } else {
+    result.innerHTML = '❌ Todavía no. cosφ actual = ' + pf.toFixed(2) + '. Intentá acercarte a 0.80 (φ ≈ ±36.9°).';
+    result.className = 'mt-3 text-sm font-bold text-red-600';
+  }
+  updateProgress();
+}
+
+function checkChallenge2(answer) {
+  const result = document.getElementById('challenge2-result');
+  const badge = document.getElementById('badge-ch2');
+
+  // Disable all options
+  document.querySelectorAll('[id^="ch2-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === '60') {
+    result.innerHTML = '✅ ¡Correcto! Cuando φ = 60°, W₂ = V_L·I_L·cos(90°) = 0. El factor de potencia es cos(60°) = 0.5.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch2-opt1').classList.add('correct');
+    badge.textContent = 'Completado';
+    badge.className = 'badge badge-green';
+    challengesCompleted.ch2 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Recordá que W₂ = V_L·I_L·cos(30°+φ). Para que W₂ = 0, se necesita cos(90°) = 0.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch2-opt' + (answer === '45' ? '2' : '3')).classList.add('wrong');
+    document.getElementById('ch2-opt1').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge3(answer) {
+  const result = document.getElementById('challenge3-result');
+  const badge = document.getElementById('badge-ch3');
+  const correctPF = 10 / Math.sqrt(10*10 + 7.5*7.5); // S = sqrt(P²+Q²), FP = P/S
+
+  document.querySelectorAll('[id^="ch3-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === '0.8') {
+    result.innerHTML = '✅ ¡Correcto! S = √(10² + 7.5²) = 12.5 kVA, FP = 10/12.5 = 0.80.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch3-opt2').classList.add('correct');
+    badge.textContent = 'Completado';
+    badge.className = 'badge badge-green';
+    challengesCompleted.ch3 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Recordá: S² = P² + Q², y FP = P/S.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch3-opt' + (answer === '0.6' ? '1' : answer === '0.9' ? '3' : '4')).classList.add('wrong');
+    document.getElementById('ch3-opt2').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge4(answer) {
+  const result = document.getElementById('challenge4-result');
+  const badge = document.getElementById('badge-ch4');
+
+  document.querySelectorAll('[id^="ch4-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'doble') {
+    result.innerHTML = '✅ ¡Correcto! En el medidor de inducción, el par motor es proporcional a la potencia activa. Al duplicar P, el par motor se duplica y el disco acelera hasta que el par de frenado (proporcional a velocidad) equilibra el nuevo par motor. El resultado: velocidad duplicada.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch4-opt1').classList.add('correct');
+    badge.textContent = 'Completado';
+    badge.className = 'badge badge-green';
+    challengesCompleted.ch4 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. El medidor de inducción no tiene regulación automática de velocidad. El par motor ∝ P, y en equilibrio: par motor = par de frenado (que ∝ velocidad). Por lo tanto, velocidad ∝ P.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch4-opt' + (answer === 'igual' ? '2' : '3')).classList.add('wrong');
+    document.getElementById('ch4-opt1').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function quizAnswer(qNum, answer) {
+  quizAnswers[qNum] = answer;
+
+  // Visual feedback for this question
+  const options = document.querySelectorAll('[id^="q' + qNum + '-opt"]');
+  options.forEach(opt => opt.classList.add('disabled'));
+
+  const correctAnswers = { 1: 'b', 2: 'b', 3: 'a' };
+
+  if (answer === correctAnswers[qNum]) {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : answer === 'b' ? '2' : '3')).classList.add('correct');
+  } else {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : answer === 'b' ? '2' : '3')).classList.add('wrong');
+    // Show correct answer
+    const correctOpt = correctAnswers[qNum] === 'a' ? '1' : correctAnswers[qNum] === 'b' ? '2' : '3';
+    document.getElementById('q' + qNum + '-opt' + correctOpt).classList.add('correct');
+  }
+
+  // Check if all answered
+  if (Object.keys(quizAnswers).length === 3) {
+    let correct = 0;
+    for (let q in correctAnswers) {
+      if (quizAnswers[q] === correctAnswers[q]) correct++;
+    }
+
+    const result = document.getElementById('quiz-result');
+    const badge = document.getElementById('badge-ch5');
+
+    if (correct === 3) {
+      result.innerHTML = '🏆 ¡Perfecto! 3/3 correctas. ¡Desbloqueaste Quiz Champion!';
+      result.className = 'mt-3 text-sm font-bold text-green-600';
+      badge.textContent = 'Completado';
+      badge.className = 'badge badge-green';
+      challengesCompleted.quiz = true;
+    } else {
+      result.innerHTML = 'Resultado: ' + correct + '/3 correctas. Revisá los conceptos e intentá de nuevo recargando la página.';
+      result.className = 'mt-3 text-sm font-bold text-orange-600';
+    }
+    updateProgress();
+  }
+}
+
+// =====================================================
+// ENERGY METER SIMULATION (Global interval)
+// =====================================================
+setInterval(() => {
+  const carga = parseFloat(document.getElementById('carga-slider').value) || 0;
+  energiaAcumulada += carga / 3600;
+  if (lcdState === 0) {
+    document.getElementById('lcd-val').textContent = Math.floor(energiaAcumulada).toString().padStart(6, '0');
+  }
+}, 1000);
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  setWireCurrent(1, 1);
+  setWireCurrent(2, 1);
+  updateWattmeterSim();
+  calcAron();
+  updateMedidorSim();
+  updateProgress();
+});
+</script>
+</body>
+</html>

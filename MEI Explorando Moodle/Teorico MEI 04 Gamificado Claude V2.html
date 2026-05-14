@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$',right:'$',display:false}]});"></script>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --light-bg: #f0f4f8;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  input[type=range] { accent-color: #2980b9; }
+  .chart-wrap { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-family: 'Courier New', monospace; font-size: 0.95rem; color: #1e3a5f; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  
+  /* Digital Display Font Simulation */
+  @font-face {
+    font-family: 'DSEG7';
+    src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2');
+  }
+  .lcd-display {
+    font-family: 'DSEG7', 'Courier New', monospace;
+    background-color: #a3c2a3; /* Typical LCD green/gray */
+    color: #2d372d;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.2);
+    border: inset 4px #7a8c7a;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  }
+  .lcd-bg { opacity: 0.1; position: absolute; left: 0; top: 0; z-index: 1; letter-spacing: inherit; }
+  .lcd-fg { position: relative; z-index: 2; letter-spacing: inherit; }
+
+  @media (max-width: 640px) {
+    .chart-wrap { min-height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 4 · Instrumentos Electrónicos · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-blue-500">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🔌</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">Del mundo analógico al universo digital</h2>
+        <p class="text-gray-600 text-sm">¿Qué sucede realmente dentro de un multímetro cuando mides una tensión? El mundo real es analógico y continuo, pero nuestros instrumentos digitales procesan "unos y ceros". Explora cómo los instrumentos pasivos evolucionaron a activos, cómo funciona la pantalla de tu tester y cómo se digitaliza una señal mediante los conversores A/D.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-comparacion')">⚖️ Analógico vs Digital</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-display')">🔢 Cuentas y Dígitos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ad')">🌊 Simulador A/D</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-conversores')">⚙️ Tipos de Conversores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-error')">📏 Calculadora de Exactitud</button>
+  </div>
+</div>
+
+<div id="tab-comparacion" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚖️ Clasificación y Comparación de Instrumentos</h2>
+      <p class="text-sm opacity-80 mt-1">Instrumentos Pasivos vs Activos, y las diferencias fundamentales entre tecnologías analógicas y digitales.</p>
+    </div>
+    <div class="p-5">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+          <h3 class="font-bold text-amber-800 text-lg mb-2">🧭 Instrumentos Analógicos</h3>
+          <p class="text-sm text-gray-700 mb-3">Utilizan y expresan información analógica (función matemática continua). Usan mecanismos electromecánicos (cuadro móvil).</p>
+          
+          <div class="space-y-2 mb-3">
+            <div class="text-xs font-bold text-gray-600 uppercase">Pasivos</div>
+            <div class="text-sm bg-white p-2 rounded shadow-sm">Toman la energía directamente de la señal a medir.</div>
+            <div class="text-xs font-bold text-gray-600 uppercase mt-2">Activos (EVM)</div>
+            <div class="text-sm bg-white p-2 rounded shadow-sm">Incluyen un amplificador. Aumentan niveles de señal (100 a 10000x) y elevan la impedancia de entrada (hasta 20MΩ).</div>
+          </div>
+
+          <h4 class="font-bold text-sm text-amber-900 border-b border-amber-300 pb-1 mb-2">Ventajas vs Desventajas</h4>
+          <ul class="text-sm space-y-1">
+            <li><span class="text-green-600 font-bold">✓</span> Bajo costo y sencillos.</li>
+            <li><span class="text-green-600 font-bold">✓</span> Visualizan variación o tendencia.</li>
+            <li><span class="text-red-500 font-bold">✗</span> Poca resolución y menor exactitud.</li>
+            <li><span class="text-red-500 font-bold">✗</span> Error de paralaje.</li>
+          </ul>
+        </div>
+
+        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+          <h3 class="font-bold text-blue-800 text-lg mb-2">📟 Instrumentos Digitales</h3>
+          <p class="text-sm text-gray-700 mb-3">Toman información analógica, la convierten a digital, la procesan mediante álgebra de Boole y presentan un resultado numérico.</p>
+
+          <div class="space-y-2 mb-3">
+            <div class="text-xs font-bold text-gray-600 uppercase">Arquitectura Interna</div>
+            <div class="flex gap-1 flex-wrap text-xs font-mono">
+              <span class="bg-white p-1 rounded border">Selector</span> ➔ 
+              <span class="bg-white p-1 rounded border">Unid. Entrada</span> ➔ 
+              <span class="bg-blue-100 p-1 rounded border border-blue-300 font-bold">Conversor A/D</span> ➔ 
+              <span class="bg-white p-1 rounded border">Contador</span> ➔ 
+              <span class="bg-white p-1 rounded border">Display</span>
+            </div>
+          </div>
+
+          <h4 class="font-bold text-sm text-blue-900 border-b border-blue-300 pb-1 mb-2">Ventajas vs Desventajas</h4>
+          <ul class="text-sm space-y-1">
+            <li><span class="text-green-600 font-bold">✓</span> Alta resolución, exactitud y rapidez de lectura.</li>
+            <li><span class="text-green-600 font-bold">✓</span> Sin error de paralaje, alta impedancia de entrada.</li>
+            <li><span class="text-green-600 font-bold">✓</span> Conmutación automática y programables.</li>
+            <li><span class="text-red-500 font-bold">✗</span> No permiten apreciar tendencia (fluctuaciones).</li>
+            <li><span class="text-red-500 font-bold">✗</span> Complejos y costo elevado. Requieren fuente.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="tab-display" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔢 Multímetro Interactivo: Entendiendo el "Medio Dígito"</h2>
+      <p class="text-sm opacity-80 mt-1">¿Qué significa que un display tiene 3 ½ dígitos o es de "2000 cuentas"?</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        
+        <div>
+          <div class="info-box mb-4">
+            <strong>¿Qué es el medio dígito (1/2)?</strong> Es el dígito ubicado más a la izquierda. Solo puede mostrar un "1" (encendido) o estar apagado ("0"). Esto duplica el fondo de escala. Un tester de 3 ½ dígitos tiene un alcance máximo de <strong>1999</strong> (2000 cuentas en total).
+          </div>
+          
+          <div class="mb-6">
+            <label class="slider-label font-semibold block mb-2">Tensión de entrada real: <span id="voltaje-val" class="text-blue-700 font-bold text-lg">000</span> mV</label>
+            <input type="range" id="voltaje-slider" min="0" max="2500" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updateDisplaySim()">
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+              <span>0 mV</span>
+              <span class="font-bold text-red-600">⚠ OL: Sobrecarga &gt;1999 mV</span>
+              <span>2500 mV</span>
+            </div>
+          </div>
+
+          <div class="formula-box text-sm">
+            Si se supera el rango (2000mV), los dígitos completos se apagan y el medio dígito marca "1" advirtiendo <strong>sobrecarga (Overrange)</strong>.
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center bg-gray-900 p-8 rounded-xl border-4 border-gray-700 shadow-inner">
+          <div class="text-gray-300 text-xs mb-2 font-bold tracking-widest w-full text-left">RANGO: 2000mV DC</div>
+          
+          <div class="lcd-display p-4 rounded text-5xl sm:text-7xl font-bold relative flex items-end justify-end w-full max-w-[300px] h-[100px] sm:h-[120px] overflow-hidden">
+            <div class="lcd-bg flex absolute right-4">
+              <span>1</span><span>8</span><span>8</span><span>8</span>
+            </div>
+            <div class="lcd-fg flex tracking-widest" id="lcd-text">
+              000
+            </div>
+          </div>
+          
+          <div class="text-gray-400 text-xs mt-2 font-mono" id="display-status">Lectura normal</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-ad" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🌊 Simulador de Conversión Analógica a Digital (A/D)</h2>
+      <p class="text-sm opacity-80 mt-1">Muestreo (Sampling) + Cuantificación (Quantization) + Codificación.</p>
+    </div>
+    <div class="p-4">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 space-y-4">
+          <div class="info-box">
+            Al digitalizar se pierde información. A mayor cantidad de bits (cuantificación) y mayor frecuencia de muestreo, mejor será la aproximación a la señal real.
+          </div>
+          
+          <div>
+            <label class="slider-label font-semibold block">Frecuencia de Muestreo: <span id="sample-val" class="text-blue-700 font-bold">10</span> muestras/ciclo</label>
+            <input type="range" id="sample-slider" min="4" max="50" value="10" step="2" class="w-full" oninput="updateADCSim()">
+            <div class="text-xs text-gray-500">Determina los intervalos de tiempo en el eje X.</div>
+          </div>
+          
+          <div>
+            <label class="slider-label font-semibold block">Resolución (Bits): <span id="bits-val" class="text-green-700 font-bold">3</span> bits (<span id="levels-val">8</span> niveles)</label>
+            <input type="range" id="bits-slider" min="1" max="6" value="3" class="w-full" oninput="updateADCSim()">
+            <div class="text-xs text-gray-500">Determina los "escalones" en el eje Y ($2^n$ niveles).</div>
+          </div>
+
+          <div class="formula-box text-sm text-center">
+            <strong>Niveles de cuantificación:</strong> <br> $Q = 2^n$ <br>
+            A mayor $n$, menores son los truncamientos.
+          </div>
+
+          <div class="mt-3 p-3 bg-yellow-50 border border-yellow-300 rounded-lg text-xs text-yellow-900">
+            <strong>⚠️ Teorema de Nyquist-Shannon:</strong><br>
+            La frecuencia de muestreo debe ser al menos el <strong>doble</strong> de la frecuencia máxima de la señal: $f_s \geq 2 \cdot f_{max}$.<br>
+            Por debajo de ese límite ocurre el <em>aliasing</em> (distorsión irreversible).
+          </div>
+        </div>
+        
+        <div class="lg:col-span-2">
+          <div id="nyquist-warn" class="hidden mb-2 p-2 bg-red-100 border border-red-400 text-red-800 text-xs font-bold rounded">
+            🚨 ¡Aliasing! La frecuencia de muestreo es demasiado baja. La señal reconstruida no representa la original (viola el Teorema de Nyquist).
+          </div>
+          <div class="chart-wrap bg-white border rounded" style="min-height: 320px;">
+            <canvas id="adcChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="tab-conversores" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚙️ Tipos de Conversores A/D</h2>
+      <p class="text-sm opacity-80 mt-1">Diferentes técnicas de conversión. Haz clic en las tarjetas para ver sus características.</p>
+    </div>
+    <div class="p-5">
+      
+      <div class="flex gap-2 mb-4">
+        <span class="badge badge-blue">Integradores (Lentos, precisos, inmunes al ruido)</span>
+        <span class="badge badge-red">No Integradores (Rápidos, menos inmunes al ruido)</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6" id="adc-cards">
+        </div>
+
+      <div id="adc-detail" class="card border-2 border-indigo-300 p-5 hidden bg-indigo-50">
+        <div class="flex justify-between items-start">
+          <h3 id="ad-title" class="font-bold text-indigo-900 text-xl mb-2"></h3>
+          <span id="ad-type-badge" class="badge"></span>
+        </div>
+        <p id="ad-desc" class="text-sm text-gray-800 mb-4"></p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-3 rounded shadow-sm border border-green-200">
+            <h4 class="text-xs font-bold text-green-700 uppercase mb-1">Ventajas</h4>
+            <p id="ad-pros" class="text-sm text-gray-700"></p>
+          </div>
+          <div class="bg-white p-3 rounded shadow-sm border border-red-200">
+            <h4 class="text-xs font-bold text-red-700 uppercase mb-1">Desventajas</h4>
+            <p id="ad-cons" class="text-sm text-gray-700"></p>
+          </div>
+        </div>
+        <div class="mt-4 text-xs font-mono text-indigo-700 bg-white p-2 rounded inline-block border border-indigo-200" id="ad-extra"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="tab-error" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📏 Especificaciones y Calculadora de Exactitud</h2>
+      <p class="text-sm opacity-80 mt-1">El error total de un instrumento digital depende del rango seleccionado y la lectura actual.</p>
+    </div>
+    <div class="p-5">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="space-y-4 text-sm text-gray-700">
+          <p>La <strong>exactitud</strong> (o error) en un multímetro digital se compone de dos partes:</p>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><strong>Error Constante:</strong> Afecta a todo el rango por igual. Se expresa como un % de Plena Escala (FS) o como un número de Dígitos (o cuentas).</li>
+            <li><strong>Error Proporcional:</strong> Depende directamente del valor medido. Se expresa como un % de la Lectura (Rd).</li>
+          </ul>
+          <div class="formula-box text-center font-bold text-base">
+            Error Total = Error Constante + Error Proporcional
+          </div>
+          <p><strong>Resolución:</strong> El mínimo incremento detectable. Se obtiene dividiendo el rango máximo por el número total de cuentas.</p>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
+          <h3 class="font-bold text-gray-800 mb-4">🧮 Calculadora de Error</h3>
+          
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Valor Medido (Lectura)</label>
+              <input type="number" id="calc-lectura" value="35" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1">Fondo de Escala (Rango)</label>
+              <input type="number" id="calc-rango" value="200" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="bg-blue-50 p-3 rounded border border-blue-100">
+              <label class="block text-xs font-bold text-blue-800 mb-1">Error % de la Lectura</label>
+              <div class="flex items-center">
+                <span class="mr-1">±</span>
+                <input type="number" id="calc-err-lec" value="0.02" step="0.01" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
+                <span class="ml-1">%</span>
+              </div>
+            </div>
+            <div class="bg-orange-50 p-3 rounded border border-orange-100">
+              <label class="block text-xs font-bold text-orange-800 mb-1">Error % Fondo Escala</label>
+              <div class="flex items-center">
+                <span class="mr-1">±</span>
+                <input type="number" id="calc-err-fe" value="0.01" step="0.01" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
+                <span class="ml-1">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-300 pt-4">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-sm font-semibold text-gray-600">Error Proporcional:</span>
+              <span class="font-mono text-sm" id="res-err-lec">± 0.007</span>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-semibold text-gray-600">Error Constante:</span>
+              <span class="font-mono text-sm" id="res-err-fe">± 0.020</span>
+            </div>
+            <div class="flex justify-between items-center bg-green-100 p-2 rounded">
+              <span class="font-bold text-green-900">Error Total:</span>
+              <span class="font-mono font-bold text-green-700 text-lg" id="res-err-total">± 0.027</span>
+            </div>
+            <div class="text-center mt-3 text-sm">
+              Rango de valor real: <br>
+              <span class="font-mono font-bold bg-white px-2 py-1 border rounded" id="res-intervalo">[ 34.973 ; 35.027 ]</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 4</div>
+    <div class="mt-1 text-xs">Simulador interactivo basado en los conceptos de Instrumentación Digital.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+function switchTab(id) {
+  var tabs = document.querySelectorAll('.tab-content');
+  tabs.forEach(t => t.classList.remove('active'));
+  var btns = document.querySelectorAll('.tab-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  
+  var target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  
+  var tabNames = ['tab-comparacion','tab-display','tab-ad','tab-conversores','tab-error'];
+  var idx = tabNames.indexOf(id);
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+
+  // Lazy render charts
+  if (id === 'tab-ad') setTimeout(updateADCSim, 50);
+}
+
+// =====================================================
+// TAB 2: LCD DISPLAY SIMULATOR
+// =====================================================
+function updateDisplaySim() {
+  const valStr = document.getElementById('voltaje-slider').value;
+  const val = parseInt(valStr, 10);
+  document.getElementById('voltaje-val').innerText = val.toString().padStart(3, '0');
+  
+  const lcdText = document.getElementById('lcd-text');
+  const displayStatus = document.getElementById('display-status');
+
+  // Max valid value is 1999 for a 3 1/2 digit display on 2000 range
+  if (val > 1999) {
+    lcdText.innerHTML = "<span style='font-size:0.55em;letter-spacing:2px'>OL</span>"; // Overrange: OL indication
+    displayStatus.innerHTML = "<span class='text-red-500 font-bold'>⚠️ Sobrecarga (Overrange / OL).</span> El instrumento supera su fondo de escala. Seleccioná un rango mayor.";
+  } else {
+    // Format to 4 characters. If < 1000, don't show the leading '0' of the half digit (it's off)
+    let displayVal = val.toString();
+    if(val < 1000) {
+      displayVal = "&nbsp;" + val.toString().padStart(3, '0');
+    }
+    lcdText.innerHTML = displayVal;
+    displayStatus.innerHTML = "Lectura normal. Todos los dígitos operando.";
+  }
+}
+
+// =====================================================
+// TAB 3: ADC SIMULATOR (Chart.js)
+// =====================================================
+let adcChartInst = null;
+function updateADCSim() {
+  const canvas = document.getElementById('adcChart');
+  if (!canvas) return;
+
+  const sampleRate = parseInt(document.getElementById('sample-slider').value);
+  const bits = parseInt(document.getElementById('bits-slider').value);
+  
+  const levels = Math.pow(2, bits);
+  document.getElementById('sample-val').textContent = sampleRate;
+  document.getElementById('bits-val').textContent = bits;
+  document.getElementById('levels-val').textContent = levels;
+
+  // Nyquist warning: for 1 cycle, minimum samples = 2 (Nyquist = 2*f_signal)
+  const nyquistWarn = document.getElementById('nyquist-warn');
+  if (sampleRate < 4) {
+    nyquistWarn.classList.remove('hidden');
+  } else {
+    nyquistWarn.classList.add('hidden');
+  }
+
+  // Generate data: 1 full cycle of a sine wave (0 to 2*PI)
+  const analogData = [];
+  const digitalData = [];
+  const labels = [];
+  
+  // High resolution analog signal
+  const highResPoints = 200;
+  for(let i=0; i<=highResPoints; i++) {
+    let x = (i / highResPoints) * 2 * Math.PI;
+    // Amplitude 0 to 1
+    let y = (Math.sin(x) + 1) / 2; 
+    analogData.push({x: x, y: y});
+  }
+
+  // Sampled and quantized signal
+  const stepX = (2 * Math.PI) / sampleRate;
+  const stepY = 1 / (levels - 1); // Quantization step
+
+  for(let i=0; i<=sampleRate; i++) {
+    let x = i * stepX;
+    let yReal = (Math.sin(x) + 1) / 2;
+    // Quantize
+    let yQuant = Math.round(yReal / stepY) * stepY;
+    
+    // Create stepped line (two points per step to make it look like a staircase)
+    if(i > 0) {
+      digitalData.push({x: x, y: digitalData[digitalData.length-1].y}); // horizontal line
+    }
+    digitalData.push({x: x, y: yQuant}); // vertical jump
+  }
+  // Extend last point slightly
+  digitalData.push({x: 2*Math.PI, y: digitalData[digitalData.length-1].y});
+
+  if (adcChartInst) adcChartInst.destroy();
+
+  const ctx = canvas.getContext('2d');
+  adcChartInst = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Señal Analógica Continua',
+          data: analogData,
+          borderColor: '#94a3b8', // Gray
+          borderWidth: 2,
+          pointRadius: 0,
+          showLine: true,
+          tension: 0.4
+        },
+        {
+          label: 'Señal Digitalizada (Escalones)',
+          data: digitalData,
+          borderColor: '#e74c3c', // Red
+          backgroundColor: '#e74c3c',
+          borderWidth: 3,
+          pointRadius: 3,
+          pointStyle: 'rect',
+          showLine: true,
+          stepped: false // We built the steps manually for better control
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { 
+          type: 'linear',
+          min: 0, max: 2*Math.PI,
+          title: { display: true, text: 'Tiempo (t)' },
+          ticks: { display: false } // Hide complex numbers
+        },
+        y: {
+          min: -0.1, max: 1.1,
+          title: { display: true, text: 'Voltaje (Cuantificado)' },
+          grid: { color: '#e2e8f0' },
+          ticks: {
+            stepSize: stepY,
+            callback: function(val) { return val >= 0 && val <= 1 ? val.toFixed(2) : ''; }
+          }
+        }
+      },
+      plugins: {
+        tooltip: { enabled: false }
+      }
+    }
+  });
+}
+
+// =====================================================
+// TAB 4: TIPOS DE CONVERSORES ADC
+// =====================================================
+const adcData = [
+  {
+    name: 'Rampa Escalera', icon: '📈', type: 'Integrador', color: 'blue',
+    desc: 'También llamado de pendiente simple. Compara la señal de entrada con una tensión generada por un DAC que sube en forma de escalera hasta igualar la entrada.',
+    pros: 'Sencillo de implementar.',
+    cons: 'Bastante lento (milisegundos). El tiempo de conversión depende de la amplitud de la señal de entrada.',
+    extra: 'Precisión depende de la linealidad de la rampa.'
+  },
+  {
+    name: 'Aproximaciones Sucesivas', icon: '⚖️', type: 'No Integrador', color: 'red',
+    desc: 'Prueba la señal comparándola con valores binarios ponderados (mitad de escala, cuarto de escala, etc.) bit por bit, de mayor a menor peso.',
+    pros: 'Muy rápido (microsegundos) y con buena resolución.',
+    cons: 'Más complejo y costoso. Aumenta el error si la tensión de entrada varía durante la conversión.',
+    extra: 'El tiempo de conversión es constante: T = n / f_reloj.'
+  },
+  {
+    name: 'Doble Rampa', icon: '🔁', type: 'Integrador', color: 'blue',
+    desc: 'Integra el voltaje de entrada por un tiempo fijo (rampa sube), y luego lo descarga a una tasa constante con una tensión de referencia (rampa baja). Se mide el tiempo de descarga.',
+    pros: 'Excelente inmunidad al ruido (puede rechazar ruido de red de 50/60Hz). Gran exactitud y económicos.',
+    cons: 'Excesiva lentitud (10 a 50 ms). Pierde exactitud en valores de tensión muy bajos.',
+    extra: 'Es el método más utilizado en Multímetros Digitales convencionales.'
+  },
+  {
+    name: 'Voltaje a Frecuencia', icon: '〰️', type: 'Integrador', color: 'blue',
+    desc: 'Convierte el voltaje en un tren de pulsos cuya frecuencia es directamente proporcional a la amplitud de la entrada. Un contador cuenta estos pulsos.',
+    pros: 'Muy buen rechazo al ruido, baratos y de exactitud moderada.',
+    cons: 'Velocidad de conversión limitada.',
+    extra: 'Usado frecuentemente en medidores de panel de 3 a 3 ½ dígitos.'
+  },
+  {
+    name: 'Paralelo (Flash)', icon: '⚡', type: 'No Integrador', color: 'red',
+    desc: 'Aplica la señal simultáneamente a un banco de comparadores (2^n - 1 comparadores). Cada uno tiene una tensión de referencia levemente mayor al anterior.',
+    pros: 'Extremadamente rápidos (nanosegundos). Respuesta instantánea en ráfaga.',
+    cons: 'Muy costosos, complejos y de baja resolución por el inmenso volumen de componentes (ej: 8 bits = 255 comparadores).',
+    extra: 'Uso en osciloscopios digitales y video.'
+  }
+];
+
+function initADCCards() {
+  const container = document.getElementById('adc-cards');
+  container.innerHTML = adcData.map((adc, idx) => `
+    <div class="card p-4 cursor-pointer hover:shadow-md transition border-2 border-transparent" 
+         style="border-color:transparent" 
+         onmouseover="this.style.borderColor='${adc.color==='blue'?'#93c5fd':'#fca5a5'}'"
+         onmouseout="this.style.borderColor='transparent'"
+         onclick="showADCDetail(${idx})">
+      <div class="text-3xl mb-2">${adc.icon}</div>
+      <div class="font-bold text-gray-800 text-sm mb-1">${adc.name}</div>
+      <span class="badge" style="font-size:0.65rem;background:${adc.color==='blue'?'#dbeafe':'#fee2e2'};color:${adc.color==='blue'?'#1e40af':'#991b1b'}">${adc.type}</span>
+    </div>
+  `).join('');
+}
+
+function showADCDetail(idx) {
+  const adc = adcData[idx];
+  document.getElementById('ad-title').textContent = adc.icon + ' ' + adc.name;
+  
+  const badge = document.getElementById('ad-type-badge');
+  badge.textContent = adc.type;
+  badge.className = 'badge';
+  badge.style.background = adc.color === 'blue' ? '#dbeafe' : '#fee2e2';
+  badge.style.color = adc.color === 'blue' ? '#1e40af' : '#991b1b';
+
+  document.getElementById('ad-desc').textContent = adc.desc;
+  document.getElementById('ad-pros').textContent = adc.pros;
+  document.getElementById('ad-cons').textContent = adc.cons;
+  document.getElementById('ad-extra').textContent = '💡 ' + adc.extra;
+
+  document.getElementById('adc-detail').classList.remove('hidden');
+}
+
+// =====================================================
+// TAB 5: ERROR CALCULATOR
+// =====================================================
+function calcError() {
+  const lec = parseFloat(document.getElementById('calc-lectura').value) || 0;
+  const ran = parseFloat(document.getElementById('calc-rango').value) || 0;
+  const errLec = parseFloat(document.getElementById('calc-err-lec').value) || 0;
+  const errFe = parseFloat(document.getElementById('calc-err-fe').value) || 0;
+
+  const errProp = (errLec * lec) / 100;
+  const errConst = (errFe * ran) / 100;
+  const errTotal = errProp + errConst;
+
+  document.getElementById('res-err-lec').textContent = '± ' + errProp.toFixed(4);
+  document.getElementById('res-err-fe').textContent = '± ' + errConst.toFixed(4);
+  document.getElementById('res-err-total').textContent = '± ' + errTotal.toFixed(4);
+  
+  const min = (lec - errTotal).toFixed(3);
+  const max = (lec + errTotal).toFixed(3);
+  document.getElementById('res-intervalo').textContent = `[ ${min} ; ${max} ]`;
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  updateDisplaySim();
+  initADCCards();
+  calcError();
+});
+</script>
+</body>
+</html>

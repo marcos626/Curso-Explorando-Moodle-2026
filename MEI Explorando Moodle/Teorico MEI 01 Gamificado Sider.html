@@ -1,0 +1,1364 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<!-- =========================
+     MATHJAX (ECUACIONES LATEX)
+========================== -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$']]
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - UTN FRL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --light-bg: #f0f4f8;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  input[type=range] { accent-color: #2980b9; }
+  .chart-wrap { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-family: 'Courier New', monospace; font-size: 0.95rem; color: #1e3a5f; }
+  .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.92rem; margin: 2px; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .target-ring { stroke-dasharray: none; }
+  .shot-dot { transition: all 0.3s; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  /* Guarantee chart canvas respects container */
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  @media (max-width: 640px) {
+    .chart-wrap { min-height: 200px; }
+  }
+</style>
+</head>
+<body>
+<!-- =====================================
+     BARRA DE PROGRESO GAMIFICADA
+====================================== -->
+<div id="progress-container">
+    <div id="progress-bar"></div>
+</div>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 1 · Exploración Interactiva · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🔭</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">¿Puede confiar en su instrumento?</h2>
+        <p class="text-gray-600 text-sm">Imagina que mides la misma resistencia diez veces y obtienes diez valores diferentes. ¿Cuál es el valor verdadero? ¿Cuánto error cometes? ¿Tu instrumento es exacto, preciso... o ninguno de los dos? Explora estas preguntas con las simulaciones interactivas a continuación.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-exactitud')">🎯 Exactitud vs Precisión</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-errores')">📊 Estadística de Errores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-propagacion')">🔗 Propagación de Errores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-metodos')">🔬 Métodos de Medición</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-si')">⚛️ Sistema Internacional</button>
+  </div>
+</div>
+
+<!-- =================== TAB 1: EXACTITUD VS PRECISIÓN =================== -->
+<div id="tab-exactitud" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Exactitud vs. Precisión — Simulador de Disparos</h2>
+      <p class="text-sm opacity-80 mt-1">Ajusta los parámetros y observa cómo se distribuyen las mediciones alrededor del valor verdadero.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Controls -->
+        <div class="space-y-4">
+          <div class="info-box mb-3">
+            <strong>¿Cómo funciona?</strong> Cada "disparo" representa una medición. El centro del blanco es el valor verdadero. Ajusta el sesgo (exactitud) y la dispersión (precisión).
+          </div>
+          <!-- Mode selector -->
+          <div>
+            <label class="block font-semibold text-sm text-gray-700 mb-2">Modo de medición:</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="setMode('exact-precise')" id="btn-ep" class="mode-btn rounded-lg p-2 text-xs font-bold border-2 border-green-500 bg-green-50 text-green-800">✅ Exacto y Preciso</button>
+              <button onclick="setMode('exact-imprecise')" id="btn-ei" class="mode-btn rounded-lg p-2 text-xs font-bold border-2 border-blue-300 bg-blue-50 text-blue-800">🎯 Exacto, No Preciso</button>
+              <button onclick="setMode('inexact-precise')" id="btn-ip" class="mode-btn rounded-lg p-2 text-xs font-bold border-2 border-yellow-400 bg-yellow-50 text-yellow-800">⚠️ Preciso, No Exacto</button>
+              <button onclick="setMode('inexact-imprecise')" id="btn-ii" class="mode-btn rounded-lg p-2 text-xs font-bold border-2 border-red-400 bg-red-50 text-red-800">❌ Ni Exacto ni Preciso</button>
+            </div>
+          </div>
+          <!-- Sliders -->
+          <div>
+            <label class="slider-label font-semibold">Sesgo (Desplazamiento del centro): <span id="bias-val" class="text-blue-700 font-bold">0</span>%</label>
+            <input type="range" id="bias-slider" min="-60" max="60" value="0" class="w-full" oninput="updateTargetSim()">
+            <div class="flex justify-between text-xs text-gray-500 mt-0.5"><span>← Más exacto</span><span>Menos exacto →</span></div>
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Dispersión (Imprecisión): <span id="spread-val" class="text-blue-700 font-bold">10</span>%</label>
+            <input type="range" id="spread-slider" min="3" max="50" value="10" class="w-full" oninput="updateTargetSim()">
+            <div class="flex justify-between text-xs text-gray-500 mt-0.5"><span>← Más preciso</span><span>Menos preciso →</span></div>
+          </div>
+          <div>
+            <label class="slider-label font-semibold">Número de mediciones: <span id="shots-val" class="text-blue-700 font-bold">20</span></label>
+            <input type="range" id="shots-slider" min="5" max="50" value="20" class="w-full" oninput="updateTargetSim()">
+          </div>
+          <button onclick="updateTargetSim()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg py-2 transition">🔄 Regenerar Mediciones</button>
+          <!-- Results summary -->
+          <div id="exactitud-summary" class="space-y-1 text-sm"></div>
+        </div>
+        <!-- Canvas target -->
+        <div class="flex flex-col items-center">
+          <canvas id="targetCanvas" width="300" height="300" style="max-width:300px; border-radius:50%; border:4px solid #1e3a5f;"></canvas>
+          <div id="exactitud-label" class="mt-3 text-center font-bold text-base text-gray-700"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conceptual cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="card p-4 border-t-4 border-green-500">
+      <h3 class="font-bold text-green-700 mb-2">✅ Exactitud</h3>
+      <p class="text-sm text-gray-600">Grado de aproximación entre el valor medido y el <strong>valor verdadero</strong>. Se expresa en términos de error: <span class="font-mono text-blue-700">Δx = xᵢ − x̄</span></p>
+      <div class="mt-2 formula-box">Error absoluto: Δx = x_medido − x_verdadero</div>
+    </div>
+    <div class="card p-4 border-t-4 border-blue-500">
+      <h3 class="font-bold text-blue-700 mb-2">🎯 Precisión</h3>
+      <p class="text-sm text-gray-600">Grado de concordancia entre <strong>mediciones repetidas</strong>. Se cuantifica con la desviación estándar: <span class="font-mono text-blue-700">σ</span></p>
+      <div class="mt-2 formula-box">σ = √(Σ(xᵢ−x̄)² / n)</div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 2: ESTADÍSTICA DE ERRORES =================== -->
+<div id="tab-errores" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📊 Estadística de Errores — Simulador de Mediciones</h2>
+      <p class="text-sm opacity-80 mt-1">Genera una muestra de mediciones y calcula todos los parámetros estadísticos del error.</p>
+    </div>
+    <div class="p-4">
+      <!-- Generator controls -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <div class="lg:col-span-2 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="slider-label font-semibold block">Valor verdadero (Ω): <span id="vv-val" class="text-blue-700 font-bold">100</span></label>
+              <input type="range" id="vv-slider" min="10" max="1000" value="100" class="w-full" oninput="updateErrorSim()">
+            </div>
+            <div>
+              <label class="slider-label font-semibold block">Error sistemático (%): <span id="sys-val" class="text-red-600 font-bold">0</span></label>
+              <input type="range" id="sys-slider" min="-20" max="20" value="0" class="w-full" oninput="updateErrorSim()">
+            </div>
+            <div>
+              <label class="slider-label font-semibold block">Error casual (σ, %): <span id="rnd-val" class="text-orange-600 font-bold">3</span></label>
+              <input type="range" id="rnd-slider" min="0.5" max="15" value="3" step="0.5" class="w-full" oninput="updateErrorSim()">
+            </div>
+            <div>
+              <label class="slider-label font-semibold block">Número de mediciones: <span id="nm-val" class="text-blue-700 font-bold">10</span></label>
+              <input type="range" id="nm-slider" min="3" max="30" value="10" class="w-full" oninput="updateErrorSim()">
+            </div>
+          </div>
+          <button onclick="updateErrorSim()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg py-2 px-6 transition">🔄 Nueva muestra aleatoria</button>
+        </div>
+        <!-- Stats panel -->
+        <div id="stats-panel" class="bg-gray-50 rounded-xl p-4 text-sm space-y-2"></div>
+      </div>
+      <!-- Measurements table -->
+      <div class="overflow-x-auto mb-4">
+        <table class="w-full text-xs text-center border-collapse" id="meas-table">
+          <thead><tr class="bg-gray-100"><th class="p-2 border">i</th><th class="p-2 border">xᵢ (Ω)</th><th class="p-2 border">Δxᵢ</th><th class="p-2 border">|Δxᵢ|</th><th class="p-2 border">Δxᵢ²</th><th class="p-2 border">eᵢ (%)</th></tr></thead>
+          <tbody id="meas-tbody"></tbody>
+        </table>
+      </div>
+      <!-- Charts row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Distribución de mediciones</h4>
+          <div class="chart-wrap"><canvas id="histChart"></canvas></div>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Secuencia de mediciones</h4>
+          <div class="chart-wrap"><canvas id="seqChart"></canvas></div>
+        </div>
+      </div>
+      <!-- Expression -->
+      <div id="meas-expression" class="formula-box mt-2 text-center text-base"></div>
+    </div>
+  </div>
+
+  <!-- Error type cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="card p-4 border-t-4 border-red-500">
+      <h3 class="font-bold text-red-700 mb-1">⚙️ Errores Instrumentales</h3>
+      <p class="text-xs text-gray-600">Desajuste del cero, calibración incorrecta, posición inadecuada, shunt incorrecto, etc.</p>
+    </div>
+    <div class="card p-4 border-t-4 border-orange-500">
+      <h3 class="font-bold text-orange-700 mb-1">👤 Errores Personales</h3>
+      <p class="text-xs text-gray-600">Paralaje visual, tiempo de lectura inadecuado, limitaciones del observador. La apreciación humana es 0,1–0,3 mm a 30 cm.</p>
+    </div>
+    <div class="card p-4 border-t-4 border-yellow-500">
+      <h3 class="font-bold text-yellow-700 mb-1">🌡️ Errores Naturales</h3>
+      <p class="text-xs text-gray-600">Temperatura, humedad, presión, campos magnéticos/eléctricos, variaciones de tensión de red.</p>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 3: PROPAGACIÓN DE ERRORES =================== -->
+<div id="tab-propagacion" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔗 Propagación de Errores — Calculadora Interactiva</h2>
+      <p class="text-sm opacity-80 mt-1">Ingresa dos mediciones con sus errores relativos y observa cómo el error se propaga según la operación matemática.</p>
+    </div>
+    <div class="p-5">
+      <!-- Inputs A and B -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+        <div class="bg-blue-50 rounded-xl p-4">
+          <h4 class="font-bold text-blue-800 mb-3">Medición A</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="slider-label font-semibold">Valor A: <span id="A-val-disp" class="text-blue-700 font-bold">50</span></label>
+              <input type="range" id="A-val" min="1" max="200" value="50" class="w-full" oninput="updatePropSim()">
+            </div>
+            <div>
+              <label class="slider-label font-semibold">Error relativo eₐ (%): <span id="eA-disp" class="text-red-600 font-bold">5</span></label>
+              <input type="range" id="eA-slider" min="0.5" max="20" value="5" step="0.5" class="w-full" oninput="updatePropSim()">
+            </div>
+            <div id="A-interval" class="formula-box text-sm"></div>
+          </div>
+        </div>
+        <div class="bg-orange-50 rounded-xl p-4">
+          <h4 class="font-bold text-orange-800 mb-3">Medición B</h4>
+          <div class="space-y-2">
+            <div>
+              <label class="slider-label font-semibold">Valor B: <span id="B-val-disp" class="text-orange-700 font-bold">30</span></label>
+              <input type="range" id="B-val" min="1" max="200" value="30" class="w-full" oninput="updatePropSim()">
+            </div>
+            <div>
+              <label class="slider-label font-semibold">Error relativo e_B (%): <span id="eB-disp" class="text-red-600 font-bold">3</span></label>
+              <input type="range" id="eB-slider" min="0.5" max="20" value="3" step="0.5" class="w-full" oninput="updatePropSim()">
+            </div>
+            <div id="B-interval" class="formula-box text-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results for each operation -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6" id="prop-results"></div>
+
+      <!-- Chart comparison -->
+      <div>
+        <h4 class="font-semibold text-gray-700 mb-2 text-sm">Comparación de errores propagados por operación</h4>
+        <div class="chart-wrap"><canvas id="propChart"></canvas></div>
+      </div>
+
+      <!-- Formulas reference -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+        <div class="formula-box">
+          <div class="font-bold text-blue-800 mb-1">SUMA: e(A+B)</div>
+          <div>e = (eₐ·A + e_B·B) / (A+B)</div>
+        </div>
+        <div class="formula-box">
+          <div class="font-bold text-blue-800 mb-1">RESTA: e(A−B)</div>
+          <div>e = (eₐ·A + e_B·B) / |A−B|</div>
+        </div>
+        <div class="formula-box">
+          <div class="font-bold text-blue-800 mb-1">PRODUCTO: e(A×B)</div>
+          <div>e = eₐ + e_B</div>
+        </div>
+        <div class="formula-box">
+          <div class="font-bold text-blue-800 mb-1">COCIENTE: e(A/B)</div>
+          <div>e = eₐ + e_B  (caso desfavorable)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 4: MÉTODOS DE MEDICIÓN =================== -->
+<div id="tab-metodos" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔬 Métodos de Medición — Clasificación Interactiva</h2>
+      <p class="text-sm opacity-80 mt-1">Explora los distintos métodos, haz clic en cada uno para ver sus detalles y ejemplos.</p>
+    </div>
+    <div class="p-5">
+      <!-- Criterion selector -->
+      <div class="mb-4">
+        <label class="font-semibold text-gray-700 text-sm block mb-2">Clasificar según:</label>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="showMethodGroup('resultado')" id="mg-resultado" class="method-group-btn rounded-lg px-4 py-2 text-sm font-semibold bg-blue-700 text-white">A) Obtención del resultado</button>
+          <button onclick="showMethodGroup('lectura')" id="mg-lectura" class="method-group-btn rounded-lg px-4 py-2 text-sm font-semibold bg-gray-200 text-gray-700">B) Técnica de lectura</button>
+          <button onclick="showMethodGroup('procedimiento')" id="mg-procedimiento" class="method-group-btn rounded-lg px-4 py-2 text-sm font-semibold bg-gray-200 text-gray-700">C) Procedimiento</button>
+        </div>
+      </div>
+
+      <!-- Method cards container -->
+      <div id="method-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4"></div>
+
+      <!-- Detail panel -->
+      <div id="method-detail" class="card border-2 border-blue-300 p-4 hidden">
+        <h4 id="md-title" class="font-bold text-blue-800 text-base mb-2"></h4>
+        <p id="md-desc" class="text-sm text-gray-700 mb-2"></p>
+        <div id="md-example" class="info-box text-sm"></div>
+        <div class="flex gap-2 mt-2 flex-wrap" id="md-badges"></div>
+      </div>
+
+      <!-- Visual flowchart summary -->
+      <div class="mt-4">
+        <h4 class="font-semibold text-gray-700 mb-2 text-sm">Mapa de clasificación general</h4>
+        <div class="overflow-x-auto">
+          <svg viewBox="0 0 720 280" class="w-full" style="min-height:200px; max-height:320px;">
+            <!-- Root -->
+            <rect x="280" y="10" width="160" height="38" rx="8" fill="#1e3a5f"/>
+            <text x="360" y="34" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Mediciones Relativas</text>
+            <!-- Three main branches -->
+            <line x1="360" y1="48" x2="120" y2="90" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="360" y1="48" x2="360" y2="90" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="360" y1="48" x2="600" y2="90" stroke="#94a3b8" stroke-width="2"/>
+            <!-- Branch A -->
+            <rect x="30" y="90" width="180" height="34" rx="6" fill="#2563eb"/>
+            <text x="120" y="112" text-anchor="middle" fill="white" font-size="10" font-weight="bold">A) Por resultado</text>
+            <!-- Branch B -->
+            <rect x="270" y="90" width="180" height="34" rx="6" fill="#7c3aed"/>
+            <text x="360" y="112" text-anchor="middle" fill="white" font-size="10" font-weight="bold">B) Por lectura</text>
+            <!-- Branch C -->
+            <rect x="510" y="90" width="180" height="34" rx="6" fill="#059669"/>
+            <text x="600" y="112" text-anchor="middle" fill="white" font-size="10" font-weight="bold">C) Por procedimiento</text>
+            <!-- A children -->
+            <line x1="80" y1="124" x2="60" y2="162" stroke="#93c5fd" stroke-width="1.5"/>
+            <line x1="160" y1="124" x2="180" y2="162" stroke="#93c5fd" stroke-width="1.5"/>
+            <rect x="10" y="162" width="100" height="28" rx="5" fill="#dbeafe"/>
+            <text x="60" y="181" text-anchor="middle" fill="#1e40af" font-size="9">Directo</text>
+            <rect x="120" y="162" width="100" height="28" rx="5" fill="#dbeafe"/>
+            <text x="170" y="181" text-anchor="middle" fill="#1e40af" font-size="9">Indirecto</text>
+            <!-- B children -->
+            <line x1="290" y1="124" x2="230" y2="162" stroke="#c4b5fd" stroke-width="1.5"/>
+            <line x1="340" y1="124" x2="340" y2="162" stroke="#c4b5fd" stroke-width="1.5"/>
+            <line x1="390" y1="124" x2="390" y2="162" stroke="#c4b5fd" stroke-width="1.5"/>
+            <line x1="440" y1="124" x2="450" y2="162" stroke="#c4b5fd" stroke-width="1.5"/>
+            <rect x="178" y="162" width="90" height="28" rx="5" fill="#ede9fe"/>
+            <text x="223" y="181" text-anchor="middle" fill="#5b21b6" font-size="8.5">Indicación</text>
+            <rect x="278" y="162" width="72" height="28" rx="5" fill="#ede9fe"/>
+            <text x="314" y="181" text-anchor="middle" fill="#5b21b6" font-size="8.5">Cero</text>
+            <rect x="358" y="162" width="80" height="28" rx="5" fill="#ede9fe"/>
+            <text x="398" y="181" text-anchor="middle" fill="#5b21b6" font-size="8.5">Sustitución</text>
+            <rect x="445" y="162" width="80" height="28" rx="5" fill="#ede9fe"/>
+            <text x="485" y="181" text-anchor="middle" fill="#5b21b6" font-size="8.5">Comparación</text>
+            <!-- Extra B methods below -->
+            <rect x="223" y="210" width="80" height="26" rx="5" fill="#f3e8ff"/>
+            <text x="263" y="228" text-anchor="middle" fill="#5b21b6" font-size="8">Resonancia</text>
+            <rect x="313" y="210" width="85" height="26" rx="5" fill="#f3e8ff"/>
+            <text x="355" y="228" text-anchor="middle" fill="#5b21b6" font-size="8">Diferencial</text>
+            <rect x="408" y="210" width="80" height="26" rx="5" fill="#f3e8ff"/>
+            <text x="448" y="228" text-anchor="middle" fill="#5b21b6" font-size="8">Balístico</text>
+            <rect x="498" y="210" width="80" height="26" rx="5" fill="#f3e8ff"/>
+            <text x="538" y="228" text-anchor="middle" fill="#5b21b6" font-size="8">Heterodino</text>
+            <!-- C children -->
+            <line x1="560" y1="124" x2="540" y2="162" stroke="#6ee7b7" stroke-width="1.5"/>
+            <line x1="640" y1="124" x2="660" y2="162" stroke="#6ee7b7" stroke-width="1.5"/>
+            <rect x="488" y="162" width="90" height="28" rx="5" fill="#d1fae5"/>
+            <text x="533" y="181" text-anchor="middle" fill="#065f46" font-size="8.5">General</text>
+            <rect x="590" y="162" width="90" height="28" rx="5" fill="#d1fae5"/>
+            <text x="635" y="181" text-anchor="middle" fill="#065f46" font-size="8.5">Combinado</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 5: SISTEMA INTERNACIONAL =================== -->
+<div id="tab-si" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚛️ Sistema Internacional de Unidades (SI) — Explorador</h2>
+      <p class="text-sm opacity-80 mt-1">El nuevo SI (2019): basado en constantes universales invariantes de la naturaleza.</p>
+    </div>
+    <div class="p-5">
+      <!-- Paradigm info -->
+      <div class="info-box mb-4">
+        <strong>Cambio de paradigma (20 mayo 2019):</strong> El SI ya no se define por artefactos materiales (como el Gran K del kilogramo), sino por los valores numéricos <em>exactos</em> de 7 constantes universales. Esto garantiza que las unidades sean invariables, reproducibles y accesibles en cualquier lugar del universo.
+      </div>
+
+      <!-- Constants table with interaction -->
+      <h4 class="font-bold text-gray-800 mb-3">Las 7 Constantes Definitorias — haz clic para explorar</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4" id="constants-grid"></div>
+      <div id="constant-detail" class="card border-2 border-indigo-300 p-4 hidden mb-4">
+        <div class="flex items-start gap-3">
+          <span id="cd-icon" class="text-3xl"></span>
+          <div>
+            <h4 id="cd-name" class="font-bold text-indigo-800 text-base"></h4>
+            <div id="cd-value" class="formula-box text-sm mt-1 mb-2"></div>
+            <p id="cd-desc" class="text-sm text-gray-700"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SI base units visual -->
+      <h4 class="font-bold text-gray-800 mb-3">Unidades de Base y sus Constantes</h4>
+      <div class="overflow-x-auto">
+        <svg viewBox="0 0 700 230" class="w-full" style="min-height:180px; max-height:280px;">
+          <!-- Center: SI -->
+          <ellipse cx="350" cy="115" rx="52" ry="40" fill="#1e3a5f"/>
+          <text x="350" y="110" text-anchor="middle" fill="white" font-size="13" font-weight="bold">SI</text>
+          <text x="350" y="126" text-anchor="middle" fill="#93c5fd" font-size="9">2019</text>
+          <!-- Units orbiting -->
+          <!-- s -->
+          <ellipse cx="350" cy="20" rx="52" ry="20" fill="#2563eb"/>
+          <text x="350" y="16" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Segundo (s)</text>
+          <text x="350" y="29" text-anchor="middle" fill="#bfdbfe" font-size="8">ΔνCs</text>
+          <line x1="350" y1="40" x2="350" y2="75" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- m -->
+          <ellipse cx="580" cy="50" rx="52" ry="20" fill="#7c3aed"/>
+          <text x="580" y="46" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Metro (m)</text>
+          <text x="580" y="59" text-anchor="middle" fill="#c4b5fd" font-size="8">c</text>
+          <line x1="530" y1="58" x2="400" y2="90" stroke="#c4b5fd" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- kg -->
+          <ellipse cx="630" cy="130" rx="52" ry="20" fill="#b45309"/>
+          <text x="630" y="126" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Kilogramo</text>
+          <text x="630" y="139" text-anchor="middle" fill="#fde68a" font-size="8">h</text>
+          <line x1="578" y1="130" x2="402" y2="123" stroke="#fde68a" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- A -->
+          <ellipse cx="550" cy="205" rx="52" ry="20" fill="#b91c1c"/>
+          <text x="550" y="201" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Amperio (A)</text>
+          <text x="550" y="214" text-anchor="middle" fill="#fca5a5" font-size="8">e</text>
+          <line x1="502" y1="198" x2="390" y2="150" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- K -->
+          <ellipse cx="230" cy="205" rx="52" ry="20" fill="#065f46"/>
+          <text x="230" y="201" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Kelvin (K)</text>
+          <text x="230" y="214" text-anchor="middle" fill="#6ee7b7" font-size="8">k</text>
+          <line x1="278" y1="198" x2="315" y2="152" stroke="#6ee7b7" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- mol -->
+          <ellipse cx="100" cy="130" rx="42" ry="20" fill="#6d28d9"/>
+          <text x="100" y="126" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Mol (mol)</text>
+          <text x="100" y="139" text-anchor="middle" fill="#ddd6fe" font-size="8">Nₐ</text>
+          <line x1="142" y1="130" x2="298" y2="120" stroke="#ddd6fe" stroke-width="1.5" stroke-dasharray="4"/>
+          <!-- cd -->
+          <ellipse cx="120" cy="50" rx="42" ry="20" fill="#92400e"/>
+          <text x="120" y="46" text-anchor="middle" fill="white" font-size="9" font-weight="bold">Candela (cd)</text>
+          <text x="120" y="59" text-anchor="middle" fill="#fde68a" font-size="8">Kcd</text>
+          <line x1="158" y1="58" x2="305" y2="90" stroke="#fde68a" stroke-width="1.5" stroke-dasharray="4"/>
+        </svg>
+      </div>
+
+      <!-- SIMELA -->
+      <div class="mt-4 bg-sky-50 border border-sky-300 rounded-xl p-4">
+        <h4 class="font-bold text-sky-800 mb-2">🇦🇷 SIMELA — Sistema Métrico Legal Argentino</h4>
+        <p class="text-sm text-gray-700">Establecido por la <strong>Ley 19.511 (1972)</strong>, reglamentado por el <strong>Decreto 788/2003</strong>. Adopta íntegramente el SI incluyendo las revisiones de 2019. El <strong>INTI</strong> actúa como instituto nacional de metrología, manteniendo los patrones nacionales y garantizando la trazabilidad al SI.</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="badge badge-blue">m · kg · s · A · K · mol · cd</span>
+          <span class="badge badge-green">Trazabilidad al SI</span>
+          <span class="badge" style="background:#e0f2fe;color:#0369a1;">Unidades adicionales: ha, L, t, eV</span>
+        </div>
+      </div>
+
+      <!-- Evolution timeline -->
+      <div class="mt-4">
+        <h4 class="font-bold text-gray-800 mb-3">Evolución histórica del SI</h4>
+        <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 1. Año 2026</div>
+    <div class="mt-1 text-xs">Simulación interactiva basada en el marco teórico oficial.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// GLOBAL STATE & CHART INSTANCES
+// =====================================================
+var histChartInst = null;
+var seqChartInst = null;
+var propChartInst = null;
+var timelineChartInst = null;
+var currentMeasurements = [];
+var currentMethodGroup = 'resultado';
+
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+function switchTab(id) {
+  try {
+    var tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(function(t) { t.classList.remove('active'); });
+    var btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    // Activate corresponding button
+    var tabNames = ['tab-exactitud','tab-errores','tab-propagacion','tab-metodos','tab-si'];
+    var idx = tabNames.indexOf(id);
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+    // Lazy chart init
+    setTimeout(function() {
+      if (id === 'tab-errores') { updateErrorSim(); }
+      if (id === 'tab-propagacion') { updatePropSim(); }
+      if (id === 'tab-si') { initTimelineChart(); }
+    }, 120);
+  } catch(e) { console.error('switchTab error:', e); }
+}
+
+// =====================================================
+// HELPER: Gaussian random
+// =====================================================
+function gaussRandom(mean, std) {
+  try {
+    var u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return mean + std * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  } catch(e) { return mean; }
+}
+
+function safeFixed(val, dec) {
+  try {
+    if (typeof val !== 'number' || !isFinite(val)) return '--';
+    return val.toFixed(dec);
+  } catch(e) { return '--'; }
+}
+
+// =====================================================
+// TAB 1: TARGET / EXACTITUD VS PRECISIÓN
+// =====================================================
+function setMode(mode) {
+  try {
+    var biasSlider = document.getElementById('bias-slider');
+    var spreadSlider = document.getElementById('spread-slider');
+    if (!biasSlider || !spreadSlider) return;
+    var configs = {
+      'exact-precise':    { bias: 0,   spread: 5 },
+      'exact-imprecise':  { bias: 0,   spread: 35 },
+      'inexact-precise':  { bias: 45,  spread: 6 },
+      'inexact-imprecise':{ bias: 40,  spread: 35 }
+    };
+    var cfg = configs[mode];
+    if (!cfg) return;
+    biasSlider.value = cfg.bias;
+    spreadSlider.value = cfg.spread;
+    updateTargetSim();
+  } catch(e) { console.error('setMode error:', e); }
+}
+
+function updateTargetSim() {
+  try {
+    var biasVal = parseInt(document.getElementById('bias-slider').value) || 0;
+    var spreadVal = parseInt(document.getElementById('spread-slider').value) || 10;
+    var shotsVal = parseInt(document.getElementById('shots-slider').value) || 20;
+
+    document.getElementById('bias-val').textContent = biasVal;
+    document.getElementById('spread-val').textContent = spreadVal;
+    document.getElementById('shots-val').textContent = shotsVal;
+
+    var canvas = document.getElementById('targetCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var cx = W / 2, cy = H / 2, R = W / 2 - 4;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw rings
+    var colors = ['#e74c3c','#e67e22','#f1c40f','#2ecc71','#3498db','#1e3a5f'];
+    for (var r = 0; r < 6; r++) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * (6 - r) / 6, 0, Math.PI * 2);
+      ctx.fillStyle = colors[r];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+
+    // Generate & draw shots
+    var biasPx = (biasVal / 100) * R;
+    var spreadPx = (spreadVal / 100) * R;
+    var shots = [];
+    for (var i = 0; i < shotsVal; i++) {
+      var sx = gaussRandom(cx + biasPx * 0.7, spreadPx);
+      var sy = gaussRandom(cy + biasPx * 0.3, spreadPx);
+      shots.push({ x: sx, y: sy });
+    }
+
+    shots.forEach(function(s) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fill();
+      ctx.strokeStyle = '#1e3a5f';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    // Cross-hair
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Calculate stats
+    var meanX = shots.reduce(function(a, s) { return a + s.x; }, 0) / shots.length;
+    var meanY = shots.reduce(function(a, s) { return a + s.y; }, 0) / shots.length;
+    var distFromCenter = Math.sqrt(Math.pow(meanX - cx, 2) + Math.pow(meanY - cy, 2));
+    var dispersion = Math.sqrt(shots.reduce(function(a, s) {
+      return a + Math.pow(s.x - meanX, 2) + Math.pow(s.y - meanY, 2);
+    }, 0) / shots.length);
+
+    var exactPerc = Math.max(0, (1 - distFromCenter / R)) * 100;
+    var precPerc = Math.max(0, (1 - dispersion / R)) * 100;
+
+    // Label
+    var label = '';
+    if (exactPerc > 70 && precPerc > 70) label = '✅ Exacto y Preciso';
+    else if (exactPerc > 70) label = '🎯 Exacto, pero No Preciso';
+    else if (precPerc > 70) label = '⚠️ Preciso, pero No Exacto';
+    else label = '❌ Ni Exacto ni Preciso';
+    document.getElementById('exactitud-label').textContent = label;
+
+    // Summary
+    var sum = document.getElementById('exactitud-summary');
+    if (sum) {
+      sum.innerHTML = [
+        '<div class="flex justify-between items-center bg-gray-50 rounded p-2"><span class="font-semibold text-sm">Exactitud estimada:</span><span class="result-pill">' + safeFixed(exactPerc, 1) + '%</span></div>',
+        '<div class="flex justify-between items-center bg-gray-50 rounded p-2"><span class="font-semibold text-sm">Precisión estimada:</span><span class="result-pill">' + safeFixed(precPerc, 1) + '%</span></div>',
+        '<div class="flex justify-between items-center bg-gray-50 rounded p-2"><span class="font-semibold text-sm">Dispersión (px):</span><span class="result-pill">' + safeFixed(dispersion, 1) + '</span></div>',
+        '<div class="flex justify-between items-center bg-gray-50 rounded p-2"><span class="font-semibold text-sm">Desplaz. centro (px):</span><span class="result-pill">' + safeFixed(distFromCenter, 1) + '</span></div>'
+      ].join('');
+    }
+  } catch(e) { console.error('updateTargetSim error:', e); }
+}
+
+// =====================================================
+// TAB 2: ERROR STATISTICS
+// =====================================================
+function updateErrorSim() {
+  try {
+    var vvVal = parseFloat(document.getElementById('vv-slider').value) || 100;
+    var sysVal = parseFloat(document.getElementById('sys-slider').value) || 0;
+    var rndVal = parseFloat(document.getElementById('rnd-slider').value) || 3;
+    var nmVal = parseInt(document.getElementById('nm-slider').value) || 10;
+
+    document.getElementById('vv-val').textContent = vvVal;
+    document.getElementById('sys-val').textContent = sysVal;
+    document.getElementById('rnd-val').textContent = rndVal;
+    document.getElementById('nm-val').textContent = nmVal;
+
+    // Generate measurements
+    var measurements = [];
+    var sysErr = vvVal * sysVal / 100;
+    var rndStd = vvVal * rndVal / 100;
+    for (var i = 0; i < nmVal; i++) {
+      measurements.push(gaussRandom(vvVal + sysErr, rndStd));
+    }
+    currentMeasurements = measurements;
+
+    // Calculate stats
+    var n = measurements.length;
+    var mean = measurements.reduce(function(a, v) { return a + v; }, 0) / n;
+    var absErrors = measurements.map(function(v) { return v - mean; });
+    var absVals = absErrors.map(function(v) { return Math.abs(v); });
+    var errorMedio = absVals.reduce(function(a, v) { return a + v; }, 0) / n;
+    var variance = absErrors.reduce(function(a, v) { return a + v * v; }, 0) / n;
+    var sigma = Math.sqrt(variance);
+    var sigmaS = n > 1 ? Math.sqrt(variance * n / (n - 1)) : sigma;
+    var sigmaRel = mean !== 0 ? sigma / mean : 0;
+
+    // Build table
+    var tbody = document.getElementById('meas-tbody');
+    if (tbody) {
+      var rows = '';
+      for (var j = 0; j < n; j++) {
+        var xi = measurements[j];
+        var dx = xi - mean;
+        var ei = mean !== 0 ? (dx / mean * 100) : 0;
+        var rowColor = Math.abs(dx) > 2 * sigma ? 'background:#fff0f0' : '';
+        rows += '<tr style="' + rowColor + '">' +
+          '<td class="p-1 border text-center">' + (j + 1) + '</td>' +
+          '<td class="p-1 border text-center font-mono">' + safeFixed(xi, 3) + '</td>' +
+          '<td class="p-1 border text-center font-mono ' + (dx >= 0 ? 'text-blue-700' : 'text-red-600') + '">' + safeFixed(dx, 4) + '</td>' +
+          '<td class="p-1 border text-center font-mono">' + safeFixed(Math.abs(dx), 4) + '</td>' +
+          '<td class="p-1 border text-center font-mono">' + safeFixed(dx * dx, 5) + '</td>' +
+          '<td class="p-1 border text-center font-mono">' + safeFixed(ei, 2) + '</td>' +
+          '</tr>';
+      }
+      tbody.innerHTML = rows;
+    }
+
+    // Stats panel
+    var statsPanel = document.getElementById('stats-panel');
+    if (statsPanel) {
+      statsPanel.innerHTML = [
+        '<div class="font-bold text-gray-800 mb-2 text-sm border-b pb-1">Parámetros Estadísticos</div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Valor verdadero:</span><span class="font-mono font-bold text-blue-700">' + safeFixed(vvVal, 2) + ' Ω</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Media (x̄):</span><span class="font-mono font-bold">' + safeFixed(mean, 4) + ' Ω</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Error medio (δ):</span><span class="font-mono font-bold text-orange-600">' + safeFixed(errorMedio, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Desv. est. (σ):</span><span class="font-mono font-bold text-red-600">' + safeFixed(sigma, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Desv. muestra (σs):</span><span class="font-mono font-bold text-red-700">' + safeFixed(sigmaS, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Coef. variación:</span><span class="font-mono font-bold">' + safeFixed(sigmaRel * 100, 2) + '%</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">n:</span><span class="font-mono font-bold">' + n + '</span></div>'
+      ].join('');
+    }
+
+    // Expression
+    var exprEl = document.getElementById('meas-expression');
+    if (exprEl) {
+      exprEl.innerHTML = 'M = ' + safeFixed(mean, 3) + ' &plusmn; ' + safeFixed(errorMedio, 4) + ' &plusmn; ' + safeFixed(sigmaRel, 4) + ' Ω';
+    }
+
+    // Charts
+    renderHistChart(measurements, mean, sigma);
+    renderSeqChart(measurements, mean, sigma, vvVal);
+
+  } catch(e) { console.error('updateErrorSim error:', e); }
+}
+
+function renderHistChart(data, mean, sigma) {
+  try {
+    if (!Array.isArray(data) || data.length === 0) return;
+    var canvas = document.getElementById('histChart');
+    if (!canvas) return;
+
+    if (histChartInst) { histChartInst.destroy(); histChartInst = null; }
+
+    var min = Math.min.apply(null, data);
+    var max = Math.max.apply(null, data);
+    var range = max - min || 1;
+    var bins = Math.min(8, data.length);
+    var binSize = range / bins;
+    var labels = [];
+    var counts = [];
+    for (var b = 0; b < bins; b++) {
+      var lo = min + b * binSize;
+      var hi = lo + binSize;
+      labels.push(safeFixed((lo + hi) / 2, 2));
+      counts.push(data.filter(function(v) { return v >= lo && (b === bins - 1 ? v <= hi : v < hi); }).length);
+    }
+
+    var ctx = canvas.getContext('2d');
+    histChartInst = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Frecuencia',
+          data: counts,
+          backgroundColor: 'rgba(37,99,235,0.6)',
+          borderColor: '#1e40af',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { mode: 'index' }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Valor medido (Ω)' } },
+          y: { title: { display: true, text: 'Frecuencia' }, beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+  } catch(e) { console.error('renderHistChart error:', e); }
+}
+
+function renderSeqChart(data, mean, sigma, vv) {
+  try {
+    if (!Array.isArray(data) || data.length === 0) return;
+    var canvas = document.getElementById('seqChart');
+    if (!canvas) return;
+
+    if (seqChartInst) { seqChartInst.destroy(); seqChartInst = null; }
+
+    var labels = data.map(function(_, i) { return 'M' + (i + 1); });
+
+    var ctx = canvas.getContext('2d');
+    seqChartInst = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Mediciones',
+            data: data,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37,99,235,0.15)',
+            pointRadius: 5,
+            tension: 0.2,
+            fill: false
+          },
+          {
+            label: 'Media (x\u0305)',
+            data: Array(data.length).fill(mean),
+            borderColor: '#16a34a',
+            borderDash: [6, 3],
+            pointRadius: 0,
+            borderWidth: 2,
+            fill: false
+          },
+          {
+            label: 'V. verdadero',
+            data: Array(data.length).fill(vv),
+            borderColor: '#dc2626',
+            borderDash: [4, 4],
+            pointRadius: 0,
+            borderWidth: 2,
+            fill: false
+          },
+          {
+            label: '+\u03c3',
+            data: Array(data.length).fill(mean + sigma),
+            borderColor: 'rgba(251,146,60,0.5)',
+            borderDash: [3, 3],
+            pointRadius: 0,
+            borderWidth: 1,
+            fill: false
+          },
+          {
+            label: '-\u03c3',
+            data: Array(data.length).fill(mean - sigma),
+            borderColor: 'rgba(251,146,60,0.5)',
+            borderDash: [3, 3],
+            pointRadius: 0,
+            borderWidth: 1,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { font: { size: 10 } } } },
+        scales: {
+          x: { title: { display: true, text: 'Medici\u00f3n n\u00b0' } },
+          y: { title: { display: true, text: 'Valor (\u03a9)' } }
+        }
+      }
+    });
+  } catch(e) { console.error('renderSeqChart error:', e); }
+}
+
+// =====================================================
+// TAB 3: PROPAGACIÓN DE ERRORES
+// =====================================================
+function updatePropSim() {
+  try {
+    var A = parseFloat(document.getElementById('A-val').value) || 50;
+    var B = parseFloat(document.getElementById('B-val').value) || 30;
+    var eA = parseFloat(document.getElementById('eA-slider').value) || 5;
+    var eB = parseFloat(document.getElementById('eB-slider').value) || 3;
+
+    document.getElementById('A-val-disp').textContent = A;
+    document.getElementById('B-val-disp').textContent = B;
+    document.getElementById('eA-disp').textContent = eA;
+    document.getElementById('eB-disp').textContent = eB;
+
+    var eAfrac = eA / 100;
+    var eBfrac = eB / 100;
+
+    // Intervals
+    var dA = document.getElementById('A-interval');
+    if (dA) dA.textContent = 'A = ' + A + ' \u00b1 ' + safeFixed(A * eAfrac, 3) + '  (e = ' + eA + '%)';
+    var dB = document.getElementById('B-interval');
+    if (dB) dB.textContent = 'B = ' + B + ' \u00b1 ' + safeFixed(B * eBfrac, 3) + '  (e = ' + eB + '%)';
+
+    // Propagated errors
+    var eSum = (A + B) !== 0 ? (eAfrac * A + eBfrac * B) / (A + B) * 100 : 0;
+    var eDiff = Math.abs(A - B) > 0.001 ? (eAfrac * A + eBfrac * B) / Math.abs(A - B) * 100 : Infinity;
+    var eProd = (eA + eB);
+    var eQuot = (eA + eB);
+
+    var results = [
+      { op: 'SUMA', symbol: 'A + B', value: A + B, error: eSum, color: '#2563eb' },
+      { op: 'RESTA', symbol: 'A \u2212 B', value: A - B, error: eDiff, color: '#7c3aed' },
+      { op: 'PRODUCTO', symbol: 'A \u00d7 B', value: A * B, error: eProd, color: '#059669' },
+      { op: 'COCIENTE', symbol: 'A / B', value: B !== 0 ? A / B : Infinity, error: eQuot, color: '#dc2626' }
+    ];
+
+    var container = document.getElementById('prop-results');
+    if (container) {
+      container.innerHTML = results.map(function(r) {
+        var errDisplay = isFinite(r.error) ? safeFixed(r.error, 2) + '%' : '\u221e (A\u2248B)';
+        var valDisplay = isFinite(r.value) ? safeFixed(r.value, 3) : '\u221e';
+        return '<div class="card p-3 border-t-4" style="border-color:' + r.color + '">' +
+          '<div class="text-xs font-bold mb-1" style="color:' + r.color + '">' + r.op + '</div>' +
+          '<div class="text-sm font-mono text-gray-600">' + r.symbol + '</div>' +
+          '<div class="text-lg font-bold text-gray-800 mt-1">' + valDisplay + '</div>' +
+          '<div class="text-xs text-gray-500">e propagado:</div>' +
+          '<div class="font-bold text-red-600 text-sm">' + errDisplay + '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    // Chart
+    renderPropChart(results);
+
+  } catch(e) { console.error('updatePropSim error:', e); }
+}
+
+function renderPropChart(results) {
+  try {
+    if (!Array.isArray(results)) return;
+    var canvas = document.getElementById('propChart');
+    if (!canvas) return;
+
+    if (propChartInst) { propChartInst.destroy(); propChartInst = null; }
+
+    var labels = results.map(function(r) { return r.op; });
+    var values = results.map(function(r) { return isFinite(r.error) ? r.error : 0; });
+    var colors = results.map(function(r) { return r.color + 'aa'; });
+    var borders = results.map(function(r) { return r.color; });
+
+    var ctx = canvas.getContext('2d');
+    propChartInst = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Error propagado (%)',
+          data: values,
+          backgroundColor: colors,
+          borderColor: borders,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return 'Error: ' + safeFixed(ctx.parsed.y, 2) + '%'; }
+            }
+          }
+        },
+        scales: {
+          y: { title: { display: true, text: 'Error propagado (%)' }, beginAtZero: true }
+        }
+      }
+    });
+  } catch(e) { console.error('renderPropChart error:', e); }
+}
+
+// =====================================================
+// TAB 4: MÉTODOS DE MEDICIÓN
+// =====================================================
+var methodsData = {
+  resultado: [
+    {
+      name: 'Método Directo',
+      icon: '📏',
+      desc: 'El valor buscado se obtiene directamente de la lectura del instrumento, sin cálculos adicionales.',
+      example: 'Medir tensión con voltímetro, o corriente con amperímetro.',
+      pros: 'Rápido y simple.',
+      cons: 'Sujeto a errores del instrumento.'
+    },
+    {
+      name: 'Método Indirecto',
+      icon: '🔢',
+      desc: 'Se obtienen datos experimentales y se aplica una ley física para calcular el resultado.',
+      example: 'Medir R con voltímetro + amperímetro y aplicar Ley de Ohm (R = V/I). Determinar potencia P = V \u00d7 I.',
+      pros: 'Mayor versatilidad.',
+      cons: 'Los errores de cada medición se propagan al resultado.'
+    }
+  ],
+  lectura: [
+    {
+      name: 'Indicaci\u00f3n / Deflexi\u00f3n',
+      icon: '🪡',
+      desc: 'La desviaci\u00f3n de una aguja o \u00edndice indica el valor medido en una escala graduada.',
+      example: 'Gal\u00f3metro anal\u00f3gico, mult\u00edmetro anal\u00f3gico.',
+      pros: 'R\u00e1pido, econ\u00f3mico.',
+      cons: 'Menos exacto, afectado por paralaje.'
+    },
+    {
+      name: 'M\u00e9todo de Cero',
+      icon: '⚖️',
+      desc: 'Se ajustan condiciones hasta que el detector marca cero; entonces se conoce la inc\u00f3gnita.',
+      example: 'Puente de Wheatstone para medir resistencia.',
+      pros: 'Muy exacto.',
+      cons: 'M\u00e1s lento; requiere ajuste cuidadoso.'
+    },
+    {
+      name: 'Sustituci\u00f3n',
+      icon: '🔄',
+      desc: 'Se reemplaza la inc\u00f3gnita por un patr\u00f3n ajustable hasta obtener la misma indicaci\u00f3n.',
+      example: 'Medir R con amper\u00edmetro: se conecta R inc\u00f3gnita, se toma lectura, luego se sustituye por R patr\u00f3n hasta igual lectura.',
+      pros: 'No cambia condiciones del circuito.',
+      cons: 'Requiere patr\u00f3n ajustable.'
+    },
+    {
+      name: 'Comparaci\u00f3n',
+      icon: '🔀',
+      desc: 'Dos cantidades del mismo tipo coexisten simult\u00e1neamente en el circuito; se comparan.',
+      example: 'Conversi\u00f3n ADC: la se\u00f1al se compara continuamente con una tensi\u00f3n de referencia.',
+      pros: 'Base de instrumentos digitales.',
+      cons: 'Requiere referencia estable.'
+    },
+    {
+      name: 'Resonancia',
+      icon: '📡',
+      desc: 'Se ajusta el circuito hasta la condici\u00f3n de resonancia; con ello se determina L, C o R.',
+      example: 'Q-metro: mide inductancia, capacidad y factor de calidad.',
+      pros: 'Alta precisi\u00f3n en RF.',
+      cons: 'Solo aplicable en CA.'
+    },
+    {
+      name: 'Diferencial',
+      icon: '➗',
+      desc: 'Se mide la diferencia entre la inc\u00f3gnita y un patr\u00f3n de valor muy pr\u00f3ximo.',
+      example: 'Medidas de precisi\u00f3n en calibraci\u00f3n de resistencias patr\u00f3n.',
+      pros: 'Alta exactitud y resoluci\u00f3n.',
+      cons: 'Requiere patr\u00f3n muy cercano al valor.'
+    },
+    {
+      name: 'Bal\u00edstico',
+      icon: '💥',
+      desc: 'Usa gal\u00f3nometros bal\u00edsticos para medir carga el\u00e9ctrica (impulso de corriente).',
+      example: 'Medici\u00f3n de flujo magn\u00e9tico con gal\u00f3metro bal\u00edstico.',
+      pros: 'Mide cargas instant\u00e1neas.',
+      cons: 'Uso especializado; requiere calibraci\u00f3n.'
+    },
+    {
+      name: 'Heterodino',
+      icon: '📻',
+      desc: 'Se transforma la frecuencia de una se\u00f1al para facilitar su medici\u00f3n.',
+      example: 'Analizador de espectro: convierte se\u00f1al de alta frecuencia a FI para an\u00e1lisis.',
+      pros: 'Permite medir altas frecuencias.',
+      cons: 'Circuitos m\u00e1s complejos.'
+    }
+  ],
+  procedimiento: [
+    {
+      name: 'M\u00e9todo General',
+      icon: '📋',
+      desc: 'Medici\u00f3n directa sin caracter\u00edstica distintiva especial; el procedimiento m\u00e1s com\u00fan.',
+      example: 'Medir resistencia con \u00f3hmetro directamente.',
+      pros: 'Simple, directo.',
+      cons: 'Exactitud limitada por el instrumento.'
+    },
+    {
+      name: 'M\u00e9todo Combinado',
+      icon: '🔧',
+      desc: 'Combina varios procedimientos: cambios de elementos, regulaci\u00f3n y ajustes.',
+      example: 'Medir R por sustituci\u00f3n con amper\u00edmetro y R patr\u00f3n ajustable.',
+      pros: 'Mayor exactitud, minimiza errores sistem\u00e1ticos.',
+      cons: 'M\u00e1s complejo y demandante en tiempo.'
+    }
+  ]
+};
+
+function showMethodGroup(group) {
+  try {
+    currentMethodGroup = group;
+    var btns = document.querySelectorAll('.method-group-btn');
+    btns.forEach(function(b) {
+      b.className = 'method-group-btn rounded-lg px-4 py-2 text-sm font-semibold bg-gray-200 text-gray-700';
+    });
+    var activeId = 'mg-' + group;
+    var activeBtn = document.getElementById(activeId);
+    if (activeBtn) activeBtn.className = 'method-group-btn rounded-lg px-4 py-2 text-sm font-semibold bg-blue-700 text-white';
+
+    var methods = methodsData[group] || [];
+    var container = document.getElementById('method-cards');
+    if (!container) return;
+
+    container.innerHTML = methods.map(function(m, idx) {
+      return '<div class="card p-4 cursor-pointer hover:shadow-lg transition border-2 border-transparent hover:border-blue-300" onclick="showMethodDetail(' + idx + ', \'' + group + '\')">' +
+        '<div class="text-2xl mb-2">' + m.icon + '</div>' +
+        '<div class="font-bold text-gray-800 text-sm">' + m.name + '</div>' +
+        '<div class="text-xs text-gray-500 mt-1 line-clamp-2">' + m.desc + '</div>' +
+        '</div>';
+    }).join('');
+
+    // Hide detail
+    var detail = document.getElementById('method-detail');
+    if (detail) detail.classList.add('hidden');
+  } catch(e) { console.error('showMethodGroup error:', e); }
+}
+
+function showMethodDetail(idx, group) {
+  try {
+    var methods = methodsData[group] || [];
+    if (idx < 0 || idx >= methods.length) return;
+    var m = methods[idx];
+    document.getElementById('md-title').textContent = m.icon + ' ' + m.name;
+    document.getElementById('md-desc').textContent = m.desc;
+    document.getElementById('md-example').innerHTML = '<strong>Ejemplo:</strong> ' + m.example;
+    var badges = document.getElementById('md-badges');
+    if (badges) {
+      badges.innerHTML = '<span class="badge badge-green">✅ ' + m.pros + '</span><span class="badge badge-red">⚠️ ' + m.cons + '</span>';
+    }
+    var detail = document.getElementById('method-detail');
+    if (detail) detail.classList.remove('hidden');
+  } catch(e) { console.error('showMethodDetail error:', e); }
+}
+
+// =====================================================
+// TAB 5: SISTEMA INTERNACIONAL
+// =====================================================
+var constantsData = [
+  {
+    name: 'Frecuencia Cs (\u0394\u03bdCs)',
+    symbol: '\u0394\u03bdCs',
+    value: '9 192 631 770 Hz',
+    unit: 'Hz',
+    icon: '\u23f0',
+    defines: 'Segundo (s)',
+    desc: 'Frecuencia de la transici\u00f3n hiperfina del estado fundamental del cesio-133. Define el segundo con una exactitud de 10\u207b¹\u00b3.'
+  },
+  {
+    name: 'Velocidad de la luz (c)',
+    symbol: 'c',
+    value: '299 792 458 m/s',
+    unit: 'm/s',
+    icon: '\u26a1',
+    defines: 'Metro (m)',
+    desc: 'Velocidad de la luz en el vac\u00edo. Fijada exactamente para definir el metro: 1 m es la distancia que recorre la luz en 1/299792458 segundos.'
+  },
+  {
+    name: 'Constante de Planck (h)',
+    symbol: 'h',
+    value: '6,626 070 15 \u00d7 10\u207b\u00b3\u2074 J\u00b7s',
+    unit: 'J\u00b7s',
+    icon: '\u269b\ufe0f',
+    defines: 'Kilogramo (kg)',
+    desc: 'Cuanto de acci\u00f3n. Permite realizar el kilogramo mediante la balanza de Kibble (electromagn\u00e9tica) o el m\u00e9todo de densidad de silicio.'
+  },
+  {
+    name: 'Carga elemental (e)',
+    symbol: 'e',
+    value: '1,602 176 634 \u00d7 10\u207b¹\u2079 C',
+    unit: 'C',
+    icon: '\u26a1',
+    defines: 'Amperio (A)',
+    desc: 'Carga del electr\u00f3n. 1 A equivale al flujo de ~6,241509\u00d710\u00b9\u2078 cargas elementales por segundo. Realizable con dispositivos SET (Single-Electron Tunneling).'
+  },
+  {
+    name: 'Constante de Boltzmann (k)',
+    symbol: 'k',
+    value: '1,380 649 \u00d7 10\u207b\u00b2\u00b3 J/K',
+    unit: 'J/K',
+    icon: '\ud83c\udf21\ufe0f',
+    defines: 'Kelvin (K)',
+    desc: 'Vincula la energ\u00eda t\u00e9rmica con la temperatura. Desvincula el kelvin del punto triple del agua; permite mediciones termodin\u00e1micas absolutas.'
+  },
+  {
+    name: 'Constante de Avogadro (Nₐ)',
+    symbol: 'N\u2090',
+    value: '6,022 140 76 \u00d7 10\u00b2\u00b3 mol\u207b\u00b9',
+    unit: 'mol\u207b\u00b9',
+    icon: '\ud83e\uddd1\u200d\ud83d\udd2c',
+    defines: 'Mol (mol)',
+    desc: 'N\u00famero exacto de entidades elementales en un mol. Su fijaci\u00f3n elimina la incertidumbre en la definici\u00f3n del mol.'
+  },
+  {
+    name: 'Eficacia luminosa (Kcd)',
+    symbol: 'K_cd',
+    value: '683 lm/W',
+    unit: 'lm/W',
+    icon: '\ud83d\udca1',
+    defines: 'Candela (cd)',
+    desc: 'Eficacia luminosa de la radiaci\u00f3n monocrom\u00e1tica de 540\u00d710\u00b9\u00b2 Hz (luz verde). Define la candela en t\u00e9rminos de potencia radiante.'
+  }
+];
+
+function initConstantsGrid() {
+  try {
+    var grid = document.getElementById('constants-grid');
+    if (!grid) return;
+    grid.innerHTML = constantsData.map(function(c, idx) {
+      return '<div class="card p-3 cursor-pointer hover:shadow-lg transition border-2 border-transparent hover:border-indigo-400" onclick="showConstantDetail(' + idx + ')">' +
+        '<div class="text-2xl mb-1">' + c.icon + '</div>' +
+        '<div class="font-bold text-indigo-800 text-xs">' + c.symbol + '</div>' +
+        '<div class="text-xs text-gray-700 mt-0.5">' + c.name + '</div>' +
+        '<div class="mt-1"><span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.7rem;">\u2192 ' + c.defines + '</span></div>' +
+        '</div>';
+    }).join('');
+  } catch(e) { console.error('initConstantsGrid error:', e); }
+}
+
+function showConstantDetail(idx) {
+  try {
+    if (idx < 0 || idx >= constantsData.length) return;
+    var c = constantsData[idx];
+    document.getElementById('cd-icon').textContent = c.icon;
+    document.getElementById('cd-name').textContent = c.name + ' — Define: ' + c.defines;
+    document.getElementById('cd-value').textContent = c.symbol + ' = ' + c.value;
+    document.getElementById('cd-desc').textContent = c.desc;
+    var detail = document.getElementById('constant-detail');
+    if (detail) detail.classList.remove('hidden');
+  } catch(e) { console.error('showConstantDetail error:', e); }
+}
+
+function initTimelineChart() {
+  try {
+    var canvas = document.getElementById('timelineChart');
+    if (!canvas) return;
+    if (timelineChartInst) { timelineChartInst.destroy(); timelineChartInst = null; }
+
+    // Timeline of key SI events
+    var events = [
+      { year: 1875, label: 'Convenci\u00f3n\ndel Metro', importance: 5 },
+      { year: 1889, label: 'Gran K\n(kilogramo)', importance: 6 },
+      { year: 1960, label: 'SI establecido\nformalmente', importance: 9 },
+      { year: 1967, label: 'Segundo por\nces\u00ednio', importance: 7 },
+      { year: 1983, label: 'Metro por\nvelocidad luz', importance: 8 },
+      { year: 1990, label: 'Josephson &\nHall cu\u00e1nticos', importance: 7 },
+      { year: 2019, label: 'Nuevo SI\nConstantes', importance: 10 }
+    ];
+
+    var ctx = canvas.getContext('2d');
+    timelineChartInst = new Chart(ctx, {
+      type: 'bubble',
+      data: {
+        datasets: events.map(function(e, i) {
+          var colors = ['#2563eb','#7c3aed','#059669','#dc2626','#d97706','#0891b2','#e74c3c'];
+          return {
+            label: e.year + ': ' + e.label.replace('\n', ' '),
+            data: [{ x: e.year, y: e.importance, r: e.importance + 3 }],
+            backgroundColor: colors[i % colors.length] + 'bb',
+            borderColor: colors[i % colors.length]
+          };
+        })
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.dataset.label;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'A\u00f1o' },
+            min: 1860, max: 2030,
+            ticks: { stepSize: 20 }
+          },
+          y: {
+            title: { display: true, text: 'Importancia hist\u00f3rica' },
+            min: 0, max: 12, display: false
+          }
+        }
+      }
+    });
+  } catch(e) { console.error('initTimelineChart error:', e); }
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    // Tab 1
+    updateTargetSim();
+    // Tab 2 - init on demand when tab shown
+    // Tab 4 - methods
+    showMethodGroup('resultado');
+    // Tab 5 constants grid
+    initConstantsGrid();
+
+    console.log('Medidas Electronicas I - Simulacion cargada correctamente.');
+  } catch(e) {
+    console.error('Init error:', e);
+  }
+});
+</script>
+<script>window.parent.postMessage({ action: "ready" }, "*"); 
+ 
+window.console = new Proxy(console, {
+  get(target, prop) {
+    if (['log', 'warn', 'error'].includes(prop)) {
+      return new Proxy(target[prop], {
+        apply(fn, thisArg, args) {
+          fn.apply(thisArg, args);
+          window.parent.postMessage({ action: 'console', 
+            type: prop, 
+            args: args.map((arg) => {
+              try {
+                return JSON.stringify(arg).replace(/^["']|["']$/g, '');
+              } catch (e) {
+                return arg;
+              }
+            }) 
+          }, '*');
+        }
+      });
+    }
+    return target[prop];
+  }
+});
+</script></body>
+</html>

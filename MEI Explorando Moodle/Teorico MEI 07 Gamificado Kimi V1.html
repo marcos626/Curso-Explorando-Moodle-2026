@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 7 · Señales No Senoidales y Armónicos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="initKaTeX();"></script>
+<style>
+  :root { --primary:#1e3a5f; --secondary:#2980b9; --accent:#e74c3c; --success:#27ae60; --warning:#f39c12; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4f8; }
+  .tab-btn { transition:all 0.3s ease; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:not(.active) { background:#e2e8f0; color:#4a5568; }
+  .tab-btn:not(.active):hover { background:#cbd5e0; }
+  .card { background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  .slider-label { font-size:0.85rem; color:#4a5568; }
+  input[type=range] { accent-color:#2980b9; }
+  .chart-wrap { position:relative; min-height:260px; max-height:380px; width:100%; margin-bottom:1rem; }
+  .formula-box { background:#eef2ff; border-left:4px solid #2980b9; border-radius:6px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.95rem; color:#1e3a5f; }
+  .badge { display:inline-block; font-size:0.75rem; font-weight:700; border-radius:9999px; padding:2px 10px; }
+  .badge-blue { background:#dbeafe; color:#1e40af; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-green { background:#dcfce7; color:#166534; }
+  .badge-purple { background:#f3e8ff; color:#6b21a8; }
+  .info-box { background:#fffbeb; border:1px solid #fbbf24; border-radius:8px; padding:0.75rem; font-size:0.88rem; }
+  .section-header { background:linear-gradient(135deg,#1e3a5f 0%,#2980b9 100%); color:white; border-radius:10px 10px 0 0; padding:1rem 1.25rem; }
+  .nav-header { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  @font-face { font-family:'DSEG7'; src:url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2'); }
+  .lcd-display { font-family:'DSEG7','Courier New',monospace; background-color:#a3c2a3; color:#2d372d; border:inset 4px #7a8c7a; box-shadow:inset 0 0 10px rgba(0,0,0,0.2); }
+  .lcd-bg { opacity:0.1; position:absolute; left:0; top:0; z-index:1; letter-spacing:inherit; }
+  .lcd-fg { position:relative; z-index:2; letter-spacing:inherit; }
+  .progress-bar { height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#2980b9,#27ae60); transition:width 0.5s ease; }
+  .achievement { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#fef3c7,#fde68a); border:2px solid #f59e0b; border-radius:20px; padding:4px 12px; font-size:0.8rem; font-weight:700; color:#92400e; transition:transform 0.2s; }
+  .achievement:hover { transform:scale(1.05); }
+  .achievement.locked { opacity:0.5; filter:grayscale(1); }
+  .quiz-option { border:2px solid #e2e8f0; border-radius:8px; padding:12px 16px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
+  .quiz-option:hover { border-color:#2980b9; background:#f0f7ff; }
+  .quiz-option.correct { border-color:#27ae60; background:#dcfce7; }
+  .quiz-option.wrong { border-color:#e74c3c; background:#fee2e2; }
+  .quiz-option.disabled { pointer-events:none; opacity:0.7; }
+  .wave-canvas { background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; }
+  .spectrum-bar { transition:height 0.3s ease; }
+  @media (max-width:640px) { .chart-wrap { min-height:200px; } }
+</style>
+</head>
+<body>
+
+<!-- Gamification Progress Header -->
+<div class="max-w-6xl mx-auto px-3 mt-2 mb-2">
+  <div class="card p-3 flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🏆</span>
+      <div>
+        <div class="text-xs font-bold text-gray-500 uppercase">Progreso de la Unidad</div>
+        <div class="text-sm font-bold text-gray-800" id="progress-text">0% completado</div>
+      </div>
+    </div>
+    <div class="flex gap-2 flex-wrap" id="achievements-container">
+      <span class="achievement locked" id="ach-fourier">🔢 Fourier Master</span>
+      <span class="achievement locked" id="ach-thd">📊 THD Expert</span>
+      <span class="achievement locked" id="ach-instrumentos">🔧 Instrumentos Pro</span>
+      <span class="achievement locked" id="ach-quiz">🎯 Quiz Champion</span>
+    </div>
+    <div class="w-full sm:w-48">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 7 · Señales No Senoidales y Armónicos · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-indigo-500">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">〰️</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">Más allá de la sinusoide: Señales deformadas y su análisis</h2>
+        <p class="text-gray-600 text-sm">Las cargas no lineales (computadoras, variadores, lámparas fluorescentes) deforman la onda sinusoidal pura. Mediante la Serie de Fourier descomponemos estas señales en armónicos, y con parámetros como THD cuantificamos la distorsión. Descubrí cómo los instrumentos de medición responden ante estas señales y por qué el valor eficaz verdadero (TRMS) es crucial.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-seniales')">📊 Tipos de Señales</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-fourier')">🔢 Serie de Fourier</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-armonicos')">〰️ Armónicos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-factores')">📐 Factores y THD</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-instrumentos')">🔧 Instrumentos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-desafios')">🎮 Desafíos</button>
+  </div>
+</div>
+
+<!-- TAB 1: TIPOS DE SEÑALES -->
+<div id="tab-seniales" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header bg-gradient-to-r from-indigo-800 to-indigo-600">
+      <h2 class="text-lg font-bold">📊 Clasificación de Señales Eléctricas</h2>
+      <p class="text-sm opacity-80 mt-1">Según su variación en el tiempo: constantes, periódicas, pseudoperiódicas y aperiódicas.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div class="info-box mb-4">
+            <strong>Señales periódicas:</strong> se repiten exactamente cada período \(T\). Las <strong>alternas</strong> tienen valor medio nulo; las de <strong>valor medio no nulo</strong> incluyen una componente DC.
+          </div>
+          <div class="space-y-3">
+            <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div class="font-bold text-blue-800 text-sm">🔵 Senoidal pura</div>
+              <div class="text-xs text-blue-600 mt-1">\(s(t) = A \cdot \sin(\omega t + \varphi)\) — La referencia ideal. Sin armónicos, factor de potencia = cos(φ).</div>
+            </div>
+            <div class="p-3 bg-red-50 rounded-lg border border-red-200">
+              <div class="font-bold text-red-800 text-sm">🔴 Cuadrada</div>
+              <div class="text-xs text-red-600 mt-1">Rica en armónicos impares: \(s(t) = \frac{4A}{\pi}\sum_{n=1,3,5...}^{\infty}\frac{1}{n}\sin(n\omega t)\)</div>
+            </div>
+            <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+              <div class="font-bold text-green-800 text-sm">🟢 Triangular</div>
+              <div class="text-xs text-green-600 mt-1">Armónicos impares con amplitudes decreciendo como \(1/n^2\): más suave que la cuadrada.</div>
+            </div>
+            <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
+              <div class="font-bold text-purple-800 text-sm">🟣 Diente de sierra / Pulso</div>
+              <div class="text-xs text-purple-600 mt-1">Contiene armónicos pares e impares. Muy usada en electrónica de potencia.</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col items-center">
+          <h3 class="font-bold text-gray-700 mb-3">Generador de Formas de Onda</h3>
+          <canvas id="waveformCanvas" width="400" height="200" class="wave-canvas mb-3"></canvas>
+          <div class="flex gap-2 mb-3">
+            <button onclick="setWaveform('sine')" class="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm font-bold hover:bg-blue-200">Seno</button>
+            <button onclick="setWaveform('square')" class="px-3 py-1 bg-red-100 text-red-800 rounded text-sm font-bold hover:bg-red-200">Cuadrada</button>
+            <button onclick="setWaveform('triangle')" class="px-3 py-1 bg-green-100 text-green-800 rounded text-sm font-bold hover:bg-green-200">Triangular</button>
+            <button onclick="setWaveform('sawtooth')" class="px-3 py-1 bg-purple-100 text-purple-800 rounded text-sm font-bold hover:bg-purple-200">Sierra</button>
+          </div>
+          <div class="w-full">
+            <label class="slider-label font-semibold block text-center mb-1">Armónicos a sumar: <span id="harm-count" class="text-indigo-700 font-bold">1</span></label>
+            <input type="range" id="harm-slider" min="1" max="15" value="1" class="w-full" oninput="updateWaveform()">
+            <div class="text-xs text-gray-500 text-center mt-1">Aumentá los armónicos para ver cómo se aproxima a la forma ideal</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-600 text-center">
+            <strong>Principio de Fourier:</strong> cualquier señal periódica puede descomponerse en una suma de senos y cosenos.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: SERIE DE FOURIER -->
+<div id="tab-fourier" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔢 Serie de Fourier — El Lenguaje de las Señales</h2>
+      <p class="text-sm opacity-80 mt-1">Descomposición de una señal periódica en componentes armónicas (senos y cosenos).</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div class="formula-box text-sm mb-4">
+            <strong>Serie trigonométrica:</strong><br>
+            \(s(t) = a_0 + \sum_{n=1}^{\infty} [a_n \cos(n\omega t) + b_n \sin(n\omega t)]\)<br><br>
+            <strong>Coeficientes:</strong><br>
+            \(a_0 = \frac{1}{T}\int_{0}^{T} s(t)\,dt\) (valor medio)<br>
+            \(a_n = \frac{2}{T}\int_{0}^{T} s(t)\cos(n\omega t)\,dt\)<br>
+            \(b_n = \frac{2}{T}\int_{0}^{T} s(t)\sin(n\omega t)\,dt\)
+          </div>
+          <div class="info-box mb-4">
+            <strong>Condiciones de Dirichlet:</strong> la señal debe ser absolutamente integrable, tener un número finito de máximos/mínimos y discontinuidades finitas en un período.
+          </div>
+          <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+            <div class="font-bold text-indigo-800 text-sm">💡 Simetrías útiles:</div>
+            <ul class="text-xs text-indigo-700 mt-1 space-y-1">
+              <li>• <strong>Función par</strong> (simetría eje Y): solo términos coseno, \(b_n = 0\)</li>
+              <li>• <strong>Función impar</strong> (simetría origen): solo términos seno, \(a_n = 0\)</li>
+              <li>• <strong>Simetría de media onda</strong>: solo armónicos impares</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flex flex-col items-center">
+          <h3 class="font-bold text-gray-700 mb-3">Construcción de una Onda Cuadrada</h3>
+          <canvas id="fourierCanvas" width="400" height="200" class="wave-canvas mb-3"></canvas>
+          <div class="w-full mb-3">
+            <label class="slider-label font-semibold block text-center mb-1">Número de términos: <span id="fourier-terms" class="text-indigo-700 font-bold">1</span></label>
+            <input type="range" id="fourier-slider" min="1" max="20" value="1" class="w-full" oninput="updateFourier()">
+          </div>
+          <div class="bg-gray-100 p-3 rounded-lg text-xs text-gray-700 w-full">
+            <strong>Efecto Gibbs:</strong> cerca de las discontinuidades aparecen oscilaciones (~9% del salto) que <strong>no desaparecen</strong> al aumentar términos, solo se estrechan.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: ARMONICOS -->
+<div id="tab-armonicos" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">〰️ Armónicos y Distorsión de la Señal</h2>
+      <p class="text-sm opacity-80 mt-1">Frecuencias múltiples enteras de la fundamental que deforman la onda pura.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <div class="info-box mb-4">
+            <strong>Definición:</strong> El armónico de orden \(h\) tiene frecuencia \(f_h = h \cdot f_1\). Para red de 50 Hz: 2°=100 Hz, 3°=150 Hz, 5°=250 Hz, etc. Los armónicos <strong>pares</strong> suelen cancelarse en sistemas simétricos; predominan los <strong>impares</strong> (3°, 5°, 7°, 9°...).
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="p-3 bg-red-50 rounded-lg border border-red-200">
+              <div class="font-bold text-red-800 text-sm">⚠️ Efectos nocivos</div>
+              <ul class="text-xs text-red-700 mt-1 space-y-1">
+                <li>• Calentamiento adicional en motores y transformadores</li>
+                <li>• Resonancia en bancos de capacitores</li>
+                <li>• Flicker y errores en equipos electrónicos</li>
+                <li>• Aumento de pérdidas en conductores (efecto pelicular)</li>
+                <li>• Falso neutro en sistemas trifásicos (3° armónico)</li>
+              </ul>
+            </div>
+            <div class="p-3 bg-green-50 rounded-lg border border-green-200">
+              <div class="font-bold text-green-800 text-sm">🔌 Cargas generadoras</div>
+              <ul class="text-xs text-green-700 mt-1 space-y-1">
+                <li>• Rectificadores y fuentes conmutadas (PCs, UPS)</li>
+                <li>• Variadores de velocidad (VFD)</li>
+                <li>• Lámparas fluorescentes con balasto electrónico</li>
+                <li>• Hornos de inducción y arco eléctrico</li>
+                <li>• Cargas con tiristores y triacs</li>
+              </ul>
+            </div>
+          </div>
+          <div class="chart-wrap bg-white border rounded p-2" style="min-height:300px;">
+            <canvas id="harmonicChart"></canvas>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+            <h4 class="font-bold text-white text-sm mb-2">Espectro de Armónicos</h4>
+            <div id="spectrum-bars" class="flex items-end justify-between h-40 gap-1">
+              <!-- Bars generated by JS -->
+            </div>
+            <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+              <span>1°</span><span>3°</span><span>5°</span><span>7°</span><span>9°</span><span>11°</span>
+            </div>
+          </div>
+          <div>
+            <label class="slider-label font-semibold block mb-2">Tipo de carga:</label>
+            <select id="load-type-harm" class="w-full p-2 border rounded text-sm" onchange="updateHarmonics()">
+              <option value="rectifier">Rectificador monofásico</option>
+              <option value="fluor_mag">Fluorescente balasto magnético</option>
+              <option value="fluor_elec">Fluorescente balasto electrónico</option>
+              <option value="vfd">Variador de frecuencia (VFD)</option>
+              <option value="pc">Fuente de PC/UPS</option>
+            </select>
+          </div>
+          <div class="formula-box text-xs">
+            <strong>Valor eficaz con armónicos:</strong><br>
+            \(S_{RMS} = \sqrt{S_1^2 + S_2^2 + S_3^2 + \cdots}\)<br>
+            \(S_{RMS} = \sqrt{\sum_{h=1}^{\infty} S_h^2}\)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: FACTORES Y THD -->
+<div id="tab-factores" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📐 Factores Característicos y THD</h2>
+      <p class="text-sm opacity-80 mt-1">Indicadores que cuantifican la distorsión armónica y el comportamiento de las señales deformadas.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="space-y-4">
+          <div class="formula-box text-sm">
+            <strong>Factor de Potencia (FP):</strong><br>
+            \(FP = \frac{P}{S}\)<br><br>
+            En presencia de armónicos:<br>
+            \(FP \neq \cos(\varphi_1)\) (diferencia significativa)<br>
+            \(FP = \frac{P_1 + P_2 + P_3 + \cdots}{S_{RMS}}\)
+          </div>
+          <div class="formula-box text-sm">
+            <strong>Factor de Cresta (FC):</strong><br>
+            \(FC = \frac{S_{max}}{S_{ef}}\)<br>
+            Senoidal: \(FC = \sqrt{2} \approx 1.41\)<br>
+            Cargas no lineales: \(FC > \sqrt{2}\) (hasta 5 en casos críticos)
+          </div>
+          <div class="formula-box text-sm">
+            <strong>Factor de Forma (FF):</strong><br>
+            \(FF = \frac{S_{ef}}{S_{med}}\)<br>
+            Senoidal: \(FF = 1.11\)<br>
+            Cuadrada: \(FF = 1.0\)
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+            <h3 class="font-bold text-red-800 mb-2">📊 THD — Tasa de Distorsión Armónica Total</h3>
+            <div class="formula-box text-sm bg-white">
+              <strong>Definición clásica:</strong><br>
+              \(THD = \frac{\sqrt{\sum_{h=2}^{\infty} S_h^2}}{S_1} \times 100\%\)<br><br>
+              <strong>Forma alternativa (más práctica):</strong><br>
+              \(THD = \sqrt{\left(\frac{S_{RMS}}{S_1}\right)^2 - 1} \times 100\%\)
+            </div>
+            <div class="text-xs text-red-700 mt-2">
+              <strong>Interpretación:</strong> THD &gt; 100% indica onda muy deformada. Límites típicos: V &lt; 5%, I &lt; 8% (IEEE 519).
+            </div>
+          </div>
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+            <h3 class="font-bold text-indigo-800 mb-2">📐 THF — Factor Armónico Total</h3>
+            <div class="formula-box text-sm bg-white">
+              \(THF = \frac{\sqrt{\sum_{h=2}^{\infty} S_h^2}}{S_{RMS}} \times 100\%\)
+            </div>
+            <div class="text-xs text-indigo-700 mt-2">
+              <strong>Diferencia clave:</strong> THF usa \(S_{RMS}\) en el denominador (siempre &lt; 100%). THD usa \(S_1\) (puede superar 100%).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THD Calculator -->
+      <div class="card p-4 border-2 border-indigo-200">
+        <h3 class="font-bold text-gray-700 mb-3">🧮 Calculadora de THD Interactiva</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="slider-label font-semibold block">Fundamental (V<sub>1</sub>): <span id="v1-val" class="text-blue-700 font-bold">220</span> V</label>
+            <input type="range" id="v1-slider" min="100" max="400" value="220" class="w-full" oninput="updateTHDCalc()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold block">3° Armónico (V<sub>3</sub>): <span id="v3-val" class="text-red-700 font-bold">15</span> V</label>
+            <input type="range" id="v3-slider" min="0" max="80" value="15" class="w-full" oninput="updateTHDCalc()">
+          </div>
+          <div>
+            <label class="slider-label font-semibold block">5° Armónico (V<sub>5</sub>): <span id="v5-val" class="text-orange-700 font-bold">8</span> V</label>
+            <input type="range" id="v5-slider" min="0" max="50" value="8" class="w-full" oninput="updateTHDCalc()">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <div class="bg-gray-50 p-3 rounded text-center">
+            <div class="text-xs text-gray-500">V<sub>RMS</sub></div>
+            <div class="font-mono font-bold text-lg" id="vrms-result">220.7 V</div>
+          </div>
+          <div class="bg-red-50 p-3 rounded text-center border border-red-200">
+            <div class="text-xs text-red-600">THD</div>
+            <div class="font-mono font-bold text-lg text-red-700" id="thd-result">7.9%</div>
+          </div>
+          <div class="bg-indigo-50 p-3 rounded text-center border border-indigo-200">
+            <div class="text-xs text-indigo-600">THF</div>
+            <div class="font-mono font-bold text-lg text-indigo-700" id="thf-result">7.8%</div>
+          </div>
+          <div class="bg-green-50 p-3 rounded text-center border border-green-200">
+            <div class="text-xs text-green-600">Estado</div>
+            <div class="font-bold text-sm text-green-700" id="thd-status">✅ Aceptable</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: INSTRUMENTOS -->
+<div id="tab-instrumentos" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔧 Instrumentos de Medición en Señales Deformadas</h2>
+      <p class="text-sm opacity-80 mt-1">No todos los instrumentos miden igual ante armónicos. Elegir el correcto es crucial.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4">
+              <div class="text-2xl mb-2">📏</div>
+              <h4 class="font-bold text-yellow-800 text-sm">Respuesta Promedio</h4>
+              <p class="text-xs text-yellow-700 mt-1">IPBM + rectificador. Mide valor medio rectificado y multiplica por factor de forma (1.11 o 2.22).</p>
+              <div class="mt-2 p-2 bg-white rounded text-xs font-mono text-red-600">
+                ⚠️ Error si la onda no es senoidal pura. Mide en defecto.
+              </div>
+            </div>
+            <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-4">
+              <div class="text-2xl mb-2">⚡</div>
+              <h4 class="font-bold text-blue-800 text-sm">Valor Eficaz (RMS)</h4>
+              <p class="text-xs text-blue-700 mt-1">Hierro móvil o electrodinámico. Responde al cuadrado del valor eficaz. Mide hasta 5° armónico fidedignamente.</p>
+              <div class="mt-2 p-2 bg-white rounded text-xs font-mono text-blue-600">
+                ✅ Mide eficaz real, pero limitado por ancho de banda mecánico.
+              </div>
+            </div>
+            <div class="bg-green-50 border-2 border-green-300 rounded-xl p-4">
+              <div class="text-2xl mb-2">🎯</div>
+              <h4 class="font-bold text-green-800 text-sm">Verdadero RMS (TRMS)</h4>
+              <p class="text-xs text-green-700 mt-1">Digital con DSP. Calcula \(\sqrt{\frac{1}{T}\int_0^T s^2(t)\,dt}\) incluyendo todas las armónicas.</p>
+              <div class="mt-2 p-2 bg-white rounded text-xs font-mono text-green-600">
+                ✅ Precisión total. Recomendado para señales deformadas.
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-100 p-4 rounded-xl border-2 border-gray-300">
+            <h4 class="font-bold text-gray-800 mb-3">📊 Comparativa de Respuesta ante Señal Cuadrada</h4>
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-200">
+                  <th class="p-2 text-left border">Instrumento</th>
+                  <th class="p-2 text-center border">Lectura (V<sub>ef</sub>=1V)</th>
+                  <th class="p-2 text-center border">Error</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="p-2 border">Promedio (factor 1.11)</td><td class="p-2 border text-center font-mono">1.11 V</td><td class="p-2 border text-center text-red-600">+11% (exceso)</td></tr>
+                <tr class="bg-gray-50"><td class="p-2 border">Promedio (factor 2.22)</td><td class="p-2 border text-center font-mono">0.90 V</td><td class="p-2 border text-center text-red-600">-10% (defecto)</td></tr>
+                <tr><td class="p-2 border">RMS Hierro Móvil</td><td class="p-2 border text-center font-mono">1.00 V</td><td class="p-2 border text-center text-green-600">0% (correcto)</td></tr>
+                <tr class="bg-gray-50"><td class="p-2 border">TRMS Digital</td><td class="p-2 border text-center font-mono">1.00 V</td><td class="p-2 border text-center text-green-600">0% (correcto)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+            <h4 class="font-bold text-white text-sm mb-2">Analizador de Redes</h4>
+            <div class="lcd-display p-2 rounded h-16 flex items-center justify-center mb-2">
+              <span class="text-xl font-bold" id="analyzer-display">THD: 4.2%</span>
+            </div>
+            <div class="text-xs text-gray-400 space-y-1">
+              <div>• Mide V, I, P, Q, S, FP</div>
+              <div>• Espectro hasta 50° armónico</div>
+              <div>• Registro de eventos transitorios</div>
+              <div>• Conexión vatimétrica (3V+3I)</div>
+            </div>
+          </div>
+          <div class="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+            <div class="font-bold text-indigo-800 text-sm">💡 Consejo práctico</div>
+            <p class="text-xs text-indigo-700 mt-1">Para medir potencia en sistemas con armónicos, usar vatímetro electrodinámico o analizador digital. Los vatímetros de respuesta promedio dan error porque asumen senoide pura.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: DESAFIOS -->
+<div id="tab-desafios" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎮 Desafíos Interactivos</h2>
+      <p class="text-sm opacity-80 mt-1">Aplicá los conceptos de señales no senoidales y desbloqueá logros.</p>
+    </div>
+    <div class="p-5 space-y-6">
+
+      <!-- Desafío 1: Fourier -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🔢</span>
+          <div class="font-bold text-gray-700">Desafío 1: Serie de Fourier</div>
+          <span class="badge badge-blue" id="badge-ch1">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Una onda cuadrada de amplitud \(A = 1\) tiene componente fundamental \(b_1 = \frac{4}{\pi}\). ¿Cuánto vale el coeficiente \(b_3\) del tercer armónico?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3">
+          <button onclick="checkChallenge1('a')" class="quiz-option text-sm" id="ch1-opt1">\(\frac{4}{3\pi}\)</button>
+          <button onclick="checkChallenge1('b')" class="quiz-option text-sm" id="ch1-opt2">\(\frac{4}{\pi}\)</button>
+          <button onclick="checkChallenge1('c')" class="quiz-option text-sm" id="ch1-opt3">\(\frac{4}{9\pi}\)</button>
+          <button onclick="checkChallenge1('d')" class="quiz-option text-sm" id="ch1-opt4">\(\frac{4}{5\pi}\)</button>
+        </div>
+        <div id="challenge1-result" class="text-sm font-bold"></div>
+      </div>
+
+      <!-- Desafío 2: THD -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">📊</span>
+          <div class="font-bold text-gray-700">Desafío 2: Cálculo de THD</div>
+          <span class="badge badge-blue" id="badge-ch2">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Una señal tiene \(V_1 = 220\) V, \(V_3 = 22\) V, \(V_5 = 11\) V. ¿Cuál es el THD aproximado?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-3">
+          <button onclick="checkChallenge2('a')" class="quiz-option text-sm" id="ch2-opt1">5%</button>
+          <button onclick="checkChallenge2('b')" class="quiz-option text-sm" id="ch2-opt2">10%</button>
+          <button onclick="checkChallenge2('c')" class="quiz-option text-sm" id="ch2-opt3">11.2%</button>
+          <button onclick="checkChallenge2('d')" class="quiz-option text-sm" id="ch2-opt4">15%</button>
+        </div>
+        <div id="challenge2-result" class="text-sm font-bold"></div>
+      </div>
+
+      <!-- Desafío 3: Instrumentos -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🔧</span>
+          <div class="font-bold text-gray-700">Desafío 3: Elección de Instrumento</div>
+          <span class="badge badge-blue" id="badge-ch3">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Tenés que medir la corriente consumida por un variador de frecuencia (VFD). ¿Qué instrumento elegís para obtener el valor eficaz real?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+          <button onclick="checkChallenge3('a')" class="quiz-option text-sm" id="ch3-opt1">Multímetro con rectificador de media onda</button>
+          <button onclick="checkChallenge3('b')" class="quiz-option text-sm" id="ch3-opt2">Amperímetro de hierro móvil (RMS)</button>
+          <button onclick="checkChallenge3('c')" class="quiz-option text-sm" id="ch3-opt3">Pinza amperimétrica TRMS digital</button>
+        </div>
+        <div id="challenge3-result" class="text-sm font-bold"></div>
+      </div>
+
+      <!-- Desafío 4: Factor de Cresta -->
+      <div class="bg-gray-50 border rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">〰️</span>
+          <div class="font-bold text-gray-700">Desafío 4: Factor de Cresta</div>
+          <span class="badge badge-blue" id="badge-ch4">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Una señal tiene valor pico \(S_{max} = 5\) A y valor eficaz \(S_{ef} = 2\) A. ¿Cuál es su factor de cresta? ¿Qué implica?
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+          <button onclick="checkChallenge4('a')" class="quiz-option text-sm" id="ch4-opt1">FC = 2.5 (sobreintensidades puntuales, riesgo de disparo de protecciones)</button>
+          <button onclick="checkChallenge4('b')" class="quiz-option text-sm" id="ch4-opt2">FC = 0.4 (señal con muy poco contenido armónico)</button>
+          <button onclick="checkChallenge4('c')" class="quiz-option text-sm" id="ch4-opt3">FC = 1.41 (señal puramente senoidal)</button>
+        </div>
+        <div id="challenge4-result" class="text-sm font-bold"></div>
+      </div>
+
+      <!-- Desafío 5: Quiz Final -->
+      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-xl">🏆</span>
+          <div class="font-bold text-indigo-800">Desafío Final: Quiz Express</div>
+          <span class="badge badge-purple" id="badge-ch5">Pendiente</span>
+        </div>
+        <div class="text-sm text-gray-600 mb-3">
+          Respondé correctamente las 3 preguntas para desbloquear <strong>Quiz Champion</strong>.
+        </div>
+        <div id="quiz-container" class="space-y-3">
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">1. ¿Qué instrumento mide el verdadero valor eficaz (TRMS) incluyendo todos los armónicos?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(1,'a')" class="quiz-option text-sm" id="q1-opt1">IPBM con rectificador de onda completa</button>
+              <button onclick="quizAnswer(1,'b')" class="quiz-option text-sm" id="q1-opt2">Multímetro digital con DSP (TRMS)</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">2. ¿Cuál es la frecuencia del 5° armónico en una red de 50 Hz?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button onclick="quizAnswer(2,'a')" class="quiz-option text-sm" id="q2-opt1">150 Hz</button>
+              <button onclick="quizAnswer(2,'b')" class="quiz-option text-sm" id="q2-opt2">250 Hz</button>
+              <button onclick="quizAnswer(2,'c')" class="quiz-option text-sm" id="q2-opt3">500 Hz</button>
+            </div>
+          </div>
+          <div class="quiz-question">
+            <div class="font-semibold text-sm mb-2">3. ¿Qué diferencia hay entre THD y THF?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button onclick="quizAnswer(3,'a')" class="quiz-option text-sm" id="q3-opt1">THD usa fundamental, THF usa RMS (THD puede &gt;100%, THF no)</button>
+              <button onclick="quizAnswer(3,'b')" class="quiz-option text-sm" id="q3-opt2">THD es para tensión, THF es para corriente</button>
+            </div>
+          </div>
+        </div>
+        <div id="quiz-result" class="mt-3 text-sm font-bold"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 7. Año 2026</div>
+    <div class="mt-1 text-xs">Simulación interactiva basada en el marco teórico oficial.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// GLOBAL STATE
+// =====================================================
+let currentWaveform = 'square';
+let harmonicCount = 1;
+let fourierTerms = 1;
+let harmonicChartInst = null;
+
+// Gamification state
+let challengesCompleted = { ch1:false, ch2:false, ch3:false, ch4:false, quiz:false };
+let quizAnswers = {};
+
+// =====================================================
+// KATEX INITIALIZATION
+// =====================================================
+function initKaTeX() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '\\(', right: '\\)', display: false},
+      {left: '\\[', right: '\\]', display: true}
+    ],
+    throwOnError: false,
+    errorColor: '#cc0000'
+  });
+}
+
+// =====================================================
+// TAB SWITCHING WITH KATEX RE-RENDER
+// =====================================================
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  var target = document.getElementById(id);
+  if (target) {
+    target.classList.add('active');
+    setTimeout(function() {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
+    }, 10);
+  }
+
+  var tabNames = ['tab-seniales','tab-fourier','tab-armonicos','tab-factores','tab-instrumentos','tab-desafios'];
+  var idx = tabNames.indexOf(id);
+  var btns = document.querySelectorAll('.tab-btn');
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+}
+
+// =====================================================
+// PROGRESS TRACKING
+// =====================================================
+function updateProgress() {
+  const total = Object.keys(challengesCompleted).length;
+  const completed = Object.values(challengesCompleted).filter(v => v).length;
+  const percent = Math.round((completed / total) * 100);
+
+  document.getElementById('progress-bar').style.width = percent + '%';
+  document.getElementById('progress-text').textContent = percent + '% completado';
+
+  if (challengesCompleted.ch1) document.getElementById('ach-fourier').classList.remove('locked');
+  if (challengesCompleted.ch2) document.getElementById('ach-thd').classList.remove('locked');
+  if (challengesCompleted.ch3 || challengesCompleted.ch4) document.getElementById('ach-instrumentos').classList.remove('locked');
+  if (challengesCompleted.quiz) document.getElementById('ach-quiz').classList.remove('locked');
+}
+
+// =====================================================
+// TAB 1: WAVEFORM GENERATOR
+// =====================================================
+function setWaveform(type) {
+  currentWaveform = type;
+  updateWaveform();
+}
+
+function updateWaveform() {
+  harmonicCount = parseInt(document.getElementById('harm-slider').value);
+  document.getElementById('harm-count').textContent = harmonicCount;
+
+  const canvas = document.getElementById('waveformCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, h/2);
+  ctx.lineTo(w, h/2);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#2980b9';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+
+  for (let x = 0; x < w; x++) {
+    let t = (x / w) * 4 * Math.PI;
+    let y = 0;
+
+    if (currentWaveform === 'sine') {
+      y = Math.sin(t);
+    } else if (currentWaveform === 'square') {
+      for (let n = 1; n <= harmonicCount; n += 2) {
+        y += (4 / (n * Math.PI)) * Math.sin(n * t);
+      }
+    } else if (currentWaveform === 'triangle') {
+      for (let n = 1; n <= harmonicCount; n += 2) {
+        y += (8 / (Math.PI * Math.PI * n * n)) * Math.sin(n * t) * ((n-1)/2 % 2 === 0 ? 1 : -1);
+      }
+    } else if (currentWaveform === 'sawtooth') {
+      for (let n = 1; n <= harmonicCount; n++) {
+        y += (2 / (n * Math.PI)) * Math.sin(n * t) * (n % 2 === 0 ? -1 : 1);
+      }
+    }
+
+    let py = h/2 - y * (h/3);
+    if (x === 0) ctx.moveTo(x, py);
+    else ctx.lineTo(x, py);
+  }
+  ctx.stroke();
+}
+
+// =====================================================
+// TAB 2: FOURIER VISUALIZATION
+// =====================================================
+function updateFourier() {
+  fourierTerms = parseInt(document.getElementById('fourier-slider').value);
+  document.getElementById('fourier-terms').textContent = fourierTerms;
+
+  const canvas = document.getElementById('fourierCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, h/2);
+  ctx.lineTo(w, h/2);
+  ctx.stroke();
+
+  // Draw ideal square wave faintly
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  for (let x = 0; x < w; x++) {
+    let t = (x / w) * 4 * Math.PI;
+    let y = (t % (2*Math.PI) < Math.PI) ? 1 : -1;
+    let py = h/2 - y * (h/3);
+    if (x === 0) ctx.moveTo(x, py);
+    else ctx.lineTo(x, py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw Fourier approximation
+  ctx.strokeStyle = '#e74c3c';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+
+  for (let x = 0; x < w; x++) {
+    let t = (x / w) * 4 * Math.PI;
+    let y = 0;
+    for (let n = 1; n <= fourierTerms; n += 2) {
+      y += (4 / (n * Math.PI)) * Math.sin(n * t);
+    }
+    let py = h/2 - y * (h/3);
+    if (x === 0) ctx.moveTo(x, py);
+    else ctx.lineTo(x, py);
+  }
+  ctx.stroke();
+}
+
+// =====================================================
+// TAB 3: HARMONICS
+// =====================================================
+const harmonicData = {
+  'rectifier': [100, 0, 33, 0, 20, 0, 14, 0, 11, 0, 9],
+  'fluor_mag': [100, 0, 15, 0, 5, 0, 3, 0, 2, 0, 1],
+  'fluor_elec': [100, 0, 80, 0, 60, 0, 40, 0, 30, 0, 25],
+  'vfd': [100, 5, 80, 60, 50, 40, 30, 25, 20, 15, 10],
+  'pc': [100, 0, 85, 0, 60, 0, 40, 0, 25, 0, 15]
+};
+
+function updateHarmonics() {
+  const loadType = document.getElementById('load-type-harm').value;
+  const data = harmonicData[loadType];
+
+  // Update spectrum bars
+  const container = document.getElementById('spectrum-bars');
+  container.innerHTML = '';
+
+  for (let i = 0; i < 6; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'spectrum-bar bg-red-500 rounded-t';
+    bar.style.width = '14%';
+    bar.style.height = (data[i*2] || 0) + '%';
+    container.appendChild(bar);
+  }
+
+  // Update chart
+  const canvas = document.getElementById('harmonicChart');
+  if (!canvas) return;
+
+  const labels = [];
+  const values = [];
+  for (let i = 0; i < 11; i++) {
+    labels.push((i+1) + '°');
+    values.push(data[i] || 0);
+  }
+
+  if (harmonicChartInst) {
+    harmonicChartInst.data.datasets[0].data = values;
+    harmonicChartInst.update();
+  } else {
+    const ctx = canvas.getContext('2d');
+    harmonicChartInst = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Amplitud relativa (%)',
+          data: values,
+          backgroundColor: values.map((v, i) => i === 0 ? '#3b82f6' : i % 2 === 0 ? '#ef4444' : '#f97316'),
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, max: 120, title: { display: true, text: '% relativo a fundamental' } },
+          x: { title: { display: true, text: 'Orden del armónico' } }
+        }
+      }
+    });
+  }
+}
+
+// =====================================================
+// TAB 4: THD CALCULATOR
+// =====================================================
+function updateTHDCalc() {
+  const v1 = parseFloat(document.getElementById('v1-slider').value);
+  const v3 = parseFloat(document.getElementById('v3-slider').value);
+  const v5 = parseFloat(document.getElementById('v5-slider').value);
+
+  document.getElementById('v1-val').textContent = v1;
+  document.getElementById('v3-val').textContent = v3;
+  document.getElementById('v5-val').textContent = v5;
+
+  const vrms = Math.sqrt(v1*v1 + v3*v3 + v5*v5);
+  const thd = Math.sqrt(v3*v3 + v5*v5) / v1 * 100;
+  const thf = Math.sqrt(v3*v3 + v5*v5) / vrms * 100;
+
+  document.getElementById('vrms-result').textContent = vrms.toFixed(1) + ' V';
+  document.getElementById('thd-result').textContent = thd.toFixed(1) + '%';
+  document.getElementById('thf-result').textContent = thf.toFixed(1) + '%';
+
+  const status = document.getElementById('thd-status');
+  if (thd < 5) {
+    status.textContent = '✅ Aceptable';
+    status.className = 'font-bold text-sm text-green-700';
+  } else if (thd < 8) {
+    status.textContent = '⚠️ Regular';
+    status.className = 'font-bold text-sm text-yellow-700';
+  } else {
+    status.textContent = '❌ Alto';
+    status.className = 'font-bold text-sm text-red-700';
+  }
+}
+
+// =====================================================
+// CHALLENGES
+// =====================================================
+function checkChallenge1(answer) {
+  const result = document.getElementById('challenge1-result');
+  const badge = document.getElementById('badge-ch1');
+  document.querySelectorAll('[id^="ch1-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'a') {
+    result.innerHTML = '✅ ¡Correcto! Para onda cuadrada: \\(b_n = \\frac{4}{n\\pi}\\). Con \\(n=3\\): \\(b_3 = \\frac{4}{3\\pi}\\).';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch1-opt1').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch1 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Recordá que para la onda cuadrada los coeficientes son \\(b_n = \\frac{4}{n\\pi}\\) para armónicos impares.';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch1-opt' + (answer === 'b' ? '2' : answer === 'c' ? '3' : '4')).classList.add('wrong');
+    document.getElementById('ch1-opt1').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge2(answer) {
+  const result = document.getElementById('challenge2-result');
+  const badge = document.getElementById('badge-ch2');
+  document.querySelectorAll('[id^="ch2-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'c') {
+    result.innerHTML = '✅ ¡Correcto! \\(THD = \\frac{\\sqrt{22^2 + 11^2}}{220} \\times 100 = \\frac{\\sqrt{605}}{220} \\times 100 \\approx 11.2\\%\\).';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch2-opt3').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch2 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. Aplicá: \\(THD = \\frac{\\sqrt{V_3^2 + V_5^2}}{V_1} \\times 100\\).';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch2-opt' + (answer === 'a' ? '1' : answer === 'b' ? '2' : '4')).classList.add('wrong');
+    document.getElementById('ch2-opt3').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge3(answer) {
+  const result = document.getElementById('challenge3-result');
+  const badge = document.getElementById('badge-ch3');
+  document.querySelectorAll('[id^="ch3-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'c') {
+    result.innerHTML = '✅ ¡Correcto! El VFD genera corrientes muy deformadas. Solo la pinza TRMS digital mide el verdadero valor eficaz incluyendo todos los armónicos.';
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch3-opt3').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch3 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. El VFD produce armónicos significativos. El instrumento de respuesta promedio y el hierro móvil no son adecuados para este caso.';
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch3-opt' + (answer === 'a' ? '1' : '2')).classList.add('wrong');
+    document.getElementById('ch3-opt3').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function checkChallenge4(answer) {
+  const result = document.getElementById('challenge4-result');
+  const badge = document.getElementById('badge-ch4');
+  document.querySelectorAll('[id^="ch4-opt"]').forEach(btn => btn.classList.add('disabled'));
+
+  if (answer === 'a') {
+    result.innerHTML = '✅ ¡Correcto! \\(FC = S_{max}/S_{ef} = 5/2 = 2.5\\). Un FC elevado indica picos de corriente muy por encima del valor eficaz, lo que puede disparar protecciones térmicas o magnéticas.';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-green-600';
+    document.getElementById('ch4-opt1').classList.add('correct');
+    badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+    challengesCompleted.ch4 = true;
+  } else {
+    result.innerHTML = '❌ Incorrecto. \\(FC = S_{max}/S_{ef} = 5/2 = 2.5\\). Para senoide pura, FC = 1.41. Un valor mayor indica fuerte distorsión.';
+    renderMathInElement(result);
+    result.className = 'text-sm font-bold text-red-600';
+    document.getElementById('ch4-opt' + (answer === 'b' ? '2' : '3')).classList.add('wrong');
+    document.getElementById('ch4-opt1').classList.add('correct');
+  }
+  updateProgress();
+}
+
+function quizAnswer(qNum, answer) {
+  quizAnswers[qNum] = answer;
+  const options = document.querySelectorAll('[id^="q' + qNum + '-opt"]');
+  options.forEach(opt => opt.classList.add('disabled'));
+
+  const correctAnswers = { 1: 'b', 2: 'b', 3: 'a' };
+
+  if (answer === correctAnswers[qNum]) {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : '2')).classList.add('correct');
+  } else {
+    document.getElementById('q' + qNum + '-opt' + (answer === 'a' ? '1' : answer === 'b' ? '2' : '3')).classList.add('wrong');
+    const correctOpt = correctAnswers[qNum] === 'a' ? '1' : '2';
+    document.getElementById('q' + qNum + '-opt' + correctOpt).classList.add('correct');
+  }
+
+  if (Object.keys(quizAnswers).length === 3) {
+    let correct = 0;
+    for (let q in correctAnswers) {
+      if (quizAnswers[q] === correctAnswers[q]) correct++;
+    }
+
+    const result = document.getElementById('quiz-result');
+    const badge = document.getElementById('badge-ch5');
+
+    if (correct === 3) {
+      result.innerHTML = '🏆 ¡Perfecto! 3/3 correctas. ¡Desbloqueaste Quiz Champion!';
+      result.className = 'mt-3 text-sm font-bold text-green-600';
+      badge.textContent = 'Completado'; badge.className = 'badge badge-green';
+      challengesCompleted.quiz = true;
+    } else {
+      result.innerHTML = 'Resultado: ' + correct + '/3 correctas. Revisá los conceptos e intentá de nuevo recargando la página.';
+      result.className = 'mt-3 text-sm font-bold text-orange-600';
+    }
+    updateProgress();
+  }
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', () => {
+  updateWaveform();
+  updateFourier();
+  updateHarmonics();
+  updateTHDCalc();
+  updateProgress();
+});
+</script>
+</body>
+</html>

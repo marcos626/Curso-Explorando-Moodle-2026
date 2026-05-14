@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 3 - UTN FRL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root { --primary:#1e3a5f; --secondary:#2980b9; }
+  body { font-family:'Segoe UI',sans-serif; background:#f0f4f8; }
+  .tab-btn { transition:all 0.3s ease; }
+  .tab-btn.active { background:#1e3a5f; color:white; }
+  .tab-btn:not(.active) { background:#e2e8f0; color:#4a5568; }
+  .tab-btn:not(.active):hover { background:#cbd5e0; }
+  .card { background:white; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); }
+  input[type=range] { accent-color:#2980b9; }
+  .chart-wrap { position:relative; min-height:240px; max-height:360px; width:100%; margin-bottom:1rem; }
+  .formula-box { background:#eef2ff; border-left:4px solid #2980b9; border-radius:6px; padding:0.75rem 1rem; font-family:'Courier New',monospace; font-size:0.9rem; color:#1e3a5f; }
+  .info-box { background:#fffbeb; border:1px solid #fbbf24; border-radius:8px; padding:0.75rem; font-size:0.88rem; }
+  .section-header { background:linear-gradient(135deg,#1e3a5f 0%,#2980b9 100%); color:white; border-radius:10px 10px 0 0; padding:1rem 1.25rem; }
+  .nav-header { background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%); }
+  .badge { display:inline-block; font-size:0.75rem; font-weight:700; border-radius:9999px; padding:2px 10px; }
+  .badge-blue { background:#dbeafe; color:#1e40af; }
+  canvas { max-width:100%; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  .component-card { transition:all 0.2s; cursor:pointer; }
+  .component-card:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.12); }
+  .component-card.selected { border-color:#2563eb !important; background:#eff6ff; }
+  .wave-canvas { border-radius:8px; background:#0f172a; }
+  @media(max-width:640px){ .chart-wrap{min-height:180px;} }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 3 · Instrumentos Pasivos · Exploración Interactiva · Ing. Walter Sotomayor</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">🧲</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">Un galvanómetro de 1882 que aún hoy mide corriente</h2>
+        <p class="text-gray-600 text-sm">D'Arsonval diseñó en 1882 un instrumento que convierte corriente eléctrica en movimiento mecánico. Con solo agregar una resistencia shunt o multiplicadora, ese mismo mecanismo se convierte en amperímetro, voltímetro u óhmetro. ¿Cómo se calcula ese shunt? ¿Por qué el ohmímetro tiene la escala al revés? ¿Qué diferencia hay entre hierro móvil y bobina móvil? Exploralo aquí.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-darsonval')">🧲 D'Arsonval</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ampliacion')">🔧 Shunt y Multiplicadora</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ω Ohmímetro</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')">🌊 Señales Alternas</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-hierro')">⚙️ Hierro Móvil</button>
+  </div>
+</div>
+
+<!-- =================== TAB 1: D'ARSONVAL =================== -->
+<div id="tab-darsonval" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧲 Galvanómetro D'Arsonval — Simulador de Momento Motor</h2>
+      <p class="text-sm opacity-80 mt-1">La cupla motora es proporcional a la corriente. El equilibrio con la cupla del resorte define el ángulo de deflexión de la aguja.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="info-box">
+            <strong>Principio (Ley de Laplace):</strong> F = B·I·l·N·sen(α)<br>
+            El campo radial del imán permanente hace que sen(α) = 1 siempre, por lo que la fuerza es constante en toda la escala.<br>
+            <strong>Equilibrio:</strong> C<sub>m</sub> = C<sub>r</sub> → K·I = Kr·α → <strong>α = (K/Kr)·I</strong>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Inducción magnética B (T): <span id="B-val" class="text-blue-700 font-bold">0.25</span></label>
+            <input type="range" id="B-slider" min="0.05" max="0.5" step="0.01" value="0.25" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Corriente I (mA): <span id="I-val" class="text-blue-700 font-bold">5</span></label>
+            <input type="range" id="I-slider" min="0" max="20" step="0.5" value="5" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">N° de espiras N: <span id="N-val" class="text-blue-700 font-bold">80</span></label>
+            <input type="range" id="N-slider" min="10" max="200" step="10" value="80" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Long. conductor l (cm): <span id="l-val" class="text-blue-700 font-bold">2</span></label>
+            <input type="range" id="l-slider" min="0.5" max="5" step="0.1" value="2" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Ancho bobina d (cm): <span id="d-val" class="text-blue-700 font-bold">1.5</span></label>
+            <input type="range" id="d-slider" min="0.5" max="4" step="0.1" value="1.5" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Constante resorte Kr: <span id="Kr-val" class="text-blue-700 font-bold">1.0</span> (relativa)</label>
+            <input type="range" id="Kr-slider" min="0.2" max="3" step="0.1" value="1" class="w-full" oninput="updateDarsonval()">
+          </div>
+          <div id="darsonval-results" class="space-y-2"></div>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <canvas id="meterCanvas3" width="280" height="180" style="max-width:280px;"></canvas>
+          <div class="chart-wrap" style="min-height:200px;max-height:240px;">
+            <canvas id="darsonvalChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Constitution cards -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔩 Constitución del Instrumento D'Arsonval</h2>
+      <p class="text-sm opacity-80 mt-1">Hacé clic en cada componente para ver su función.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+        <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('bobina')">
+          <div class="text-3xl mb-1">🪡</div>
+          <div class="text-xs font-bold text-gray-800">Bobina Móvil</div>
+        </div>
+        <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('iman')">
+          <div class="text-3xl mb-1">🧲</div>
+          <div class="text-xs font-bold text-gray-800">Imán Permanente</div>
+        </div>
+        <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('resorte')">
+          <div class="text-3xl mb-1">🌀</div>
+          <div class="text-xs font-bold text-gray-800">Resorte Antagonista</div>
+        </div>
+        <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('aguja')">
+          <div class="text-3xl mb-1">📍</div>
+          <div class="text-xs font-bold text-gray-800">Aguja Indicadora</div>
+        </div>
+        <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('escala')">
+          <div class="text-3xl mb-1">📏</div>
+          <div class="text-xs font-bold text-gray-800">Escala Graduada</div>
+        </div>
+      </div>
+      <div id="comp-detail" class="hidden card border-2 border-blue-300 p-4">
+        <div class="flex items-start gap-3">
+          <span id="comp-icon" class="text-4xl flex-shrink-0"></span>
+          <div>
+            <h4 id="comp-name" class="font-bold text-blue-900 text-base mb-1"></h4>
+            <p id="comp-desc" class="text-sm text-gray-700"></p>
+            <div id="comp-formula" class="mt-2 formula-box text-sm hidden"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-amber-50 border border-amber-300 rounded-xl p-3">
+          <h4 class="font-bold text-amber-800 text-sm mb-1">📜 Historia</h4>
+          <p class="text-xs text-gray-700">Arsen D'Arsonval (Francia, 1882) diseñó el galvanómetro de espejo, en honor al italiano Luigi Galvani. El principio sigue siendo la base de todos los instrumentos analógicos modernos.</p>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+          <h4 class="font-bold text-blue-800 text-sm mb-1">⚡ Características principales</h4>
+          <ul class="text-xs text-gray-700 space-y-0.5">
+            <li>✅ Muy sensible y preciso</li>
+            <li>✅ Escala lineal uniforme</li>
+            <li>✅ Pequeño consumo</li>
+            <li>✅ Insensible a campos externos</li>
+            <li>❌ Solo corriente continua (CC)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amortiguamiento -->
+  <div class="card overflow-hidden">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔇 Amortiguamiento</h2>
+      <p class="text-sm opacity-80 mt-1">Sin amortiguamiento la aguja oscila. Los tres mecanismos buscan llevarla al equilibrio en el menor tiempo.</p>
+    </div>
+    <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
+        <div class="font-bold text-blue-800 text-sm mb-1">💨 Neumático</div>
+        <p class="text-xs text-gray-700">Cámara de aire hermética con aleta de aluminio unida al eje. El aire comprimido frena el movimiento. Sencillo y económico. Usado en electrodinámicos.</p>
+        <div class="formula-box text-xs mt-2">M<sub>am</sub> ∝ dα/dt</div>
+      </div>
+      <div class="bg-green-50 rounded-xl p-3 border border-green-200">
+        <div class="font-bold text-green-800 text-sm mb-1">💧 Hidráulico</div>
+        <p class="text-xs text-gray-700">Dos discos metálicos con holgura de 0.1 mm llena de líquido viscoso (alta tensión superficial). El movimiento viscoso frena el sistema.</p>
+        <div class="formula-box text-xs mt-2">Mam = C·(dα/dt)</div>
+      </div>
+      <div class="bg-red-50 rounded-xl p-3 border border-red-200">
+        <div class="font-bold text-red-800 text-sm mb-1">🔴 Magnético (Foucault)</div>
+        <p class="text-xs text-gray-700">Chapa conductora en campo magnético: las corrientes de Foucault inducidas generan una fuerza antagónica (Ley de Lenz). Muy eficaz en magnetoeléctricos. No usar donde haya campos dispersos.</p>
+        <div class="formula-box text-xs mt-2">F = -k·v (Ley de Lenz)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 2: SHUNT Y MULTIPLICADORA =================== -->
+<div id="tab-ampliacion" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔧 Calculadora de Shunt (Amperímetro) y Multiplicadora (Voltímetro)</h2>
+      <p class="text-sm opacity-80 mt-1">El instrumento D'Arsonval admite poca corriente. Estas resistencias amplían su alcance de medida.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Amperímetro -->
+        <div class="bg-blue-50 rounded-xl p-4 border border-blue-200 space-y-3">
+          <h3 class="font-bold text-blue-800">⚡ Amperímetro — Resistencia Shunt (paralelo)</h3>
+          <div class="formula-box text-sm">R_S = R_A / (I / I_A − 1)<br>U_AB = R_A · I_A = R_S · I_S</div>
+          <div>
+            <label class="text-sm font-semibold">Resistencia interna bobina R_A (Ω): <span id="amp-RA" class="text-blue-700 font-bold">50</span></label>
+            <input type="range" id="amp-RA-slider" min="1" max="500" value="50" class="w-full" oninput="updateAmpSim()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Corriente fondo de escala I_A (mA): <span id="amp-IA" class="text-blue-700 font-bold">1</span></label>
+            <input type="range" id="amp-IA-slider" min="0.1" max="50" step="0.1" value="1" class="w-full" oninput="updateAmpSim()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Corriente a medir I (mA): <span id="amp-I" class="text-blue-700 font-bold">100</span></label>
+            <input type="range" id="amp-I-slider" min="1" max="5000" value="100" class="w-full" oninput="updateAmpSim()">
+          </div>
+          <div id="amp-results" class="space-y-2 text-sm"></div>
+          <div class="chart-wrap" style="min-height:160px;max-height:200px;">
+            <canvas id="ampCircuitChart"></canvas>
+          </div>
+          <div class="bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs">
+            ⚠️ <strong>Precaución:</strong> nunca conectar el amperímetro directamente a una fuente de fem. Siempre en serie con una carga. Comenzar en el rango más alto.
+          </div>
+        </div>
+
+        <!-- Voltímetro -->
+        <div class="bg-green-50 rounded-xl p-4 border border-green-200 space-y-3">
+          <h3 class="font-bold text-green-800">🔋 Voltímetro — Resistencia Multiplicadora (serie)</h3>
+          <div class="formula-box text-sm">R_m = U / I_v − R_A<br>U = U_A + U_m = I_v·(R_A + R_m)</div>
+          <div>
+            <label class="text-sm font-semibold">Resistencia interna R_A (Ω): <span id="volt-RA" class="text-blue-700 font-bold">50</span></label>
+            <input type="range" id="volt-RA-slider" min="1" max="500" value="50" class="w-full" oninput="updateVoltSim()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Corriente fondo de escala I_v (mA): <span id="volt-Iv" class="text-blue-700 font-bold">1</span></label>
+            <input type="range" id="volt-Iv-slider" min="0.1" max="50" step="0.1" value="1" class="w-full" oninput="updateVoltSim()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Tensión a medir U (V): <span id="volt-U" class="text-blue-700 font-bold">100</span></label>
+            <input type="range" id="volt-U-slider" min="1" max="1000" value="100" class="w-full" oninput="updateVoltSim()">
+          </div>
+          <div id="volt-results" class="space-y-2 text-sm"></div>
+          <div class="chart-wrap" style="min-height:160px;max-height:200px;">
+            <canvas id="voltCircuitChart"></canvas>
+          </div>
+          <div class="bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs">
+            ⚠️ <strong>Cifra Ω/V:</strong> Sensibilidad = 1/I_v. Cuanto mayor el valor, menor el efecto de carga. Comenzar siempre en la escala de mayor voltaje.
+          </div>
+        </div>
+      </div>
+
+      <!-- Multirango -->
+      <div class="mt-4 card border-2 border-purple-200 p-4">
+        <h3 class="font-bold text-purple-800 mb-2">🔀 Amperímetro/Voltímetro Multirango</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-purple-50 rounded-xl p-3">
+            <div class="font-semibold text-purple-700 text-sm mb-2">Shunts independientes (conmutación)</div>
+            <p class="text-xs text-gray-700 mb-2">Cada shunt se selecciona individualmente. El interruptor debe ser del tipo <strong>"antes de desconectar"</strong> para nunca dejar la bobina sin protección.</p>
+            <div id="multirango-amp" class="space-y-1 text-xs font-mono"></div>
+          </div>
+          <div class="bg-indigo-50 rounded-xl p-3">
+            <div class="font-semibold text-indigo-700 text-sm mb-2">Resistencias multiplicadoras</div>
+            <p class="text-xs text-gray-700 mb-2">Para voltímetros no es necesario el interruptor "antes de desconectar", ya que al cambiar el rango no queda sin protección.</p>
+            <div id="multirango-volt" class="space-y-1 text-xs font-mono"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 3: OHMÍMETRO =================== -->
+<div id="tab-ohmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Ω Ohmímetro — Serie vs. Paralelo</h2>
+      <p class="text-sm opacity-80 mt-1">El ohmímetro usa una batería interna. La resistencia desconocida modifica la corriente y con ello la deflexión de la aguja.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Serie -->
+        <div class="space-y-3">
+          <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+            <h3 class="font-bold text-orange-800 mb-2">🔴 Óhmetro Serie</h3>
+            <div class="formula-box text-sm mb-2">α_x = α_max · [ 1 / (1 + R_x/R_i) ]<br>Ri = R1 + Rm (resistencia interna total)</div>
+            <p class="text-xs text-gray-700 mb-3">Rx = 0 → corriente máxima → aguja al fondo (marca "0Ω" a la derecha). Rx = ∞ → sin corriente → "∞" a la izquierda. La escala crece de derecha a izquierda.</p>
+            <div class="space-y-2">
+              <div><label class="text-xs font-semibold">Tensión batería E (V): <span id="oS-E" class="text-orange-700 font-bold">1.5</span></label>
+              <input type="range" id="oS-E-slider" min="0.5" max="9" step="0.5" value="1.5" class="w-full" oninput="updateOhmSerie()"></div>
+              <div><label class="text-xs font-semibold">Resistencia interna Ri (Ω): <span id="oS-Ri" class="text-orange-700 font-bold">500</span></label>
+              <input type="range" id="oS-Ri-slider" min="10" max="5000" value="500" class="w-full" oninput="updateOhmSerie()"></div>
+              <div><label class="text-xs font-semibold">Resistencia a medir Rx (Ω): <span id="oS-Rx" class="text-orange-700 font-bold">500</span></label>
+              <input type="range" id="oS-Rx-slider" min="0" max="50000" value="500" class="w-full" oninput="updateOhmSerie()"></div>
+            </div>
+            <div id="oS-results" class="mt-3 text-sm space-y-1"></div>
+          </div>
+          <div class="chart-wrap" style="min-height:200px;max-height:260px;">
+            <canvas id="ohmSerieChart"></canvas>
+          </div>
+          <div class="info-box text-xs">
+            <strong>Rango serie:</strong> 1 Ω a 50 kΩ. Ideal para valores altos. Desventaja: la descarga de la batería desplaza el cero → usar R2 de ajuste antes de cada medición.
+          </div>
+        </div>
+
+        <!-- Paralelo -->
+        <div class="space-y-3">
+          <div class="bg-teal-50 border border-teal-200 rounded-xl p-4">
+            <h3 class="font-bold text-teal-800 mb-2">🟢 Óhmetro Paralelo (Shunt)</h3>
+            <div class="formula-box text-sm mb-2">α_x = α_max · [ R_x / (R_x + R_m) ]<br>Rx=0 → I=0 → "0Ω" a la izquierda</div>
+            <p class="text-xs text-gray-700 mb-3">La escala crece de izquierda a derecha (como amperímetros). Rx = ∞ → toda la corriente pasa por el galvanómetro → escala completa.</p>
+            <div class="space-y-2">
+              <div><label class="text-xs font-semibold">Tensión E (V): <span id="oP-E" class="text-teal-700 font-bold">1.5</span></label>
+              <input type="range" id="oP-E-slider" min="0.5" max="9" step="0.5" value="1.5" class="w-full" oninput="updateOhmPar()"></div>
+              <div><label class="text-xs font-semibold">Resistencia interna galv. Rm (Ω): <span id="oP-Rm" class="text-teal-700 font-bold">100</span></label>
+              <input type="range" id="oP-Rm-slider" min="10" max="1000" value="100" class="w-full" oninput="updateOhmPar()"></div>
+              <div><label class="text-xs font-semibold">Rx (Ω): <span id="oP-Rx" class="text-teal-700 font-bold">100</span></label>
+              <input type="range" id="oP-Rx-slider" min="0" max="2000" value="100" class="w-full" oninput="updateOhmPar()"></div>
+            </div>
+            <div id="oP-results" class="mt-3 text-sm space-y-1"></div>
+          </div>
+          <div class="chart-wrap" style="min-height:200px;max-height:260px;">
+            <canvas id="ohmParChart"></canvas>
+          </div>
+          <div class="info-box text-xs">
+            <strong>Rango paralelo:</strong> 0.1 Ω a 1000 Ω. Ideal para valores bajos de resistencia. Requiere interruptor para desconectar la batería cuando no se usa.
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm text-center border-collapse rounded-xl overflow-hidden">
+          <thead><tr class="bg-gray-800 text-white">
+            <th class="p-3 text-left">Característica</th>
+            <th class="p-3">Óhmetro Serie</th>
+            <th class="p-3">Óhmetro Paralelo</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr class="bg-orange-50"><td class="p-3 font-semibold text-left">Conexión Rx</td><td class="p-3">En serie</td><td class="p-3">En paralelo</td></tr>
+            <tr><td class="p-3 font-semibold text-left">Rx = 0</td><td class="p-3">Deflexión máxima (→ "0" a la derecha)</td><td class="p-3">Sin deflexión (→ "0" a la izquierda)</td></tr>
+            <tr class="bg-orange-50"><td class="p-3 font-semibold text-left">Rx = ∞</td><td class="p-3">Sin deflexión (→ "∞" a la izquierda)</td><td class="p-3">Deflexión máxima (→ "∞" a la derecha)</td></tr>
+            <tr><td class="p-3 font-semibold text-left">Escala crece</td><td class="p-3 text-red-700 font-bold">← Derecha a izquierda</td><td class="p-3 text-green-700 font-bold">→ Izquierda a derecha</td></tr>
+            <tr class="bg-orange-50"><td class="p-3 font-semibold text-left">Rango óptimo</td><td class="p-3">1 Ω a 50 kΩ (valores altos)</td><td class="p-3">0.1 Ω a 1000 Ω (valores bajos)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 4: SEÑALES ALTERNAS =================== -->
+<div id="tab-alterna" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🌊 Instrumentos con Rectificador — Medición de CA</h2>
+      <p class="text-sm opacity-80 mt-1">El instrumento D'Arsonval no responde a CA directamente. Un rectificador convierte la CA en una señal unidireccional medible.</p>
+    </div>
+    <div class="p-4">
+      <div class="info-box mb-4">
+        <strong>El problema:</strong> El instrumento magnetoeléctrico deflexiona con CC. Con CA sinusoidal, el torque cambia de signo cada semiciclo → la aguja no se mueve (inercia mecánica).<br>
+        <strong>La solución:</strong> Rectificar la CA para obtener un valor medio distinto de cero → el instrumento lee ese valor medio y la escala se gradúa con un <strong>factor de forma</strong> para indicar el valor eficaz.
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+        <!-- Media onda -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
+          <h3 class="font-bold text-blue-800">📊 Rectificador de Media Onda</h3>
+          <div class="formula-box text-sm">I_med = I_max / π = 0.318 · I_max<br>Factor forma Ff = V_ef / V_med = π / √2 = 2.22<br>= 2 × 1.11 (doble del factor onda completa)</div>
+          <p class="text-xs text-gray-700">El semiciclo negativo es bloqueado por el diodo. La escala se multiplica por 2.22 para indicar el valor eficaz. Solo la mitad del tiempo está activo → baja sensibilidad.</p>
+          <canvas id="halfWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs">
+            ❌ <strong>Desventajas:</strong> Baja sensibilidad (I_med &lt; I_ef / 2) y respuesta no lineal. Solo para baja precisión.
+          </div>
+        </div>
+
+        <!-- Onda completa -->
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 space-y-3">
+          <h3 class="font-bold text-green-800">📊 Rectificador de Onda Completa</h3>
+          <div class="formula-box text-sm">I_med = 2·I_max / π = 0.636 · I_max<br>Factor forma Ff = V_ef / V_med = π / (2√2) = 1.11<br>I_ef = √2/2 · I_max = 0.707 · I_max</div>
+          <p class="text-xs text-gray-700">Puente de 4 diodos. El semiciclo negativo se traslada al primer cuadrante. La frecuencia de la señal rectificada es el doble. El factor de escala es 1.11.</p>
+          <canvas id="fullWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
+          <div class="bg-green-100 border border-green-300 rounded-lg p-2 text-xs">
+            ✅ <strong>Ventajas:</strong> Mayor valor medio → mayor sensibilidad. Factor de forma simple (1.11). Más preciso y lineal.
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive calculator -->
+      <div class="card border-2 border-indigo-200 p-4 mb-4">
+        <h3 class="font-bold text-indigo-800 mb-3">🧮 Calculadora de Valores de Onda Sinusoidal</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <div><label class="text-sm font-semibold">Valor de pico V_p (V): <span id="wave-Vp" class="text-indigo-700 font-bold">311</span></label>
+            <input type="range" id="wave-Vp-slider" min="1" max="700" value="311" class="w-full" oninput="updateWaveCalc()"></div>
+            <div><label class="text-sm font-semibold">Frecuencia f (Hz): <span id="wave-f" class="text-indigo-700 font-bold">50</span></label>
+            <input type="range" id="wave-f-slider" min="10" max="400" step="10" value="50" class="w-full" oninput="updateWaveCalc()"></div>
+          </div>
+          <div id="wave-results" class="bg-indigo-50 rounded-xl p-3 space-y-1 text-sm"></div>
+        </div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-center border-collapse rounded-xl overflow-hidden">
+          <thead><tr class="bg-indigo-800 text-white">
+            <th class="p-3 text-left">Valor</th>
+            <th class="p-3">Expresión</th>
+            <th class="p-3">Relación con V_p</th>
+            <th class="p-3">Ejemplo (V_p=311 V)</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100" id="wave-table">
+            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor de pico (V_p)</td><td class="p-3 font-mono">V_p</td><td class="p-3">1</td><td class="p-3 font-bold">311 V</td></tr>
+            <tr><td class="p-3 font-semibold text-left">Valor pico a pico (V_pp)</td><td class="p-3 font-mono">2 · V_p</td><td class="p-3">2</td><td class="p-3 font-bold">622 V</td></tr>
+            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor eficaz / RMS</td><td class="p-3 font-mono">V_p / √2</td><td class="p-3">0.707</td><td class="p-3 font-bold">220 V</td></tr>
+            <tr><td class="p-3 font-semibold text-left">Valor medio (media onda)</td><td class="p-3 font-mono">V_p / π</td><td class="p-3">0.318</td><td class="p-3 font-bold">99 V</td></tr>
+            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor medio (onda completa)</td><td class="p-3 font-mono">2·V_p / π</td><td class="p-3">0.636</td><td class="p-3 font-bold">198 V</td></tr>
+            <tr><td class="p-3 font-semibold text-left">Factor forma (onda completa)</td><td class="p-3 font-mono">V_ef / V_med</td><td class="p-3 font-bold text-green-700">1.11</td><td class="p-3">—</td></tr>
+            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Factor forma (media onda)</td><td class="p-3 font-mono">V_ef / V_med</td><td class="p-3 font-bold text-orange-700">2.22</td><td class="p-3">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 5: HIERRO MÓVIL =================== -->
+<div id="tab-hierro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">⚙️ Instrumentos Electromagnéticos — Hierro Móvil</h2>
+      <p class="text-sm opacity-80 mt-1">Ayrton y Perry (1882). Dos aspas de hierro dulce se magnetizan con la misma polaridad y se repelen. Sin imán permanente → funciona en CA y CC.</p>
+    </div>
+    <div class="p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+        <!-- Principio y momento motor -->
+        <div class="space-y-3">
+          <div class="bg-gray-800 text-white rounded-xl p-4">
+            <h3 class="font-bold text-yellow-300 mb-2">📐 Ecuación de funcionamiento</h3>
+            <div class="font-mono text-sm space-y-1">
+              <div>Mm = ½ · I² · dL/dα</div>
+              <div>Ma = Ca · α</div>
+              <div class="border-t border-gray-600 mt-2 pt-2 text-yellow-200">α = C · (dL/dα) · I²</div>
+              <div class="text-gray-400 text-xs mt-1">→ escala cuadrática (α ∝ I²)</div>
+            </div>
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Corriente I (A): <span id="hm-I" class="text-blue-700 font-bold">2</span></label>
+            <input type="range" id="hm-I-slider" min="0" max="10" step="0.1" value="2" class="w-full" oninput="updateHierroSim()">
+          </div>
+          <div>
+            <label class="text-sm font-semibold">Constante constructiva C: <span id="hm-C" class="text-blue-700 font-bold">1.0</span></label>
+            <input type="range" id="hm-C-slider" min="0.1" max="3" step="0.1" value="1" class="w-full" oninput="updateHierroSim()">
+          </div>
+          <div id="hierro-results" class="formula-box text-sm"></div>
+
+          <!-- CA explanation -->
+          <div class="bg-green-50 border border-green-200 rounded-xl p-3">
+            <h4 class="font-bold text-green-800 text-sm mb-1">✅ ¿Por qué funciona en CA?</h4>
+            <p class="text-xs text-gray-700">Si i = Î·sen(θ), entonces α ∝ I²_ef porque:</p>
+            <div class="formula-box text-xs mt-1">α = C·(dL/dα)·½·Î²<br>= C·(dL/dα)·I²_ef<br>(La inercia mecánica promedia el I²)</div>
+            <p class="text-xs text-gray-700 mt-1">El instrumento responde al valor eficaz verdadero (TRMS).</p>
+          </div>
+        </div>
+
+        <!-- Escala chart -->
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Comparación de escalas: lineal vs. cuadrática</h4>
+          <div class="chart-wrap">
+            <canvas id="hierroScaleChart"></canvas>
+          </div>
+          <div class="info-box text-xs mt-2">
+            <strong>Zona muerta:</strong> entre el 10 y 20% inicial de la escala cuadrática, las marcas están tan juntas que los errores son inaceptables. El fabricante la deja sin graduar.
+          </div>
+        </div>
+      </div>
+
+      <!-- Classification -->
+      <div class="card border-2 border-gray-200 p-4 mb-4">
+        <h3 class="font-bold text-gray-800 mb-3">🗂️ Clasificación según efecto dinámico y forma del hierro</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
+            <div class="font-bold text-blue-800 text-sm mb-1">🟦 Atracción (mononúcleo)</div>
+            <p class="text-xs text-gray-700">Una sola aspa circular atraída al interior de la bobina donde el campo es mayor.</p>
+          </div>
+          <div class="bg-orange-50 rounded-xl p-3 border border-orange-200">
+            <div class="font-bold text-orange-800 text-sm mb-1">🟧 Repulsión (polinúcleo)</div>
+            <p class="text-xs text-gray-700">Dos aspas (fija + móvil) con igual polaridad se repelen. La más común en uso industrial.</p>
+          </div>
+          <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+            <div class="font-bold text-purple-800 text-sm mb-1">🟪 Repulsión-Atracción</div>
+            <p class="text-xs text-gray-700">Al inicio del giro: repulsión. Al final: atracción (polos distintos enfrentados). Mayor linealidad.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
+            <div class="font-bold text-gray-800 text-sm mb-1">⬛ Aspa Rectangular</div>
+            <p class="text-xs text-gray-700">Funcionamiento equivalente al de repulsión. El hierro fijo y móvil son rectangulares.</p>
+          </div>
+          <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200">
+            <div class="font-bold text-yellow-800 text-sm mb-1">⭕ Aspa Circular</div>
+            <p class="text-xs text-gray-700">El aspa móvil es circular. Principio de atracción. Diseño más simple y compacto.</p>
+          </div>
+          <div class="bg-teal-50 rounded-xl p-3 border border-teal-200">
+            <div class="font-bold text-teal-800 text-sm mb-1">🔵 Sector Circular (moderno)</div>
+            <p class="text-xs text-gray-700">Núcleo en entrehierro entre zapatas polares. El núcleo busca la posición de máxima energía. Construcción moderna.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison table Magneto vs Electro -->
+      <div class="card border-2 border-gray-200 overflow-hidden">
+        <div class="bg-gray-800 text-white p-3 font-bold">📊 Comparativo: Magnetoeléctrico vs. Electromagnético</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="bg-gray-100">
+              <th class="p-3 text-left">Característica</th>
+              <th class="p-3 text-center text-blue-800">🧲 Magnetoeléctrico</th>
+              <th class="p-3 text-center text-orange-800">⚙️ Electromagnético</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr><td class="p-3 font-semibold">Tipo de corriente</td><td class="p-3 text-center">Solo CC</td><td class="p-3 text-center bg-green-50 font-bold text-green-700">CC y CA ✓</td></tr>
+              <tr class="bg-gray-50"><td class="p-3 font-semibold">Tipo de escala</td><td class="p-3 text-center text-green-700 font-bold">Lineal ✓</td><td class="p-3 text-center text-orange-700">Cuadrática</td></tr>
+              <tr><td class="p-3 font-semibold">Precisión / Exactitud</td><td class="p-3 text-center text-green-700 font-bold">Alta ✓</td><td class="p-3 text-center">Menor</td></tr>
+              <tr class="bg-gray-50"><td class="p-3 font-semibold">Consumo propio</td><td class="p-3 text-center text-green-700 font-bold">Pequeño ✓</td><td class="p-3 text-center text-red-700">Mayor</td></tr>
+              <tr><td class="p-3 font-semibold">Resistencia mecánica</td><td class="p-3 text-center">Frágil</td><td class="p-3 text-center text-green-700 font-bold">Resistente ✓</td></tr>
+              <tr class="bg-gray-50"><td class="p-3 font-semibold">Costo</td><td class="p-3 text-center">Mayor</td><td class="p-3 text-center text-green-700 font-bold">Menor ✓</td></tr>
+              <tr><td class="p-3 font-semibold">Blindaje necesario</td><td class="p-3 text-center text-green-700 font-bold">No (imán propio) ✓</td><td class="p-3 text-center text-red-700">Sí (campo débil)</td></tr>
+              <tr class="bg-gray-50"><td class="p-3 font-semibold">Ampliación de rango</td><td class="p-3 text-center">Shunt (A) / R_m (V)</td><td class="p-3 text-center">Derivaciones bobina / R_ad</td></tr>
+              <tr><td class="p-3 font-semibold">Uso principal</td><td class="p-3 text-center">Lab, precisión, CC</td><td class="p-3 text-center text-green-700 font-bold">Tableros CA ✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 3 · 2026</div>
+    <div class="mt-1 text-xs">Herramienta educativa interactiva basada en la guía de estudios oficial de la cátedra.</div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// TAB SWITCHING
+// =====================================================
+var tabIds = ['tab-darsonval','tab-ampliacion','tab-ohmetro','tab-alterna','tab-hierro'];
+var tabInited = {};
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab-btn')[tabIds.indexOf(id)].classList.add('active');
+  if (!tabInited[id]) { tabInited[id] = true; initTab(id); }
+}
+
+function initTab(id) {
+  if (id==='tab-ampliacion') { updateAmpSim(); updateVoltSim(); }
+  if (id==='tab-ohmetro') { initOhmCharts(); }
+  if (id==='tab-alterna') { drawWaves(); updateWaveCalc(); }
+  if (id==='tab-hierro') { initHierroTab(); }
+}
+
+// =====================================================
+// TAB 1: D'ARSONVAL
+// =====================================================
+var darsonvalChart = null;
+
+function updateDarsonval() {
+  var B = parseFloat(document.getElementById('B-slider').value);
+  var I = parseFloat(document.getElementById('I-slider').value) / 1000; // A
+  var N = parseInt(document.getElementById('N-slider').value);
+  var l = parseFloat(document.getElementById('l-slider').value) / 100; // m
+  var d = parseFloat(document.getElementById('d-slider').value) / 100; // m
+  var Kr = parseFloat(document.getElementById('Kr-slider').value);
+
+  document.getElementById('B-val').textContent = B.toFixed(2);
+  document.getElementById('I-val').textContent = (I*1000).toFixed(1);
+  document.getElementById('N-val').textContent = N;
+  document.getElementById('l-val').textContent = (l*100).toFixed(1);
+  document.getElementById('d-val').textContent = (d*100).toFixed(1);
+  document.getElementById('Kr-val').textContent = Kr.toFixed(1);
+
+  var F = B * I * l * N;
+  var Cm = F * d;
+  var K = B * l * N * d;
+  var alpha = K * I / Kr; // rad
+  var alphaDeg = Math.min(alpha * 180 / Math.PI, 270);
+
+  document.getElementById('darsonval-results').innerHTML = [
+    '<div class="formula-box text-sm">F = B·I·l·N = ' + F.toFixed(4) + ' N</div>',
+    '<div class="formula-box text-sm">C_m = F·d = ' + Cm.toFixed(6) + ' N·m = K·I donde K = ' + K.toFixed(4) + '</div>',
+    '<div class="formula-box text-sm">α = K·I / Kr = <strong>' + alphaDeg.toFixed(1) + '°</strong></div>',
+    '<div class="p-2 rounded-lg text-sm font-semibold ' + (alphaDeg > 200 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700') + '">' +
+    (alphaDeg > 200 ? '⚠️ Superando el fondo de escala (>200°)' : '✅ Dentro del campo de medida') + '</div>'
+  ].join('');
+
+  drawMeter3(alphaDeg / 270);
+
+  // Chart: α vs I
+  var currents = [];
+  var angles = [];
+  for (var i = 0; i <= 20; i++) {
+    var ci = i / 1000;
+    currents.push(i);
+    angles.push(Math.min(K * ci / Kr * 180 / Math.PI, 270));
+  }
+  if (darsonvalChart) darsonvalChart.destroy();
+  darsonvalChart = new Chart(document.getElementById('darsonvalChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: currents,
+      datasets: [
+        { label: 'Ángulo α (°)', data: angles, borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0, fill: false },
+        { label: 'Lectura actual', data: currents.map(function(c) { return c === Math.round(I*1000*2)/2 ? alphaDeg : null; }),
+          pointRadius: 8, pointBackgroundColor: '#e74c3c', type: 'scatter', data: [{x: I*1000, y: alphaDeg}] }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, title: { display: true, text: 'Ángulo α vs. Corriente I (escala lineal)' } },
+      scales: {
+        x: { title: { display: true, text: 'Corriente I (mA)' } },
+        y: { title: { display: true, text: 'Ángulo α (°)' }, beginAtZero: true, max: 270 }
+      }
+    }
+  });
+}
+
+function drawMeter3(fraction) {
+  var canvas = document.getElementById('meterCanvas3');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0,0,w,h);
+  var cx = w/2, cy = h - 10, R = Math.min(w,h)*0.8;
+  var startA = Math.PI, endA = 0;
+  var angle = startA + Math.min(fraction, 1) * Math.PI;
+
+  // Arc
+  ctx.beginPath(); ctx.arc(cx, cy, R, startA, endA);
+  ctx.strokeStyle = '#cbd5e0'; ctx.lineWidth = 4; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, R, startA, angle);
+  ctx.strokeStyle = fraction > 0.85 ? '#ef4444' : '#2563eb'; ctx.lineWidth = 6; ctx.stroke();
+
+  // Ticks
+  for (var i = 0; i <= 10; i++) {
+    var a = Math.PI + (i/10)*Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*(R-15), cy+Math.sin(a)*(R-15));
+    ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
+    ctx.strokeStyle='#64748b'; ctx.lineWidth=i%2===0?2:1; ctx.stroke();
+  }
+
+  // Needle
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(angle - Math.PI/2);
+  ctx.beginPath(); ctx.moveTo(0,8); ctx.lineTo(-3,0); ctx.lineTo(0,-R+12); ctx.lineTo(3,0); ctx.closePath();
+  ctx.fillStyle='#e74c3c'; ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.arc(cx,cy,6,0,2*Math.PI); ctx.fillStyle='#1e3a5f'; ctx.fill();
+}
+
+// Component data
+var compData = {
+  bobina: { icon:'🪡', name:'Bobina Móvil', desc:'Arrollamiento de alambre conductor de pequeña sección montado sobre un bastidor de aluminio. La corriente a medir circula por ella. Está suspendida entre las expansiones polares del imán y puede girar libremente.', formula:'F = B·I·l·N (fuerza en la bobina)' },
+  iman: { icon:'🧲', name:'Imán Permanente', desc:'Genera el campo magnético fijo y radial en el entrehierro. Su forma especial garantiza que el campo sea constante y radial en toda la trayectoria de la bobina (sen(α)=1 siempre), lo que produce una escala lineal.', formula:'B = cte. (campo radial constante)' },
+  resorte: { icon:'🌀', name:'Resorte Antagonista', desc:'Dos resortes en espiral arrollados en sentidos contrarios sirven como: mecanismo equilibrador de la rotación, conductores de la corriente hacia la bobina. La constante del resorte determina la sensibilidad del instrumento.', formula:'C_r = Kr · α (cupla resistente)' },
+  aguja: { icon:'📍', name:'Aguja Indicadora', desc:'Montada sobre el eje de suspensión con contrapesos de equilibrio. Se desplaza sobre la escala graduada permitiendo la lectura. Un tornillo de ajuste a cero permite calibrar antes de cada medición.', formula:'α = (K/Kr)·I (deflexión ∝ corriente)' },
+  escala: { icon:'📏', name:'Escala Graduada', desc:'Graduación lineal y uniforme tarada por el fabricante. Puede ser en mA, μA, V, etc. según la aplicación. El espejo bajo la escala permite corregir el error de paralaje.', formula:'Escala lineal: y = K·x' }
+};
+
+function showComponent(id) {
+  var c = compData[id];
+  document.getElementById('comp-icon').textContent = c.icon;
+  document.getElementById('comp-name').textContent = c.name;
+  document.getElementById('comp-desc').textContent = c.desc;
+  var fbox = document.getElementById('comp-formula');
+  fbox.textContent = c.formula; fbox.classList.remove('hidden');
+  document.getElementById('comp-detail').classList.remove('hidden');
+  document.querySelectorAll('.component-card').forEach(function(el){el.classList.remove('selected');});
+}
+
+// =====================================================
+// TAB 2: SHUNT Y MULTIPLICADORA
+// =====================================================
+var ampChart = null, voltChart = null;
+
+function updateAmpSim() {
+  var RA = parseInt(document.getElementById('amp-RA-slider').value);
+  var IA = parseFloat(document.getElementById('amp-IA-slider').value);
+  var I = parseFloat(document.getElementById('amp-I-slider').value);
+  document.getElementById('amp-RA').textContent = RA;
+  document.getElementById('amp-IA').textContent = IA.toFixed(1);
+  document.getElementById('amp-I').textContent = I.toFixed(0);
+
+  if (I <= IA) { document.getElementById('amp-results').innerHTML = '<div class="text-red-600 text-sm font-semibold">⚠️ I debe ser mayor que I_A</div>'; return; }
+  var RS = (RA * IA) / (I - IA);
+  var IS = I - IA;
+  var UAB = RA * IA / 1000; // V (IA en mA)
+  var n = I / IA;
+
+  document.getElementById('amp-results').innerHTML = [
+    '<div class="formula-box text-sm">R_S = R_A·I_A / (I − I_A) = ' + RS.toFixed(3) + ' Ω</div>',
+    '<div class="formula-box text-sm">I_S = ' + IS.toFixed(1) + ' mA | I_A = ' + IA.toFixed(1) + ' mA</div>',
+    '<div class="formula-box text-sm">U_AB = R_A·I_A = R_S·I_S = ' + (UAB*1000).toFixed(2) + ' mV</div>',
+    '<div class="formula-box text-sm">Factor de escala n = I/I_A = <strong>' + n.toFixed(1) + 'x</strong></div>',
+    '<div class="bg-blue-100 rounded-lg p-2 text-xs text-blue-800"><strong>R_S = ' + RS.toFixed(3) + ' Ω</strong> (menor que R_A = '+RA+' Ω) ✓</div>'
+  ].join('');
+
+  // Multirango
+  var ranges = [I, I/2, I/5].filter(function(r){return r>IA;});
+  document.getElementById('multirango-amp').innerHTML = ranges.map(function(r,i) {
+    var rs = (RA*IA/(r-IA)).toFixed(2);
+    return '<div class="bg-white rounded p-1">Rango ' + (i+1) + ': ' + r.toFixed(0) + ' mA → R_S = ' + rs + ' Ω</div>';
+  }).join('');
+
+  // Chart: current distribution
+  if (ampChart) ampChart.destroy();
+  ampChart = new Chart(document.getElementById('ampCircuitChart').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: ['Por bobina (I_A)','Por shunt (I_S)'], datasets: [{data:[IA,IS],backgroundColor:['#2563eb','#93c5fd'],borderWidth:2}] },
+    options: { responsive:true,maintainAspectRatio:false, plugins:{title:{display:true,text:'Distribución de corriente (mA)'}, legend:{position:'bottom'}} }
+  });
+}
+
+function updateVoltSim() {
+  var RA = parseInt(document.getElementById('volt-RA-slider').value);
+  var Iv = parseFloat(document.getElementById('volt-Iv-slider').value);
+  var U = parseFloat(document.getElementById('volt-U-slider').value);
+  document.getElementById('volt-RA').textContent = RA;
+  document.getElementById('volt-Iv').textContent = Iv.toFixed(1);
+  document.getElementById('volt-U').textContent = U.toFixed(0);
+
+  var Rm = (U / (Iv/1000)) - RA;
+  var UA = RA * Iv/1000;
+  var Um = Rm * Iv/1000;
+  var sensOV = 1000/Iv;
+
+  document.getElementById('volt-results').innerHTML = [
+    '<div class="formula-box text-sm">R_m = U/I_v − R_A = ' + Rm.toFixed(0) + ' Ω</div>',
+    '<div class="formula-box text-sm">U_A = ' + UA.toFixed(3) + ' V | U_m = ' + Um.toFixed(2) + ' V</div>',
+    '<div class="formula-box text-sm">Cifra Ω/V = 1/I_v = <strong>' + sensOV.toFixed(0) + ' Ω/V</strong></div>',
+    '<div class="bg-green-100 rounded-lg p-2 text-xs text-green-800"><strong>R_m = ' + Rm.toFixed(0) + ' Ω</strong> >> R_A = '+RA+' Ω ✓</div>'
+  ].join('');
+
+  // Multirango
+  var Uranges = [U, U/2, U/5];
+  document.getElementById('multirango-volt').innerHTML = Uranges.map(function(u,i) {
+    var rm = ((u/(Iv/1000))-RA).toFixed(0);
+    return '<div class="bg-white rounded p-1">Rango ' + (i+1) + ': ' + u.toFixed(0) + ' V → R_m = ' + rm + ' Ω</div>';
+  }).join('');
+
+  if (voltChart) voltChart.destroy();
+  voltChart = new Chart(document.getElementById('voltCircuitChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['U_A (Bobina)','U_m (Multiplicadora)'],
+      datasets: [{data:[UA, Um], backgroundColor:['#16a34a','#86efac'], borderRadius:6}]
+    },
+    options: { responsive:true,maintainAspectRatio:false, plugins:{title:{display:true,text:'Caída de tensión (V)'}, legend:{display:false}},
+      scales:{y:{beginAtZero:true, title:{display:true,text:'V'}}} }
+  });
+}
+
+// =====================================================
+// TAB 3: OHMÍMETRO
+// =====================================================
+var ohmSerieChart=null, ohmParChart=null;
+
+function initOhmCharts() {
+  updateOhmSerie(); updateOhmPar();
+}
+
+function updateOhmSerie() {
+  var E = parseFloat(document.getElementById('oS-E-slider').value);
+  var Ri = parseFloat(document.getElementById('oS-Ri-slider').value);
+  var Rx = parseFloat(document.getElementById('oS-Rx-slider').value);
+  document.getElementById('oS-E').textContent = E;
+  document.getElementById('oS-Ri').textContent = Ri;
+  document.getElementById('oS-Rx').textContent = Rx;
+
+  var Imax = E / Ri * 1000;
+  var Ix = E / (Ri + Rx) * 1000;
+  var alpha = Ix / Imax;
+
+  document.getElementById('oS-results').innerHTML = [
+    '<div class="formula-box text-sm">I_max (Rx=0) = E/Ri = ' + Imax.toFixed(3) + ' mA</div>',
+    '<div class="formula-box text-sm">I_x = E/(Ri+Rx) = ' + Ix.toFixed(3) + ' mA</div>',
+    '<div class="formula-box text-sm">Deflexión = ' + (alpha*100).toFixed(1) + '% de escala completa</div>',
+    '<div class="bg-orange-100 rounded-lg p-2 text-xs text-orange-800">En la escala: la aguja está a <strong>' + (alpha*100).toFixed(1) + '%</strong> desde la derecha (0Ω)</div>'
+  ].join('');
+
+  // Chart
+  var rxValues = [0,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000,50000].filter(function(r){return r>=0;});
+  var deflections = rxValues.map(function(r){ return (E/(Ri+r))/(E/Ri)*100; });
+
+  if (ohmSerieChart) ohmSerieChart.destroy();
+  ohmSerieChart = new Chart(document.getElementById('ohmSerieChart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: rxValues.map(function(r){return r<1000?r+'Ω':(r/1000)+'kΩ';}),
+      datasets:[
+        {label:'Deflexión (%)',data:deflections,borderColor:'#ea580c',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(234,88,12,0.1)'},
+        {label:'Lectura actual',type:'scatter',data:[{x:rxValues.indexOf(rxValues.reduce(function(prev,curr){return Math.abs(curr-Rx)<Math.abs(prev-Rx)?curr:prev;})),y:(Ix/Imax*100)}],pointRadius:8,pointBackgroundColor:'#dc2626'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{title:{display:true,text:'Óhmetro Serie: Deflexión vs Rx (α ∝ 1/(1+Rx/Ri))'},legend:{display:false}},
+      scales:{x:{title:{display:true,text:'Rx'}},y:{title:{display:true,text:'Deflexión (%)'},beginAtZero:true,max:100}}
+    }
+  });
+}
+
+function updateOhmPar() {
+  var E = parseFloat(document.getElementById('oP-E-slider').value);
+  var Rm = parseFloat(document.getElementById('oP-Rm-slider').value);
+  var Rx = parseFloat(document.getElementById('oP-Rx-slider').value);
+  document.getElementById('oP-E').textContent = E;
+  document.getElementById('oP-Rm').textContent = Rm;
+  document.getElementById('oP-Rx').textContent = Rx;
+
+  // When Rx=inf → I=E/(R1+Rm)≈E/Rm → full scale
+  // When Rx connected: Im = E/(R1)·Rx/(Rx+Rm)... simplified: Im ∝ Rx/(Rx+Rm)
+  var alphaFull = 1; // normalized
+  var alpha = (Rx===0) ? 0 : Rx/(Rx+Rm);
+
+  document.getElementById('oP-results').innerHTML = [
+    '<div class="formula-box text-sm">α = α_max · Rx/(Rx + Rm)</div>',
+    '<div class="formula-box text-sm">Deflexión = ' + (alpha*100).toFixed(1) + '% de escala completa</div>',
+    '<div class="bg-teal-100 rounded-lg p-2 text-xs text-teal-800">La aguja está a <strong>' + (alpha*100).toFixed(1) + '%</strong> desde la izquierda (0Ω)</div>'
+  ].join('');
+
+  var rxValues = [0,10,20,50,100,200,500,1000,2000];
+  var deflections = rxValues.map(function(r){ return r/(r+Rm)*100; });
+
+  if (ohmParChart) ohmParChart.destroy();
+  ohmParChart = new Chart(document.getElementById('ohmParChart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels: rxValues.map(function(r){return r+'Ω';}),
+      datasets:[{label:'Deflexión (%)',data:deflections,borderColor:'#0d9488',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(13,148,136,0.1)'}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{title:{display:true,text:'Óhmetro Paralelo: Deflexión vs Rx (escala crece →)'},legend:{display:false}},
+      scales:{x:{title:{display:true,text:'Rx'}},y:{title:{display:true,text:'Deflexión (%)'},beginAtZero:true,max:100}}
+    }
+  });
+}
+
+// =====================================================
+// TAB 4: SEÑALES ALTERNAS
+// =====================================================
+function drawWaves() {
+  drawHalfWave();
+  drawFullWave();
+}
+
+function drawHalfWave() {
+  var canvas = document.getElementById('halfWaveCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0,0,w,h);
+
+  var amp = h*0.38, cy = h/2, cycles = 3;
+  // Original AC (dim)
+  ctx.beginPath(); ctx.strokeStyle='rgba(148,163,184,0.4)'; ctx.lineWidth=1.5;
+  for (var x=0; x<w; x++) {
+    var theta = (x/w)*cycles*2*Math.PI;
+    var y = cy - amp*Math.sin(theta);
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  // Rectified (half-wave)
+  ctx.beginPath(); ctx.strokeStyle='#60a5fa'; ctx.lineWidth=2.5;
+  var first=true;
+  for (var x=0; x<w; x++) {
+    var theta = (x/w)*cycles*2*Math.PI;
+    var val = Math.sin(theta);
+    var y = val>=0 ? cy - amp*val : cy;
+    if(first){ctx.moveTo(x,y);first=false;}else{ctx.lineTo(x,y);}
+  }
+  ctx.stroke();
+
+  // Mean line
+  var Idc = 0.318 * amp;
+  ctx.beginPath(); ctx.strokeStyle='#fbbf24'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.moveTo(0, cy-Idc); ctx.lineTo(w, cy-Idc); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24'; ctx.font='bold 10px sans-serif'; ctx.fillText('I_med = 0.318·Ip', 4, cy-Idc-4);
+
+  // Labels
+  ctx.fillStyle='#94a3b8'; ctx.font='10px sans-serif';
+  ctx.fillText('Señal original (atenuada)', 4, 14);
+  ctx.fillStyle='#60a5fa';
+  ctx.fillText('Señal rectificada (media onda)', 4, 26);
+}
+
+function drawFullWave() {
+  var canvas = document.getElementById('fullWaveCanvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#0f172a'; ctx.fillRect(0,0,w,h);
+
+  var amp = h*0.38, cy = h/2+10, cycles = 3;
+  ctx.beginPath(); ctx.strokeStyle='rgba(148,163,184,0.4)'; ctx.lineWidth=1.5;
+  for (var x=0; x<w; x++) {
+    var t = (x/w)*cycles*2*Math.PI;
+    var y = cy - amp*Math.sin(t);
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  ctx.beginPath(); ctx.strokeStyle='#4ade80'; ctx.lineWidth=2.5;
+  for (var x=0; x<w; x++) {
+    var t = (x/w)*cycles*2*Math.PI;
+    var y = cy - amp*Math.abs(Math.sin(t));
+    x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+
+  var Idc = 0.636 * amp;
+  ctx.beginPath(); ctx.strokeStyle='#fbbf24'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  ctx.moveTo(0,cy-Idc); ctx.lineTo(w,cy-Idc); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24'; ctx.font='bold 10px sans-serif'; ctx.fillText('I_med = 0.636·Ip', 4, cy-Idc-4);
+  ctx.fillStyle='#94a3b8'; ctx.font='10px sans-serif'; ctx.fillText('Señal original', 4, 14);
+  ctx.fillStyle='#4ade80'; ctx.fillText('Señal rectificada (onda completa)', 4, 26);
+}
+
+function updateWaveCalc() {
+  var Vp = parseFloat(document.getElementById('wave-Vp-slider').value);
+  var f = parseInt(document.getElementById('wave-f-slider').value);
+  document.getElementById('wave-Vp').textContent = Vp;
+  document.getElementById('wave-f').textContent = f;
+
+  var Vef = Vp/Math.sqrt(2), Vmed_full = 2*Vp/Math.PI, Vmed_half = Vp/Math.PI, T = 1/f*1000;
+  document.getElementById('wave-results').innerHTML = [
+    '<div class="text-xs font-semibold text-indigo-700 mb-1">Para V_p = ' + Vp + ' V, f = ' + f + ' Hz:</div>',
+    '<div class="formula-box text-xs">V_ef = V_p/√2 = <strong>' + Vef.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">V_med (OC) = 2V_p/π = <strong>' + Vmed_full.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">V_med (MO) = V_p/π = <strong>' + Vmed_half.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">T = 1/f = <strong>' + T.toFixed(2) + ' ms</strong></div>',
+    '<div class="formula-box text-xs">V_pp = 2·V_p = <strong>' + (2*Vp).toFixed(0) + ' V</strong></div>',
+  ].join('');
+}
+
+// =====================================================
+// TAB 5: HIERRO MÓVIL
+// =====================================================
+var hierroScaleChart = null;
+
+function initHierroTab() {
+  updateHierroSim();
+  // Scale chart
+  var xs = []; for(var i=0;i<=100;i++) xs.push(i);
+  var linear = xs.map(function(x){return x;});
+  var quad = xs.map(function(x){return x*x/100;});
+
+  if (hierroScaleChart) hierroScaleChart.destroy();
+  hierroScaleChart = new Chart(document.getElementById('hierroScaleChart').getContext('2d'), {
+    type:'line',
+    data:{
+      labels:xs,
+      datasets:[
+        {label:'Lineal (magnetoeléctrico)',data:linear,borderColor:'#2563eb',borderWidth:2,pointRadius:0},
+        {label:'Cuadrática (hierro móvil)',data:quad,borderColor:'#ea580c',borderWidth:2,pointRadius:0,tension:0.3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},title:{display:true,text:'α ∝ I (lineal) vs α ∝ I² (cuadrática)'}},
+      scales:{
+        x:{title:{display:true,text:'Corriente I (% del máximo)'}},
+        y:{title:{display:true,text:'Ángulo α (% del máximo)'},beginAtZero:true,max:100}
+      }
+    }
+  });
+}
+
+function updateHierroSim() {
+  var I = parseFloat(document.getElementById('hm-I-slider').value);
+  var C = parseFloat(document.getElementById('hm-C-slider').value);
+  document.getElementById('hm-I').textContent = I.toFixed(1);
+  document.getElementById('hm-C').textContent = C.toFixed(1);
+  var alpha = C * I * I;
+  var alphaCA = C * I * I; // Same! α = C·(dL/dα)·I²_ef
+  document.getElementById('hierro-results').innerHTML =
+    'α = C·(dL/dα)·I² = ' + C.toFixed(1) + ' × ' + (I*I).toFixed(2) + ' = <strong>' + alpha.toFixed(2) + '</strong> unidades\n' +
+    'En CA: α = C·(dL/dα)·I²_ef = ' + alphaCA.toFixed(2) + ' (mismo resultado con I_ef)';
+}
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', function() {
+  updateDarsonval();
+  tabInited['tab-darsonval'] = true;
+});
+</script>
+</body>
+</html>
