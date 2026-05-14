@@ -1,30 +1,15 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<!-- =========================
-     MATHJAX (ECUACIONES LATEX)
-========================== -->
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$']]
-  },
-  svg: {
-    fontCache: 'global'
-  }
-};
-</script>
-
-<script defer
-src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
-</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medidas Electrónicas I - UTN FRL</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 <style>
   :root {
     --primary: #1e3a5f;
@@ -43,7 +28,8 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
   .slider-label { font-size: 0.85rem; color: #4a5568; }
   input[type=range] { accent-color: #2980b9; }
   .chart-wrap { position: relative; min-height: 260px; max-height: 380px; width: 100%; margin-bottom: 1rem; }
-  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-family: 'Courier New', monospace; font-size: 0.95rem; color: #1e3a5f; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.95rem; color: #1e3a5f; overflow-x: auto; }
+  .formula-box .katex-display { margin: 0.15rem 0; }
   .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.92rem; margin: 2px; }
   .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
   .badge-blue { background: #dbeafe; color: #1e40af; }
@@ -64,13 +50,6 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
 </style>
 </head>
 <body>
-<!-- =====================================
-     BARRA DE PROGRESO GAMIFICADA
-====================================== -->
-<div id="progress-container">
-    <div id="progress-bar"></div>
-</div>
-
 <!-- HEADER -->
 <div class="nav-header text-white p-4 mb-4 shadow-lg">
   <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -166,13 +145,13 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="card p-4 border-t-4 border-green-500">
       <h3 class="font-bold text-green-700 mb-2">✅ Exactitud</h3>
-      <p class="text-sm text-gray-600">Grado de aproximación entre el valor medido y el <strong>valor verdadero</strong>. Se expresa en términos de error: <span class="font-mono text-blue-700">Δx = xᵢ − x̄</span></p>
-      <div class="mt-2 formula-box">Error absoluto: Δx = x_medido − x_verdadero</div>
+      <p class="text-sm text-gray-600">Grado de aproximación entre el valor medido y el <strong>valor verdadero</strong>. Se expresa en términos de error: <span class="text-blue-700">\( \Delta x_i = x_i - \bar{x} \)</span></p>
+      <div class="mt-2 formula-box">Error absoluto: \[ \Delta x = x_{\text{medido}} - x_{\text{verdadero}} \]</div>
     </div>
     <div class="card p-4 border-t-4 border-blue-500">
       <h3 class="font-bold text-blue-700 mb-2">🎯 Precisión</h3>
-      <p class="text-sm text-gray-600">Grado de concordancia entre <strong>mediciones repetidas</strong>. Se cuantifica con la desviación estándar: <span class="font-mono text-blue-700">σ</span></p>
-      <div class="mt-2 formula-box">σ = √(Σ(xᵢ−x̄)² / n)</div>
+      <p class="text-sm text-gray-600">Grado de concordancia entre <strong>mediciones repetidas</strong>. Se cuantifica con la desviación estándar: <span class="text-blue-700">\( \sigma \)</span></p>
+      <div class="mt-2 formula-box">\[ \sigma = \sqrt{\frac{\sum_{i=1}^{n}(x_i-\bar{x})^2}{n}} \]</div>
     </div>
   </div>
 </div>
@@ -198,7 +177,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
               <input type="range" id="sys-slider" min="-20" max="20" value="0" class="w-full" oninput="updateErrorSim()">
             </div>
             <div>
-              <label class="slider-label font-semibold block">Error casual (σ, %): <span id="rnd-val" class="text-orange-600 font-bold">3</span></label>
+              <label class="slider-label font-semibold block">Error casual (\(\sigma\), %): <span id="rnd-val" class="text-orange-600 font-bold">3</span></label>
               <input type="range" id="rnd-slider" min="0.5" max="15" value="3" step="0.5" class="w-full" oninput="updateErrorSim()">
             </div>
             <div>
@@ -214,7 +193,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
       <!-- Measurements table -->
       <div class="overflow-x-auto mb-4">
         <table class="w-full text-xs text-center border-collapse" id="meas-table">
-          <thead><tr class="bg-gray-100"><th class="p-2 border">i</th><th class="p-2 border">xᵢ (Ω)</th><th class="p-2 border">Δxᵢ</th><th class="p-2 border">|Δxᵢ|</th><th class="p-2 border">Δxᵢ²</th><th class="p-2 border">eᵢ (%)</th></tr></thead>
+          <thead><tr class="bg-gray-100"><th class="p-2 border">\(i\)</th><th class="p-2 border">\(x_i\;(\Omega)\)</th><th class="p-2 border">\(\Delta x_i\)</th><th class="p-2 border">\(|\Delta x_i|\)</th><th class="p-2 border">\((\Delta x_i)^2\)</th><th class="p-2 border">\(e_i\;(\%)\)</th></tr></thead>
           <tbody id="meas-tbody"></tbody>
         </table>
       </div>
@@ -269,7 +248,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
               <input type="range" id="A-val" min="1" max="200" value="50" class="w-full" oninput="updatePropSim()">
             </div>
             <div>
-              <label class="slider-label font-semibold">Error relativo eₐ (%): <span id="eA-disp" class="text-red-600 font-bold">5</span></label>
+              <label class="slider-label font-semibold">Error relativo \(e_A\) (%): <span id="eA-disp" class="text-red-600 font-bold">5</span></label>
               <input type="range" id="eA-slider" min="0.5" max="20" value="5" step="0.5" class="w-full" oninput="updatePropSim()">
             </div>
             <div id="A-interval" class="formula-box text-sm"></div>
@@ -283,7 +262,7 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
               <input type="range" id="B-val" min="1" max="200" value="30" class="w-full" oninput="updatePropSim()">
             </div>
             <div>
-              <label class="slider-label font-semibold">Error relativo e_B (%): <span id="eB-disp" class="text-red-600 font-bold">3</span></label>
+              <label class="slider-label font-semibold">Error relativo \(e_B\) (%): <span id="eB-disp" class="text-red-600 font-bold">3</span></label>
               <input type="range" id="eB-slider" min="0.5" max="20" value="3" step="0.5" class="w-full" oninput="updatePropSim()">
             </div>
             <div id="B-interval" class="formula-box text-sm"></div>
@@ -303,20 +282,20 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
       <!-- Formulas reference -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
         <div class="formula-box">
-          <div class="font-bold text-blue-800 mb-1">SUMA: e(A+B)</div>
-          <div>e = (eₐ·A + e_B·B) / (A+B)</div>
+          <div class="font-bold text-blue-800 mb-1">SUMA: \(e(A+B)\)</div>
+          <div>\[ e(A+B)=\frac{e_A A+e_B B}{A+B} \]</div>
         </div>
         <div class="formula-box">
-          <div class="font-bold text-blue-800 mb-1">RESTA: e(A−B)</div>
-          <div>e = (eₐ·A + e_B·B) / |A−B|</div>
+          <div class="font-bold text-blue-800 mb-1">RESTA: \(e(A-B)\)</div>
+          <div>\[ e(A-B)=\frac{e_A A+e_B B}{|A-B|} \]</div>
         </div>
         <div class="formula-box">
-          <div class="font-bold text-blue-800 mb-1">PRODUCTO: e(A×B)</div>
-          <div>e = eₐ + e_B</div>
+          <div class="font-bold text-blue-800 mb-1">PRODUCTO: \(e(A\times B)\)</div>
+          <div>\[ e(A\cdot B)=e_A+e_B \]</div>
         </div>
         <div class="formula-box">
-          <div class="font-bold text-blue-800 mb-1">COCIENTE: e(A/B)</div>
-          <div>e = eₐ + e_B  (caso desfavorable)</div>
+          <div class="font-bold text-blue-800 mb-1">COCIENTE: \(e(A/B)\)</div>
+          <div>\[ e\!\left(\frac{A}{B}\right)=e_A+e_B \]</div>
         </div>
       </div>
     </div>
@@ -574,6 +553,19 @@ function safeFixed(val, dec) {
   } catch(e) { return '--'; }
 }
 
+function renderLatexIn(el) {
+  try {
+    if (!el || typeof renderMathInElement !== 'function') return;
+    renderMathInElement(el, {
+      delimiters: [
+        { left: '\\[', right: '\\]', display: true },
+        { left: '\\(', right: '\\)', display: false }
+      ],
+      throwOnError: false
+    });
+  } catch(e) { console.error('renderLatexIn error:', e); }
+}
+
 // =====================================================
 // TAB 1: TARGET / EXACTITUD VS PRECISIÓN
 // =====================================================
@@ -754,19 +746,21 @@ function updateErrorSim() {
       statsPanel.innerHTML = [
         '<div class="font-bold text-gray-800 mb-2 text-sm border-b pb-1">Parámetros Estadísticos</div>',
         '<div class="flex justify-between"><span class="text-gray-600">Valor verdadero:</span><span class="font-mono font-bold text-blue-700">' + safeFixed(vvVal, 2) + ' Ω</span></div>',
-        '<div class="flex justify-between"><span class="text-gray-600">Media (x̄):</span><span class="font-mono font-bold">' + safeFixed(mean, 4) + ' Ω</span></div>',
-        '<div class="flex justify-between"><span class="text-gray-600">Error medio (δ):</span><span class="font-mono font-bold text-orange-600">' + safeFixed(errorMedio, 4) + '</span></div>',
-        '<div class="flex justify-between"><span class="text-gray-600">Desv. est. (σ):</span><span class="font-mono font-bold text-red-600">' + safeFixed(sigma, 4) + '</span></div>',
-        '<div class="flex justify-between"><span class="text-gray-600">Desv. muestra (σs):</span><span class="font-mono font-bold text-red-700">' + safeFixed(sigmaS, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Media \\(\\bar{x}\\):</span><span class="font-mono font-bold">' + safeFixed(mean, 4) + ' Ω</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Error medio \\(\\delta\\):</span><span class="font-mono font-bold text-orange-600">' + safeFixed(errorMedio, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Desv. est. \\(\\sigma\\):</span><span class="font-mono font-bold text-red-600">' + safeFixed(sigma, 4) + '</span></div>',
+        '<div class="flex justify-between"><span class="text-gray-600">Desv. muestra \\(\\sigma_s\\):</span><span class="font-mono font-bold text-red-700">' + safeFixed(sigmaS, 4) + '</span></div>',
         '<div class="flex justify-between"><span class="text-gray-600">Coef. variación:</span><span class="font-mono font-bold">' + safeFixed(sigmaRel * 100, 2) + '%</span></div>',
-        '<div class="flex justify-between"><span class="text-gray-600">n:</span><span class="font-mono font-bold">' + n + '</span></div>'
+        '<div class="flex justify-between"><span class="text-gray-600">\\(n\\):</span><span class="font-mono font-bold">' + n + '</span></div>'
       ].join('');
+      renderLatexIn(statsPanel);
     }
 
     // Expression
     var exprEl = document.getElementById('meas-expression');
     if (exprEl) {
-      exprEl.innerHTML = 'M = ' + safeFixed(mean, 3) + ' &plusmn; ' + safeFixed(errorMedio, 4) + ' &plusmn; ' + safeFixed(sigmaRel, 4) + ' Ω';
+      exprEl.innerHTML = '\\[ M = ' + safeFixed(mean, 3) + ' \\pm ' + safeFixed(errorMedio, 4) + ' \\pm ' + safeFixed(sigmaRel, 4) + '\\;\\Omega \\]';
+      renderLatexIn(exprEl);
     }
 
     // Charts
@@ -923,9 +917,15 @@ function updatePropSim() {
 
     // Intervals
     var dA = document.getElementById('A-interval');
-    if (dA) dA.textContent = 'A = ' + A + ' \u00b1 ' + safeFixed(A * eAfrac, 3) + '  (e = ' + eA + '%)';
+    if (dA) {
+      dA.innerHTML = '\\[ A = ' + A + ' \\pm ' + safeFixed(A * eAfrac, 3) + '\\quad (e_A = ' + eA + '\\%) \\]';
+      renderLatexIn(dA);
+    }
     var dB = document.getElementById('B-interval');
-    if (dB) dB.textContent = 'B = ' + B + ' \u00b1 ' + safeFixed(B * eBfrac, 3) + '  (e = ' + eB + '%)';
+    if (dB) {
+      dB.innerHTML = '\\[ B = ' + B + ' \\pm ' + safeFixed(B * eBfrac, 3) + '\\quad (e_B = ' + eB + '\\%) \\]';
+      renderLatexIn(dB);
+    }
 
     // Propagated errors
     var eSum = (A + B) !== 0 ? (eAfrac * A + eBfrac * B) / (A + B) * 100 : 0;
@@ -934,10 +934,10 @@ function updatePropSim() {
     var eQuot = (eA + eB);
 
     var results = [
-      { op: 'SUMA', symbol: 'A + B', value: A + B, error: eSum, color: '#2563eb' },
-      { op: 'RESTA', symbol: 'A \u2212 B', value: A - B, error: eDiff, color: '#7c3aed' },
-      { op: 'PRODUCTO', symbol: 'A \u00d7 B', value: A * B, error: eProd, color: '#059669' },
-      { op: 'COCIENTE', symbol: 'A / B', value: B !== 0 ? A / B : Infinity, error: eQuot, color: '#dc2626' }
+      { op: 'SUMA', symbol: '\\(A+B\\)', value: A + B, error: eSum, color: '#2563eb' },
+      { op: 'RESTA', symbol: '\\(A-B\\)', value: A - B, error: eDiff, color: '#7c3aed' },
+      { op: 'PRODUCTO', symbol: '\\(A\\times B\\)', value: A * B, error: eProd, color: '#059669' },
+      { op: 'COCIENTE', symbol: '\\(A/B\\)', value: B !== 0 ? A / B : Infinity, error: eQuot, color: '#dc2626' }
     ];
 
     var container = document.getElementById('prop-results');
@@ -947,12 +947,13 @@ function updatePropSim() {
         var valDisplay = isFinite(r.value) ? safeFixed(r.value, 3) : '\u221e';
         return '<div class="card p-3 border-t-4" style="border-color:' + r.color + '">' +
           '<div class="text-xs font-bold mb-1" style="color:' + r.color + '">' + r.op + '</div>' +
-          '<div class="text-sm font-mono text-gray-600">' + r.symbol + '</div>' +
+          '<div class="text-sm text-gray-600">' + r.symbol + '</div>' +
           '<div class="text-lg font-bold text-gray-800 mt-1">' + valDisplay + '</div>' +
           '<div class="text-xs text-gray-500">e propagado:</div>' +
           '<div class="font-bold text-red-600 text-sm">' + errDisplay + '</div>' +
           '</div>';
       }).join('');
+      renderLatexIn(container);
     }
 
     // Chart
@@ -1168,6 +1169,7 @@ var constantsData = [
     name: 'Frecuencia Cs (\u0394\u03bdCs)',
     symbol: '\u0394\u03bdCs',
     value: '9 192 631 770 Hz',
+    valueLatex: '\\Delta\\nu_{\\mathrm{Cs}} = 9\\,192\\,631\\,770\\;\\mathrm{Hz}',
     unit: 'Hz',
     icon: '\u23f0',
     defines: 'Segundo (s)',
@@ -1177,6 +1179,7 @@ var constantsData = [
     name: 'Velocidad de la luz (c)',
     symbol: 'c',
     value: '299 792 458 m/s',
+    valueLatex: 'c = 299\\,792\\,458\\;\\mathrm{m/s}',
     unit: 'm/s',
     icon: '\u26a1',
     defines: 'Metro (m)',
@@ -1186,6 +1189,7 @@ var constantsData = [
     name: 'Constante de Planck (h)',
     symbol: 'h',
     value: '6,626 070 15 \u00d7 10\u207b\u00b3\u2074 J\u00b7s',
+    valueLatex: 'h = 6{,}626\\,070\\,15\\times10^{-34}\\;\\mathrm{J\\,s}',
     unit: 'J\u00b7s',
     icon: '\u269b\ufe0f',
     defines: 'Kilogramo (kg)',
@@ -1195,6 +1199,7 @@ var constantsData = [
     name: 'Carga elemental (e)',
     symbol: 'e',
     value: '1,602 176 634 \u00d7 10\u207b¹\u2079 C',
+    valueLatex: 'e = 1{,}602\\,176\\,634\\times10^{-19}\\;\\mathrm{C}',
     unit: 'C',
     icon: '\u26a1',
     defines: 'Amperio (A)',
@@ -1204,6 +1209,7 @@ var constantsData = [
     name: 'Constante de Boltzmann (k)',
     symbol: 'k',
     value: '1,380 649 \u00d7 10\u207b\u00b2\u00b3 J/K',
+    valueLatex: 'k = 1{,}380\\,649\\times10^{-23}\\;\\mathrm{J/K}',
     unit: 'J/K',
     icon: '\ud83c\udf21\ufe0f',
     defines: 'Kelvin (K)',
@@ -1213,6 +1219,7 @@ var constantsData = [
     name: 'Constante de Avogadro (Nₐ)',
     symbol: 'N\u2090',
     value: '6,022 140 76 \u00d7 10\u00b2\u00b3 mol\u207b\u00b9',
+    valueLatex: 'N_A = 6{,}022\\,140\\,76\\times10^{23}\\;\\mathrm{mol}^{-1}',
     unit: 'mol\u207b\u00b9',
     icon: '\ud83e\uddd1\u200d\ud83d\udd2c',
     defines: 'Mol (mol)',
@@ -1222,6 +1229,7 @@ var constantsData = [
     name: 'Eficacia luminosa (Kcd)',
     symbol: 'K_cd',
     value: '683 lm/W',
+    valueLatex: 'K_{\\mathrm{cd}} = 683\\;\\mathrm{lm/W}',
     unit: 'lm/W',
     icon: '\ud83d\udca1',
     defines: 'Candela (cd)',
@@ -1250,7 +1258,9 @@ function showConstantDetail(idx) {
     var c = constantsData[idx];
     document.getElementById('cd-icon').textContent = c.icon;
     document.getElementById('cd-name').textContent = c.name + ' — Define: ' + c.defines;
-    document.getElementById('cd-value').textContent = c.symbol + ' = ' + c.value;
+    var valueEl = document.getElementById('cd-value');
+    valueEl.innerHTML = '\\[ ' + c.valueLatex + ' \\]';
+    renderLatexIn(valueEl);
     document.getElementById('cd-desc').textContent = c.desc;
     var detail = document.getElementById('constant-detail');
     if (detail) detail.classList.remove('hidden');
@@ -1322,6 +1332,7 @@ function initTimelineChart() {
 // =====================================================
 document.addEventListener('DOMContentLoaded', function() {
   try {
+    renderLatexIn(document.body);
     // Tab 1
     updateTargetSim();
     // Tab 2 - init on demand when tab shown
@@ -1329,6 +1340,9 @@ document.addEventListener('DOMContentLoaded', function() {
     showMethodGroup('resultado');
     // Tab 5 constants grid
     initConstantsGrid();
+    setTimeout(function() {
+      if (!document.querySelector('.katex')) renderLatexIn(document.body);
+    }, 100);
 
     console.log('Medidas Electronicas I - Simulacion cargada correctamente.');
   } catch(e) {
