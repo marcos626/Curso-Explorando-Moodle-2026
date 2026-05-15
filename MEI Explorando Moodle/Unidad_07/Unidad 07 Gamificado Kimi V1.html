@@ -156,7 +156,7 @@
           </div>
           <div class="w-full">
             <label class="slider-label font-semibold block text-center mb-1">Armónicos a sumar: <span id="harm-count" class="text-indigo-700 font-bold">1</span></label>
-            <input type="range" id="harm-slider" min="1" max="15" value="1" class="w-full" oninput="updateWaveform()">
+            <input type="range" id="harm-slider" min="1" max="15" value="5" class="w-full" oninput="updateWaveform()">
             <div class="text-xs text-gray-500 text-center mt-1">Aumentá los armónicos para ver cómo se aproxima a la forma ideal</div>
           </div>
           <div class="mt-3 text-xs text-gray-600 text-center">
@@ -596,7 +596,7 @@
 // GLOBAL STATE
 // =====================================================
 let currentWaveform = 'square';
-let harmonicCount = 1;
+let harmonicCount = 5;
 let fourierTerms = 1;
 let harmonicChartInst = null;
 
