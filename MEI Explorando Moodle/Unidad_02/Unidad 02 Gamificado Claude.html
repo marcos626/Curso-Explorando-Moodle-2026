@@ -1003,22 +1003,77 @@ function movingMagnetFixedCoilSymbol(small) {
 
 function ferromagneticSymbol(type, small) {
   var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
-  function unit(dx, facing) {
+  
+  // === HIERRO MÓVIL SIMPLE (único) ===
+  function singleUnit(dx, facing) {
     var rightFacing = facing === 'right';
+    
+    // Bornes: círculos con líneas levemente inclinadas hacia el núcleo
     var terminals = rightFacing
-      ? '<circle class="symbol-fill" cx="50" cy="16" r="4"></circle><circle class="symbol-fill" cx="50" cy="68" r="4"></circle><line class="symbol-thin" x1="50" y1="16" x2="30" y2="25"></line><line class="symbol-thin" x1="50" y1="68" x2="30" y2="59"></line>'
-      : '<circle class="symbol-fill" cx="6" cy="16" r="4"></circle><circle class="symbol-fill" cx="6" cy="68" r="4"></circle><line class="symbol-thin" x1="6" y1="16" x2="26" y2="25"></line><line class="symbol-thin" x1="6" y1="68" x2="26" y2="59"></line>';
+      ? '<line class="symbol-thin" x1="62" y1="16" x2="84" y2="5"></line>' +
+        '<line class="symbol-thin" x1="62" y1="68" x2="80" y2="81"></line>'+
+        '<circle class="symbol-fill" cx="84" cy="5" r="5"></circle>' +
+        '<circle class="symbol-fill" cx="80" cy="81" r="5"></circle>'
+      : '<line class="symbol-thin" x1="24" y1="16" x2="4" y2="6"></line>' +
+        '<line class="symbol-thin" x1="24" y1="68" x2="6" y2="81"></line>'+
+        '<circle class="symbol-fill" cx="4" cy="6" r="5"></circle>' +
+        '<circle class="symbol-fill" cx="6" cy="81" r="5"></circle>';
+    
+    // Bobina: 3 picos, termina exactamente en el borne (Y=68)
     var coil = rightFacing
-      ? '<polyline class="symbol-line" points="34,14 26,21 40,28 26,35 40,42 26,49 40,56 26,63 34,70"></polyline>'
-      : '<polyline class="symbol-line" points="22,14 30,21 16,28 30,35 16,42 30,49 16,56 30,63 22,70"></polyline>';
-    var coreX = rightFacing ? 44 : 12;
+      ? '<polyline class="symbol-line" points="62,16 46,24 62,32 46,40 62,48 46,56 62,68"></polyline>'
+      : '<polyline class="symbol-line" points="24,16 40,24 24,32 40,40 24,48 40,56 24,68"></polyline>';
+    
+    // Núcleo: barra AFINADA (más angosta)
+    var coreX = rightFacing ? 51 : 29;
+    var coreW = 6;  // antes 10
+    
     return '<g transform="translate(' + dx + ' 0)">' +
       terminals + coil +
-      '<line class="symbol-line" x1="' + coreX + '" y1="12" x2="' + coreX + '" y2="72"></line>' +
+      '<rect class="symbol-fill" x="' + (coreX - coreW/2) + '" y="10" width="' + coreW + '" height="64"></rect>' +
       '</g>';
   }
-  var body = type === 'double' ? unit(0, 'left') + unit(44, 'right') : unit(24, 'right');
-  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' + body + '</svg>';
+  
+  // === COCIENTÍMETRO FERROMAGNÉTICO (doble) ===
+  function doubleUnit(dx) {
+    // --- Sistema izquierdo ---
+    var leftTerminals = 
+      '<line class="symbol-thin" x1="24" y1="16" x2="4" y2="6"></line>' +
+      '<line class="symbol-thin" x1="24" y1="68" x2="6" y2="81"></line>'+
+      '<circle class="symbol-fill" cx="4" cy="6" r="5"></circle>' +
+      '<circle class="symbol-fill" cx="6" cy="81" r="5"></circle>';
+    
+    // Bobina izquierda: picos hacia la derecha (hacia el centro)
+    var leftCoil = '<polyline class="symbol-line" points="24,16 40,24 24,32 40,40 24,48 40,56 24,68"></polyline>';
+    
+    // Núcleo izquierdo: barra AFINADA
+    var leftCore = '<rect class="symbol-fill" x="29" y="10" width="6" height="64"></rect>';
+
+    var topBar = '<rect class="symbol-fill" x="32" y="10" width="60" height="6"></rect>';
+    
+    // --- Sistema derecho ---
+    var rightTerminals = 
+      '<line class="symbol-thin" x1="100" y1="16" x2="120" y2="6"></line>' +
+      '<line class="symbol-thin" x1="100" y1="68" x2="118" y2="81"></line>'+
+      '<circle class="symbol-fill" cx="120" cy="6" r="5"></circle>' +
+      '<circle class="symbol-fill" cx="118" cy="81" r="5"></circle>' ;
+    
+    // Bobina derecha: picos hacia la izquierda (hacia el centro)
+    var rightCoil = '<polyline class="symbol-line" points="100,16 84,24 100,32 84,40 100,48 84,56 100,68"></polyline>';
+    
+    // Núcleo derecho: barra AFINADA
+    var rightCore = '<rect class="symbol-fill" x="89" y="10" width="6" height="64"></rect>';
+        
+    return '<g transform="translate(' + dx + ' 0)">' +
+      leftTerminals + leftCoil + leftCore +
+      topBar +
+      rightCoil + rightCore + rightTerminals +
+      '</g>';
+  }
+  
+  var body = type === 'double' ? doubleUnit(0) : singleUnit(10, 'right');
+  return '<svg class="' + cls + '" viewBox="0 0 130 84" aria-hidden="true" focusable="false">' + body + '</svg>';
+
 }
 
 function fixedMagnetIronSymbol(small) {
