@@ -9,7 +9,7 @@
 <!-- KaTeX for Math Rendering -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]});"></script>
 <style>
   :root {
     --primary: #1e3a5f;
@@ -51,6 +51,15 @@
   .sym-card { transition: all 0.2s; cursor: pointer; }
   .sym-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
   .sym-card.selected { border-color: #2563eb !important; background: #eff6ff; }
+  .measure-symbol { width: 70px; height: 54px; display: block; }
+  .measure-symbol-sm { width: 48px; height: 38px; display: inline-block; vertical-align: middle; }
+  .measure-symbol .magnet, .measure-symbol-sm .magnet { fill: #ffffff; stroke: #111827; stroke-width: 4; stroke-linejoin: round; }
+  .measure-symbol .coil, .measure-symbol-sm .coil { fill: #ffffff; stroke: #111827; stroke-width: 4; rx: 3; }
+  .measure-symbol .coil-line, .measure-symbol-sm .coil-line { stroke: #111827; stroke-width: 2; stroke-linecap: round; }
+  .measure-symbol .symbol-line, .measure-symbol-sm .symbol-line { fill: none; stroke: #111827; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+  .measure-symbol .symbol-thin, .measure-symbol-sm .symbol-thin { fill: none; stroke: #111827; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .measure-symbol .symbol-fill, .measure-symbol-sm .symbol-fill { fill: #111827; stroke: none; }
+  .measure-symbol .symbol-text, .measure-symbol-sm .symbol-text { fill: #111827; font-family: 'Segoe UI', sans-serif; font-size: 28px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
   @media (max-width: 640px) {
     .chart-wrap { min-height: 200px; }
   }
@@ -422,7 +431,7 @@
             <label class="slider-label font-semibold block mb-2">Posición de uso:</label>
             <select id="dec-posicion" class="w-full border border-gray-300 rounded-lg p-2 text-sm" onchange="updateDecoder()">
               <option value="vert" selected>Vertical (⊥)</option>
-              <option value="horiz">Horizontal (⊤)</option>
+              <option value="horiz">Horizontal (⊓)</option>
               <option value="60">Inclinado 60°</option>
             </select>
           </div>
@@ -853,7 +862,7 @@ function drawMeter(fraction) {
   var cx = w / 2, cy = h - 20;
   var R = Math.min(w, h) * 0.75;
   var startAngle = Math.PI;
-  var endAngle = 0;
+  var endAngle = 2 * Math.PI;
   var angle = startAngle + fraction * Math.PI;
 
   // Scale arc
@@ -897,7 +906,7 @@ function drawMeter(fraction) {
   // Needle
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(angle - Math.PI / 2);
+  ctx.rotate(angle + Math.PI / 2);
   ctx.beginPath();
   ctx.moveTo(0, 10);
   ctx.lineTo(-3, 0);
@@ -973,20 +982,160 @@ var quizPts = 0;
 var quizTotal = 0;
 var quizAnswered = false;
 
+function magnetoSymbol(type, small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  var rects = {
+    single: '<rect class="coil" x="34" y="55" width="32" height="16"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="71"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="71"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="71"></line>',
+    double: '<rect class="coil" x="34" y="49" width="32" height="12"></rect><rect class="coil" x="34" y="64" width="32" height="12"></rect><line class="coil-line" x1="42" y1="49" x2="42" y2="61"></line><line class="coil-line" x1="50" y1="49" x2="50" y2="61"></line><line class="coil-line" x1="58" y1="49" x2="58" y2="61"></line><line class="coil-line" x1="42" y1="64" x2="42" y2="76"></line><line class="coil-line" x1="50" y1="64" x2="50" y2="76"></line><line class="coil-line" x1="58" y1="64" x2="58" y2="76"></line>',
+    cross: '<g transform="rotate(45 50 62)"><rect class="coil" x="34" y="55" width="32" height="14"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="69"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="69"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="69"></line></g><g transform="rotate(-45 50 62)"><rect class="coil" x="34" y="55" width="32" height="14"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="69"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="69"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="69"></line></g>'
+  };
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false"><path class="magnet" d="M14 76 H30 V31 C30 20 70 20 70 31 V76 H86 V28 C86 5 14 5 14 28 Z"></path>' + rects[type] + '</svg>';
+}
+
+function movingMagnetFixedCoilSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<line class="symbol-thin" x1="10" y1="42" x2="90" y2="42"></line><circle class="symbol-fill" cx="10" cy="42" r="4"></circle><circle class="symbol-fill" cx="90" cy="42" r="4"></circle>' +
+    '<polyline class="symbol-thin" points="25,42 32,42 35,24 42,60 46,42"></polyline><polyline class="symbol-thin" points="54,42 58,60 65,24 68,42 75,42"></polyline>' +
+    '<rect class="magnet" x="46" y="18" width="10" height="48"></rect><line class="symbol-line" x1="51" y1="19" x2="51" y2="65"></line>' +
+    '</svg>';
+}
+
+function ferromagneticSymbol(type, small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  function unit(dx, facing) {
+    var rightFacing = facing === 'right';
+    var terminals = rightFacing
+      ? '<circle class="symbol-fill" cx="50" cy="16" r="4"></circle><circle class="symbol-fill" cx="50" cy="68" r="4"></circle><line class="symbol-thin" x1="50" y1="16" x2="30" y2="25"></line><line class="symbol-thin" x1="50" y1="68" x2="30" y2="59"></line>'
+      : '<circle class="symbol-fill" cx="6" cy="16" r="4"></circle><circle class="symbol-fill" cx="6" cy="68" r="4"></circle><line class="symbol-thin" x1="6" y1="16" x2="26" y2="25"></line><line class="symbol-thin" x1="6" y1="68" x2="26" y2="59"></line>';
+    var coil = rightFacing
+      ? '<polyline class="symbol-line" points="34,14 26,21 40,28 26,35 40,42 26,49 40,56 26,63 34,70"></polyline>'
+      : '<polyline class="symbol-line" points="22,14 30,21 16,28 30,35 16,42 30,49 16,56 30,63 22,70"></polyline>';
+    var coreX = rightFacing ? 44 : 12;
+    return '<g transform="translate(' + dx + ' 0)">' +
+      terminals + coil +
+      '<line class="symbol-line" x1="' + coreX + '" y1="12" x2="' + coreX + '" y2="72"></line>' +
+      '</g>';
+  }
+  var body = type === 'double' ? unit(0, 'left') + unit(44, 'right') : unit(24, 'right');
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' + body + '</svg>';
+}
+
+function fixedMagnetIronSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<path class="magnet" d="M18 76 H30 V31 C30 20 70 20 70 31 V76 H82 V28 C82 5 18 5 18 28 Z"></path>' +
+    '<polyline class="symbol-line" points="52,48 45,53 55,58 45,63 55,68 48,73"></polyline><line class="symbol-line" x1="50" y1="47" x2="50" y2="73"></line>' +
+    '</svg>';
+}
+
+function electrodynamicSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<rect class="coil" x="44" y="14" width="12" height="56"></rect><rect class="coil" x="20" y="36" width="60" height="12"></rect>' +
+    '</svg>';
+}
+
+function ferrodynamicSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<circle class="symbol-thin" cx="50" cy="42" r="33"></circle><circle class="symbol-thin" cx="50" cy="42" r="27"></circle>' +
+    '<rect class="coil" x="44" y="17" width="12" height="50"></rect><rect class="coil" x="20" y="36" width="60" height="12"></rect>' +
+    '</svg>';
+}
+
+function inductionSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<circle class="symbol-thin" cx="45" cy="42" r="24"></circle><circle class="symbol-fill" cx="45" cy="42" r="5"></circle>' +
+    '<rect class="symbol-fill" x="64" y="13" width="10" height="58"></rect>' +
+    '</svg>';
+}
+
+function thermalDilationSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<circle class="symbol-fill" cx="22" cy="22" r="6"></circle><circle class="symbol-fill" cx="78" cy="22" r="6"></circle>' +
+    '<polyline class="symbol-thin" points="22,22 50,36 78,22"></polyline>' +
+    '<line class="symbol-line" x1="50" y1="36" x2="50" y2="65"></line><polygon class="symbol-fill" points="50,72 44,60 56,60"></polygon>' +
+    '</svg>';
+}
+
+function electrostaticSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<circle class="symbol-fill" cx="50" cy="13" r="6"></circle><line class="symbol-line" x1="50" y1="19" x2="50" y2="34"></line>' +
+    '<line class="symbol-line" x1="27" y1="36" x2="73" y2="36"></line><line class="symbol-line" x1="27" y1="48" x2="73" y2="48"></line>' +
+    '<line class="symbol-line" x1="50" y1="48" x2="50" y2="65"></line><polygon class="symbol-fill" points="50,72 44,60 56,60"></polygon>' +
+    '</svg>';
+}
+
+function vibratingReedsSymbol(small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<line class="symbol-line" x1="20" y1="68" x2="80" y2="68"></line>' +
+    '<line class="symbol-line" x1="50" y1="68" x2="50" y2="22"></line>' +
+    '<line class="symbol-thin" x1="50" y1="68" x2="34" y2="27"></line><line class="symbol-thin" x1="50" y1="68" x2="66" y2="27"></line>' +
+    '<line class="symbol-thin" x1="38" y1="32" x2="32" y2="13"></line><line class="symbol-thin" x1="62" y1="32" x2="68" y2="13"></line>' +
+    '</svg>';
+}
+
+function insulationStarSymbol(value, small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  var text = value ? '<text class="symbol-text" x="50" y="45">' + value + '</text>' : '';
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' +
+    '<polygon class="symbol-thin" points="50,10 60,32 84,34 66,50 72,74 50,61 28,74 34,50 16,34 40,32"></polygon>' +
+    text +
+    '</svg>';
+}
+
+function positionSymbol(type, small) {
+  var cls = small ? 'measure-symbol-sm' : 'measure-symbol';
+  var label = type === 'verticalTol' ? '<text class="symbol-text" x="67" y="43" style="font-size:18px;">±1°</text>' :
+    type === 'horizontalTol' ? '<text class="symbol-text" x="50" y="20" style="font-size:18px;">±15°</text>' :
+    type === 'inclined' ? '<text class="symbol-text" x="62" y="55" style="font-size:20px;">60°</text>' : '';
+  var shapes = {
+    vertical: '<line class="symbol-line" x1="26" y1="66" x2="74" y2="66"></line><line class="symbol-line" x1="50" y1="16" x2="50" y2="66"></line>',
+    verticalTol: '<line class="symbol-line" x1="22" y1="66" x2="70" y2="66"></line><line class="symbol-line" x1="50" y1="16" x2="50" y2="66"></line>',
+    horizontal: '<path class="symbol-line" d="M26 66 V34 H74 V66"></path>',
+    horizontalTol: '<path class="symbol-line" d="M26 66 V38 H74 V66"></path>',
+    inclined: '<line class="symbol-line" x1="24" y1="66" x2="80" y2="66"></line><line class="symbol-line" x1="24" y1="66" x2="54" y2="16"></line>'
+  };
+  return '<svg class="' + cls + '" viewBox="0 0 100 84" aria-hidden="true" focusable="false">' + shapes[type] + label + '</svg>';
+}
+
+function renderIcon(icon, small) {
+  if (typeof icon === 'function') return icon(small);
+  return icon;
+}
+
+function renderMathNode(el) {
+  if (typeof renderMathInElement === 'undefined' || !el) return;
+  renderMathInElement(el, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false },
+      { left: '\\(', right: '\\)', display: false },
+      { left: '\\[', right: '\\]', display: true }
+    ]
+  });
+}
+
 var symbolsData = {
   sistema: [
-    { icon: '⊡', label: 'Magnetoeléctrico', desc: 'Bobina móvil e imán permanente. Solo CC. Alta precisión, escala lineal ($y = x$). El instrumento más común para laboratorio.', note: 'Símbolo: rectángulo con bobina en el centro' },
-    { icon: '⊡⊡', label: 'Magnetoeléctrico diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: doble rectángulo' },
-    { icon: '⊗', label: 'Cocientímetro magneto.', desc: 'Dos bobinas cruzadas e imán permanente. Usado en ohmímetros de relación.', note: 'Símbolo: rectángulo con X interior' },
-    { icon: '⋀⋀', label: 'Imán móvil, bobina fija', desc: 'El elemento móvil es un imán permanente dentro de una bobina fija. Mide CA y CC.', note: 'Símbolo: dos triángulos enfrentados' },
-    { icon: '≡', label: 'Hierro móvil (ferromagnético)', desc: 'Bobina fija y núcleo de hierro móvil. Usado en CA. Escala cuadrática ($y = x^2$).', note: 'Símbolo: hierro dentro de bobina' },
-    { icon: '⊞', label: 'Hierro móvil + imán fijo', desc: 'Hierro móvil con bobina e imán fijos. Variante del ferromagnético.', note: 'Símbolo: rectángulo con cruz' },
-    { icon: '≡≡', label: 'Cocientímetro ferromagnético', desc: 'Dos sistemas de hierro móvil para medir cocientes de magnitudes.', note: 'Símbolo: doble sistema' },
-    { icon: '⊕', label: 'Electrodinámico sin hierro', desc: 'Bobina fija y bobina móvil sin hierro. Alta precisión en CA y CC.', note: 'Símbolo: cruz en rectángulo' },
-    { icon: '⊕̈', label: 'Ferrodinámico (con hierro)', desc: 'Electrodinámico con núcleo de hierro. Más sensible pero menos exacto.', note: 'Símbolo: cruz con puntos' },
-    { icon: '⦾', label: 'Inductivo (inducción)', desc: 'Basado en efectos de inducción electromagnética. Usado en contadores de energía.', note: 'Símbolo: punto en círculo' },
-    { icon: '⩚', label: 'Térmico de dilatación', desc: 'Basado en los efectos caloríficos de la corriente. Mide valores eficaces.', note: 'Símbolo: dos puntos con flecha' },
-    { icon: '⏚', label: 'Electrostático', desc: 'Basado en la fuerza entre placas cargadas. Mide tensiones sin consumir corriente.', note: 'Símbolo: condensador' }
+    { icon: function(small) { return magnetoSymbol('single', small); }, label: 'Magnetoeléctrico', desc: 'Bobina móvil e imán permanente. Solo CC. Alta precisión, escala lineal ($y = x$). El instrumento más común para laboratorio.', note: 'Símbolo: imán en herradura con una bobina rectangular entre las puntas' },
+    { icon: function(small) { return magnetoSymbol('double', small); }, label: 'Magnetoeléctrico o diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares apiladas' },
+    { icon: function(small) { return magnetoSymbol('cross', small); }, label: 'Cocientímetro magnetoeléctrico', desc: 'Dos bobinas cruzadas e imán permanente. Usado en ohmímetros de relación.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares cruzadas' },
+    { icon: movingMagnetFixedCoilSymbol, label: 'Imán móvil, bobina fija', desc: 'El elemento móvil es un imán dentro de una bobina fija. Mide CA y CC.', note: 'Símbolo: imán móvil vertical con bobina fija y bornes laterales' },
+    { icon: function(small) { return ferromagneticSymbol('single', small); }, label: 'Hierro móvil (ferromagnético)', desc: 'Bobina fija y núcleo de hierro móvil. Usado en CA. Escala cuadrática ($y = x^2$).', note: 'Símbolo: núcleo vertical dentro de una bobina fija' },
+    { icon: fixedMagnetIronSymbol, label: 'Hierro móvil + imán fijo', desc: 'Hierro móvil con bobina e imán fijos. Variante del ferromagnético.', note: 'Símbolo: imán fijo en herradura con hierro móvil y bobina' },
+    { icon: function(small) { return ferromagneticSymbol('double', small); }, label: 'Cocientímetro ferromagnético', desc: 'Dos sistemas de hierro móvil para medir cocientes de magnitudes.', note: 'Símbolo: dos sistemas ferromagnéticos en paralelo' },
+    { icon: electrodynamicSymbol, label: 'Electrodinámico sin hierro', desc: 'Bobina fija y bobina móvil sin hierro. Alta precisión en CA y CC.', note: 'Símbolo: dos bobinas rectangulares cruzadas' },
+    { icon: ferrodynamicSymbol, label: 'Ferrodinámico (con hierro)', desc: 'Electrodinámico con núcleo de hierro. Más sensible pero menos exacto.', note: 'Símbolo: bobinas cruzadas dentro de doble círculo' },
+    { icon: inductionSymbol, label: 'Inductivo (inducción)', desc: 'Basado en efectos de inducción electromagnética. Usado en contadores de energía.', note: 'Símbolo: círculo con punto y barra lateral' },
+    { icon: thermalDilationSymbol, label: 'Térmico de dilatación', desc: 'Basado en los efectos caloríficos de la corriente. Mide valores eficaces.', note: 'Símbolo: dos bornes superiores unidos a una aguja descendente' },
+    { icon: electrostaticSymbol, label: 'Electrostático', desc: 'Basado en la fuerza entre placas cargadas. Mide tensiones sin consumir corriente.', note: 'Símbolo: dos placas paralelas con borne y aguja' },
+    { icon: vibratingReedsSymbol, label: 'Láminas vibrantes', desc: 'Instrumento basado en láminas resonantes que vibran según la frecuencia aplicada.', note: 'Símbolo: láminas verticales vibrantes sobre una base' }
   ],
   corriente: [
     { icon: '⎯⎯', label: 'Corriente continua (CC)', desc: 'El instrumento solo puede usarse para medir corriente continua (CC / DC).', note: 'Símbolo: línea continua horizontal' },
@@ -997,16 +1146,16 @@ var symbolsData = {
     { icon: '≋≋≋', label: 'Trifásico 2I+1V', desc: 'Instrumento trifásico con dos circuitos de intensidad y un circuito de tensión.', note: 'Símbolo: triple onda doble' },
   ],
   posicion: [
-    { icon: '⊥', label: 'Posición vertical', desc: 'El instrumento debe usarse con el cuadrante en posición vertical. La más común en tableros.', note: 'Símbolo: línea perpendicular al piso' },
-    { icon: '⊥±1°', label: 'Vertical ±1°', desc: 'Posición vertical con tolerancia de inclinación de ±1°. Instrumento muy sensible a la posición.', note: 'Símbolo: perpendicular con ángulo indicado' },
-    { icon: '⊤', label: 'Posición horizontal', desc: 'El instrumento debe usarse con el cuadrante en posición horizontal (acostado).', note: 'Símbolo: línea paralela al piso' },
-    { icon: '⊤±15°', label: 'Horizontal ±15°', desc: 'Posición horizontal con tolerancia de ±15°.', note: 'Símbolo: horizontal con ángulo' },
-    { icon: '/60°', label: 'Inclinado 60°', desc: 'El instrumento debe usarse con el cuadrante inclinado 60° respecto a la horizontal.', note: 'Símbolo: línea inclinada con ángulo' },
+    { icon: function(small) { return positionSymbol('vertical', small); }, label: 'Posición vertical', desc: 'El instrumento debe usarse con el cuadrante en posición vertical. La más común en tableros.', note: 'Símbolo: línea perpendicular al piso' },
+    { icon: function(small) { return positionSymbol('verticalTol', small); }, label: 'Vertical ±1°', desc: 'Posición vertical con tolerancia de inclinación de ±1°. Instrumento muy sensible a la posición.', note: 'Símbolo: posición vertical con tolerancia indicada' },
+    { icon: function(small) { return positionSymbol('horizontal', small); }, label: 'Posición horizontal', desc: 'El instrumento debe usarse con el cuadrante en posición horizontal (acostado).', note: 'Símbolo: soporte horizontal abierto hacia abajo' },
+    { icon: function(small) { return positionSymbol('horizontalTol', small); }, label: 'Horizontal ±15°', desc: 'Posición horizontal con tolerancia de ±15°.', note: 'Símbolo: posición horizontal con tolerancia indicada' },
+    { icon: function(small) { return positionSymbol('inclined', small); }, label: 'Inclinado 60°', desc: 'El instrumento debe usarse con el cuadrante inclinado 60° respecto a la horizontal.', note: 'Símbolo: línea inclinada con ángulo indicado' },
   ],
   aislacion: [
-    { icon: '☆', label: 'Tensión de ensayo 500 V', desc: 'La aislación del instrumento fue ensayada a 500 V. Tensión de trabajo limitada.', note: 'Símbolo: estrella vacía' },
-    { icon: '②', label: 'Tensión de ensayo > 500 V (ej. 2 kV)', desc: 'La aislación fue ensayada a una tensión superior a 500 V. El número indica los kilovolts del ensayo.', note: 'Símbolo: número dentro de estrella' },
-    { icon: '⓪', label: 'Sin ensayo dieléctrico', desc: 'El instrumento no está previsto para ensayo dieléctrico. Cuidado con las tensiones de trabajo.', note: 'Símbolo: cero dentro de estrella' },
+    { icon: function(small) { return insulationStarSymbol('', small); }, label: 'Tensión de ensayo 500 V', desc: 'La aislación del instrumento fue ensayada a 500 V. Tensión de trabajo limitada.', note: 'Símbolo: estrella vacía' },
+    { icon: function(small) { return insulationStarSymbol('2', small); }, label: 'Tensión de ensayo > 500 V (ej. 2 kV)', desc: 'La aislación fue ensayada a una tensión superior a 500 V. El número indica los kilovolts del ensayo.', note: 'Símbolo: número dentro de estrella' },
+    { icon: function(small) { return insulationStarSymbol('0', small); }, label: 'Sin ensayo dieléctrico', desc: 'El instrumento no está previsto para ensayo dieléctrico. Cuidado con las tensiones de trabajo.', note: 'Símbolo: cero dentro de estrella' },
   ],
   especial: [
     { icon: '⚠', label: 'Instrucciones especiales', desc: 'Llama la atención sobre la existencia de instrucciones especiales, esquemas o notas de uso.', note: 'Símbolo: triángulo de advertencia' },
@@ -1027,7 +1176,7 @@ function initIdentTab() {
     if (!grid) return;
     grid.innerHTML = symbolsData[cat].map(function(sym, idx) {
       return '<div class="sym-card card p-3 border-2 border-transparent flex flex-col items-center text-center" onclick="showSymDetail(\'' + cat + '\',' + idx + ')">' +
-        '<div style="font-size:2rem;min-height:50px;display:flex;align-items:center;justify-content:center;" class="mb-2">' + sym.icon + '</div>' +
+        '<div style="font-size:2rem;min-height:56px;display:flex;align-items:center;justify-content:center;" class="mb-2">' + renderIcon(sym.icon, false) + '</div>' +
         '<div class="text-xs font-semibold text-gray-800">' + sym.label + '</div>' +
         '</div>';
     }).join('');
@@ -1052,10 +1201,14 @@ function showSymCategory(cat) {
 
 function showSymDetail(cat, idx) {
   var sym = symbolsData[cat][idx];
-  document.getElementById('sym-detail-icon').textContent = sym.icon;
+  var descEl = document.getElementById('sym-detail-desc');
+  var noteEl = document.getElementById('sym-detail-note');
+  document.getElementById('sym-detail-icon').innerHTML = renderIcon(sym.icon, false);
   document.getElementById('sym-detail-name').textContent = sym.label;
-  document.getElementById('sym-detail-desc').textContent = sym.desc;
-  document.getElementById('sym-detail-note').textContent = sym.note;
+  descEl.textContent = sym.desc;
+  noteEl.textContent = sym.note;
+  renderMathNode(descEl);
+  renderMathNode(noteEl);
   document.getElementById('sym-detail').classList.remove('hidden');
 }
 
@@ -1071,24 +1224,25 @@ function updateDecoder() {
   var claseVal = claseDecoderLabels[claseIdx] || 1.5;
   document.getElementById('dec-clase-val').textContent = claseVal;
 
-  var sistMap = { magneto: { icon: '⊡', name: 'Magnetoeléctrico (bobina móvil + imán permanente)' }, ferro: { icon: '≡', name: 'Ferromagnético (hierro móvil + bobina fija)' }, electro: { icon: '⊕', name: 'Electrodinámico (sin hierro)' }, induccion: { icon: '⦾', name: 'Inductivo' }, electrostat: { icon: '⏚', name: 'Electrostático' } };
+  var sistMap = { magneto: { icon: function(small) { return magnetoSymbol('single', small); }, name: 'Magnetoeléctrico (bobina móvil + imán permanente)' }, ferro: { icon: function(small) { return ferromagneticSymbol('single', small); }, name: 'Ferromagnético (hierro móvil + bobina fija)' }, electro: { icon: electrodynamicSymbol, name: 'Electrodinámico (sin hierro)' }, induccion: { icon: inductionSymbol, name: 'Inductivo' }, electrostat: { icon: electrostaticSymbol, name: 'Electrostático' } };
   var corMap = { cc: { icon: '⎯⎯', name: 'Corriente continua (CC)' }, ca: { icon: '∿', name: 'Corriente alterna (CA)' }, ccca: { icon: '⎯∿', name: 'Corriente continua y alterna (CC/CA)' } };
-  var posMap = { vert: { icon: '⊥', name: 'Posición vertical' }, horiz: { icon: '⊤', name: 'Posición horizontal' }, '60': { icon: '/60°', name: 'Posición inclinada 60°' } };
-  var tenMap = { '500': { icon: '☆', name: 'Tensión de ensayo: 500 V' }, '2000': { icon: '②', name: 'Tensión de ensayo: 2 kV' }, '0': { icon: '⓪', name: 'Sin ensayo dieléctrico' } };
+  var posMap = { vert: { icon: function(small) { return positionSymbol('vertical', small); }, name: 'Posición vertical' }, horiz: { icon: function(small) { return positionSymbol('horizontal', small); }, name: 'Posición horizontal' }, '60': { icon: function(small) { return positionSymbol('inclined', small); }, name: 'Posición inclinada 60°' } };
+  var tenMap = { '500': { icon: function(small) { return insulationStarSymbol('', small); }, name: 'Tensión de ensayo: 500 V' }, '2000': { icon: function(small) { return insulationStarSymbol('2', small); }, name: 'Tensión de ensayo: 2 kV' }, '0': { icon: function(small) { return insulationStarSymbol('0', small); }, name: 'Sin ensayo dieléctrico' } };
 
   var s = sistMap[sistema], c = corMap[corriente], p = posMap[posicion], t = tenMap[tension];
 
-  var displayHTML = [s.icon, c.icon, '<span style="font-size:1.2rem;font-weight:900;font-family:monospace;background:#eef2ff;padding:4px 12px;border-radius:8px;color:#1e40af;">' + claseVal + '</span>', p.icon, t.icon]
-    .map(function(ic) { return '<span style="font-size:2rem;padding:4px 8px;background:white;border-radius:8px;border:1px solid #e2e8f0;">' + ic + '</span>'; })
+  var claseIcon = '<span style="font-size:1.2rem;font-weight:900;font-family:monospace;background:#eef2ff;padding:4px 12px;border-radius:8px;color:#1e40af;">' + claseVal + '</span>';
+  var displayHTML = [s.icon, c.icon, p.icon, claseIcon, t.icon]
+    .map(function(ic) { return '<span style="font-size:2rem;padding:4px 8px;background:white;border-radius:8px;border:1px solid #e2e8f0;display:inline-flex;align-items:center;justify-content:center;min-height:54px;">' + renderIcon(ic, true) + '</span>'; })
     .join('<span style="font-size:1.5rem;color:#94a3b8;">·</span>');
 
   document.getElementById('decoder-display').innerHTML = displayHTML;
   document.getElementById('decoder-meaning').innerHTML = [
-    '<div>① <strong>' + s.icon + '</strong> → ' + s.name + '</div>',
-    '<div>② <strong>' + c.icon + '</strong> → ' + c.name + '</div>',
-    '<div>③ <strong>' + claseVal + '</strong> → Clase de exactitud ' + claseVal + ' (error máx. ' + claseVal + '% del fondo de escala)</div>',
-    '<div>④ <strong>' + p.icon + '</strong> → ' + p.name + '</div>',
-    '<div>⑤ <strong>' + t.icon + '</strong> → ' + t.name + '</div>',
+    '<div>① <strong>' + renderIcon(s.icon, true) + '</strong> → ' + s.name + '</div>',
+    '<div>② <strong>' + renderIcon(c.icon, true) + '</strong> → ' + c.name + '</div>',
+    '<div>③ <strong>' + renderIcon(p.icon, true) + '</strong> → ' + p.name + '</div>',
+    '<div>④ <strong>' + claseVal + '</strong> → Clase de exactitud ' + claseVal + ' (error máx. ' + claseVal + '% del fondo de escala)</div>',
+    '<div>⑤ <strong>' + renderIcon(t.icon, true) + '</strong> → ' + t.name + '</div>',
   ].join('');
 }
 
@@ -1115,7 +1269,7 @@ function nextQuizQuestion() {
   quizAnswered = false;
   document.getElementById('quiz-feedback').classList.add('hidden');
   var q = quizQuestions[quizIdx];
-  document.getElementById('quiz-symbol-display').textContent = q.icon;
+  document.getElementById('quiz-symbol-display').innerHTML = renderIcon(q.icon, false);
   document.getElementById('quiz-pts').textContent = quizPts;
   document.getElementById('quiz-total').textContent = quizTotal;
 
@@ -1161,6 +1315,7 @@ function checkQuiz(answer) {
   fb.classList.remove('hidden');
   fb.className = 'info-box text-center font-semibold ' + (correct ? 'bg-green-50 border-green-400 text-green-800' : 'bg-red-50 border-red-400 text-red-800');
   fb.textContent = correct ? '✅ ¡Correcto! ' + q.desc : '❌ Era: ' + q.correct + '. ' + q.desc;
+  renderMathNode(fb);
 }
 
 function resetQuiz() {
