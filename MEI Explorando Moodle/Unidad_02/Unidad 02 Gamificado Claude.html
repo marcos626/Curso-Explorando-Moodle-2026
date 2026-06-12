@@ -166,7 +166,7 @@
         <!-- Results panel -->
         <div class="space-y-3">
           <div id="clase-results" class="space-y-3"></div>
-          <div class="chart-wrap" style="min-height:200px;max-height:260px;">
+          <div class="chart-wrap">
             <canvas id="claseChart"></canvas>
           </div>
         </div>
@@ -594,7 +594,7 @@
             <h4 class="font-semibold text-gray-700 mb-3 text-sm">🧮 Calculadora de error por sector</h4>
             <div>
               <label class="slider-label font-semibold">Posición de lectura en la escala: <span id="sector-val" class="text-blue-700 font-bold">65</span>%</label>
-              <input type="range" id="sector-slider" min="1" max="100" value="65" class="w-full" oninput="updateErrorSector()">
+              <input type="range" id="sector-slider" min="0" max="100" value="65" class="w-full" oninput="updateErrorSector()">
             </div>
             <div class="mt-3 space-y-2">
               <div class="flex items-center gap-2">
@@ -638,7 +638,7 @@
         <!-- Error comparison chart -->
         <div>
           <h4 class="font-semibold text-gray-700 mb-2 text-sm">Porcentaje de error vs. posición en la escala</h4>
-          <div class="chart-wrap">
+          <div class="chart-wrap" style="min-height:500px; max-height:550px;">
             <canvas id="errorSectorChart"></canvas>
           </div>
           <div id="sector-marker-info" class="text-xs text-center text-gray-500 mt-1"></div>
@@ -1469,58 +1469,128 @@ var errSectorChartInst = null;
 function initErrorSectorTab() {
   if (errSectorInited) return;
   errSectorInited = true;
+  window.errorSectorLinePos = 0;
   initErrSectorChart();
   updateErrorSector();
 }
 
-function errUniforme(x) { return x < 2 ? 999 : 100 / x; }
-function errCuadratica(x) { return x < 3 ? 999 : 100 / (x * x / 100); }
-function errAmpliada(x) { 
-  var q = x * x / 100;
-  var amp = Math.min(100, q * 1.3 - (q > 30 ? (q - 30) * 0.3 : 0));
-  return amp < 1 ? 999 : 100 / amp;
+function errUniforme(x) { 
+  // Escala uniforme: error ∝ 1/x (tiende a infinito cuando x→0)
+  if (x <= 0.5) return 1000;
+  return 100 / x;
 }
-function errLogaritmica(x) { 
-  var log10 = x <= 0 ? 0 : Math.log10(x + 1) / Math.log10(101) * 100;
-  return log10 < 1 ? 999 : 100 / log10;
+
+function errCuadratica(x) { 
+  // Escala cuadrática: error ∝ 1/x² (tiende a infinito más rápido)
+  if (x <= 0.5) return 10000;
+  return 10000 / (x * x);
+}
+
+function errAmpliada(x) { 
+  // Escala ampliada: entre uniforme y cuadrática, pero más cercana a uniforme
+  if (x <= 0.5) return 6000;
+  var u = 100 / x;
+  var c = 10000 / (x * x);
+  return (u * 0.5 + c * 0.5); // 50% uniforme, 50% cuadrática
+}
+
+function errLogaritmica(x) {
+  // La escala logarítmica distribuye el error uniformemente.
+  // Curva suave, nunca se dispara: parte de ~0.5% y baja lentamente a ~0.05%
+  // Fórmula: error = A / log(x + B), acotada entre 0.05 y 0.6
+  if (x <= 0) return 0.6;
+  var raw = 0.55 / (1 + Math.log10(x + 1) / Math.log10(101) * 8);
+  return Math.max(raw, 0.05);
 }
 
 function initErrSectorChart() {
   var xs = [];
-  for (var i = 1; i <= 100; i++) xs.push(i);
+  for (var i = 0; i <= 100; i += 5) xs.push(i);
 
-  var cap = function(v) { return Math.min(v, 1.5); };
+  var cap = function(v) { return Math.min(Math.max(v, 0.01), 100); };
 
   if (errSectorChartInst) { errSectorChartInst.destroy(); }
   var ctx = document.getElementById('errorSectorChart').getContext('2d');
+  
+  // Plugin personalizado para dibujar línea vertical
+  var verticalLinePlugin = {
+    id: 'verticalLine',
+    afterDatasetsDraw: function(chart) {
+      if (typeof window.errorSectorLinePos === 'undefined' || window.errorSectorLinePos === null) return;
+      
+      try {
+        var x = window.errorSectorLinePos;
+        var xScale = chart.scales.x;
+        var yScale = chart.scales.y;
+        
+        if (!xScale || !yScale) return;
+        
+        var xPixel = xScale.getPixelForValue(x);
+        var yTop = yScale.top;
+        var yBottom = yScale.bottom;
+        
+        var ctx = chart.ctx;
+        ctx.save();
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(xPixel, yTop);
+        ctx.lineTo(xPixel, yBottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      } catch(e) {
+        console.error('Error drawing vertical line:', e);
+      }
+    }
+  };
+  
   errSectorChartInst = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: xs,
       datasets: [
-        { label: 'Uniforme', data: xs.map(function(x) { return cap(errUniforme(x)); }), borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0.3 },
-        { label: 'Cuadrática', data: xs.map(function(x) { return cap(errCuadratica(x)); }), borderColor: '#ea580c', borderWidth: 2, pointRadius: 0, tension: 0.3 },
-        { label: 'Ampliada', data: xs.map(function(x) { return cap(errAmpliada(x)); }), borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0, tension: 0.3, borderDash: [5,3] },
-        { label: 'Logarítmica', data: xs.map(function(x) { return cap(errLogaritmica(x)); }), borderColor: '#16a34a', borderWidth: 2, pointRadius: 0, tension: 0.3 }
+        { label: 'escala uniforme', data: xs.map(function(x) { return { x: x, y: cap(errUniforme(x)) }; }), borderColor: '#2563eb', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+        { label: 'escala cuadrática', data: xs.map(function(x) { return { x: x, y: cap(errCuadratica(x)) }; }), borderColor: '#ea580c', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+        { label: 'escala ampliada', data: xs.map(function(x) { return { x: x, y: cap(errAmpliada(x)) }; }), borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0, tension: 0.4 },
+        { label: 'escala logarítmica', data: xs.map(function(x) { return { x: x, y: cap(errLogaritmica(x)) }; }), borderColor: '#16a34a', borderWidth: 2, pointRadius: 0, tension: 0.4 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'top' },
-        tooltip: { mode: 'index', intersect: false }
+        legend: { position: 'top', labels: { font: { size: 12 }, padding: 15 } },
+        tooltip: { mode: 'nearest', intersect: false },
+        verticalLine: {}
       },
       scales: {
-        x: { title: { display: true, text: 'Posición en la escala (%)' }, ticks: { maxTicksLimit: 11 } },
-        y: { title: { display: true, text: 'Error relativo normalizado' }, beginAtZero: true }
+        x: { 
+          type: 'linear',
+          title: { display: true, text: 'Posición en la escala (%)', font: { size: 12, weight: 'bold' } }, 
+          min: 0, max: 100,
+          ticks: { stepSize: 10, font: { size: 11 } } 
+        },
+        y: { 
+          title: { display: true, text: 'Porcentaje de error en la información', font: { size: 12, weight: 'bold' } }, 
+          beginAtZero: true, 
+          max: 5, 
+          ticks: { stepSize: 2, font: { size: 11 } }   
+        }
       }
-    }
+    },
+    plugins: [verticalLinePlugin]
   });
 }
 
 function updateErrorSector() {
   var x = parseInt(document.getElementById('sector-slider').value);
   document.getElementById('sector-val').textContent = x;
+  
+  // Actualizar la posición de la línea vertical en el gráfico
+  window.errorSectorLinePos = x;
+  if (errSectorChartInst) {
+    errSectorChartInst.update();
+  }
 
   var eu = errUniforme(x), ec = errCuadratica(x), ea = errAmpliada(x), el = errLogaritmica(x);
   var fmt = function(v) { return v >= 99 ? 'Muy alto ⚠️' : (v > 0.5 ? v.toFixed(2) + ' (mod.)' : v.toFixed(3) + ' (bajo ✓)'); };
