@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medidas Electrónicas I - Unidad 3 - UTN FRL</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -56,7 +59,7 @@
       <span class="text-3xl">🧲</span>
       <div>
         <h2 class="font-bold text-lg text-gray-800 mb-1">Un galvanómetro de 1882 que aún hoy mide corriente</h2>
-        <p class="text-gray-600 text-sm">D'Arsonval diseñó en 1882 un instrumento que convierte corriente eléctrica en movimiento mecánico. Con solo agregar una resistencia shunt o multiplicadora, ese mismo mecanismo se convierte en amperímetro, voltímetro u óhmetro. ¿Cómo se calcula ese shunt? ¿Por qué el ohmímetro tiene la escala al revés? ¿Qué diferencia hay entre hierro móvil y bobina móvil? Exploralo aquí.</p>
+        <p class="text-gray-600 text-sm">D'Arsonval diseñó en 1882 un instrumento que convierte corriente eléctrica en movimiento mecánico. Con solo agregar una resistencia shunt o multiplicadora, ese mismo mecanismo se convierte en amperímetro, voltímetro u óhmetro. ¿Cómo se calcula ese shunt? ¿Por qué el ohmetro tiene la escala al revés? ¿Qué diferencia hay entre hierro móvil y bobina móvil? Exploralo aquí.</p>
       </div>
     </div>
   </div>
@@ -67,7 +70,7 @@
   <div class="flex flex-wrap gap-2">
     <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-darsonval')">🧲 D'Arsonval</button>
     <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ampliacion')">🔧 Shunt y Multiplicadora</button>
-    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ω Ohmímetro</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ω Ohmetro</button>
     <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')">🌊 Señales Alternas</button>
     <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-hierro')">⚙️ Hierro Móvil</button>
   </div>
@@ -84,9 +87,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="space-y-4">
           <div class="info-box">
-            <strong>Principio (Ley de Laplace):</strong> F = B·I·l·N·sen(α)<br>
+            <strong>Principio (Ley de Laplace):</strong> $ F = B \cdot I \cdot l \cdot N \cdot \operatorname{sen}(\alpha) $<br>
             El campo radial del imán permanente hace que sen(α) = 1 siempre, por lo que la fuerza es constante en toda la escala.<br>
-            <strong>Equilibrio:</strong> C<sub>m</sub> = C<sub>r</sub> → K·I = Kr·α → <strong>α = (K/Kr)·I</strong>
+            <strong>Equilibrio:</strong> $ C_m = C_r \rightarrow K \cdot I = K_r \cdot \alpha \rightarrow \alpha = \left(\frac{K}{K_r}\right) \cdot I $
           </div>
           <div>
             <label class="text-sm font-semibold text-gray-700">Inducción magnética B (T): <span id="B-val" class="text-blue-700 font-bold">0.25</span></label>
@@ -192,17 +195,17 @@
       <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
         <div class="font-bold text-blue-800 text-sm mb-1">💨 Neumático</div>
         <p class="text-xs text-gray-700">Cámara de aire hermética con aleta de aluminio unida al eje. El aire comprimido frena el movimiento. Sencillo y económico. Usado en electrodinámicos.</p>
-        <div class="formula-box text-xs mt-2">M<sub>am</sub> ∝ dα/dt</div>
+        <div class="formula-box text-xs mt-2">$ M_{\text{am}} \propto \frac{d\alpha}{dt} $</div>
       </div>
       <div class="bg-green-50 rounded-xl p-3 border border-green-200">
         <div class="font-bold text-green-800 text-sm mb-1">💧 Hidráulico</div>
         <p class="text-xs text-gray-700">Dos discos metálicos con holgura de 0.1 mm llena de líquido viscoso (alta tensión superficial). El movimiento viscoso frena el sistema.</p>
-        <div class="formula-box text-xs mt-2">Mam = C·(dα/dt)</div>
+        <div class="formula-box text-xs mt-2">$ M_{\text{am}} = C \cdot \frac{d\alpha}{dt} $</div>
       </div>
       <div class="bg-red-50 rounded-xl p-3 border border-red-200">
         <div class="font-bold text-red-800 text-sm mb-1">🔴 Magnético (Foucault)</div>
         <p class="text-xs text-gray-700">Chapa conductora en campo magnético: las corrientes de Foucault inducidas generan una fuerza antagónica (Ley de Lenz). Muy eficaz en magnetoeléctricos. No usar donde haya campos dispersos.</p>
-        <div class="formula-box text-xs mt-2">F = -k·v (Ley de Lenz)</div>
+        <div class="formula-box text-xs mt-2">$ F = -k \cdot v \quad \text{(Ley de Lenz)} $</div>
       </div>
     </div>
   </div>
@@ -220,7 +223,7 @@
         <!-- Amperímetro -->
         <div class="bg-blue-50 rounded-xl p-4 border border-blue-200 space-y-3">
           <h3 class="font-bold text-blue-800">⚡ Amperímetro — Resistencia Shunt (paralelo)</h3>
-          <div class="formula-box text-sm">R_S = R_A / (I / I_A − 1)<br>U_AB = R_A · I_A = R_S · I_S</div>
+          <div class="formula-box text-sm">$ R_S = \frac{R_A}{\left(\frac{I}{I_A} - 1\right)} \qquad U_{AB} = R_A \cdot I_A = R_S \cdot I_S $</div>
           <div>
             <label class="text-sm font-semibold">Resistencia interna bobina R_A (Ω): <span id="amp-RA" class="text-blue-700 font-bold">50</span></label>
             <input type="range" id="amp-RA-slider" min="1" max="500" value="50" class="w-full" oninput="updateAmpSim()">
@@ -245,7 +248,7 @@
         <!-- Voltímetro -->
         <div class="bg-green-50 rounded-xl p-4 border border-green-200 space-y-3">
           <h3 class="font-bold text-green-800">🔋 Voltímetro — Resistencia Multiplicadora (serie)</h3>
-          <div class="formula-box text-sm">R_m = U / I_v − R_A<br>U = U_A + U_m = I_v·(R_A + R_m)</div>
+          <div class="formula-box text-sm">$ R_m = \frac{U}{I_v} - R_A $<br>$ U = U_A + U_m = I_v \cdot (R_A + R_m) $</div>
           <div>
             <label class="text-sm font-semibold">Resistencia interna R_A (Ω): <span id="volt-RA" class="text-blue-700 font-bold">50</span></label>
             <input type="range" id="volt-RA-slider" min="1" max="500" value="50" class="w-full" oninput="updateVoltSim()">
@@ -288,12 +291,12 @@
   </div>
 </div>
 
-<!-- =================== TAB 3: OHMÍMETRO =================== -->
+<!-- =================== TAB 3: OHMETRO =================== -->
 <div id="tab-ohmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">Ω Ohmímetro — Serie vs. Paralelo</h2>
-      <p class="text-sm opacity-80 mt-1">El ohmímetro usa una batería interna. La resistencia desconocida modifica la corriente y con ello la deflexión de la aguja.</p>
+      <h2 class="text-lg font-bold">Ω Ohmetro — Serie vs. Paralelo</h2>
+      <p class="text-sm opacity-80 mt-1">El ohmetro usa una batería interna. La resistencia desconocida modifica la corriente y con ello la deflexión de la aguja.</p>
     </div>
     <div class="p-4">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -301,7 +304,7 @@
         <div class="space-y-3">
           <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
             <h3 class="font-bold text-orange-800 mb-2">🔴 Óhmetro Serie</h3>
-            <div class="formula-box text-sm mb-2">α_x = α_max · [ 1 / (1 + R_x/R_i) ]<br>Ri = R1 + Rm (resistencia interna total)</div>
+            <div class="formula-box text-sm mb-2">$ \alpha_x = \alpha_{\text{max}} \cdot \left[ \frac{1}{1 + \frac{R_x}{R_i}} \right] $<br>$ R_i = R_1 + R_m \quad \text{(resistencia interna total)} $</div>
             <p class="text-xs text-gray-700 mb-3">Rx = 0 → corriente máxima → aguja al fondo (marca "0Ω" a la derecha). Rx = ∞ → sin corriente → "∞" a la izquierda. La escala crece de derecha a izquierda.</p>
             <div class="space-y-2">
               <div><label class="text-xs font-semibold">Tensión batería E (V): <span id="oS-E" class="text-orange-700 font-bold">1.5</span></label>
@@ -325,7 +328,7 @@
         <div class="space-y-3">
           <div class="bg-teal-50 border border-teal-200 rounded-xl p-4">
             <h3 class="font-bold text-teal-800 mb-2">🟢 Óhmetro Paralelo (Shunt)</h3>
-            <div class="formula-box text-sm mb-2">α_x = α_max · [ R_x / (R_x + R_m) ]<br>Rx=0 → I=0 → "0Ω" a la izquierda</div>
+            <div class="formula-box text-sm mb-2">$ \alpha_x = \alpha_{\text{max}} \cdot \left[ \frac{R_x}{R_x + R_m} \right] $<br>$ R_x = 0 \rightarrow I = 0 \rightarrow \text{"0Ω" a la izquierda} $</div>
             <p class="text-xs text-gray-700 mb-3">La escala crece de izquierda a derecha (como amperímetros). Rx = ∞ → toda la corriente pasa por el galvanómetro → escala completa.</p>
             <div class="space-y-2">
               <div><label class="text-xs font-semibold">Tensión E (V): <span id="oP-E" class="text-teal-700 font-bold">1.5</span></label>
@@ -384,7 +387,7 @@
         <!-- Media onda -->
         <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
           <h3 class="font-bold text-blue-800">📊 Rectificador de Media Onda</h3>
-          <div class="formula-box text-sm">I_med = I_max / π = 0.318 · I_max<br>Factor forma Ff = V_ef / V_med = π / √2 = 2.22<br>= 2 × 1.11 (doble del factor onda completa)</div>
+          <div class="formula-box text-sm">$ I_{\text{med}} = \frac{I_{\text{max}}}{\pi} = 0.318 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{\sqrt{2}} = 2.22 $<br>$ = 2 \times 1.11 \text{ (doble del factor onda completa)} $</div>
           <p class="text-xs text-gray-700">El semiciclo negativo es bloqueado por el diodo. La escala se multiplica por 2.22 para indicar el valor eficaz. Solo la mitad del tiempo está activo → baja sensibilidad.</p>
           <canvas id="halfWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
           <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs">
@@ -395,7 +398,7 @@
         <!-- Onda completa -->
         <div class="bg-green-50 border border-green-200 rounded-xl p-4 space-y-3">
           <h3 class="font-bold text-green-800">📊 Rectificador de Onda Completa</h3>
-          <div class="formula-box text-sm">I_med = 2·I_max / π = 0.636 · I_max<br>Factor forma Ff = V_ef / V_med = π / (2√2) = 1.11<br>I_ef = √2/2 · I_max = 0.707 · I_max</div>
+          <div class="formula-box text-sm">$ I_{\text{med}} = \frac{2 \cdot I_{\text{max}}}{\pi} = 0.636 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{2\sqrt{2}} = 1.11 $<br>$ I_{\text{ef}} = \frac{\sqrt{2}}{2} \cdot I_{\text{max}} = 0.707 \cdot I_{\text{max}} $</div>
           <p class="text-xs text-gray-700">Puente de 4 diodos. El semiciclo negativo se traslada al primer cuadrante. La frecuencia de la señal rectificada es el doble. El factor de escala es 1.11.</p>
           <canvas id="fullWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
           <div class="bg-green-100 border border-green-300 rounded-lg p-2 text-xs">
@@ -456,10 +459,10 @@
           <div class="bg-gray-800 text-white rounded-xl p-4">
             <h3 class="font-bold text-yellow-300 mb-2">📐 Ecuación de funcionamiento</h3>
             <div class="font-mono text-sm space-y-1">
-              <div>Mm = ½ · I² · dL/dα</div>
-              <div>Ma = Ca · α</div>
-              <div class="border-t border-gray-600 mt-2 pt-2 text-yellow-200">α = C · (dL/dα) · I²</div>
-              <div class="text-gray-400 text-xs mt-1">→ escala cuadrática (α ∝ I²)</div>
+              <div>$ M_m = \frac{1}{2} \cdot I^2 \cdot \frac{dL}{d\alpha} $</div>
+              <div>$ M_a = C_a \cdot \alpha $</div>
+              <div class="border-t border-gray-600 mt-2 pt-2 text-yellow-200">$ \alpha = C \cdot \frac{dL}{d\alpha} \cdot I^2 $</div>
+              <div class="text-gray-400 text-xs mt-1">→ escala cuadrática ($ \alpha \propto I^2 $)</div>
             </div>
           </div>
           <div>
@@ -476,7 +479,7 @@
           <div class="bg-green-50 border border-green-200 rounded-xl p-3">
             <h4 class="font-bold text-green-800 text-sm mb-1">✅ ¿Por qué funciona en CA?</h4>
             <p class="text-xs text-gray-700">Si i = Î·sen(θ), entonces α ∝ I²_ef porque:</p>
-            <div class="formula-box text-xs mt-1">α = C·(dL/dα)·½·Î²<br>= C·(dL/dα)·I²_ef<br>(La inercia mecánica promedia el I²)</div>
+            <div class="formula-box text-xs mt-1">$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot \frac{1}{2} \cdot I^2 $<br>$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot I_{\text{ef}}^2 $<br>$ \text{(La inercia mecánica promedia el } I^2) $</div>
             <p class="text-xs text-gray-700 mt-1">El instrumento responde al valor eficaz verdadero (TRMS).</p>
           </div>
         </div>
@@ -562,6 +565,39 @@
 </div>
 
 <script>
+
+// Función reutilizable para renderizar ecuaciones en contenido dinámico
+function renderMathInElementDynamic(elementId) {
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.getElementById(elementId), {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false},
+            ],
+            throwOnError: false
+        });
+    } else {
+        console.error('KaTeX auto-render no cargado');
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Esperar a que KaTeX esté disponible
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false},
+            ],
+            throwOnError: false
+        });
+        // Inicializar tab activo (D'Arsonval)
+        updateDarsonval();
+    } else {
+        console.error('KaTeX auto-render no cargado');
+    }
+});
+
 // =====================================================
 // TAB SWITCHING
 // =====================================================
@@ -610,9 +646,9 @@ function updateDarsonval() {
   var alphaDeg = Math.min(alpha * 180 / Math.PI, 270);
 
   document.getElementById('darsonval-results').innerHTML = [
-    '<div class="formula-box text-sm">F = B·I·l·N = ' + F.toFixed(4) + ' N</div>',
-    '<div class="formula-box text-sm">C_m = F·d = ' + Cm.toFixed(6) + ' N·m = K·I donde K = ' + K.toFixed(4) + '</div>',
-    '<div class="formula-box text-sm">α = K·I / Kr = <strong>' + alphaDeg.toFixed(1) + '°</strong></div>',
+    '<div class="formula-box text-sm">$ F = B \\cdot I \\cdot l \\cdot N = ' + F.toFixed(4) + ' \\text{ N} $</div>',
+    '<div class="formula-box text-sm">$ C_m = F \\cdot d = ' + Cm.toFixed(6) + ' \\text{ N} \\cdot \\text{m} = K \\cdot I \\text{ donde } K = ' + K.toFixed(4) + ' $</div>',
+    '<div class="formula-box text-sm">$ \\alpha = \\frac{K \\cdot I}{K_r} = $ <strong class="text-blue-900">' + alphaDeg.toFixed(1) + '°</strong></div>',
     '<div class="p-2 rounded-lg text-sm font-semibold ' + (alphaDeg > 200 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700') + '">' +
     (alphaDeg > 200 ? '⚠️ Superando el fondo de escala (>200°)' : '✅ Dentro del campo de medida') + '</div>'
   ].join('');
@@ -647,6 +683,7 @@ function updateDarsonval() {
       }
     }
   });
+  renderMathInElementDynamic('darsonval-results');
 }
 
 function drawMeter3(fraction) {
@@ -685,11 +722,11 @@ function drawMeter3(fraction) {
 
 // Component data
 var compData = {
-  bobina: { icon:'🪡', name:'Bobina Móvil', desc:'Arrollamiento de alambre conductor de pequeña sección montado sobre un bastidor de aluminio. La corriente a medir circula por ella. Está suspendida entre las expansiones polares del imán y puede girar libremente.', formula:'F = B·I·l·N (fuerza en la bobina)' },
-  iman: { icon:'🧲', name:'Imán Permanente', desc:'Genera el campo magnético fijo y radial en el entrehierro. Su forma especial garantiza que el campo sea constante y radial en toda la trayectoria de la bobina (sen(α)=1 siempre), lo que produce una escala lineal.', formula:'B = cte. (campo radial constante)' },
-  resorte: { icon:'🌀', name:'Resorte Antagonista', desc:'Dos resortes en espiral arrollados en sentidos contrarios sirven como: mecanismo equilibrador de la rotación, conductores de la corriente hacia la bobina. La constante del resorte determina la sensibilidad del instrumento.', formula:'C_r = Kr · α (cupla resistente)' },
-  aguja: { icon:'📍', name:'Aguja Indicadora', desc:'Montada sobre el eje de suspensión con contrapesos de equilibrio. Se desplaza sobre la escala graduada permitiendo la lectura. Un tornillo de ajuste a cero permite calibrar antes de cada medición.', formula:'α = (K/Kr)·I (deflexión ∝ corriente)' },
-  escala: { icon:'📏', name:'Escala Graduada', desc:'Graduación lineal y uniforme tarada por el fabricante. Puede ser en mA, μA, V, etc. según la aplicación. El espejo bajo la escala permite corregir el error de paralaje.', formula:'Escala lineal: y = K·x' }
+  bobina: { icon:'🪡', name:'Bobina Móvil', desc:'Arrollamiento de alambre conductor de pequeña sección montado sobre un bastidor de aluminio. La corriente a medir circula por ella. Está suspendida entre las expansiones polares del imán y puede girar libremente.', formula:'$ F = B \\cdot I \\cdot l \\cdot N \\quad (\\text{fuerza en la bobina}) $' },
+  iman: { icon:'🧲', name:'Imán Permanente', desc:'Genera el campo magnético fijo y radial en el entrehierro. Su forma especial garantiza que el campo sea constante y radial en toda la trayectoria de la bobina (sen(α)=1 siempre), lo que produce una escala lineal.', formula:'$ B = \\text{cte.} \\quad (\\text{campo radial constante}) $' },
+  resorte: { icon:'🌀', name:'Resorte Antagonista', desc:'Dos resortes en espiral arrollados en sentidos contrarios sirven como: mecanismo equilibrador de la rotación, conductores de la corriente hacia la bobina. La constante del resorte determina la sensibilidad del instrumento.', formula:'$ C_r = K_r \\cdot \\alpha \\quad (\\text{cupla resistente}) $' },
+  aguja: { icon:'📍', name:'Aguja Indicadora', desc:'Montada sobre el eje de suspensión con contrapesos de equilibrio. Se desplaza sobre la escala graduada permitiendo la lectura. Un tornillo de ajuste a cero permite calibrar antes de cada medición.', formula:'$ \\alpha = \\frac{K}{K_r} \\cdot I \\quad (\\text{deflexión } \\propto \\text{corriente}) $' },
+  escala: { icon:'📏', name:'Escala Graduada', desc:'Graduación lineal y uniforme tarada por el fabricante. Puede ser en mA, μA, V, etc. según la aplicación. El espejo bajo la escala permite corregir el error de paralaje.', formula:'$ \\text{Escala lineal: } y = K \\cdot x $' }
 };
 
 function showComponent(id) {
@@ -698,9 +735,11 @@ function showComponent(id) {
   document.getElementById('comp-name').textContent = c.name;
   document.getElementById('comp-desc').textContent = c.desc;
   var fbox = document.getElementById('comp-formula');
-  fbox.textContent = c.formula; fbox.classList.remove('hidden');
+  fbox.innerHTML = c.formula; fbox.classList.remove('hidden');
+  renderMathInElementDynamic('comp-formula');
   document.getElementById('comp-detail').classList.remove('hidden');
   document.querySelectorAll('.component-card').forEach(function(el){el.classList.remove('selected');});
+  document.querySelector('.component-card[onclick="showComponent(\''+id+'\')"]').classList.add('selected');
 }
 
 // =====================================================
@@ -723,10 +762,10 @@ function updateAmpSim() {
   var n = I / IA;
 
   document.getElementById('amp-results').innerHTML = [
-    '<div class="formula-box text-sm">R_S = R_A·I_A / (I − I_A) = ' + RS.toFixed(3) + ' Ω</div>',
-    '<div class="formula-box text-sm">I_S = ' + IS.toFixed(1) + ' mA | I_A = ' + IA.toFixed(1) + ' mA</div>',
-    '<div class="formula-box text-sm">U_AB = R_A·I_A = R_S·I_S = ' + (UAB*1000).toFixed(2) + ' mV</div>',
-    '<div class="formula-box text-sm">Factor de escala n = I/I_A = <strong>' + n.toFixed(1) + 'x</strong></div>',
+    '<div class="formula-box text-sm">$ R_S = \\frac{R_A \\cdot I_A}{I - I_A} = ' + RS.toFixed(3) + ' \\Omega $</div>',
+    '<div class="formula-box text-sm">$ I_S = ' + IS.toFixed(1) + ' \\text{ mA} \\quad | \\quad I_A = ' + IA.toFixed(1) + ' \\text{ mA} $</div>',
+    '<div class="formula-box text-sm">$ U_{AB} = R_A \\cdot I_A = R_S \\cdot I_S = ' + (UAB*1000).toFixed(2) + ' \\text{ mV} $</div>',
+    '<div class="formula-box text-sm">$ \\text{Factor de escala } n = \\frac{I}{I_A} = $ <strong class="text-blue-900">' + n.toFixed(1) + 'x</strong></div>',
     '<div class="bg-blue-100 rounded-lg p-2 text-xs text-blue-800"><strong>R_S = ' + RS.toFixed(3) + ' Ω</strong> (menor que R_A = '+RA+' Ω) ✓</div>'
   ].join('');
 
@@ -744,6 +783,7 @@ function updateAmpSim() {
     data: { labels: ['Por bobina (I_A)','Por shunt (I_S)'], datasets: [{data:[IA,IS],backgroundColor:['#2563eb','#93c5fd'],borderWidth:2}] },
     options: { responsive:true,maintainAspectRatio:false, plugins:{title:{display:true,text:'Distribución de corriente (mA)'}, legend:{position:'bottom'}} }
   });
+  renderMathInElementDynamic('amp-results');
 }
 
 function updateVoltSim() {
@@ -760,9 +800,9 @@ function updateVoltSim() {
   var sensOV = 1000/Iv;
 
   document.getElementById('volt-results').innerHTML = [
-    '<div class="formula-box text-sm">R_m = U/I_v − R_A = ' + Rm.toFixed(0) + ' Ω</div>',
-    '<div class="formula-box text-sm">U_A = ' + UA.toFixed(3) + ' V | U_m = ' + Um.toFixed(2) + ' V</div>',
-    '<div class="formula-box text-sm">Cifra Ω/V = 1/I_v = <strong>' + sensOV.toFixed(0) + ' Ω/V</strong></div>',
+    '<div class="formula-box text-sm">$ R_m = \\frac{U}{I_v} - R_A = ' + Rm.toFixed(0) + ' \\Omega $</div>',
+    '<div class="formula-box text-sm">$ U_A = ' + UA.toFixed(3) + ' \\text{ V} \\quad | \\quad U_m = ' + Um.toFixed(2) + ' \\text{ V} $</div>',
+    '<div class="formula-box text-sm">$ \\text{Cifra } \\Omega/V = \\frac{1}{I_v} = $ <strong class="text-green-900">' + sensOV.toFixed(0) + ' Ω/V</strong></div>',
     '<div class="bg-green-100 rounded-lg p-2 text-xs text-green-800"><strong>R_m = ' + Rm.toFixed(0) + ' Ω</strong> >> R_A = '+RA+' Ω ✓</div>'
   ].join('');
 
@@ -783,10 +823,11 @@ function updateVoltSim() {
     options: { responsive:true,maintainAspectRatio:false, plugins:{title:{display:true,text:'Caída de tensión (V)'}, legend:{display:false}},
       scales:{y:{beginAtZero:true, title:{display:true,text:'V'}}} }
   });
+  renderMathInElementDynamic('volt-results');
 }
 
 // =====================================================
-// TAB 3: OHMÍMETRO
+// TAB 3: OHMETRO
 // =====================================================
 var ohmSerieChart=null, ohmParChart=null;
 
@@ -807,9 +848,9 @@ function updateOhmSerie() {
   var alpha = Ix / Imax;
 
   document.getElementById('oS-results').innerHTML = [
-    '<div class="formula-box text-sm">I_max (Rx=0) = E/Ri = ' + Imax.toFixed(3) + ' mA</div>',
-    '<div class="formula-box text-sm">I_x = E/(Ri+Rx) = ' + Ix.toFixed(3) + ' mA</div>',
-    '<div class="formula-box text-sm">Deflexión = ' + (alpha*100).toFixed(1) + '% de escala completa</div>',
+    '<div class="formula-box text-sm">$ I_{\\text{max}} = \\frac{E}{R_i} = ' + Imax.toFixed(3) + ' \\text{ mA} \\quad \\text{(cuando } R_x = 0) $</div>',
+    '<div class="formula-box text-sm">$ I_x = \\frac{E}{R_i + R_x} = ' + Ix.toFixed(3) + ' \\text{ mA} $</div>',
+    '<div class="formula-box text-sm">$ \\text{Deflexión} = $ <strong class="text-orange-900">' + (alpha*100).toFixed(1) + '%</strong> $ \\text{ de escala completa} $</div>',
     '<div class="bg-orange-100 rounded-lg p-2 text-xs text-orange-800">En la escala: la aguja está a <strong>' + (alpha*100).toFixed(1) + '%</strong> desde la derecha (0Ω)</div>'
   ].join('');
 
@@ -833,6 +874,7 @@ function updateOhmSerie() {
       scales:{x:{title:{display:true,text:'Rx'}},y:{title:{display:true,text:'Deflexión (%)'},beginAtZero:true,max:100}}
     }
   });
+  renderMathInElementDynamic('oS-results');
 }
 
 function updateOhmPar() {
@@ -849,8 +891,8 @@ function updateOhmPar() {
   var alpha = (Rx===0) ? 0 : Rx/(Rx+Rm);
 
   document.getElementById('oP-results').innerHTML = [
-    '<div class="formula-box text-sm">α = α_max · Rx/(Rx + Rm)</div>',
-    '<div class="formula-box text-sm">Deflexión = ' + (alpha*100).toFixed(1) + '% de escala completa</div>',
+    '<div class="formula-box text-sm">$ \\alpha = \\alpha_{\\text{max}} \\cdot \\frac{R_x}{R_x + R_m} $</div>',
+    '<div class="formula-box text-sm">$ \\text{Deflexión} = $ <strong class="text-teal-900">' + (alpha*100).toFixed(1) + '%</strong> $ \\text{ de escala completa} $</div>',
     '<div class="bg-teal-100 rounded-lg p-2 text-xs text-teal-800">La aguja está a <strong>' + (alpha*100).toFixed(1) + '%</strong> desde la izquierda (0Ω)</div>'
   ].join('');
 
@@ -870,6 +912,7 @@ function updateOhmPar() {
       scales:{x:{title:{display:true,text:'Rx'}},y:{title:{display:true,text:'Deflexión (%)'},beginAtZero:true,max:100}}
     }
   });
+  renderMathInElementDynamic('oP-results');
 }
 
 // =====================================================
@@ -965,12 +1008,13 @@ function updateWaveCalc() {
   var Vef = Vp/Math.sqrt(2), Vmed_full = 2*Vp/Math.PI, Vmed_half = Vp/Math.PI, T = 1/f*1000;
   document.getElementById('wave-results').innerHTML = [
     '<div class="text-xs font-semibold text-indigo-700 mb-1">Para V_p = ' + Vp + ' V, f = ' + f + ' Hz:</div>',
-    '<div class="formula-box text-xs">V_ef = V_p/√2 = <strong>' + Vef.toFixed(2) + ' V</strong></div>',
-    '<div class="formula-box text-xs">V_med (OC) = 2V_p/π = <strong>' + Vmed_full.toFixed(2) + ' V</strong></div>',
-    '<div class="formula-box text-xs">V_med (MO) = V_p/π = <strong>' + Vmed_half.toFixed(2) + ' V</strong></div>',
-    '<div class="formula-box text-xs">T = 1/f = <strong>' + T.toFixed(2) + ' ms</strong></div>',
-    '<div class="formula-box text-xs">V_pp = 2·V_p = <strong>' + (2*Vp).toFixed(0) + ' V</strong></div>',
+    '<div class="formula-box text-xs">$ V_{\\text{ef}} = \\frac{V_p}{\\sqrt{2}} = $ <strong class="text-indigo-900">' + Vef.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">$ V_{\\text{med (OC)}} = \\frac{2 V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_full.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">$ V_{\\text{med (MO)}} = \\frac{V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_half.toFixed(2) + ' V</strong></div>',
+    '<div class="formula-box text-xs">$ T = \\frac{1}{f} = $ <strong class="text-indigo-900">' + T.toFixed(2) + ' ms</strong></div>',
+    '<div class="formula-box text-xs">$ V_{\\text{pp}} = 2 \\cdot V_p = $ <strong class="text-indigo-900">' + (2*Vp).toFixed(0) + ' V</strong></div>',
   ].join('');
+  renderMathInElementDynamic('wave-results');
 }
 
 // =====================================================
@@ -1014,17 +1058,15 @@ function updateHierroSim() {
   var alpha = C * I * I;
   var alphaCA = C * I * I; // Same! α = C·(dL/dα)·I²_ef
   document.getElementById('hierro-results').innerHTML =
-    'α = C·(dL/dα)·I² = ' + C.toFixed(1) + ' × ' + (I*I).toFixed(2) + ' = <strong>' + alpha.toFixed(2) + '</strong> unidades\n' +
-    'En CA: α = C·(dL/dα)·I²_ef = ' + alphaCA.toFixed(2) + ' (mismo resultado con I_ef)';
+    '$ \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I^2 = ' + C.toFixed(1) + ' \\times ' + (I*I).toFixed(2) + ' = $ <strong class="text-yellow-900">' + alpha.toFixed(2) + '</strong> $ \\text{ unidades} $<br>' +
+    '$ \\text{En CA: } \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I_{\\text{ef}}^2 = ' + alphaCA.toFixed(2) + ' \\text{ (mismo resultado con } I_{\\text{ef}}\\text{)} $';
+  renderMathInElementDynamic('hierro-results');
 }
 
 // =====================================================
 // INITIALIZATION
 // =====================================================
-document.addEventListener('DOMContentLoaded', function() {
-  updateDarsonval();
-  tabInited['tab-darsonval'] = true;
-});
+
 </script>
 </body>
 </html>

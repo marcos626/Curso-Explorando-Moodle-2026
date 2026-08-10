@@ -169,6 +169,8 @@
         <i class="fas fa-trophy"></i>
         <div><div class="font-bold">¡Logro Desbloqueado!</div><div id="achievementText" class="text-sm opacity-90"></div></div>
     </div>
+    
+    <!-- HEADER -->
     <div class="nav-header text-white p-4 mb-4 shadow-lg">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
@@ -182,17 +184,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- HOOK -->
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="card p-4 border-l-4 border-yellow-400">
             <div class="flex items-start gap-3">
-                <span class="text-3xl">⚡</span>
+                <span class="text-3xl">🧲</span>
                 <div>
-                    <h2 class="font-bold text-lg text-gray-800 mb-1">¿Cómo funciona realmente un instrumento analógico?</h2>
-                    <p class="text-gray-600 text-sm">Desde el delicado movimiento de una bobina en un campo magnético hasta la medición de la resistividad de la tierra con picas enterradas. Explora los principios físicos que hacen posible medir lo que no se ve.</p>
+                    <h2 class="font-bold text-lg text-gray-800 mb-1">Un galvanómetro de 1882 que aún hoy mide corriente</h2>
+                    <p class="text-gray-600 text-sm">D'Arsonval diseñó en 1882 un instrumento que convierte corriente eléctrica en movimiento mecánico. Con solo agregar una resistencia shunt o multiplicadora, ese mismo mecanismo se convierte en amperímetro, voltímetro u óhmetro. ¿Cómo se calcula ese shunt? ¿Por qué el ohmetro tiene la escala al revés? ¿Qué diferencia hay entre hierro móvil y bobina móvil? Exploralo aquí.</p>
                 </div>
             </div>
         </div>
     </div>
+    <!-- ACHIEVEMENTS -->
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="flex gap-2 flex-wrap justify-center">
             <div class="achievement" id="ach1"><i class="fas fa-medal"></i> Principiante</div>
@@ -203,12 +208,14 @@
             <div class="achievement" id="ach6"><i class="fas fa-crown"></i> Experto</div>
         </div>
     </div>
+    
+    <!-- TABS -->
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="flex flex-wrap gap-2">
             <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-galvanometro')"><svg class="measure-symbol-sm" viewBox="0 0 100 84" aria-hidden="true" focusable="false" style="vertical-align:middle; margin-right:6px"><path class="magnet" d="M14 76 H30 V31 C30 20 70 20 70 31 V76 H86 V28 C86 5 14 5 14 28 Z"></path><rect class="coil" x="34" y="55" width="32" height="16"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="71"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="71"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="71"></line></svg> Galvanómetro</button>
             <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-amperimetro')"><i class="fas fa-tachometer-alt"></i> Amperímetro</button>
             <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-voltimetro')"><i class="fas fa-battery-full"></i> Voltímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmmetro')"><i class="fas fa-wave-square"></i> Ohmmetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ω Ohmetro</button>
             <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-telurimetro')"><i class="fas fa-globe-americas"></i> Telurímetro</button>
             <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-wenner')"><i class="fas fa-ruler-combined"></i> Wenner</button>
             <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-schlumberger')"><i class="fas fa-layer-group"></i> Schlumberger</button>
@@ -284,7 +291,8 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 1: Amperímetro</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Un galvanómetro tiene $ R_m = 1.2\\text{k}\\Omega $ y $ I_{fs} = 50\\mu\\text{A} $. ¿Qué resistencia shunt se necesita para medir hasta 5A?</p>
+                <p class="text-gray-700 mb-3">Un galvanómetro tiene $R_m = 1.2 \ \text{k} \Omega$ y $I_{fs} = 50\ \mu\text{A}$. ¿Qué resistencia shunt se necesita para medir hasta $5\ \text{A}$?</p>
+                <div class="formula-box">$$ R_{sh} = \frac{R_m}{n - 1}, \quad n = \frac{I}{I_{fs}} $$</div>
                 <div class="simulator-controls">
                     <div class="control-group"><label>Tu respuesta (Ω)</label><input type="number" id="chal1" placeholder="Ej: 0.012" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                 </div>
@@ -294,7 +302,7 @@
         </div>
     </div>
 
-    <!-- TAB: VOLTMETRO -->
+    <!-- TAB: VOLTIMETRO -->
     <div id="tab-voltimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-battery-full"></i> Voltímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a voltímetro mediante resistencia multiplicadora.</p></div>
@@ -324,7 +332,8 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 2: Voltímetro Ampliado</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Un voltímetro de 5V (con $ R_V = 100\text{k}\Omega $) se quiere ampliar a 50V. Calcula $ R_s $ y la relación $ K $.</p>
+                <p class="text-gray-700 mb-3">Un voltímetro de $5\ V$ (con $R_V = 100\ \text{k}\Omega$) se quiere ampliar a $50\ V$. Calcula $R_s$ y la relación $K$.</p>
+                <div class="formula-box">$$ K = \frac{V_2}{V_1}, \qquad R_s = R_V(K - 1) $$</div>
                 <div class="simulator-controls">
                     <div class="control-group"><label>$R_s$ (kΩ)</label><input type="number" id="chal2a" placeholder="Rs" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                     <div class="control-group"><label>$K$</label><input type="number" id="chal2b" placeholder="K" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
@@ -335,14 +344,17 @@
         </div>
     </div>
 
-    <!-- TAB: OHMMETRO -->
-    <div id="tab-ohmmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+    <!-- TAB: OHMETRO -->
+    <div id="tab-ohmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-wave-square"></i> Ohmmetro en Serie</h2><p class="text-sm opacity-80 mt-1">Principio de funcionamiento y escala no lineal.</p></div>
+            <div class="section-header">
+                <h2 class="text-lg font-bold">Ω Ohmetro — Serie vs. Paralelo</h2>
+                <p class="text-sm opacity-80 mt-1">Principio de funcionamiento y escala no lineal.</p>
+            </div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">El ohmmetro mide resistencia aplicando una tensión conocida y midiendo la corriente resultante. En la escala el valor cero corresponde a corriente máxima (cortocircuito).</p>
+                <p class="text-gray-700 mb-3">El ohmetro mide resistencia aplicando una tensión conocida y midiendo la corriente resultante. En la escala el valor cero corresponde a corriente máxima (cortocircuito).</p>
                 <div class="formula-box">$$ R_x = \frac{\mathcal{E}}{I} - (R_m + R_s + r) $$<p class="mt-2 text-sm text-gray-600">$ \mathcal{E} $ = fem de la batería interna, $ r $ = resistencia interna de la batería, $ R_s $ = resistencia de ajuste de cero, $ R_m $ = resistencia del galvanómetro</p></div>
-                <div class="info-box"><i class="fas fa-info-circle"></i>La escala del ohmmetro es <strong>inversa y no lineal</strong>: valores bajos de resistencia están a la derecha (máxima deflexión) y valores altos a la izquierda.</div>
+                <div class="info-box"><i class="fas fa-info-circle"></i>La escala del ohmetro es <strong>inversa y no lineal</strong>: valores bajos de resistencia están a la derecha (máxima deflexión) y valores altos a la izquierda.</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
@@ -460,7 +472,7 @@
     <!-- TAB: WENNER -->
     <div id="tab-wenner" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-ruler-combined"></i> Método de Wenner (4 Picas)</h2><p class="text-sm opacity-80 mt-1">Desarrollado por Frank Wenner en 1915. Método estándar para medir resistividad del suelo.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-ruler-combined"></i> Método de Wenner (4 Picas)</h2><p class="text-sm opacity-80 mt-1">Método estándar para medición de resistividad del suelo.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Desarrollado por <strong>Frank Wenner</strong> en 1915, es el método estándar para medir la resistividad del suelo. Utiliza cuatro electrodos alineados y equidistantes.</p>
                 <div class="diagram-container field-diagram-card">
@@ -516,7 +528,7 @@
                         <text x="164" y="310" class="field-note dimension-label">Condicion: a &gt; 20b</text>
                     </svg>
                 </div>
-                <div class="formula-box">$$ \rho_a = 2 \pi a \cdot \frac{V}{I} = 2 \pi a R $$<p class="mt-2 text-sm text-gray-600">$ \rho_a $ = resistividad aparente [$ \Omega \cdot \text{m} $], $ a $ = separación entre electrodos [m], $ R $ = resistencia medida por el telurímetro [$ \Omega $], $ V $ = diferencia de potencial entre P1 y P2, $ I $ = corriente inyectada entre C1 y C2</p></div>
+                <div class="formula-box">$$ \rho_a = 2\ \pi\ a \cdot \frac{V}{I} = 2 \pi\ a\ R $$<p class="mt-2 text-sm text-gray-600">$ \rho_a $ = resistividad aparente [$ \Omega \cdot \text{m} $], $ a $ = separación entre electrodos [m], $ R $ = resistencia medida por el telurímetro [$ \Omega $], $ V $ = diferencia de potencial entre P1 y P2, $ I $ = corriente inyectada entre C1 y C2</p></div>
                 <div class="info-box"><i class="fas fa-arrow-down"></i><strong>Profundidad de investigación:</strong> La medición representa aproximadamente una profundidad $ h \approx \frac{3a}{4} $. Para analizar capas más profundas, se aumenta la separación $ a $.</div>
                 <div class="info-box"><i class="fas fa-ruler-vertical"></i><strong>Condición de enterramiento:</strong> La profundidad $ b $ de los electrodos debe cumplir $ a > 20b $ (idealmente $ b \leq 5\% $ de $ a $) para que la fórmula simplificada sea válida.</div>
             </div>
@@ -554,7 +566,8 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 3: Wenner en Campo</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">En una medición Wenner con $ a = 4\text{m} $, el telurímetro marca $ R = 12.5\Omega $. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
+                <p class="text-gray-700 mb-3">En una medición de resistividad del suelo con el método Wenner con $a = 4\ \text{m}$, el telurímetro marca $R = 12.5\ \Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
+                <div class="formula-box">$$ \rho_a = 2\ \pi\ a\ R, \qquad h \approx \frac{3a}{4} $$</div>
                 <div class="simulator-controls">
                     <div class="control-group"><label>$\rho_a$ (Ω·m)</label><input type="number" id="chal3a" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                     <div class="control-group"><label>Profundidad aprox. (m)</label><input type="number" id="chal3b" placeholder="h" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
@@ -622,8 +635,8 @@
                         <text x="460" y="326" text-anchor="middle" class="field-note dimension-label">solo se desplazan las picas exteriores C1 y C2</text>
                     </svg>
                 </div>
-                <div class="formula-box">$$ \rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$ L $ = distancia desde el centro hasta C1 o C2, $ l $ = distancia desde el centro hasta P1 o P2 (mitad de $ a $), $ R $ = resistencia medida [$ \Omega $]</p></div>
-                <div class="formula-box">$$ \rho_a = \pi R a n(n+1) $$<p class="mt-2 text-sm text-gray-600">Alternativa: $ \rho = 2\pi R \cdot \dfrac{(n+1)na}{2} $ donde $ n = \dfrac{L}{l} $ y $ a = 2l $ (separación entre P1 y P2)</p></div>
+                <div class="formula-box">$$\rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$L$ = distancia desde el centro hasta C1 o C2, $l$ = distancia desde el centro hasta P1 o P2 (mitad de $a$), $R$ = resistencia medida [$ \Omega $]</p></div>
+                <div class="formula-box">$$\rho_a = \pi\ R\ a\ n\ (n+1)$$<p class="mt-2 text-sm text-gray-600">Alternativa: $ \rho = 2\ \pi\ R \cdot \dfrac{(n+1)na}{2} $ donde $ n = \dfrac{L}{l} $ y $ a = 2l $ (separación entre P1 y P2)</p></div>
                 <div class="info-box"><i class="fas fa-check-circle"></i><strong>Ventajas del Schlumberger:</strong> Menos sensible a variaciones laterales del terreno; más rápido para sondeos profundos porque solo se mueven los electrodos exteriores; los electrodos centrales fijos minimizan errores de contacto.</div>
                 <div class="info-box"><i class="fas fa-times-circle"></i><strong>Desventaja:</strong> La fórmula es más compleja que la de Wenner. Requiere cálculo manual en la mayoría de los telurímetros.</div>
             </div>
@@ -660,7 +673,8 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 4: Schlumberger</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">En una configuración Schlumberger: $ a = 2\text{m} $ (P1-P2), $ n = 8 $ (factor), $ R = 4.2\Omega $. Calcula $ \rho_a $.</p>
+                <p class="text-gray-700 mb-3">En una configuración Schlumberger: $a = 2\ \text{m}$ (separación entre electrodos de potencial P1-P2, por lo tanto $l = a/2 = 1\text{m}$), $n = 8$ (factor tal que $L = n \cdot l$), $ R = 4.2\Omega $. Calcula $ \rho_a $.</p>
+                <div class="formula-box">$$ \rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$ L $ = mitad de la distancia entre electrodos de corriente (C1-C2), $ l = a/2 $ = mitad de la distancia entre electrodos de potencial (P1-P2), $ n = L/l $ es el factor de separación entre ambos pares de electrodos</p></div>
                 <div class="simulator-controls">
                     <div class="control-group"><label>$\rho_a$ (Ω·m)</label><input type="number" id="chal4" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                 </div>
@@ -1155,7 +1169,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { title: { display: true, text: 'Escala No Lineal del Ohmmetro' } },
+                    plugins: { title: { display: true, text: 'Escala No Lineal del Ohmetro' } },
                     scales: {
                         x: { title: { display: true, text: 'Rx (Ω)' } },
                         y: { beginAtZero: true, title: { display: true, text: 'Deflexión %' } }
