@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Medidas Electrónicas I - Unidad 5 - UTN FRL</title>
+<title>Medidas Electrónicas I - Unidad 5 - UTN FRLR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -56,7 +59,7 @@
     <div>
       <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
       <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
-      <div class="text-xs opacity-80 mt-0.5">Unidad 5 · Osciloscopios de Rayos Catódicos · Ing. Walter Sotomayor</div>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 5 · Osciloscopios de Rayos Catódicos · Exploración gamificada</div>
     </div>
     <div class="flex gap-2 flex-wrap justify-center">
       <span class="badge badge-blue">4º Año Ing. Electrónica</span>
@@ -417,10 +420,10 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Controles -->
         <div class="space-y-4">
-          <div class="info-box">
-            <strong>Fórmula de deflexión electrostática:</strong><br>
-            <span class="font-mono text-blue-800">Y = (Vd · l · L) / (2 · b · Vp)</span><br>
-            <span class="font-mono text-blue-800">S_D = Y / Vd = (l · L) / (2 · b · Vp)</span>
+          <div class="info-box space-y-3">
+            <div><strong>Fórmula de deflexión electrostática:</strong></div>
+            <div class="font-mono text-blue-800">$ Y = \dfrac{V_d \cdot l \cdot L}{2 \cdot b \cdot V_p} $</div>
+            <div class="font-mono text-blue-800">$ S_D = \dfrac{Y}{V_d} = \dfrac{l \cdot L}{2 \cdot b \cdot V_p} $</div>
           </div>
           <div>
             <label class="slider-label font-semibold">Tensión de deflexión Vd (V): <span id="vd-val" class="text-blue-700 font-bold">50</span> V</label>
@@ -483,11 +486,11 @@
           <div class="info-box mb-3">
             <strong>Ley de Lorentz:</strong> Al haz de electrones (conductor con corriente) en el campo magnético B de las bobinas se le aplica la regla de la mano izquierda (Fleming), produciendo una fuerza F que deflecta el haz en arco de circunferencia.
           </div>
-          <div class="formula-box mb-3">
-            R = m·v / (e·B)  →  Radio del arco<br>
-            α = e·B·l / (m·v)  →  Ángulo de deflexión<br>
-            Y = e·B·l·L / (m·v)  →  Desviación<br>
-            S = Y/B = e·l·L / (m·v)  →  Sensibilidad
+          <div class="formula-box mb-3 space-y-3">
+            <div>$ R = \dfrac{m \cdot v}{e \cdot B} $ → Radio del arco</div>
+            <div>$ \alpha = \dfrac{e \cdot B \cdot l}{m \cdot v} $ → Ángulo de deflexión</div>
+            <div>$ Y = \dfrac{e \cdot B \cdot l \cdot L}{m \cdot v} $ → Desviación</div>
+            <div>$ S = \dfrac{Y}{B} = \dfrac{e \cdot l \cdot L}{m \cdot v} $ → Sensibilidad</div>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div class="card p-3 border-l-4 border-green-500">
@@ -569,7 +572,7 @@
     <div class="card p-4 border-t-4 border-blue-500">
       <h3 class="font-bold text-blue-700 mb-2">🔄 Base de Tiempo Relajada (Recurrente)</h3>
       <p class="text-sm text-gray-600 mb-2">El diente de sierra se genera continuamente. El sincronismo se logra cuando su período es igual o múltiplo entero del de la señal.</p>
-      <div class="formula-box text-sm">T_barrido = n · T_señal  (n = 1, 2, 3, ...)</div>
+      <div class="formula-box text-sm">$ T_{\text{barrido}} = n \cdot T_{\text{señal}} \quad (n = 1, 2, 3, \ldots) $</div>
       <div class="mt-2">
         <span class="badge badge-green">Simple</span>
         <span class="badge badge-blue">Señales periódicas</span>
@@ -678,7 +681,7 @@
           <p class="text-sm text-gray-600 mb-2">En un mismo barrido, el conmutador bascula numerosas veces entre canal 1 y 2, tomando muestras alternadas de cada señal.</p>
           <div class="info-box text-xs"><strong>Cuándo usar:</strong> Señales lentas (bases de tiempo ≥ 500 ms/div)</div>
           <div class="mt-2 formula-box text-xs">
-            ΔT_barrido &gt;&gt; 1 / f_conmutación<br>
+            $ \Delta T_{\text{barrido}} \gg \dfrac{1}{f_{\text{conmutación}}} $<br>
             → se ven dos trazos "continuos"
           </div>
         </div>
@@ -724,10 +727,7 @@
               <span id="zi-val" class="result-pill">-- kΩ</span>
             </div>
           </div>
-          <div class="formula-box text-sm">
-            Xc = 1 / (2π·f·C) = 1 / (2π · <span id="f-formula">1×10⁶</span> · <span id="c-formula">120×10⁻¹²</span>)
-            <div id="xc-formula" class="mt-1 font-bold"></div>
-          </div>
+          <div id="sonda-formula-box" class="formula-box text-sm"></div>
         </div>
         <div>
           <h4 class="font-semibold text-gray-700 mb-2 text-sm">Impedancia de entrada vs Frecuencia</h4>
@@ -769,8 +769,8 @@
       </div>
 
       <div class="formula-box mb-4">
-        <strong>Relación de frecuencias:</strong>  f<sub>Y</sub> / f<sub>X</sub> = N<sub>X</sub> / N<sub>Y</sub><br>
-        <strong>Donde:</strong> N<sub>X</sub> = picos horizontales tocados · N<sub>Y</sub> = picos verticales tocados
+        <strong>Relación de frecuencias:</strong> $ \dfrac{f_Y}{f_X} = \dfrac{N_X}{N_Y} $<br>
+        <strong>Donde:</strong> $ N_X $ = picos horizontales tocados · $ N_Y $ = picos verticales tocados
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -928,7 +928,7 @@
       </div>
 
       <div class="info-box mt-4">
-        <strong>💡 Aplicación práctica:</strong> Medición de frecuencia desconocida. Se conecta una señal de frecuencia <strong>conocida</strong> (f<sub>X</sub>) al eje X y la señal <strong>desconocida</strong> (f<sub>Y</sub>) al eje Y. Se ajusta f<sub>X</sub> hasta obtener una figura estable. Contando los picos N<sub>X</sub> y N<sub>Y</sub>, se calcula: <span class="font-mono">f<sub>Y</sub> = f<sub>X</sub> · (N<sub>X</sub>/N<sub>Y</sub>)</span>
+        <strong>💡 Aplicación práctica:</strong> Medición de frecuencia desconocida. Se conecta una señal de frecuencia <strong>conocida</strong> (f<sub>X</sub>) al eje X y la señal <strong>desconocida</strong> (f<sub>Y</sub>) al eje Y. Se ajusta f<sub>X</sub> hasta obtener una figura estable. Contando los picos N<sub>X</sub> y N<sub>Y</sub>, se calcula: <span class="font-mono">$ f_Y = f_X \cdot \dfrac{N_X}{N_Y} $</span>
       </div>
     </div>
   </div>
@@ -1225,8 +1225,9 @@
 <div class="max-w-6xl mx-auto px-3 mb-8">
   <div class="card p-4 text-center text-sm text-gray-500">
     <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
-    <div>Ing. Walter Sotomayor · Guía de Estudios Unidad 5 · Año 2026</div>
-    <div class="mt-1 text-xs">Herramienta educativa interactiva basada en la guía de estudios oficial de la cátedra.</div>
+    <div>Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</div>
+    <div>Guía de Estudios Unidad 5. Año 2026</div>
+    <div class="mt-1 text-xs">Material didáctico gamificado.</div>
   </div>
 </div>
 
@@ -1289,7 +1290,7 @@ var zoneData = [
   null,
   { icon:'🔴', title:'Zona 1 — Generación', border:'border-blue-500', desc:'Cátodo emisor (acero/níquel recubierto de óxido de bario y estroncio). La emisividad térmica genera electrones al calentar el filamento con corriente alterna. La rejilla (cilindro de Wehnelt) se polariza negativamente y controla la densidad del haz. El ánodo A₁ acelera los electrones hacia la pantalla.', formula:'Emisividad: calor → fuerza electroestática → nube de electrones\nControl de intensidad: Vrilla-cátodo → controla densidad del haz', badges:['Cátodo → Rejilla → A₁','BaO + SrO','Filamento AC'] },
   { icon:'🔵', title:'Zona 2 — Enfoque', border:'border-blue-400', desc:'El haz divergente del primer ánodo pasa por el anillo de enfoque y el segundo ánodo (A₂/A₃). Actúa como lente óptica electrostática. El potenciómetro de enfoque varía el campo electrostático y concentra el haz. El electrodo de astigmatismo hace que el punto sea redondo y acelera más el haz. El resultado es el "spot" o punto focal.', formula:'ΔV(cátodo-electrodos de enfoque) = 200 a 500 V\nSpot: punto pequeño, brillante y redondo', badges:['Anillo de enfoque','Astigmatismo','200-500 V'] },
-  { icon:'🟣', title:'Zona 3 — Deflexión', border:'border-purple-400', desc:'Dos pares de placas: verticales (PDV, más cercanas al cañón) y horizontales (PDH, más cercanas a la pantalla). La deflexión electrostática usa placas internas al tubo y es la estándar en osciloscopios. La señal a observar se aplica a las placas verticales, el barrido diente de sierra a las horizontales.', formula:'Y = (Vd · l · L) / (2 · b · Vp)\nS_D = Y/Vd = (l·L)/(2·b·Vp)', badges:['PDV + PDH','Electrostática','Sistema XY'] },
+  { icon:'🟣', title:'Zona 3 — Deflexión', border:'border-purple-400', desc:'Dos pares de placas: verticales (PDV, más cercanas al cañón) y horizontales (PDH, más cercanas a la pantalla). La deflexión electrostática usa placas internas al tubo y es la estándar en osciloscopios. La señal a observar se aplica a las placas verticales, el barrido diente de sierra a las horizontales.', formula:'$ Y = \\dfrac{V_d \\cdot l \\cdot L}{2 \\cdot b \\cdot V_p} $\n$ S_D = \\dfrac{Y}{V_d} = \\dfrac{l \\cdot L}{2 \\cdot b \\cdot V_p} $', badges:['PDV + PDH','Electrostática','Sistema XY'] },
   { icon:'🟡', title:'Zona 4 — Post-aceleración', border:'border-yellow-400', desc:'Electrones acelerados a baja velocidad garantizan buena sensibilidad al atravesar las placas. Luego se post-aceleran con alto potencial en las paredes (capa de Aquadag, nombre comercial de grafito coloidal). Esto les confiere alta energía cinética al impactar la pantalla, produciendo alta luminiscencia. Dos sistemas: campo conformado (espiral +10 kV) y campo enrejado (Aquadag +20 kV + malla cóncava 2 kV).', formula:'Post-aceleración: varios kV en capa de Aquadag\nResultado: alta luminiscencia + buena sensibilidad', badges:['Aquadag','Campo conformado','Campo enrejado'] },
   { icon:'🟢', title:'Zona 5 — Pantalla', border:'border-green-400', desc:'Capa fluorescente y fosforescente visible al operario. Fluorescencia: se enciende al impactar el haz (energía cinética). Fosforescencia/persistencia: se mantiene encendida un tiempo tras cesar la excitación (definida como caída al 1% del valor inicial). La retícula es la cuadrícula de líneas horizontales y verticales separadas 1 cm (10 divisiones × 8 divisiones). Marcas de 0%, 10%, 90%, 100% para medir tiempos de subida y bajada.', formula:'Persistencia: tiempo hasta caer al 1% luminosidad inicial\nRetícula: 10 div (H) × 8 div (V), separadas 1 cm', badges:['Fósforo','Retícula 10×8','Aquadag (disipador)'] }
 ];
@@ -1306,6 +1307,7 @@ function showZone(n) {
     var fEl = document.getElementById('zd-formula');
     fEl.textContent = d.formula;
     fEl.classList.remove('hidden');
+    renderMathInElementDynamic('zd-formula');
     var bEl = document.getElementById('zd-badges');
     bEl.innerHTML = d.badges.map(function(b){ return '<span class="badge badge-blue">'+b+'</span>'; }).join('');
     // highlight selected zone
@@ -1726,9 +1728,9 @@ function updateSonda() {
     document.getElementById('ct-val').textContent  = Ct.toFixed(0)+' pF';
     document.getElementById('xc-val').textContent  = Xc >= 1000 ? (Xc/1000).toFixed(1)+' kΩ' : Xc.toFixed(0)+' Ω';
     document.getElementById('zi-val').textContent  = Zi.toFixed(2)+' kΩ';
-    document.getElementById('f-formula').textContent  = fMhz.toFixed(1)+'×10⁶';
-    document.getElementById('c-formula').textContent  = Ct+'×10⁻¹²';
-    document.getElementById('xc-formula').textContent = 'Xc = '+Xc.toFixed(0)+' Ω';
+    document.getElementById('sonda-formula-box').innerHTML =
+      '$ X_c = \\dfrac{1}{2\\pi f C} = \\dfrac{1}{2\\pi \\cdot '+fMhz.toFixed(1)+'\\times10^{6} \\cdot '+Ct.toFixed(0)+'\\times10^{-12}} = '+Xc.toFixed(0)+'\\ \\Omega $';
+    renderMathInElementDynamic('sonda-formula-box');
 
     drawSondaChart(Cc, aten);
   } catch(e){ console.error(e); }
@@ -1785,10 +1787,10 @@ var quizData = [
     ans:1, exp:'La rejilla se polariza negativamente. Al variar su tensión se controla cuántos electrones pasan, regulando la intensidad del trazo.' },
   { q:'Para que un osciloscopio muestre una señal estable (base de tiempo relajada), la relación entre el período del diente de sierra T\' y el de la señal T debe ser:',
     opts:['T\' = T/2 siempre','T\' = n·T, donde n es un entero positivo','T\' > 3·T en todos los casos','No existe condición de sincronismo'],
-    ans:1, exp:'Condición de sincronismo: T_barrido = n × T_señal (n = 1, 2, 3...). Así cada barrido comienza en el mismo punto homólogo de la señal.' },
-  { q:'La fórmula de la desviación electrostática es Y = (Vd·l·L)/(2·b·Vp). ¿Qué ocurre con la sensibilidad S_D si se aumenta Vp?',
+    ans:1, exp:'Condición de sincronismo: $ T_{\\text{barrido}} = n \\times T_{\\text{señal}} $ (n = 1, 2, 3...). Así cada barrido comienza en el mismo punto homólogo de la señal.' },
+  { q:'La fórmula de la desviación electrostática es $ Y = \\dfrac{V_d \\cdot l \\cdot L}{2 \\cdot b \\cdot V_p} $. ¿Qué ocurre con la sensibilidad S_D si se aumenta Vp?',
     opts:['Aumenta porque hay más energía cinética','Disminuye porque Vp aparece en el denominador','Se mantiene constante','Depende solo de b y l'],
-    ans:1, exp:'S_D = (l·L)/(2·b·Vp). Al aumentar Vp (post-aceleración), los electrones son más rápidos y difíciles de desviar → S_D disminuye.' },
+    ans:1, exp:'$ S_D = \\dfrac{l \\cdot L}{2 \\cdot b \\cdot V_p} $. Al aumentar Vp (post-aceleración), los electrones son más rápidos y difíciles de desviar → S_D disminuye.' },
   { q:'La post-aceleración en el TRC sirve para:',
     opts:['Aumentar la sensibilidad de deflexión','Enfocar mejor el haz en el spot','Aumentar la luminosidad de la pantalla sin perjudicar la sensibilidad','Generar el diente de sierra'],
     ans:2, exp:'La post-aceleración aplica alto voltaje (varios kV) en la capa de Aquadag DESPUÉS de las placas. Los electrones se aceleran ya desviados → alta luminiscencia sin perder sensibilidad.' },
@@ -1829,6 +1831,7 @@ function buildQuiz() {
       html += '</div>';
     });
     container.innerHTML = html;
+    renderMathInElementDynamic('quiz-container');
     updateQuizScore();
   } catch(e){ console.error(e); }
 }
@@ -1857,6 +1860,7 @@ function selectOpt(qi, oi) {
     var expEl = document.getElementById('exp-'+qi);
     expEl.textContent = (oi===correct?'✅ ':'❌ ')+quizData[qi].exp;
     expEl.classList.remove('hidden');
+    renderMathInElementDynamic('exp-'+qi);
     updateQuizScore();
   } catch(e){ console.error(e); }
 }
@@ -2337,13 +2341,13 @@ var quizXYData = [
     ans: 1, exp: 'En modo X-Y se desactiva la base de tiempo. El Canal 1 (CH1) controla el eje X y el Canal 2 (CH2) controla el eje Y.' },
   { q: 'Si una figura de Lissajous muestra 2 picos horizontales y 3 picos verticales, ¿cuál es la relación fY:fX?',
     opts: ['2:3', '3:2', '1:1', '6:1'],
-    ans: 1, exp: 'La relación es fY/fX = NX/NY = 2/3. Por lo tanto fY:fX = 2:3.' },
+    ans: 1, exp: 'La relación es $ \\dfrac{f_Y}{f_X} = \\dfrac{N_X}{N_Y} = \\dfrac{2}{3} $. Por lo tanto fY:fX = 2:3.' },
   { q: 'Una figura de Lissajous con relación 1:1 y desfasaje de 90° se ve como:',
     opts: ['Una línea diagonal', 'Una elipse', 'Un círculo (si amplitudes iguales)', 'Una parábola'],
     ans: 2, exp: 'Con fY=fX y φ=90°, si AX=AY se obtiene un círculo. Si las amplitudes son diferentes, una elipse.' },
   { q: 'En el trazador de curvas (Octopus), ¿qué representa el eje Y?',
     opts: ['La tensión aplicada al componente', 'La corriente que circula (proporcional a VR2)', 'La resistencia del componente', 'La frecuencia de la fuente'],
-    ans: 1, exp: 'El eje Y muestra la caída de tensión en R2, que es proporcional a la corriente por el DUT (I = VR2/R2).' },
+    ans: 1, exp: 'El eje Y muestra la caída de tensión en R2, que es proporcional a la corriente por el DUT ($ I = V_{R2}/R_2 $).' },
   { q: '¿Qué firma esperarías al conectar un capacitor en el trazador de curvas?',
     opts: ['Línea recta por el origen', 'Elipse o círculo', 'Línea en forma de L', 'Línea horizontal'],
     ans: 1, exp: 'El capacitor produce una elipse o círculo porque la corriente se adelanta 90° respecto a la tensión.' },
@@ -2381,6 +2385,7 @@ function buildQuizXY() {
       html += '</div>';
     });
     container.innerHTML = html;
+    renderMathInElementDynamic('quiz-xy-container');
     updateQuizXYScore();
   } catch(e) { console.error(e); }
 }
@@ -2406,6 +2411,7 @@ function selectOptXY(qi, oi) {
     var expEl = document.getElementById('xy-exp-' + qi);
     expEl.textContent = (oi === correct ? '✅ ' : '❌ ') + quizXYData[qi].exp;
     expEl.classList.remove('hidden');
+    renderMathInElementDynamic('xy-exp-' + qi);
     updateQuizXYScore();
   } catch(e) { console.error(e); }
 }
@@ -2425,10 +2431,38 @@ function resetQuizXY() {
 }
 
 // =============================================
+// RENDERIZADO DE ECUACIONES (KaTeX)
+// =============================================
+function renderMathInElementDynamic(elementId) {
+  if (typeof renderMathInElement !== 'undefined') {
+    renderMathInElement(document.getElementById(elementId), {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$", right: "$", display: false},
+      ],
+      throwOnError: false
+    });
+  } else {
+    console.error('KaTeX auto-render no cargado');
+  }
+}
+
+// =============================================
 // INITIALIZATION
 // =============================================
 document.addEventListener('DOMContentLoaded', function() {
   try {
+    if (typeof renderMathInElement !== 'undefined') {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+        ],
+        throwOnError: false
+      });
+    } else {
+      console.error('KaTeX auto-render no cargado');
+    }
     showPanelArea('trc');
     updateDeflexion();
     updateBarrido();
