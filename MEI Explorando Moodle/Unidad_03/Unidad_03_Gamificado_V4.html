@@ -218,29 +218,23 @@
     <!-- TABS -->
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="flex flex-wrap gap-2">
-            <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-galvanometro')"><svg class="measure-symbol-sm" viewBox="0 0 100 84" aria-hidden="true" focusable="false" style="vertical-align:middle; margin-right:6px"><path class="magnet" d="M14 76 H30 V31 C30 20 70 20 70 31 V76 H86 V28 C86 5 14 5 14 28 Z"></path><rect class="coil" x="34" y="55" width="32" height="16"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="71"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="71"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="71"></line></svg> Galvanómetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-amperimetro')"><i class="fas fa-tachometer-alt"></i> Amperímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-voltimetro')"><i class="fas fa-battery-full"></i> Voltímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ω Ohmetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')"><i class="fas fa-wave-square"></i> Señales Alternas</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-hierro')"><i class="fas fa-cog"></i> Hierro Móvil</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-telurimetro')"><i class="fas fa-globe-americas"></i> Telurímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-wenner')"><i class="fas fa-ruler-combined"></i> Wenner</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-schlumberger')"><i class="fas fa-layer-group"></i> Schlumberger</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-matriz')"><i class="fas fa-th"></i> Matriz</button>
+            <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-galvanometro')">Galvanómetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-amperimetro')">Amperímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-voltimetro')">Voltímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ohmetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')">Señales Alternas</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-hierro')">Hierro Móvil</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-telurimetro')">Telurímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-wenner')">Wenner</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-schlumberger')">Schlumberger</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-matriz')">Matriz</button>
         </div>
     </div>
 
         <!-- TAB: GALVANÓMETRO -->
         <div id="tab-galvanometro" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
                 <div class="card overflow-hidden mb-4">
-                        <div class="section-header"><h2 class="text-lg font-bold"><svg class="measure-symbol-sm" viewBox="0 0 100 84" aria-hidden="true" focusable="false" style="margin-right:8px">
-        <path class="magnet" d="M14 76 H30 V31 C30 20 70 20 70 31 V76 H86 V28 C86 5 14 5 14 28 Z"></path>
-        <rect class="coil" x="34" y="55" width="32" height="16"></rect>
-        <line class="coil-line" x1="42" y1="55" x2="42" y2="71"></line>
-        <line class="coil-line" x1="50" y1="55" x2="50" y2="71"></line>
-        <line class="coil-line" x1="58" y1="55" x2="58" y2="71"></line>
-    </svg> Galvanómetro de D'Arsonval</h2><p class="text-sm opacity-80 mt-1">El instrumento base (sistema magnetoelétrico) sobre el cual se construyen la mayoría de los instrumentos analógicos.</p></div>
+                        <div class="section-header"><h2 class="text-lg font-bold">Galvanómetro de D'Arsonval</h2><p class="text-sm opacity-80 mt-1">El instrumento base (sistema magnetoelétrico) sobre el cual se construyen la mayoría de los instrumentos analógicos.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">El galvanómetro de D'Arsonval consiste en una bobina móvil suspendida entre los polos de un imán permanente.</p>
                 <div class="info-box"><i class="fas fa-link"></i><strong>Conexión con Unidad 2:</strong> este es el <strong>sistema magnetoeléctrico</strong> (imán permanente + bobina móvil) que viste en la clasificación por principio de funcionamiento. Como la deflexión es proporcional a la corriente ($\theta = S_I \cdot I$), su escala es <strong>lineal</strong> — la de menor error relativo en el tercio superior, tal como mostraba la tabla comparativa.</div>
@@ -254,7 +248,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold">🔩 Constitución del Instrumento D'Arsonval</h2><p class="text-sm opacity-80 mt-1">Hacé clic en cada componente para ver su función.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Constitución del Instrumento D'Arsonval</h2><p class="text-sm opacity-80 mt-1">Hacé clic en cada componente para ver su función.</p></div>
             <div class="p-4">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('bobina')">
@@ -290,11 +284,11 @@
                 </div>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-amber-50 border border-amber-300 rounded-xl p-3">
-                        <h4 class="font-bold text-amber-800 text-sm mb-1">📜 Historia</h4>
+                        <h4 class="font-bold text-amber-800 text-sm mb-1">Historia</h4>
                         <p class="text-xs text-gray-700">Arsen D'Arsonval (Francia, 1882) diseñó el galvanómetro de espejo, en honor al italiano Luigi Galvani. El principio sigue siendo la base de todos los instrumentos analógicos modernos.</p>
                     </div>
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
-                        <h4 class="font-bold text-blue-800 text-sm mb-1">⚡ Características principales</h4>
+                        <h4 class="font-bold text-blue-800 text-sm mb-1">Características principales</h4>
                         <ul class="text-xs text-gray-700 space-y-0.5">
                             <li>✅ Muy sensible y preciso</li>
                             <li>✅ Escala lineal uniforme</li>
@@ -307,7 +301,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold">🔇 Amortiguamiento</h2><p class="text-sm opacity-80 mt-1">Sin amortiguamiento la aguja oscila. Los tres mecanismos buscan llevarla al equilibrio en el menor tiempo.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Amortiguamiento</h2><p class="text-sm opacity-80 mt-1">Sin amortiguamiento la aguja oscila. Los tres mecanismos buscan llevarla al equilibrio en el menor tiempo.</p></div>
             <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
                     <div class="font-bold text-blue-800 text-sm mb-1">💨 Neumático</div>
@@ -328,7 +322,7 @@
         </div>
         <div class="card p-4 mb-4">
             <div class="quiz-container">
-                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
                 <p class="text-gray-700 mb-2"><strong>¿Qué sucede si se invierte la polaridad de la corriente en un galvanómetro de D'Arsonval?</strong></p>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> La deflexión se mantiene igual</div>
                 <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> La aguja se desvía en sentido contrario</div>
@@ -341,7 +335,7 @@
     <!-- TAB: AMPERÍMETRO -->
     <div id="tab-amperimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-tachometer-alt"></i> Amperímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a amperímetro mediante resistencia shunt.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Amperímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a amperímetro mediante resistencia shunt.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Para convertir un galvanómetro en amperímetro se debe agregar una <strong>resistencia en paralelo (shunt)</strong> que derive la corriente excedente.</p>
                 <div class="formula-box">$$ R_{sh} = \frac{R_m}{\frac{I}{I_m} - 1} = \frac{R_m}{n - 1} $$<p class="mt-2 text-sm text-gray-600">$ R_{sh} $ = resistencia shunt, $ R_m $ = resistencia interna del galvanómetro, $ I $ = corriente máxima de la escala, $ I_m $ = corriente de fondo de escala del galvanómetro, $ n $ = factor de multiplicación</p></div>
@@ -349,7 +343,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-calculator"></i> Calculadora de resistencia Shunt</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Calculadora de resistencia Shunt</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
                     <div class="control-group"><label class="slider-label font-semibold">Corriente galvanómetro $I_m$ (μA): <span id="imValue" class="text-blue-700 font-bold">100</span></label><input type="range" id="imSlider" min="10" max="1000" value="100" oninput="updateShunt()"></div>
@@ -361,7 +355,7 @@
         </div>
 
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 1: Amperímetro</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Desafío 1: Amperímetro</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Un galvanómetro tiene $R_m = 1.2 \ \text{k} \Omega$ y $I_{fs} = 50\ \mu\text{A}$. ¿Qué resistencia shunt se necesita para medir hasta $5\ \text{A}$?</p>
                 <div class="formula-box">$$ R_{sh} = \frac{R_m}{n - 1}, \quad n = \frac{I}{I_{fs}} $$</div>
@@ -377,7 +371,7 @@
     <!-- TAB: VOLTIMETRO -->
     <div id="tab-voltimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-battery-full"></i> Voltímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a voltímetro mediante resistencia multiplicadora.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Voltímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a voltímetro mediante resistencia multiplicadora.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Para convertir un galvanómetro en voltímetro se debe agregar una <strong>resistencia en serie (multiplicadora)</strong> que limite la corriente.</p>
                 <div class="formula-box">$$ R_s = \frac{V}{I_m} - R_m = R_m(n - 1) $$<p class="mt-2 text-sm text-gray-600">$ R_s $ = resistencia serie multiplicadora, $ V $ = tensión máxima de la escala, $ I_m $ = corriente de fondo de escala, $ R_m $ = resistencia interna, $ n = V/V_m $</p></div>
@@ -385,7 +379,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-arrows-alt-v"></i> Simulador de Ampliación de Escala</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Simulador de Ampliación de Escala</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Simula la ampliación de escala de un voltímetro de 10V a 25V:</p>
                 <div class="simulator-controls">
@@ -398,11 +392,11 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-ruler"></i> Comparación de Escalas</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Comparación de Escalas</h2></div>
             <div class="p-4"><div class="chart-container"><canvas id="scaleChart"></canvas></div></div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 2: Voltímetro Ampliado</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Desafío 2: Voltímetro Ampliado</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Un voltímetro de $5\ V$ (con $R_V = 100\ \text{k}\Omega$) se quiere ampliar a $50\ V$. Calcula $R_s$ y la relación $K$.</p>
                 <div class="formula-box">$$ K = \frac{V_2}{V_1}, \qquad R_s = R_V(K - 1) $$</div>
@@ -420,7 +414,7 @@
     <div id="tab-ohmetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
             <div class="section-header">
-                <h2 class="text-lg font-bold">Ω Ohmetro — Serie vs. Paralelo</h2>
+                <h2 class="text-lg font-bold">Ohmetro — Serie vs. Paralelo</h2>
                 <p class="text-sm opacity-80 mt-1">Principio de funcionamiento y escala no lineal.</p>
             </div>
             <div class="p-4">
@@ -430,7 +424,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-random"></i> Resistencia Medida vs Deflexión</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Resistencia Medida vs Deflexión</h2></div>
             <div class="p-4"><div class="chart-container"><canvas id="ohmmeterChart"></canvas></div></div>
         </div>
     </div>
@@ -439,7 +433,7 @@
     <div id="tab-alterna" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
             <div class="section-header">
-                <h2 class="text-lg font-bold"><i class="fas fa-wave-square"></i> Instrumentos con Rectificador — Medición de CA</h2>
+                <h2 class="text-lg font-bold">Instrumentos con Rectificador — Medición de CA</h2>
                 <p class="text-sm opacity-80 mt-1">El instrumento D'Arsonval no responde a CA directamente. Un rectificador convierte la CA en una señal unidireccional medible.</p>
             </div>
             <div class="p-4">
@@ -447,14 +441,14 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
-                        <h3 class="font-bold text-blue-800">📊 Rectificador de Media Onda</h3>
+                        <h3 class="font-bold text-blue-800">Rectificador de Media Onda</h3>
                         <div class="formula-box text-sm">$ I_{\text{med}} = \frac{I_{\text{max}}}{\pi} = 0.318 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{\sqrt{2}} = 2.22 $<br>$ = 2 \times 1.11 \text{ (doble del factor onda completa)} $</div>
                         <p class="text-xs text-gray-700">El semiciclo negativo es bloqueado por el diodo. La escala se multiplica por 2.22 para indicar el valor eficaz. Solo la mitad del tiempo está activo → baja sensibilidad.</p>
                         <canvas id="halfWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
                         <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs">❌ <strong>Desventajas:</strong> Baja sensibilidad (I_med &lt; I_ef / 2) y respuesta no lineal. Solo para baja precisión.</div>
                     </div>
                     <div class="bg-green-50 border border-green-200 rounded-xl p-4 space-y-3">
-                        <h3 class="font-bold text-green-800">📊 Rectificador de Onda Completa</h3>
+                        <h3 class="font-bold text-green-800">Rectificador de Onda Completa</h3>
                         <div class="formula-box text-sm">$ I_{\text{med}} = \frac{2 \cdot I_{\text{max}}}{\pi} = 0.636 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{2\sqrt{2}} = 1.11 $<br>$ I_{\text{ef}} = \frac{\sqrt{2}}{2} \cdot I_{\text{max}} = 0.707 \cdot I_{\text{max}} $</div>
                         <p class="text-xs text-gray-700">Puente de 4 diodos. El semiciclo negativo se traslada al primer cuadrante. La frecuencia de la señal rectificada es el doble. El factor de escala es 1.11.</p>
                         <canvas id="fullWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
@@ -463,7 +457,7 @@
                 </div>
 
                 <div class="card border-2 border-indigo-200 p-4 mb-4">
-                    <h3 class="font-bold text-indigo-800 mb-3">🧮 Calculadora de Valores de Onda Sinusoidal</h3>
+                    <h3 class="font-bold text-indigo-800 mb-3">Calculadora de Valores de Onda Sinusoidal</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-2">
                             <div><label class="text-sm font-semibold">Valor de pico $V_p$ (V): <span id="wave-Vp" class="text-indigo-700 font-bold">311</span></label>
@@ -498,7 +492,7 @@
         </div>
         <div class="card p-4 mb-4">
             <div class="quiz-container">
-                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
                 <p class="text-gray-700 mb-2"><strong>¿Por qué un instrumento de bobina móvil (D'Arsonval) no puede medir CA directamente sin rectificador?</strong></p>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque su resistencia interna es demasiado alta para CA</div>
                 <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque el par motor cambia de signo cada semiciclo y la inercia mecánica de la aguja promedia el efecto a cero</div>
@@ -512,14 +506,14 @@
     <div id="tab-hierro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
             <div class="section-header">
-                <h2 class="text-lg font-bold"><i class="fas fa-cog"></i> Instrumentos Electromagnéticos — Hierro Móvil</h2>
+                <h2 class="text-lg font-bold">Instrumentos Electromagnéticos — Hierro Móvil</h2>
                 <p class="text-sm opacity-80 mt-1">Ayrton y Perry (1882). Dos aspas de hierro dulce se magnetizan con la misma polaridad y se repelen. Sin imán permanente → funciona en CA y CC.</p>
             </div>
             <div class="p-4">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                     <div class="space-y-3">
                         <div class="bg-gray-800 text-white rounded-xl p-4">
-                            <h3 class="font-bold text-yellow-300 mb-2">📐 Ecuación de funcionamiento</h3>
+                            <h3 class="font-bold text-yellow-300 mb-2">Ecuación de funcionamiento</h3>
                             <div class="font-mono text-sm space-y-1">
                                 <div>$ M_m = \frac{1}{2} \cdot I^2 \cdot \frac{dL}{d\alpha} $</div>
                                 <div>$ M_a = C_a \cdot \alpha $</div>
@@ -537,7 +531,7 @@
                         </div>
                         <div id="hierro-results" class="formula-box text-sm"></div>
                         <div class="bg-green-50 border border-green-200 rounded-xl p-3">
-                            <h4 class="font-bold text-green-800 text-sm mb-1">✅ ¿Por qué funciona en CA?</h4>
+                            <h4 class="font-bold text-green-800 text-sm mb-1">¿Por qué funciona en CA?</h4>
                             <p class="text-xs text-gray-700">Si i = Î·sen(θ), entonces α ∝ I²_ef porque:</p>
                             <div class="formula-box text-xs mt-1">$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot \frac{1}{2} \cdot I^2 $<br>$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot I_{\text{ef}}^2 $<br>$ \text{(La inercia mecánica promedia el } I^2) $</div>
                             <p class="text-xs text-gray-700 mt-1">El instrumento responde al valor eficaz verdadero (TRMS).</p>
@@ -551,7 +545,7 @@
                 </div>
 
                 <div class="card border-2 border-gray-200 p-4 mb-4">
-                    <h3 class="font-bold text-gray-800 mb-3">🗂️ Clasificación según efecto dinámico y forma del hierro</h3>
+                    <h3 class="font-bold text-gray-800 mb-3">Clasificación según efecto dinámico y forma del hierro</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <div class="bg-blue-50 rounded-xl p-3 border border-blue-200"><div class="font-bold text-blue-800 text-sm mb-1">🟦 Atracción (mononúcleo)</div><p class="text-xs text-gray-700">Una sola aspa circular atraída al interior de la bobina donde el campo es mayor.</p></div>
                         <div class="bg-orange-50 rounded-xl p-3 border border-orange-200"><div class="font-bold text-orange-800 text-sm mb-1">🟧 Repulsión (polinúcleo)</div><p class="text-xs text-gray-700">Dos aspas (fija + móvil) con igual polaridad se repelen. La más común en uso industrial.</p></div>
@@ -589,7 +583,7 @@
         </div>
         <div class="card p-4 mb-4">
             <div class="quiz-container">
-                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
                 <p class="text-gray-700 mb-2"><strong>¿Por qué un instrumento de hierro móvil puede medir CA sin necesidad de rectificador?</strong></p>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque tiene un imán permanente que sigue la polaridad de la corriente</div>
                 <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque el par motor depende de $I^2$, siempre positivo, y la inercia mecánica promedia el valor eficaz</div>
@@ -602,14 +596,14 @@
     <!-- TAB: TELURÍMETRO -->
     <div id="tab-telurimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-globe-americas"></i> Telurímetro y Medición de Resistividad del Terreno</h2><p class="text-sm opacity-80 mt-1">Fundamentos y método de caída de potencial.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Telurímetro y Medición de Resistividad del Terreno</h2><p class="text-sm opacity-80 mt-1">Fundamentos y método de caída de potencial.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">La <strong>resistividad del terreno</strong> ($ \rho $) es una propiedad física que mide la oposición que ofrece el suelo al paso de la corriente eléctrica. Se expresa en ohmios-metro ($ \Omega \cdot \text{m} $) y es fundamental para diseñar sistemas de puesta a tierra eficaces.</p>
                 <div class="info-box"><i class="fas fa-exclamation-circle"></i><strong>¿Por qué medirla?</strong> Permite determinar el trazado, profundidad, número y tipo de elementos necesarios para una puesta a tierra segura, controlando tensiones de paso y contacto.</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-bolt"></i> Método de Caída de Potencial (3 puntas)</h2><p class="text-sm opacity-80 mt-1">El método más empleado para medir la resistencia de puesta a tierra.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Método de Caída de Potencial (3 puntas)</h2><p class="text-sm opacity-80 mt-1">El método más empleado para medir la resistencia de puesta a tierra.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Este es el método más empleado para medir la <strong>resistencia de puesta a tierra</strong> de un sistema existente.</p>
                 <div class="diagram-container field-diagram-card">
@@ -682,7 +676,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-calculator"></i> Simulador de Caída de Potencial</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Simulador de Caída de Potencial</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
                     <div class="control-group"><label class="slider-label font-semibold">Distancia E-H (m): <span id="distEHVal" class="text-blue-700 font-bold">20</span></label><input type="range" id="distEH" min="10" max="100" value="20" oninput="updateTelurimetro()"></div>
@@ -695,7 +689,7 @@
         </div>
         <div class="card p-4 mb-4">
             <div class="quiz-container">
-                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2"><i class="fas fa-question-circle"></i> Quiz Rápido</h3>
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
                 <p class="text-gray-700 mb-2"><strong>¿Por qué la resistencia del electrodo auxiliar H no afecta la medición?</strong></p>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque H está muy lejos de E</div>
                 <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque no interviene en la medición de caída de potencial V</div>
@@ -708,7 +702,7 @@
     <!-- TAB: WENNER -->
     <div id="tab-wenner" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-ruler-combined"></i> Método de Wenner (4 Picas)</h2><p class="text-sm opacity-80 mt-1">Método estándar para medición de resistividad del suelo.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Método de Wenner (4 Picas)</h2><p class="text-sm opacity-80 mt-1">Método estándar para medición de resistividad del suelo.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Desarrollado por <strong>Frank Wenner</strong> en 1915, es el método estándar para medir la resistividad del suelo. Utiliza cuatro electrodos alineados y equidistantes.</p>
                 <div class="diagram-container field-diagram-card">
@@ -770,7 +764,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-calculator"></i> Calculadora Wenner</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Calculadora Wenner</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
                     <div class="control-group"><label class="slider-label font-semibold">Separación $a$ (m): <span id="wennerAVal" class="text-blue-700 font-bold">3</span></label><input type="range" id="wennerA" min="1" max="20" value="3" oninput="updateWenner()"></div>
@@ -781,11 +775,11 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-chart-area"></i> Perfil de Resistividad vs Profundidad</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Perfil de Resistividad vs Profundidad</h2></div>
             <div class="p-4"><p class="text-gray-700 mb-2">Variando la separación $ a $ se obtienen valores de resistividad a diferentes profundidades:</p><div class="chart-container"><canvas id="wennerChart"></canvas></div></div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-table"></i> Valores Típicos de Resistividad</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Valores Típicos de Resistividad</h2></div>
             <div class="p-4">
                 <table class="data-table">
                     <thead><tr><th>Tipo de Terreno</th><th>Naturaleza</th><th>Resistividad Media (Ω·m)</th></tr></thead>
@@ -800,7 +794,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 3: Wenner en Campo</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Desafío 3: Wenner en Campo</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">En una medición de resistividad del suelo con el método Wenner con $a = 4\ \text{m}$, el telurímetro marca $R = 12.5\ \Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
                 <div class="formula-box">$$ \rho_a = 2\ \pi\ a\ R, \qquad h \approx \frac{3a}{4} $$</div>
@@ -817,7 +811,7 @@
     <!-- TAB: SCHLUMBERGER -->
     <div id="tab-schlumberger" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-layer-group"></i> Método de Schlumberger</h2><p class="text-sm opacity-80 mt-1">Variante del método Wenner para mayor sensibilidad en estudios profundos.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Método de Schlumberger</h2><p class="text-sm opacity-80 mt-1">Variante del método Wenner para mayor sensibilidad en estudios profundos.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Variante del método Wenner que ofrece mayor sensibilidad para estudios a mayor profundidad. Los electrodos de potencial (P1, P2) permanecen <strong>fijos</strong> y separados una distancia pequeña $ a $, mientras que los de corriente (C1, C2) se alejan simétricamente.</p>
                 <div class="diagram-container field-diagram-card">
@@ -878,7 +872,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-calculator"></i> Calculadora Schlumberger</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Calculadora Schlumberger</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
                     <div class="control-group"><label class="slider-label font-semibold">Separación P1-P2: $a$ (m): <span id="schlumAVal" class="text-blue-700 font-bold">1</span></label><input type="range" id="schlumA" min="0.5" max="5" step="0.5" value="1" oninput="updateSchlumberger()"></div>
@@ -890,7 +884,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-balance-scale"></i> Comparativa Wenner vs Schlumberger</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Comparativa Wenner vs Schlumberger</h2></div>
             <div class="p-4">
                 <table class="data-table">
                     <thead><tr><th>Característica</th><th>Wenner</th><th>Schlumberger</th></tr></thead>
@@ -907,7 +901,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-question-circle"></i> Desafío 4: Schlumberger</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Desafío 4: Schlumberger</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">En una configuración Schlumberger: $a = 2\ \text{m}$ (separación entre electrodos de potencial P1-P2, por lo tanto $l = a/2 = 1\text{m}$), $n = 8$ (factor tal que $L = n \cdot l$), $ R = 4.2\Omega $. Calcula $ \rho_a $.</p>
                 <div class="formula-box">$$ \rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$ L $ = mitad de la distancia entre electrodos de corriente (C1-C2), $ l = a/2 $ = mitad de la distancia entre electrodos de potencial (P1-P2), $ n = L/l $ es el factor de separación entre ambos pares de electrodos</p></div>
@@ -923,7 +917,7 @@
     <!-- TAB: MATRIZ -->
     <div id="tab-matriz" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-th"></i> Matriz de Medición de Resistividad</h2><p class="text-sm opacity-80 mt-1">Caracterización completa de un terreno mediante barrido sistemático.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Matriz de Medición de Resistividad</h2><p class="text-sm opacity-80 mt-1">Caracterización completa de un terreno mediante barrido sistemático.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Para caracterizar completamente un terreno, se demarca una <strong>cuadrícula de medición</strong> y se barre el lote con el método de Wenner en dos sentidos perpendiculares sobre una matriz de 9 m x 9 m, con separación $ a = 3\text{ m} $ entre estacas.</p>
                 <div class="info-box"><i class="fas fa-info-circle"></i><strong>Procedimiento de campo:</strong> primero se miden cuatro líneas horizontales, paralelas al lado B, en las posiciones 0, 3, 6 y 9 m. Luego se repite el barrido en sentido vertical, paralelo al lado A. En cada línea se colocan cuatro picas separadas 3 m.</div>
@@ -931,7 +925,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-border-all"></i> Barrido de Campo 9 m × 9 m (Wenner)</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Barrido de Campo 9 m × 9 m (Wenner)</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Haz clic en cada línea de medición para cargar el valor del TP. Los colores respetan los cables provistos por el GRT300.</p>
                 <div class="flex justify-center gap-2 mb-4 flex-wrap">
@@ -1032,7 +1026,7 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-table"></i> Tabla de Resultados</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Tabla de Resultados</h2></div>
             <div class="p-4">
                 <table class="data-table" id="resultsTable">
                     <thead><tr><th>Sentido</th><th>Línea (m)</th><th>R (Ω)</th><th>ρ (Ω·m) para a=3m</th></tr></thead>
@@ -1042,11 +1036,11 @@
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-chart-bar"></i> Gráfico Comparativo por Eje</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Gráfico Comparativo por Eje</h2></div>
             <div class="p-4"><div class="chart-container"><canvas id="matrixChart"></canvas></div></div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold"><i class="fas fa-map-marked-alt"></i> Interpretación de Resultados</h2></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Interpretación de Resultados</h2></div>
             <div class="p-4">
                 <ul class="ml-5 leading-8 list-disc text-gray-700">
                     <li><strong>Anisotropía:</strong> Si $ \rho_H \neq \rho_V $, el terreno tiene estratificación preferencial o contenido de humedad direccional.</li>
