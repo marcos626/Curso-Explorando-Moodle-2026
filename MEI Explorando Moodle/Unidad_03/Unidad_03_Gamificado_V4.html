@@ -62,9 +62,9 @@
         .achievement-popup { position: fixed; top: 20px; right: -300px; background: linear-gradient(135deg, #1e3a5f, #2980b9); color: white; padding: 0.9rem 1.1rem; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); z-index: 1001; transition: right 0.5s ease; display: flex; align-items: center; gap: 0.75rem; }
         .achievement-popup.show { right: 20px; }
         .achievement-popup i { color: #fef3c7; font-size: 1.4rem; }
-        .achievement { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; background: #e2e8f0; color: #4a5568; opacity: 0.75; transition: all 0.3s ease; }
-        .achievement.unlocked { background: #dcfce7; color: #166534; opacity: 1; }
-        .achievement i { color: currentColor; }
+        .tab-btn.earned:not(.active) { background: #dcfce7; color: #166534; }
+        .tab-btn.earned:not(.active):hover { background: #bbf7d0; }
+        .tab-btn .tab-medal { color: #f59e0b; margin-left: 0.35rem; }
         .simulator-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
         .control-group { background: #f8fafc; padding: 0.9rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
         .control-group label { display: block; font-weight: 600; color: #374151; font-size: 0.875rem; margin-bottom: 0.5rem; }
@@ -193,7 +193,6 @@
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="card p-4 border-l-4 border-yellow-400">
             <div class="flex items-start gap-3">
-                <span class="text-3xl">🧲</span>
                 <div>
                     <h2 class="font-bold text-lg text-gray-800 mb-1">Un galvanómetro de 1882 que aún hoy mide corriente</h2>
                     <p class="text-gray-600 text-sm">D'Arsonval diseñó en 1882 un instrumento que convierte corriente eléctrica en movimiento mecánico. Con solo agregar una resistencia shunt o multiplicadora, ese mismo mecanismo se convierte en amperímetro, voltímetro u óhmetro. ¿Cómo se calcula ese shunt? ¿Por qué el ohmetro tiene la escala al revés? ¿Qué diferencia hay entre hierro móvil y bobina móvil? Exploralo aquí.</p>
@@ -201,33 +200,20 @@
             </div>
         </div>
     </div>
-    <!-- ACHIEVEMENTS -->
-    <div class="max-w-6xl mx-auto px-3 mb-4">
-        <div class="flex gap-2 flex-wrap justify-center">
-            <div class="achievement" id="ach1"><i class="fas fa-medal"></i> Principiante</div>
-            <div class="achievement" id="ach2"><i class="fas fa-atom"></i> Galvanómetro</div>
-            <div class="achievement" id="ach3"><i class="fas fa-bolt"></i> Telurímetro</div>
-            <div class="achievement" id="ach4"><i class="fas fa-globe"></i> Wenner</div>
-            <div class="achievement" id="ach5"><i class="fas fa-layer-group"></i> Schlumberger</div>
-            <div class="achievement" id="ach6"><i class="fas fa-crown"></i> Experto</div>
-            <div class="achievement" id="ach7"><i class="fas fa-wave-square"></i> Señales Alternas</div>
-            <div class="achievement" id="ach8"><i class="fas fa-cog"></i> Hierro Móvil</div>
-        </div>
-    </div>
     
     <!-- TABS -->
     <div class="max-w-6xl mx-auto px-3 mb-4">
         <div class="flex flex-wrap gap-2">
-            <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-galvanometro')">Galvanómetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-amperimetro')">Amperímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-voltimetro')">Voltímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ohmetro')">Ohmetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-alterna')">Señales Alternas</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-hierro')">Hierro Móvil</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-telurimetro')">Telurímetro</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-wenner')">Wenner</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-schlumberger')">Schlumberger</button>
-            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-matriz')">Matriz</button>
+            <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach2" onclick="switchTab('tab-galvanometro')">Galvanómetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach9" onclick="switchTab('tab-amperimetro')">Amperímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach10" onclick="switchTab('tab-voltimetro')">Voltímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach11" onclick="switchTab('tab-ohmetro')">Ohmetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach7" onclick="switchTab('tab-alterna')">Señales Alternas</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach8" onclick="switchTab('tab-hierro')">Hierro Móvil</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach3" onclick="switchTab('tab-telurimetro')">Telurímetro</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach4" onclick="switchTab('tab-wenner')">Wenner</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach5" onclick="switchTab('tab-schlumberger')">Schlumberger</button>
+            <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" data-ach="ach12" onclick="switchTab('tab-matriz')">Matriz</button>
         </div>
     </div>
 
@@ -237,14 +223,14 @@
                         <div class="section-header"><h2 class="text-lg font-bold">Galvanómetro de D'Arsonval</h2><p class="text-sm opacity-80 mt-1">El instrumento base (sistema magnetoelétrico) sobre el cual se construyen la mayoría de los instrumentos analógicos.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">El galvanómetro de D'Arsonval consiste en una bobina móvil suspendida entre los polos de un imán permanente.</p>
-                <div class="info-box"><i class="fas fa-link"></i><strong>Conexión con Unidad 2:</strong> este es el <strong>sistema magnetoeléctrico</strong> (imán permanente + bobina móvil) que viste en la clasificación por principio de funcionamiento. Como la deflexión es proporcional a la corriente ($\theta = S_I \cdot I$), su escala es <strong>lineal</strong> — la de menor error relativo en el tercio superior, tal como mostraba la tabla comparativa.</div>
+                <div class="info-box"><svg class="measure-symbol-sm" viewBox="0 0 100 84" aria-hidden="true" focusable="false" style="margin-right:6px"><path class="magnet" d="M14 76 H30 V31 C30 20 70 20 70 31 V76 H86 V28 C86 5 14 5 14 28 Z"></path><rect class="coil" x="34" y="55" width="32" height="16"></rect><line class="coil-line" x1="42" y1="55" x2="42" y2="71"></line><line class="coil-line" x1="50" y1="55" x2="50" y2="71"></line><line class="coil-line" x1="58" y1="55" x2="58" y2="71"></line></svg><strong>Conexión con Unidad 2:</strong> este es el <strong>sistema magnetoeléctrico</strong> (imán permanente + bobina móvil) que viste en la clasificación por principio de funcionamiento. Como la deflexión es proporcional a la corriente ($\displaystyle \theta = S_I \cdot I$), su escala es <strong>lineal</strong> — la de menor error relativo en el tercio superior, tal como mostraba la tabla comparativa.</div>
                 <p class="text-gray-700 mb-2">El principio físico que origina el par motor es la <strong>Ley de Laplace</strong>: la fuerza que un campo magnético ejerce sobre un conductor recorrido por corriente.</p>
-                <div class="formula-box">$$ F = B \cdot I \cdot l \cdot N \cdot \operatorname{sen}(\alpha) $$<p class="mt-2 text-sm text-gray-600">$ F $ = fuerza sobre cada lado de la bobina, $ B $ = inducción magnética, $ I $ = corriente, $ l $ = longitud del conductor, $ N $ = número de espiras, $ \alpha $ = ángulo entre $ B $ e $ I $. El imán del D'Arsonval está diseñado con expansiones polares que mantienen el campo radial, por lo que $ \operatorname{sen}(\alpha) = 1 $ siempre y la fuerza es constante en toda la escala.</p></div>
-                <div class="formula-box">$$ \tau = N \cdot B \cdot A \cdot I $$<p class="mt-2 text-sm text-gray-600">donde $ \tau $ = par motor, $ N $ = número de espiras, $ B $ = densidad de flujo magnético, $ A $ = área de la bobina, $ I $ = corriente</p></div>
+                <div class="formula-box">$$ F = B \cdot I \cdot l \cdot N \cdot \operatorname{sen}(\alpha) $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle F $ = fuerza sobre cada lado de la bobina, $ \displaystyle B $ = inducción magnética, $ \displaystyle I $ = corriente, $ \displaystyle l $ = longitud del conductor, $ \displaystyle N $ = número de espiras, $ \displaystyle \alpha $ = ángulo entre $ \displaystyle B $ e $ \displaystyle I $. El imán del D'Arsonval está diseñado con expansiones polares que mantienen el campo radial, por lo que $ \displaystyle \operatorname{sen}(\alpha) = 1 $ siempre y la fuerza es constante en toda la escala.</p></div>
+                <div class="formula-box">$$ \tau = N \cdot B \cdot A \cdot I $$<p class="mt-2 text-sm text-gray-600">donde $ \displaystyle \tau $ = par motor, $ \displaystyle N $ = número de espiras, $ \displaystyle B $ = densidad de flujo magnético, $ \displaystyle A $ = área de la bobina, $ \displaystyle I $ = corriente</p></div>
                 <p class="text-gray-700 mb-2">El par de torsión restaurador del resorte espiral está dado por:</p>
                 <div class="formula-box">$$ \tau_r = K \cdot \theta $$</div>
                 <p class="text-gray-700 mb-2">En equilibrio, ambos pares son iguales, por lo que la deflexión es proporcional a la corriente:</p>
-                <div class="formula-box">$$ \theta = \frac{N \cdot B \cdot A}{K} \cdot I = S_I \cdot I $$<p class="mt-2 text-sm text-gray-600">$ S_I $ = sensibilidad de corriente del instrumento [rad/A]</p></div>
+                <div class="formula-box">$$ \theta = \frac{N \cdot B \cdot A}{K} \cdot I = S_I \cdot I $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle S_I $ = sensibilidad de corriente del instrumento [rad/A]</p></div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
@@ -252,29 +238,23 @@
             <div class="p-4">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('bobina')">
-                        <div class="text-3xl mb-1">🪡</div>
                         <div class="text-xs font-bold text-gray-800">Bobina Móvil</div>
                     </div>
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('iman')">
-                        <div class="text-3xl mb-1">🧲</div>
                         <div class="text-xs font-bold text-gray-800">Imán Permanente</div>
                     </div>
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('resorte')">
-                        <div class="text-3xl mb-1">🌀</div>
                         <div class="text-xs font-bold text-gray-800">Resorte Antagonista</div>
                     </div>
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('aguja')">
-                        <div class="text-3xl mb-1">📍</div>
                         <div class="text-xs font-bold text-gray-800">Aguja Indicadora</div>
                     </div>
                     <div class="component-card card p-3 border-2 border-transparent text-center" onclick="showComponent('escala')">
-                        <div class="text-3xl mb-1">📏</div>
                         <div class="text-xs font-bold text-gray-800">Escala Graduada</div>
                     </div>
                 </div>
                 <div id="comp-detail" class="hidden card border-2 border-blue-300 p-4">
                     <div class="flex items-start gap-3">
-                        <span id="comp-icon" class="text-4xl flex-shrink-0"></span>
                         <div>
                             <h4 id="comp-name" class="font-bold text-blue-900 text-base mb-1"></h4>
                             <p id="comp-desc" class="text-sm text-gray-700"></p>
@@ -304,19 +284,19 @@
             <div class="section-header"><h2 class="text-lg font-bold">Amortiguamiento</h2><p class="text-sm opacity-80 mt-1">Sin amortiguamiento la aguja oscila. Los tres mecanismos buscan llevarla al equilibrio en el menor tiempo.</p></div>
             <div class="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                    <div class="font-bold text-blue-800 text-sm mb-1">💨 Neumático</div>
+                    <div class="font-bold text-blue-800 text-sm mb-1">Neumático</div>
                     <p class="text-xs text-gray-700">Cámara de aire hermética con aleta de aluminio unida al eje. El aire comprimido frena el movimiento. Sencillo y económico. Usado en electrodinámicos.</p>
-                    <div class="formula-box text-xs mt-2">$ M_{\text{am}} \propto \frac{d\alpha}{dt} $</div>
+                    <div class="formula-box text-xs mt-2">$ \displaystyle M_{\text{am}} \propto \frac{d\alpha}{dt} $</div>
                 </div>
                 <div class="bg-green-50 rounded-xl p-3 border border-green-200">
-                    <div class="font-bold text-green-800 text-sm mb-1">💧 Hidráulico</div>
+                    <div class="font-bold text-green-800 text-sm mb-1">Hidráulico</div>
                     <p class="text-xs text-gray-700">Dos discos metálicos con holgura de 0.1 mm llena de líquido viscoso (alta tensión superficial). El movimiento viscoso frena el sistema.</p>
-                    <div class="formula-box text-xs mt-2">$ M_{\text{am}} = C \cdot \frac{d\alpha}{dt} $</div>
+                    <div class="formula-box text-xs mt-2">$ \displaystyle M_{\text{am}} = C \cdot \frac{d\alpha}{dt} $</div>
                 </div>
                 <div class="bg-red-50 rounded-xl p-3 border border-red-200">
-                    <div class="font-bold text-red-800 text-sm mb-1">🔴 Magnético (Foucault)</div>
+                    <div class="font-bold text-red-800 text-sm mb-1">Magnético (Foucault)</div>
                     <p class="text-xs text-gray-700">Chapa conductora en campo magnético: las corrientes de Foucault inducidas generan una fuerza antagónica (Ley de Lenz). Muy eficaz en magnetoeléctricos. No usar donde haya campos dispersos.</p>
-                    <div class="formula-box text-xs mt-2">$ F = -k \cdot v \quad \text{(Ley de Lenz)} $</div>
+                    <div class="formula-box text-xs mt-2">$ \displaystyle F = -k \cdot v \quad \text{(Ley de Lenz)} $</div>
                 </div>
             </div>
         </div>
@@ -338,7 +318,7 @@
             <div class="section-header"><h2 class="text-lg font-bold">Amperímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a amperímetro mediante resistencia shunt.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Para convertir un galvanómetro en amperímetro se debe agregar una <strong>resistencia en paralelo (shunt)</strong> que derive la corriente excedente.</p>
-                <div class="formula-box">$$ R_{sh} = \frac{R_m}{\frac{I}{I_m} - 1} = \frac{R_m}{n - 1} $$<p class="mt-2 text-sm text-gray-600">$ R_{sh} $ = resistencia shunt, $ R_m $ = resistencia interna del galvanómetro, $ I $ = corriente máxima de la escala, $ I_m $ = corriente de fondo de escala del galvanómetro, $ n $ = factor de multiplicación</p></div>
+                <div class="formula-box">$$ R_{sh} = \frac{R_m}{\frac{I}{I_m} - 1} = \frac{R_m}{n - 1} $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle R_{sh} $ = resistencia shunt, $ \displaystyle R_m $ = resistencia interna del galvanómetro, $ \displaystyle I $ = corriente máxima de la escala, $ \displaystyle I_m $ = corriente de fondo de escala del galvanómetro, $ \displaystyle n $ = factor de multiplicación</p></div>
                 <div class="info-box"><i class="fas fa-exclamation-triangle"></i><strong>Importante:</strong> El amperímetro se conecta en <strong>serie</strong> con el circuito. Su resistencia interna debe ser muy pequeña para no alterar la corriente a medir.</div>
             </div>
         </div>
@@ -346,9 +326,9 @@
             <div class="section-header"><h2 class="text-lg font-bold">Calculadora de resistencia Shunt</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
-                    <div class="control-group"><label class="slider-label font-semibold">Corriente galvanómetro $I_m$ (μA): <span id="imValue" class="text-blue-700 font-bold">100</span></label><input type="range" id="imSlider" min="10" max="1000" value="100" oninput="updateShunt()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Resistencia interna $R_m$ (Ω): <span id="rmValue" class="text-blue-700 font-bold">1000</span></label><input type="range" id="rmSlider" min="100" max="5000" value="1000" oninput="updateShunt()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Corriente deseada $I$ (A): <span id="iValue" class="text-blue-700 font-bold">1</span></label><input type="range" id="iSlider" min="1" max="10" value="1" oninput="updateShunt()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Corriente galvanómetro $\displaystyle I_m$ (μA): <span id="imValue" class="text-blue-700 font-bold">100</span></label><input type="range" id="imSlider" min="10" max="1000" value="100" oninput="updateShunt()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Resistencia interna $\displaystyle R_m$ (Ω): <span id="rmValue" class="text-blue-700 font-bold">1000</span></label><input type="range" id="rmSlider" min="100" max="5000" value="1000" oninput="updateShunt()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Corriente deseada $\displaystyle I$ (A): <span id="iValue" class="text-blue-700 font-bold">1</span></label><input type="range" id="iSlider" min="1" max="10" value="1" oninput="updateShunt()"></div>
                 </div>
                 <div class="formula-box mt-5">$$ R_{sh} = \frac{1000}{\frac{1}{0.0001} - 1} = 0.100 \ \Omega $$<div class="slider-result" id="shuntResult">Rsh = 0.100 Ω</div></div>
             </div>
@@ -357,13 +337,14 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Desafío 1: Amperímetro</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Un galvanómetro tiene $R_m = 1.2 \ \text{k} \Omega$ y $I_{fs} = 50\ \mu\text{A}$. ¿Qué resistencia shunt se necesita para medir hasta $5\ \text{A}$?</p>
-                <div class="formula-box">$$ R_{sh} = \frac{R_m}{n - 1}, \quad n = \frac{I}{I_{fs}} $$</div>
-                <div class="simulator-controls">
-                    <div class="control-group"><label>Tu respuesta (Ω)</label><input type="number" id="chal1" placeholder="Ej: 0.012" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
+                <div class="quiz-container">
+                    <p class="text-gray-700 mb-3">Un galvanómetro tiene $\displaystyle R_m = 1.2 \ \text{k} \Omega$ e $\displaystyle I_m = 50\ \mu\text{A}$. ¿Qué resistencia shunt se necesita para medir hasta $\displaystyle I = 5\ \text{A}$?</p>
+                    <div class="formula-box">$$ R_{sh} = \frac{R_m}{n - 1}, \quad n = \frac{I}{I_m} $$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> $\displaystyle R_{sh} \approx 12.1\ \Omega$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> $\displaystyle R_{sh} \approx 0.012\ \Omega$</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> $\displaystyle R_{sh} \approx 120\ \text{M}\Omega$</div>
+                    <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> $\displaystyle n = \frac{5\ \text{A}}{50\ \mu\text{A}} = 100\,000$, entonces $\displaystyle R_{sh} = \frac{1200\ \Omega}{99\,999} \approx 0.012\ \Omega$. Si se toma $\displaystyle I_m$ como 50 mA en lugar de 50 μA se obtiene 12.1 Ω, y $\displaystyle R_m(n-1) \approx 120\ \text{M}\Omega$ es la fórmula de la resistencia multiplicadora del voltímetro, no la del shunt.</div>
                 </div>
-                <button onclick="checkChallenge1()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">Verificar</button>
-                <div id="chal1Result" class="mt-2 font-bold"></div>
             </div>
         </div>
     </div>
@@ -374,7 +355,7 @@
             <div class="section-header"><h2 class="text-lg font-bold">Voltímetro Analógico</h2><p class="text-sm opacity-80 mt-1">Conversión de galvanómetro a voltímetro mediante resistencia multiplicadora.</p></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Para convertir un galvanómetro en voltímetro se debe agregar una <strong>resistencia en serie (multiplicadora)</strong> que limite la corriente.</p>
-                <div class="formula-box">$$ R_s = \frac{V}{I_m} - R_m = R_m(n - 1) $$<p class="mt-2 text-sm text-gray-600">$ R_s $ = resistencia serie multiplicadora, $ V $ = tensión máxima de la escala, $ I_m $ = corriente de fondo de escala, $ R_m $ = resistencia interna, $ n = V/V_m $</p></div>
+                <div class="formula-box">$$ R_s = \frac{V}{I_m} - R_m = R_m(n - 1) $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle R_s $ = resistencia serie multiplicadora, $ \displaystyle V $ = tensión máxima de la escala, $ \displaystyle I_m $ = corriente de fondo de escala, $ \displaystyle R_m $ = resistencia interna, $ \displaystyle n = V/V_m $</p></div>
                 <div class="info-box"><i class="fas fa-exclamation-triangle"></i><strong>Importante:</strong> El voltímetro se conecta en <strong>paralelo</strong> con el elemento a medir. Su resistencia interna debe ser muy grande para no alterar la tensión.</div>
             </div>
         </div>
@@ -383,12 +364,12 @@
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Simula la ampliación de escala de un voltímetro de 10V a 25V:</p>
                 <div class="simulator-controls">
-                    <div class="control-group"><label class="slider-label font-semibold">Escala original $V_1$ (V): <span id="v1Value" class="text-blue-700 font-bold">10</span></label><input type="range" id="v1Slider" min="1" max="50" value="10" oninput="updateVoltmeter()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Escala deseada $V_2$ (V): <span id="v2Value" class="text-blue-700 font-bold">25</span></label><input type="range" id="v2Slider" min="5" max="100" value="25" oninput="updateVoltmeter()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Resistencia interna $R_V$ (kΩ): <span id="rvValue" class="text-blue-700 font-bold">200</span></label><input type="range" id="rvSlider" min="1" max="500" value="200" oninput="updateVoltmeter()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Escala original $\displaystyle V_1$ (V): <span id="v1Value" class="text-blue-700 font-bold">10</span></label><input type="range" id="v1Slider" min="1" max="50" value="10" oninput="updateVoltmeter()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Escala deseada $\displaystyle V_2$ (V): <span id="v2Value" class="text-blue-700 font-bold">25</span></label><input type="range" id="v2Slider" min="5" max="100" value="25" oninput="updateVoltmeter()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Resistencia interna $\displaystyle R_V$ (kΩ): <span id="rvValue" class="text-blue-700 font-bold">200</span></label><input type="range" id="rvSlider" min="1" max="500" value="200" oninput="updateVoltmeter()"></div>
                 </div>
                 <div class="formula-box mt-5">$$ R_s = \frac{V_2 - V_1}{V_1/R_V} = \frac{25 - 10}{10/200000} = 300 \ \text{k}\Omega $$<div class="slider-result" id="voltmeterResult">Rs = 300 kΩ</div></div>
-                <div class="info-box"><i class="fas fa-chart-line"></i><strong>Relación de escalas:</strong> $ K = V_T / V_V = 25/10 = 2.5 $ (constante para todo el rango)</div>
+                <div class="info-box"><i class="fas fa-chart-line"></i><strong>Relación de escalas:</strong> $ \displaystyle K = V_T / V_V = 25/10 = 2.5 $ (constante para todo el rango)</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
@@ -398,11 +379,11 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Desafío 2: Voltímetro Ampliado</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Un voltímetro de $5\ V$ (con $R_V = 100\ \text{k}\Omega$) se quiere ampliar a $50\ V$. Calcula $R_s$ y la relación $K$.</p>
+                <p class="text-gray-700 mb-3">Un voltímetro de $\displaystyle 5\ V$ (con $\displaystyle R_V = 100\ \text{k}\Omega$) se quiere ampliar a $\displaystyle 50\ V$. Calcula $\displaystyle R_s$ y la relación $\displaystyle K$.</p>
                 <div class="formula-box">$$ K = \frac{V_2}{V_1}, \qquad R_s = R_V(K - 1) $$</div>
                 <div class="simulator-controls">
-                    <div class="control-group"><label>$R_s$ (kΩ)</label><input type="number" id="chal2a" placeholder="Rs" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
-                    <div class="control-group"><label>$K$</label><input type="number" id="chal2b" placeholder="K" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
+                    <div class="control-group"><label>$\displaystyle R_s$ (kΩ)</label><input type="number" id="chal2a" placeholder="Rs" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
+                    <div class="control-group"><label>$\displaystyle K$</label><input type="number" id="chal2b" placeholder="K" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                 </div>
                 <button onclick="checkChallenge2()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">Verificar</button>
                 <div id="chal2Result" class="mt-2 font-bold"></div>
@@ -419,13 +400,23 @@
             </div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">El ohmetro mide resistencia aplicando una tensión conocida y midiendo la corriente resultante. En la escala el valor cero corresponde a corriente máxima (cortocircuito).</p>
-                <div class="formula-box">$$ R_x = \frac{\mathcal{E}}{I} - (R_m + R_s + r) $$<p class="mt-2 text-sm text-gray-600">$ \mathcal{E} $ = fem de la batería interna, $ r $ = resistencia interna de la batería, $ R_s $ = resistencia de ajuste de cero, $ R_m $ = resistencia del galvanómetro</p></div>
+                <div class="formula-box">$$ R_x = \frac{\mathcal{E}}{I} - (R_m + R_s + r) $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle \mathcal{E} $ = fem de la batería interna, $ \displaystyle r $ = resistencia interna de la batería, $ \displaystyle R_s $ = resistencia de ajuste de cero, $ \displaystyle R_m $ = resistencia del galvanómetro</p></div>
                 <div class="info-box"><i class="fas fa-info-circle"></i>La escala del ohmetro es <strong>inversa y no lineal</strong>: valores bajos de resistencia están a la derecha (máxima deflexión) y valores altos a la izquierda.</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Resistencia Medida vs Deflexión</h2></div>
             <div class="p-4"><div class="chart-container"><canvas id="ohmmeterChart"></canvas></div></div>
+        </div>
+        <div class="card p-4 mb-4">
+            <div class="quiz-container">
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
+                <p class="text-gray-700 mb-2"><strong>Si se cortocircuitan las puntas del ohmetro ($\displaystyle R_x = 0$), ¿dónde se ubica la aguja?</strong></p>
+                <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> En el extremo izquierdo de la escala, sin deflexión</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> En el extremo derecho de la escala, con deflexión máxima</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> En el centro de la escala</div>
+                <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> Con $\displaystyle R_x = 0$ circula la corriente máxima $\displaystyle I = \frac{\mathcal{E}}{R_m + R_s + r}$, que se ajusta con $\displaystyle R_s$ para que coincida con el fondo de escala del galvanómetro. Por eso el cero de resistencia está a la derecha. La aguja queda en el centro cuando $\displaystyle R_x$ es igual a la resistencia interna del ohmetro, y en el extremo izquierdo cuando las puntas están abiertas ($\displaystyle R_x \to \infty$).</div>
+            </div>
         </div>
     </div>
 
@@ -442,14 +433,14 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
                         <h3 class="font-bold text-blue-800">Rectificador de Media Onda</h3>
-                        <div class="formula-box text-sm">$ I_{\text{med}} = \frac{I_{\text{max}}}{\pi} = 0.318 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{\sqrt{2}} = 2.22 $<br>$ = 2 \times 1.11 \text{ (doble del factor onda completa)} $</div>
+                        <div class="formula-box text-sm">$ \displaystyle I_{\text{med}} = \frac{I_{\text{max}}}{\pi} = 0.318 \cdot I_{\text{max}} $<br>$ \displaystyle \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{\sqrt{2}} = 2.22 $<br>$ \displaystyle = 2 \times 1.11 \text{ (doble del factor onda completa)} $</div>
                         <p class="text-xs text-gray-700">El semiciclo negativo es bloqueado por el diodo. La escala se multiplica por 2.22 para indicar el valor eficaz. Solo la mitad del tiempo está activo → baja sensibilidad.</p>
                         <canvas id="halfWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs">❌ <strong>Desventajas:</strong> Baja sensibilidad (I_med &lt; I_ef / 2) y respuesta no lineal. Solo para baja precisión.</div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs">❌ <strong>Desventajas:</strong> Baja sensibilidad ($ \displaystyle I_{\text{med}} < I_{\text{ef}} / 2 $) y respuesta no lineal. Solo para baja precisión.</div>
                     </div>
                     <div class="bg-green-50 border border-green-200 rounded-xl p-4 space-y-3">
                         <h3 class="font-bold text-green-800">Rectificador de Onda Completa</h3>
-                        <div class="formula-box text-sm">$ I_{\text{med}} = \frac{2 \cdot I_{\text{max}}}{\pi} = 0.636 \cdot I_{\text{max}} $<br>$ \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{2\sqrt{2}} = 1.11 $<br>$ I_{\text{ef}} = \frac{\sqrt{2}}{2} \cdot I_{\text{max}} = 0.707 \cdot I_{\text{max}} $</div>
+                        <div class="formula-box text-sm">$ \displaystyle I_{\text{med}} = \frac{2 \cdot I_{\text{max}}}{\pi} = 0.636 \cdot I_{\text{max}} $<br>$ \displaystyle \text{Factor forma } F_f = \frac{V_{\text{ef}}}{V_{\text{med}}} = \frac{\pi}{2\sqrt{2}} = 1.11 $<br>$ \displaystyle I_{\text{ef}} = \frac{\sqrt{2}}{2} \cdot I_{\text{max}} = 0.707 \cdot I_{\text{max}} $</div>
                         <p class="text-xs text-gray-700">Puente de 4 diodos. El semiciclo negativo se traslada al primer cuadrante. La frecuencia de la señal rectificada es el doble. El factor de escala es 1.11.</p>
                         <canvas id="fullWaveCanvas" width="300" height="120" class="wave-canvas w-full"></canvas>
                         <div class="bg-green-100 border border-green-300 rounded-lg p-2 text-xs">✅ <strong>Ventajas:</strong> Mayor valor medio → mayor sensibilidad. Factor de forma simple (1.11). Más preciso y lineal.</div>
@@ -460,9 +451,9 @@
                     <h3 class="font-bold text-indigo-800 mb-3">Calculadora de Valores de Onda Sinusoidal</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-2">
-                            <div><label class="text-sm font-semibold">Valor de pico $V_p$ (V): <span id="wave-Vp" class="text-indigo-700 font-bold">311</span></label>
+                            <div><label class="text-sm font-semibold">Valor pico $\displaystyle V_p$ (V): <span id="wave-Vp" class="text-indigo-700 font-bold">311</span></label>
                             <input type="range" id="wave-Vp-slider" min="1" max="700" value="311" class="w-full" oninput="updateWaveCalc()"></div>
-                            <div><label class="text-sm font-semibold">Frecuencia f (Hz): <span id="wave-f" class="text-indigo-700 font-bold">50</span></label>
+                            <div><label class="text-sm font-semibold">Frecuencia $\displaystyle f$ (Hz): <span id="wave-f" class="text-indigo-700 font-bold">50</span></label>
                             <input type="range" id="wave-f-slider" min="10" max="400" step="10" value="50" class="w-full" oninput="updateWaveCalc()"></div>
                         </div>
                         <div id="wave-results" class="bg-indigo-50 rounded-xl p-3 space-y-1 text-sm"></div>
@@ -474,17 +465,17 @@
                         <thead><tr class="bg-indigo-800 text-white">
                             <th class="p-3 text-left">Valor</th>
                             <th class="p-3">Expresión</th>
-                            <th class="p-3">Relación con V_p</th>
-                            <th class="p-3">Ejemplo (V_p=311 V)</th>
+                            <th class="p-3">Relación con $\displaystyle V_p$</th>
+                            <th class="p-3">Ejemplo ($\displaystyle V_p = 311$ V)</th>
                         </tr></thead>
                         <tbody class="divide-y divide-gray-100">
-                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor de pico (V_p)</td><td class="p-3 font-mono">V_p</td><td class="p-3">1</td><td class="p-3 font-bold">311 V</td></tr>
-                            <tr><td class="p-3 font-semibold text-left">Valor pico a pico (V_pp)</td><td class="p-3 font-mono">2 · V_p</td><td class="p-3">2</td><td class="p-3 font-bold">622 V</td></tr>
-                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor eficaz / RMS</td><td class="p-3 font-mono">V_p / √2</td><td class="p-3">0.707</td><td class="p-3 font-bold">220 V</td></tr>
-                            <tr><td class="p-3 font-semibold text-left">Valor medio (media onda)</td><td class="p-3 font-mono">V_p / π</td><td class="p-3">0.318</td><td class="p-3 font-bold">99 V</td></tr>
-                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor medio (onda completa)</td><td class="p-3 font-mono">2·V_p / π</td><td class="p-3">0.636</td><td class="p-3 font-bold">198 V</td></tr>
-                            <tr><td class="p-3 font-semibold text-left">Factor forma (onda completa)</td><td class="p-3 font-mono">V_ef / V_med</td><td class="p-3 font-bold text-green-700">1.11</td><td class="p-3">—</td></tr>
-                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Factor forma (media onda)</td><td class="p-3 font-mono">V_ef / V_med</td><td class="p-3 font-bold text-orange-700">2.22</td><td class="p-3">—</td></tr>
+                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor pico ($\displaystyle V_p$)</td><td class="p-3">$\displaystyle V_p$</td><td class="p-3">1</td><td class="p-3 font-bold">311 V</td></tr>
+                            <tr><td class="p-3 font-semibold text-left">Valor pico a pico ($\displaystyle V_{pp}$)</td><td class="p-3">$\displaystyle 2 \cdot V_p$</td><td class="p-3">2</td><td class="p-3 font-bold">622 V</td></tr>
+                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor eficaz / RMS ($\displaystyle V_{\text{ef}}$)</td><td class="p-3">$\displaystyle\frac{V_p}{\sqrt{2}}$</td><td class="p-3">0.707</td><td class="p-3 font-bold">220 V</td></tr>
+                            <tr><td class="p-3 font-semibold text-left">Valor medio (media onda)</td><td class="p-3">$\displaystyle\frac{V_p}{\pi}$</td><td class="p-3">0.318</td><td class="p-3 font-bold">99 V</td></tr>
+                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Valor medio (onda completa)</td><td class="p-3">$\displaystyle\frac{2 V_p}{\pi}$</td><td class="p-3">0.636</td><td class="p-3 font-bold">198 V</td></tr>
+                            <tr><td class="p-3 font-semibold text-left">Factor forma (onda completa)</td><td class="p-3">$\displaystyle\frac{V_{\text{ef}}}{V_{\text{med}}}$</td><td class="p-3 font-bold text-green-700">1.11</td><td class="p-3">—</td></tr>
+                            <tr class="bg-indigo-50"><td class="p-3 font-semibold text-left">Factor forma (media onda)</td><td class="p-3">$\displaystyle\frac{V_{\text{ef}}}{V_{\text{med}}}$</td><td class="p-3 font-bold text-orange-700">2.22</td><td class="p-3">—</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -497,7 +488,7 @@
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque su resistencia interna es demasiado alta para CA</div>
                 <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque el par motor cambia de signo cada semiciclo y la inercia mecánica de la aguja promedia el efecto a cero</div>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque el imán permanente se desmagnetiza con corriente alterna</div>
-                <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> Como el par es proporcional a la corriente instantánea ($\tau \propto I$), en CA se invierte junto con la corriente cada semiciclo. La aguja, por inercia, no llega a seguir esos cambios y su valor medio es cero. Por eso se necesita rectificar la señal antes de aplicarla al galvanómetro.</div>
+                <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> Como el par es proporcional a la corriente instantánea ($\displaystyle \tau \propto I$), en CA se invierte junto con la corriente cada semiciclo. La aguja, por inercia, no llega a seguir esos cambios y su valor medio es cero. Por eso se necesita rectificar la señal antes de aplicarla al galvanómetro.</div>
             </div>
         </div>
     </div>
@@ -513,16 +504,16 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                     <div class="space-y-3">
                         <div class="bg-gray-800 text-white rounded-xl p-4">
-                            <h3 class="font-bold text-yellow-300 mb-2">Ecuación de funcionamiento</h3>
+                            <h3 class="font-bold mb-2" style="color:#fcd34d">Ecuación de funcionamiento</h3>
                             <div class="font-mono text-sm space-y-1">
-                                <div>$ M_m = \frac{1}{2} \cdot I^2 \cdot \frac{dL}{d\alpha} $</div>
-                                <div>$ M_a = C_a \cdot \alpha $</div>
-                                <div class="border-t border-gray-600 mt-2 pt-2 text-yellow-200">$ \alpha = C \cdot \frac{dL}{d\alpha} \cdot I^2 $</div>
-                                <div class="text-gray-400 text-xs mt-1">→ escala cuadrática ($ \alpha \propto I^2 $)</div>
+                                <div>$ \displaystyle M_m = \frac{1}{2} \cdot I^2 \cdot \frac{dL}{d\alpha} $</div>
+                                <div>$ \displaystyle M_a = C_a \cdot \alpha $</div>
+                                <div class="border-t border-gray-600 mt-2 pt-2 text-yellow-200">$ \displaystyle \alpha = C \cdot \frac{dL}{d\alpha} \cdot I^2 $</div>
+                                <div class="text-gray-400 text-xs mt-1">→ escala cuadrática ($ \displaystyle \alpha \propto I^2 $)</div>
                             </div>
                         </div>
                         <div>
-                            <label class="text-sm font-semibold">Corriente $I$ (A): <span id="hm-I" class="text-blue-700 font-bold">2</span></label>
+                            <label class="text-sm font-semibold">Corriente $\displaystyle I$ (A): <span id="hm-I" class="text-blue-700 font-bold">2</span></label>
                             <input type="range" id="hm-I-slider" min="0" max="10" step="0.1" value="2" class="w-full" oninput="updateHierroSim()">
                         </div>
                         <div>
@@ -533,7 +524,7 @@
                         <div class="bg-green-50 border border-green-200 rounded-xl p-3">
                             <h4 class="font-bold text-green-800 text-sm mb-1">¿Por qué funciona en CA?</h4>
                             <p class="text-xs text-gray-700">Si i = Î·sen(θ), entonces α ∝ I²_ef porque:</p>
-                            <div class="formula-box text-xs mt-1">$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot \frac{1}{2} \cdot I^2 $<br>$ \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot I_{\text{ef}}^2 $<br>$ \text{(La inercia mecánica promedia el } I^2) $</div>
+                            <div class="formula-box text-xs mt-1">$ \displaystyle \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot \frac{1}{2} \cdot I^2 $<br>$ \displaystyle \alpha = C \cdot \left(\frac{dL}{d\alpha}\right) \cdot I_{\text{ef}}^2 $<br>$ \displaystyle \text{(La inercia mecánica promedia el } I^2) $</div>
                             <p class="text-xs text-gray-700 mt-1">El instrumento responde al valor eficaz verdadero (TRMS).</p>
                         </div>
                     </div>
@@ -547,23 +538,23 @@
                 <div class="card border-2 border-gray-200 p-4 mb-4">
                     <h3 class="font-bold text-gray-800 mb-3">Clasificación según efecto dinámico y forma del hierro</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <div class="bg-blue-50 rounded-xl p-3 border border-blue-200"><div class="font-bold text-blue-800 text-sm mb-1">🟦 Atracción (mononúcleo)</div><p class="text-xs text-gray-700">Una sola aspa circular atraída al interior de la bobina donde el campo es mayor.</p></div>
-                        <div class="bg-orange-50 rounded-xl p-3 border border-orange-200"><div class="font-bold text-orange-800 text-sm mb-1">🟧 Repulsión (polinúcleo)</div><p class="text-xs text-gray-700">Dos aspas (fija + móvil) con igual polaridad se repelen. La más común en uso industrial.</p></div>
-                        <div class="bg-purple-50 rounded-xl p-3 border border-purple-200"><div class="font-bold text-purple-800 text-sm mb-1">🟪 Repulsión-Atracción</div><p class="text-xs text-gray-700">Al inicio del giro: repulsión. Al final: atracción (polos distintos enfrentados). Mayor linealidad.</p></div>
-                        <div class="bg-gray-50 rounded-xl p-3 border border-gray-200"><div class="font-bold text-gray-800 text-sm mb-1">⬛ Aspa Rectangular</div><p class="text-xs text-gray-700">Funcionamiento equivalente al de repulsión. El hierro fijo y móvil son rectangulares.</p></div>
-                        <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200"><div class="font-bold text-yellow-800 text-sm mb-1">⭕ Aspa Circular</div><p class="text-xs text-gray-700">El aspa móvil es circular. Principio de atracción. Diseño más simple y compacto.</p></div>
-                        <div class="bg-teal-50 rounded-xl p-3 border border-teal-200"><div class="font-bold text-teal-800 text-sm mb-1">🔵 Sector Circular (moderno)</div><p class="text-xs text-gray-700">Núcleo en entrehierro entre zapatas polares. El núcleo busca la posición de máxima energía. Construcción moderna.</p></div>
+                        <div class="bg-blue-50 rounded-xl p-3 border border-blue-200"><div class="font-bold text-blue-800 text-sm mb-1">Atracción (mononúcleo)</div><p class="text-xs text-gray-700">Una sola aspa circular atraída al interior de la bobina donde el campo es mayor.</p></div>
+                        <div class="bg-orange-50 rounded-xl p-3 border border-orange-200"><div class="font-bold text-orange-800 text-sm mb-1">Repulsión (polinúcleo)</div><p class="text-xs text-gray-700">Dos aspas (fija + móvil) con igual polaridad se repelen. La más común en uso industrial.</p></div>
+                        <div class="bg-purple-50 rounded-xl p-3 border border-purple-200"><div class="font-bold text-purple-800 text-sm mb-1">Repulsión-Atracción</div><p class="text-xs text-gray-700">Al inicio del giro: repulsión. Al final: atracción (polos distintos enfrentados). Mayor linealidad.</p></div>
+                        <div class="bg-gray-50 rounded-xl p-3 border border-gray-200"><div class="font-bold text-gray-800 text-sm mb-1">Aspa Rectangular</div><p class="text-xs text-gray-700">Funcionamiento equivalente al de repulsión. El hierro fijo y móvil son rectangulares.</p></div>
+                        <div class="bg-yellow-50 rounded-xl p-3 border border-yellow-200"><div class="font-bold text-yellow-800 text-sm mb-1">Aspa Circular</div><p class="text-xs text-gray-700">El aspa móvil es circular. Principio de atracción. Diseño más simple y compacto.</p></div>
+                        <div class="bg-teal-50 rounded-xl p-3 border border-teal-200"><div class="font-bold text-teal-800 text-sm mb-1">Sector Circular (moderno)</div><p class="text-xs text-gray-700">Núcleo en entrehierro entre zapatas polares. El núcleo busca la posición de máxima energía. Construcción moderna.</p></div>
                     </div>
                 </div>
 
                 <div class="card border-2 border-gray-200 overflow-hidden">
-                    <div class="bg-gray-800 text-white p-3 font-bold">📊 Comparativo: Magnetoeléctrico vs. Electromagnético</div>
+                    <div class="bg-gray-800 text-white p-3 font-bold">Comparativo: Magnetoeléctrico vs. Electromagnético</div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead><tr class="bg-gray-100">
                                 <th class="p-3 text-left">Característica</th>
-                                <th class="p-3 text-center text-blue-800">🧲 Magnetoeléctrico</th>
-                                <th class="p-3 text-center text-orange-800">⚙️ Electromagnético</th>
+                                <th class="p-3 text-center text-blue-800">Magnetoeléctrico</th>
+                                <th class="p-3 text-center text-orange-800">Electromagnético</th>
                             </tr></thead>
                             <tbody class="divide-y divide-gray-100">
                                 <tr><td class="p-3 font-semibold">Tipo de corriente</td><td class="p-3 text-center">Solo CC</td><td class="p-3 text-center bg-green-50 font-bold text-green-700">CC y CA ✓</td></tr>
@@ -586,9 +577,9 @@
                 <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">Quiz Rápido</h3>
                 <p class="text-gray-700 mb-2"><strong>¿Por qué un instrumento de hierro móvil puede medir CA sin necesidad de rectificador?</strong></p>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque tiene un imán permanente que sigue la polaridad de la corriente</div>
-                <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque el par motor depende de $I^2$, siempre positivo, y la inercia mecánica promedia el valor eficaz</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true)"><i class="far fa-circle"></i> Porque el par motor depende de $\displaystyle I^2$, siempre positivo, y la inercia mecánica promedia el valor eficaz</div>
                 <div class="quiz-option" onclick="checkAnswer(this, false)"><i class="far fa-circle"></i> Porque las aspas de hierro giran en sincronismo con la frecuencia de la señal</div>
-                <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> El par motor es $ M_m = \frac{1}{2} I^2 \frac{dL}{d\alpha} $: al depender de $I^2$, nunca cambia de signo (positivo tanto en el semiciclo positivo como en el negativo). La inercia mecánica de la aguja promedia esos valores, y el resultado es proporcional al valor eficaz (TRMS) de la corriente, sin necesidad de rectificar.</div>
+                <div class="quiz-feedback hidden"><i class="fas fa-lightbulb"></i> El par motor es $ \displaystyle M_m = \frac{1}{2} I^2 \frac{dL}{d\alpha} $: al depender de $\displaystyle I^2$, nunca cambia de signo (positivo tanto en el semiciclo positivo como en el negativo). La inercia mecánica de la aguja promedia esos valores, y el resultado es proporcional al valor eficaz (TRMS) de la corriente, sin necesidad de rectificar.</div>
             </div>
         </div>
     </div>
@@ -598,12 +589,12 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Telurímetro y Medición de Resistividad del Terreno</h2><p class="text-sm opacity-80 mt-1">Fundamentos y método de caída de potencial.</p></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">La <strong>resistividad del terreno</strong> ($ \rho $) es una propiedad física que mide la oposición que ofrece el suelo al paso de la corriente eléctrica. Se expresa en ohmios-metro ($ \Omega \cdot \text{m} $) y es fundamental para diseñar sistemas de puesta a tierra eficaces.</p>
+                <p class="text-gray-700 mb-3">La <strong>resistividad del terreno</strong> ($ \displaystyle \rho $) es una propiedad física que mide la oposición que ofrece el suelo al paso de la corriente eléctrica. Se expresa en ohmios-metro ($ \displaystyle \Omega \cdot \text{m} $) y es fundamental para diseñar sistemas de puesta a tierra eficaces.</p>
                 <div class="info-box"><i class="fas fa-exclamation-circle"></i><strong>¿Por qué medirla?</strong> Permite determinar el trazado, profundidad, número y tipo de elementos necesarios para una puesta a tierra segura, controlando tensiones de paso y contacto.</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold">Método de Caída de Potencial (3 puntas)</h2><p class="text-sm opacity-80 mt-1">El método más empleado para medir la resistencia de puesta a tierra.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Método de Caída de Potencial (3 puntas)</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Este es el método más empleado para medir la <strong>resistencia de puesta a tierra</strong> de un sistema existente.</p>
                 <div class="diagram-container field-diagram-card">
@@ -671,7 +662,7 @@
                         <div class="text-center"><div class="text-2xl font-bold text-blue-600">20 m</div><div class="text-sm text-gray-600">Distancia E-H típica</div></div>
                     </div>
                 </div>
-                <div class="formula-box">$$ R_E = \frac{V_{ES}}{I} $$<p class="mt-2 text-sm text-gray-600">$ R_E $ = resistencia de puesta a tierra del electrodo bajo prueba, $ V_{ES} $ = caída de tensión entre E y S, $ I $ = corriente inyectada entre E y H</p></div>
+                <div class="formula-box">$$ R_E = \frac{V_{ES}}{I} $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle R_E $ = resistencia de puesta a tierra del electrodo bajo prueba, $ \displaystyle V_{ES} $ = caída de tensión entre E y S, $ \displaystyle I $ = corriente inyectada entre E y H</p></div>
                 <div class="info-box"><i class="fas fa-check-double"></i><strong>Verificación:</strong> Se deben realizar tres mediciones con S al 52%, 62% y 72% de la distancia E-H. Si los resultados no difieren más del 10%, el promedio es válido.</div>
             </div>
         </div>
@@ -702,7 +693,7 @@
     <!-- TAB: WENNER -->
     <div id="tab-wenner" class="tab-content max-w-6xl mx-auto px-3 mb-8">
         <div class="card overflow-hidden mb-4">
-            <div class="section-header"><h2 class="text-lg font-bold">Método de Wenner (4 Picas)</h2><p class="text-sm opacity-80 mt-1">Método estándar para medición de resistividad del suelo.</p></div>
+            <div class="section-header"><h2 class="text-lg font-bold">Método de Wenner (4 Picas)</h2></div>
             <div class="p-4">
                 <p class="text-gray-700 mb-3">Desarrollado por <strong>Frank Wenner</strong> en 1915, es el método estándar para medir la resistividad del suelo. Utiliza cuatro electrodos alineados y equidistantes.</p>
                 <div class="diagram-container field-diagram-card">
@@ -758,17 +749,17 @@
                         <text x="164" y="310" class="field-note dimension-label">Condicion: a &gt; 20b</text>
                     </svg>
                 </div>
-                <div class="formula-box">$$ \rho_a = 2\ \pi\ a \cdot \frac{V}{I} = 2 \pi\ a\ R $$<p class="mt-2 text-sm text-gray-600">$ \rho_a $ = resistividad aparente [$ \Omega \cdot \text{m} $], $ a $ = separación entre electrodos [m], $ R $ = resistencia medida por el telurímetro [$ \Omega $], $ V $ = diferencia de potencial entre P1 y P2, $ I $ = corriente inyectada entre C1 y C2</p></div>
-                <div class="info-box"><i class="fas fa-arrow-down"></i><strong>Profundidad de investigación:</strong> La medición representa aproximadamente una profundidad $ h \approx \frac{3a}{4} $. Para analizar capas más profundas, se aumenta la separación $ a $.</div>
-                <div class="info-box"><i class="fas fa-ruler-vertical"></i><strong>Condición de enterramiento:</strong> La profundidad $ b $ de los electrodos debe cumplir $ a > 20b $ (idealmente $ b \leq 5\% $ de $ a $) para que la fórmula simplificada sea válida.</div>
+                <div class="formula-box">$$ \rho_a = 2\ \pi\ a \cdot \frac{V}{I} = 2 \pi\ a\ R $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle \rho_a $ = resistividad aparente [$ \displaystyle \Omega \cdot \text{m} $], $ \displaystyle a $ = separación entre electrodos [m], $ \displaystyle R $ = resistencia medida por el telurímetro [$ \displaystyle \Omega $], $ \displaystyle V $ = diferencia de potencial entre P1 y P2, $ \displaystyle I $ = corriente inyectada entre C1 y C2</p></div>
+                <div class="info-box"><i class="fas fa-arrow-down"></i><strong>Profundidad de investigación:</strong> La medición representa aproximadamente una profundidad $ h \approx \displaystyle\frac{3a}{4} $. Para analizar capas más profundas, se aumenta la separación $ \displaystyle a $.</div>
+                <div class="info-box"><i class="fas fa-ruler-vertical"></i><strong>Condición de enterramiento:</strong> La profundidad $ \displaystyle b $ de los electrodos debe cumplir $ \displaystyle a > 20b $ (idealmente $ \displaystyle b \leq 5\% $ de $ \displaystyle a $) para que la fórmula simplificada sea válida.</div>
             </div>
         </div>
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Calculadora Wenner</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
-                    <div class="control-group"><label class="slider-label font-semibold">Separación $a$ (m): <span id="wennerAVal" class="text-blue-700 font-bold">3</span></label><input type="range" id="wennerA" min="1" max="20" value="3" oninput="updateWenner()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Resistencia medida $R$ (Ω): <span id="wennerRVal" class="text-blue-700 font-bold">7.49</span></label><input type="range" id="wennerR" min="0.1" max="50" step="0.1" value="7.49" oninput="updateWenner()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Separación $\displaystyle a$ (m): <span id="wennerAVal" class="text-blue-700 font-bold">3</span></label><input type="range" id="wennerA" min="1" max="20" value="3" oninput="updateWenner()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Resistencia medida $\displaystyle R$ (Ω): <span id="wennerRVal" class="text-blue-700 font-bold">7.49</span></label><input type="range" id="wennerR" min="0.1" max="50" step="0.1" value="7.49" oninput="updateWenner()"></div>
                 </div>
                 <div class="formula-box mt-5">$$ \rho_a = 2 \pi \cdot 3 \cdot 7.49 = 141.1 \ \Omega \cdot \text{m} $$<div class="slider-result" id="wennerResult">ρ = 141.1 Ω·m</div></div>
                 <div class="mt-3 p-3 bg-green-50 rounded-lg border-l-4 border-green-500"><i class="fas fa-leaf text-green-600 mr-2"></i><strong>Tipo de suelo estimado:</strong> <span id="soilType">Arcilla húmeda / Humus</span></div>
@@ -776,7 +767,7 @@
         </div>
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Perfil de Resistividad vs Profundidad</h2></div>
-            <div class="p-4"><p class="text-gray-700 mb-2">Variando la separación $ a $ se obtienen valores de resistividad a diferentes profundidades:</p><div class="chart-container"><canvas id="wennerChart"></canvas></div></div>
+            <div class="p-4"><p class="text-gray-700 mb-2">Variando la separación $ \displaystyle a $ se obtienen valores de resistividad a diferentes profundidades:</p><div class="chart-container"><canvas id="wennerChart"></canvas></div></div>
         </div>
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Valores Típicos de Resistividad</h2></div>
@@ -796,10 +787,10 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Desafío 3: Wenner en Campo</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">En una medición de resistividad del suelo con el método Wenner con $a = 4\ \text{m}$, el telurímetro marca $R = 12.5\ \Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
+                <p class="text-gray-700 mb-3">En una medición de resistividad del suelo con el método Wenner con $\displaystyle a = 4\ \text{m}$, el telurímetro marca $\displaystyle R = 12.5\ \Omega$. ¿Cuál es la resistividad aparente? ¿A qué profundidad aproximada corresponde?</p>
                 <div class="formula-box">$$ \rho_a = 2\ \pi\ a\ R, \qquad h \approx \frac{3a}{4} $$</div>
                 <div class="simulator-controls">
-                    <div class="control-group"><label>$\rho_a$ (Ω·m)</label><input type="number" id="chal3a" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
+                    <div class="control-group"><label>$\displaystyle \rho_a$ (Ω·m)</label><input type="number" id="chal3a" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                     <div class="control-group"><label>Profundidad aprox. (m)</label><input type="number" id="chal3b" placeholder="h" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                 </div>
                 <button onclick="checkChallenge3()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">Verificar</button>
@@ -813,7 +804,7 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Método de Schlumberger</h2><p class="text-sm opacity-80 mt-1">Variante del método Wenner para mayor sensibilidad en estudios profundos.</p></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Variante del método Wenner que ofrece mayor sensibilidad para estudios a mayor profundidad. Los electrodos de potencial (P1, P2) permanecen <strong>fijos</strong> y separados una distancia pequeña $ a $, mientras que los de corriente (C1, C2) se alejan simétricamente.</p>
+                <p class="text-gray-700 mb-3">Variante del método Wenner que ofrece mayor sensibilidad para estudios a mayor profundidad. Los electrodos de potencial (P1, P2) permanecen <strong>fijos</strong> y separados una distancia pequeña $ \displaystyle a $, mientras que los de corriente (C1, C2) se alejan simétricamente.</p>
                 <div class="diagram-container field-diagram-card">
                     <svg class="field-diagram" viewBox="0 0 920 350" role="img" aria-label="Metodo Schlumberger con picas de potencial fijas y corriente separada">
                         <defs>
@@ -865,8 +856,8 @@
                         <text x="460" y="326" text-anchor="middle" class="field-note dimension-label">solo se desplazan las picas exteriores C1 y C2</text>
                     </svg>
                 </div>
-                <div class="formula-box">$$\rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$L$ = distancia desde el centro hasta C1 o C2, $l$ = distancia desde el centro hasta P1 o P2 (mitad de $a$), $R$ = resistencia medida [$ \Omega $]</p></div>
-                <div class="formula-box">$$\rho_a = \pi\ R\ a\ n\ (n+1)$$<p class="mt-2 text-sm text-gray-600">Alternativa: $ \rho = 2\ \pi\ R \cdot \dfrac{(n+1)na}{2} $ donde $ n = \dfrac{L}{l} $ y $ a = 2l $ (separación entre P1 y P2)</p></div>
+                <div class="formula-box">$$\rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$\displaystyle L$ = distancia desde el centro hasta C1 o C2, $\displaystyle l$ = distancia desde el centro hasta P1 o P2 (mitad de $\displaystyle a$), $\displaystyle R$ = resistencia medida [$ \displaystyle \Omega $]</p></div>
+                <div class="formula-box">$$\rho_a = \pi\ R\ a\ n\ (n+1)$$<p class="mt-2 text-sm text-gray-600">Alternativa: $ \displaystyle \rho = 2\ \pi\ R \cdot \dfrac{(n+1)na}{2} $ donde $ \displaystyle n = \dfrac{L}{l} $ y $ \displaystyle a = 2l $ (separación entre P1 y P2)</p></div>
                 <div class="info-box"><i class="fas fa-check-circle"></i><strong>Ventajas del Schlumberger:</strong> Menos sensible a variaciones laterales del terreno; más rápido para sondeos profundos porque solo se mueven los electrodos exteriores; los electrodos centrales fijos minimizan errores de contacto.</div>
                 <div class="info-box"><i class="fas fa-times-circle"></i><strong>Desventaja:</strong> La fórmula es más compleja que la de Wenner. Requiere cálculo manual en la mayoría de los telurímetros.</div>
             </div>
@@ -875,9 +866,9 @@
             <div class="section-header"><h2 class="text-lg font-bold">Calculadora Schlumberger</h2></div>
             <div class="p-4">
                 <div class="simulator-controls">
-                    <div class="control-group"><label class="slider-label font-semibold">Separación P1-P2: $a$ (m): <span id="schlumAVal" class="text-blue-700 font-bold">1</span></label><input type="range" id="schlumA" min="0.5" max="5" step="0.5" value="1" oninput="updateSchlumberger()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Factor $n$ (C a P): <span id="schlumNVal" class="text-blue-700 font-bold">5</span></label><input type="range" id="schlumN" min="2" max="20" value="5" oninput="updateSchlumberger()"></div>
-                    <div class="control-group"><label class="slider-label font-semibold">Resistencia $R$ (Ω): <span id="schlumRVal" class="text-blue-700 font-bold">3.5</span></label><input type="range" id="schlumR" min="0.1" max="50" step="0.1" value="3.5" oninput="updateSchlumberger()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Separación P1-P2: $\displaystyle a$ (m): <span id="schlumAVal" class="text-blue-700 font-bold">1</span></label><input type="range" id="schlumA" min="0.5" max="5" step="0.5" value="1" oninput="updateSchlumberger()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Factor $\displaystyle n$ (C a P): <span id="schlumNVal" class="text-blue-700 font-bold">5</span></label><input type="range" id="schlumN" min="2" max="20" value="5" oninput="updateSchlumberger()"></div>
+                    <div class="control-group"><label class="slider-label font-semibold">Resistencia $\displaystyle R$ (Ω): <span id="schlumRVal" class="text-blue-700 font-bold">3.5</span></label><input type="range" id="schlumR" min="0.1" max="50" step="0.1" value="3.5" oninput="updateSchlumberger()"></div>
                 </div>
                 <div class="mt-3 text-center text-blue-900"><div>L = <span id="schlumL">5.0</span> m (distancia centro-C)</div><div>l = <span id="schlumL2">0.5</span> m (distancia centro-P)</div></div>
                 <div class="formula-box mt-5">$$ \rho_a = \pi \cdot \frac{(5^2 - 0.5^2)}{2 \cdot 0.5} \cdot 3.5 = 274.8 \ \Omega \cdot \text{m} $$<div class="slider-result" id="schlumResult">ρ = 274.8 Ω·m</div></div>
@@ -891,9 +882,9 @@
                     <tbody>
                         <tr><td>Espaciado</td><td>Equidistante (a)</td><td>Potencial fijo, corriente variable</td></tr>
                         <tr><td>Movimiento</td><td>Se mueven las 4 picas</td><td>Solo se mueven las exteriores</td></tr>
-                        <tr><td>Fórmula</td><td>$ \rho = 2\pi a R $</td><td>$ \rho = \pi R \frac{L^2-l^2}{2l} $</td></tr>
+                        <tr><td>Fórmula</td><td>$ \displaystyle \rho = 2\pi a R $</td><td>$ \displaystyle \rho = \pi R \frac{L^2-l^2}{2l} $</td></tr>
                         <tr><td>Complejidad</td><td>Baja</td><td>Media</td></tr>
-                        <tr><td>Profundidad</td><td>$ h \approx a $</td><td>$ h \approx L/2 $</td></tr>
+                        <tr><td>Profundidad</td><td>$ \displaystyle h \approx a $</td><td>$ \displaystyle h \approx L/2 $</td></tr>
                         <tr><td>Uso principal</td><td>Mallas de tierra BT</td><td>Estudios geológicos profundos</td></tr>
                         <tr><td>Sensibilidad local</td><td>Alta</td><td>Baja (mejor para ruido)</td></tr>
                     </tbody>
@@ -903,10 +894,10 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Desafío 4: Schlumberger</h2></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">En una configuración Schlumberger: $a = 2\ \text{m}$ (separación entre electrodos de potencial P1-P2, por lo tanto $l = a/2 = 1\text{m}$), $n = 8$ (factor tal que $L = n \cdot l$), $ R = 4.2\Omega $. Calcula $ \rho_a $.</p>
-                <div class="formula-box">$$ \rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$ L $ = mitad de la distancia entre electrodos de corriente (C1-C2), $ l = a/2 $ = mitad de la distancia entre electrodos de potencial (P1-P2), $ n = L/l $ es el factor de separación entre ambos pares de electrodos</p></div>
+                <p class="text-gray-700 mb-3">En una configuración Schlumberger: $\displaystyle a = 2\ \text{m}$ (separación entre electrodos de potencial P1-P2, por lo tanto $\displaystyle l = a/2 = 1\text{m}$), $\displaystyle n = 8$ (factor tal que $\displaystyle L = n \cdot l$), $ \displaystyle R = 4.2\Omega $. Calcula $ \displaystyle \rho_a $.</p>
+                <div class="formula-box">$$ \rho_a = \pi \cdot \frac{(L^2 - l^2)}{2l} \cdot R $$<p class="mt-2 text-sm text-gray-600">$ \displaystyle L $ = mitad de la distancia entre electrodos de corriente (C1-C2), $ \displaystyle l = a/2 $ = mitad de la distancia entre electrodos de potencial (P1-P2), $ \displaystyle n = L/l $ es el factor de separación entre ambos pares de electrodos</p></div>
                 <div class="simulator-controls">
-                    <div class="control-group"><label>$\rho_a$ (Ω·m)</label><input type="number" id="chal4" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
+                    <div class="control-group"><label>$\displaystyle \rho_a$ (Ω·m)</label><input type="number" id="chal4" placeholder="ρ" class="w-full p-2 border-2 border-gray-300 rounded-md"></div>
                 </div>
                 <button onclick="checkChallenge4()" class="mt-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white border-0 rounded-lg cursor-pointer font-semibold transition">Verificar</button>
                 <div id="chal4Result" class="mt-2 font-bold"></div>
@@ -919,7 +910,7 @@
         <div class="card overflow-hidden mb-4">
             <div class="section-header"><h2 class="text-lg font-bold">Matriz de Medición de Resistividad</h2><p class="text-sm opacity-80 mt-1">Caracterización completa de un terreno mediante barrido sistemático.</p></div>
             <div class="p-4">
-                <p class="text-gray-700 mb-3">Para caracterizar completamente un terreno, se demarca una <strong>cuadrícula de medición</strong> y se barre el lote con el método de Wenner en dos sentidos perpendiculares sobre una matriz de 9 m x 9 m, con separación $ a = 3\text{ m} $ entre estacas.</p>
+                <p class="text-gray-700 mb-3">Para caracterizar completamente un terreno, se demarca una <strong>cuadrícula de medición</strong> y se barre el lote con el método de Wenner en dos sentidos perpendiculares sobre una matriz de 9 m x 9 m, con separación $ \displaystyle a = 3\text{ m} $ entre estacas.</p>
                 <div class="info-box"><i class="fas fa-info-circle"></i><strong>Procedimiento de campo:</strong> primero se miden cuatro líneas horizontales, paralelas al lado B, en las posiciones 0, 3, 6 y 9 m. Luego se repite el barrido en sentido vertical, paralelo al lado A. En cada línea se colocan cuatro picas separadas 3 m.</div>
                 <div class="info-box"><i class="fas fa-book"></i><strong>GRT300:</strong> el manual identifica las conexiones como C1 negro, P1 verde, P2 amarillo y C2 rojo. Conviene mantener los cables separados entre sí y verificar antes el voltaje de tierra: si supera 10 V pueden aparecer errores en la medición de resistencia.</div>
             </div>
@@ -1043,12 +1034,12 @@
             <div class="section-header"><h2 class="text-lg font-bold">Interpretación de Resultados</h2></div>
             <div class="p-4">
                 <ul class="ml-5 leading-8 list-disc text-gray-700">
-                    <li><strong>Anisotropía:</strong> Si $ \rho_H \neq \rho_V $, el terreno tiene estratificación preferencial o contenido de humedad direccional.</li>
+                    <li><strong>Anisotropía:</strong> Si $ \displaystyle \rho_H \neq \rho_V $, el terreno tiene estratificación preferencial o contenido de humedad direccional.</li>
                     <li><strong>Homogeneidad:</strong> Valores similares en todas las líneas indican suelo uniforme.</li>
-                    <li><strong>Estratificación:</strong> Variaciones sistemáticas con la profundidad (aumentando $ a $) revelan capas distintas.</li>
-                    <li><strong>Promedio:</strong> Se calcula $ \bar{\rho} $ para el diseño de la malla de tierra, usando la peor condición como factor de seguridad.</li>
+                    <li><strong>Estratificación:</strong> Variaciones sistemáticas con la profundidad (aumentando $ \displaystyle a $) revelan capas distintas.</li>
+                    <li><strong>Promedio:</strong> Se calcula $ \displaystyle \bar{\rho} $ para el diseño de la malla de tierra, usando la peor condición como factor de seguridad.</li>
                 </ul>
-                <div class="info-box"><i class="fas fa-lightbulb"></i><strong>Tip de diseño:</strong> Para una resistencia de puesta a tierra $ R_T < 10\Omega $ (norma IEEE), con $ \rho \approx 140 \Omega \cdot \text{m} $, se necesitan aproximadamente 4 jabalinas de 2.4 m espaciadas 3 m, o una malla de 6×6 m.</div>
+                <div class="info-box"><i class="fas fa-lightbulb"></i><strong>Tip de diseño:</strong> Para una resistencia de puesta a tierra $ \displaystyle R_T < 10\Omega $ (norma IEEE), con $ \displaystyle \rho \approx 140 \Omega \cdot \text{m} $, se necesitan aproximadamente 4 jabalinas de 2.4 m espaciadas 3 m, o una malla de 6×6 m.</div>
             </div>
         </div>
     </div>
@@ -1106,9 +1097,11 @@
         function unlockAchievement(id, text) {
             if (!achievements.includes(id)) {
                 achievements.push(id);
-                document.getElementById(id).classList.add('unlocked');
+                var btn = document.querySelector('.tab-btn[data-ach="' + id + '"]');
+                btn.classList.add('earned');
+                btn.insertAdjacentHTML('beforeend', '<i class="fas fa-medal tab-medal"></i>');
                 showAchievement(text);
-                updateProgress(Math.min(100, achievements.length * 16));
+                updateProgress(Math.round(achievements.length / document.querySelectorAll('.tab-btn[data-ach]').length * 100));
             }
         }
 
@@ -1150,6 +1143,12 @@
                 if (tab && tab.id === 'tab-galvanometro') {
                     unlockAchievement('ach2', '¡Dominaste el Galvanómetro!');
                 }
+                if (tab && tab.id === 'tab-amperimetro') {
+                    unlockAchievement('ach9', '¡Dominaste el Amperímetro!');
+                }
+                if (tab && tab.id === 'tab-ohmetro') {
+                    unlockAchievement('ach11', '¡Dominaste el Ohmetro!');
+                }
                 if (tab && tab.id === 'tab-telurimetro') {
                     unlockAchievement('ach3', '¡Medidor de Tierra!');
                 }
@@ -1159,7 +1158,6 @@
                 if (tab && tab.id === 'tab-hierro') {
                     unlockAchievement('ach8', '¡Experto en Hierro Móvil!');
                 }
-                unlockAchievement('ach1', '¡Primer Quiz Perfecto!');
             }
         }
 
@@ -1180,16 +1178,15 @@
 
         // Constitución del D'Arsonval — datos de componentes
         var compData = {
-            bobina: { icon: '🪡', name: 'Bobina Móvil', desc: 'Arrollamiento de alambre conductor de pequeña sección montado sobre un bastidor de aluminio. La corriente a medir circula por ella. Está suspendida entre las expansiones polares del imán y puede girar libremente.', formula: '$ F = B \\cdot I \\cdot l \\cdot N \\quad (\\text{fuerza en la bobina}) $' },
-            iman: { icon: '🧲', name: 'Imán Permanente', desc: 'Genera el campo magnético fijo y radial en el entrehierro. Su forma especial garantiza que el campo sea constante y radial en toda la trayectoria de la bobina (sen(α)=1 siempre), lo que produce una escala lineal.', formula: '$ B = \\text{cte.} \\quad (\\text{campo radial constante}) $' },
-            resorte: { icon: '🌀', name: 'Resorte Antagonista', desc: 'Dos resortes en espiral arrollados en sentidos contrarios sirven como: mecanismo equilibrador de la rotación, conductores de la corriente hacia la bobina. La constante del resorte determina la sensibilidad del instrumento.', formula: '$ \\tau_r = K \\cdot \\theta \\quad (\\text{par resistente}) $' },
-            aguja: { icon: '📍', name: 'Aguja Indicadora', desc: 'Montada sobre el eje de suspensión con contrapesos de equilibrio. Se desplaza sobre la escala graduada permitiendo la lectura. Un tornillo de ajuste a cero permite calibrar antes de cada medición.', formula: '$ \\theta = \\frac{N \\cdot B \\cdot A}{K} \\cdot I \\quad (\\text{deflexión } \\propto \\text{corriente}) $' },
-            escala: { icon: '📏', name: 'Escala Graduada', desc: 'Graduación lineal y uniforme tarada por el fabricante. Puede ser en mA, μA, V, etc. según la aplicación. El espejo bajo la escala permite corregir el error de paralaje.', formula: '$ \\text{Escala lineal: } y = K \\cdot x $' }
+            bobina: { name: 'Bobina Móvil', desc: 'Arrollamiento de alambre conductor de pequeña sección montado sobre un bastidor de aluminio. La corriente a medir circula por ella. Está suspendida entre las expansiones polares del imán y puede girar libremente.', formula: '$ \\displaystyle F = B \\cdot I \\cdot l \\cdot N \\quad (\\text{fuerza en la bobina}) $' },
+            iman: { name: 'Imán Permanente', desc: 'Genera el campo magnético fijo y radial en el entrehierro. Su forma especial garantiza que el campo sea constante y radial en toda la trayectoria de la bobina (sen(α)=1 siempre), lo que produce una escala lineal.', formula: '$ \\displaystyle B = \\text{cte.} \\quad (\\text{campo radial constante}) $' },
+            resorte: { name: 'Resorte Antagonista', desc: 'Dos resortes en espiral arrollados en sentidos contrarios sirven como: mecanismo equilibrador de la rotación, conductores de la corriente hacia la bobina. La constante del resorte determina la sensibilidad del instrumento.', formula: '$ \\displaystyle \\tau_r = K \\cdot \\theta \\quad (\\text{par resistente}) $' },
+            aguja: { name: 'Aguja Indicadora', desc: 'Montada sobre el eje de suspensión con contrapesos de equilibrio. Se desplaza sobre la escala graduada permitiendo la lectura. Un tornillo de ajuste a cero permite calibrar antes de cada medición.', formula: '$ \\displaystyle \\theta = \\frac{N \\cdot B \\cdot A}{K} \\cdot I \\quad (\\text{deflexión } \\propto \\text{corriente}) $' },
+            escala: { name: 'Escala Graduada', desc: 'Graduación lineal y uniforme tarada por el fabricante. Puede ser en mA, μA, V, etc. según la aplicación. El espejo bajo la escala permite corregir el error de paralaje.', formula: '$ \\displaystyle \\text{Escala lineal: } y = K \\cdot x $' }
         };
 
         function showComponent(id) {
             var c = compData[id];
-            document.getElementById('comp-icon').textContent = c.icon;
             document.getElementById('comp-name').textContent = c.name;
             document.getElementById('comp-desc').textContent = c.desc;
             var fbox = document.getElementById('comp-formula');
@@ -1306,7 +1303,9 @@
                 const idx = cell.dataset.axis + cell.dataset.line;
                 matrixData[idx] = { axis: cell.dataset.axis, line: cell.dataset.line, R: R, rho: rho };
                 matrixCounter++;
-                if (matrixCounter >= 4) unlockAchievement('ach6', '¡Experto en Medición de Suelo!');
+                if (matrixCounter === document.querySelectorAll('.matrix-line-hit').length) {
+                    unlockAchievement('ach12', '¡Matriz de Resistividad Completa!');
+                }
                 updateResultsTable();
             }, 800);
         }
@@ -1475,18 +1474,6 @@
         }
 
         // Challenge checkers
-        function checkChallenge1() {
-            const val = parseFloat(document.getElementById('chal1').value);
-            const correct = 0.012;
-            const result = document.getElementById('chal1Result');
-            if (Math.abs(val - correct) < 0.001) {
-                result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Correcto! Rsh ≈ 0.012 Ω</span>';
-                unlockAchievement('ach1', '¡Desafío Completado!');
-            } else {
-                result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> Revisa: Rs = Rm/(n-1) donde n = I/Im</span>';
-            }
-        }
-
         function checkChallenge2() {
             const rs = parseFloat(document.getElementById('chal2a').value);
             const k = parseFloat(document.getElementById('chal2b').value);
@@ -1495,6 +1482,7 @@
             const result = document.getElementById('chal2Result');
             if (Math.abs(rs - correctRs) < 10 && Math.abs(k - correctK) < 0.5) {
                 result.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> ¡Perfecto! Rs = 900 kΩ, K = 10</span>';
+                unlockAchievement('ach10', '¡Dominaste el Voltímetro!');
             } else {
                 result.innerHTML = '<span class="text-red-600"><i class="fas fa-times"></i> Rs = Rv*(V2/V1 - 1), K = V2/V1</span>';
             }
@@ -1614,12 +1602,12 @@
 
             var Vef = Vp / Math.sqrt(2), Vmed_full = 2 * Vp / Math.PI, Vmed_half = Vp / Math.PI, T = 1 / f * 1000;
             document.getElementById('wave-results').innerHTML = [
-                '<div class="text-xs font-semibold text-indigo-700 mb-1">Para V_p = ' + Vp + ' V, f = ' + f + ' Hz:</div>',
-                '<div class="formula-box text-xs">$ V_{\\text{ef}} = \\frac{V_p}{\\sqrt{2}} = $ <strong class="text-indigo-900">' + Vef.toFixed(2) + ' V</strong></div>',
-                '<div class="formula-box text-xs">$ V_{\\text{med (OC)}} = \\frac{2 V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_full.toFixed(2) + ' V</strong></div>',
-                '<div class="formula-box text-xs">$ V_{\\text{med (MO)}} = \\frac{V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_half.toFixed(2) + ' V</strong></div>',
-                '<div class="formula-box text-xs">$ T = \\frac{1}{f} = $ <strong class="text-indigo-900">' + T.toFixed(2) + ' ms</strong></div>',
-                '<div class="formula-box text-xs">$ V_{\\text{pp}} = 2 \\cdot V_p = $ <strong class="text-indigo-900">' + (2 * Vp).toFixed(0) + ' V</strong></div>',
+                '<div class="text-xs font-semibold text-indigo-700 mb-1">Para $ \\displaystyle V_p = ' + Vp + ' $ V, $ \\displaystyle f = ' + f + ' $ Hz:</div>',
+                '<div class="formula-box text-xs">$ \\displaystyle V_{\\text{ef}} = \\frac{V_p}{\\sqrt{2}} = $ <strong class="text-indigo-900">' + Vef.toFixed(2) + ' V</strong></div>',
+                '<div class="formula-box text-xs">$ \\displaystyle V_{\\text{med (OC)}} = \\frac{2 V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_full.toFixed(2) + ' V</strong></div>',
+                '<div class="formula-box text-xs">$ \\displaystyle V_{\\text{med (MO)}} = \\frac{V_p}{\\pi} = $ <strong class="text-indigo-900">' + Vmed_half.toFixed(2) + ' V</strong></div>',
+                '<div class="formula-box text-xs">$ \\displaystyle T = \\frac{1}{f} = $ <strong class="text-indigo-900">' + T.toFixed(2) + ' ms</strong></div>',
+                '<div class="formula-box text-xs">$ \\displaystyle V_{\\text{pp}} = 2 \\cdot V_p = $ <strong class="text-indigo-900">' + (2 * Vp).toFixed(0) + ' V</strong></div>',
             ].join('');
             renderMathInElementDynamic('wave-results');
         }
@@ -1664,8 +1652,8 @@
             var alpha = C * I * I;
             var alphaCA = C * I * I;
             document.getElementById('hierro-results').innerHTML =
-                '$ \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I^2 = ' + C.toFixed(1) + ' \\times ' + (I * I).toFixed(2) + ' = $ <strong class="text-yellow-900">' + alpha.toFixed(2) + '</strong> $ \\text{ unidades} $<br>' +
-                '$ \\text{En CA: } \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I_{\\text{ef}}^2 = ' + alphaCA.toFixed(2) + ' \\text{ (mismo resultado con } I_{\\text{ef}}\\text{)} $';
+                '$ \\displaystyle \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I^2 = ' + C.toFixed(1) + ' \\times ' + (I * I).toFixed(2) + ' = $ <strong class="text-yellow-900">' + alpha.toFixed(2) + '</strong> $ \\displaystyle \\text{ unidades} $<br>' +
+                '$ \\displaystyle \\text{En CA: } \\alpha = C \\cdot \\frac{dL}{d\\alpha} \\cdot I_{\\text{ef}}^2 = ' + alphaCA.toFixed(2) + ' \\text{ (mismo resultado con } I_{\\text{ef}}\\text{)} $';
             renderMathInElementDynamic('hierro-results');
         }
     </script>
