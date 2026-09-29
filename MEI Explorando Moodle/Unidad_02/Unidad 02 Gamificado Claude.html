@@ -332,7 +332,7 @@
           <ul class="text-xs text-gray-700 space-y-1">
             <li>→ Voltímetro (tensión)</li>
             <li>→ Amperímetro (corriente)</li>
-            <li>→ Ohmímetro (resistencia)</li>
+            <li>→ Ohmetro (resistencia)</li>
             <li>→ Megóhmetro, mVoltímetro…</li>
           </ul>
         </div>
@@ -498,7 +498,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="space-y-4">
           <div class="info-box">
-            <strong>¿Qué tipo de escala tiene tu instrumento?</strong> Depende del principio físico: los instrumentos magnetoeléctricos tienen escala lineal ($y = x$); los de hierro móvil, cuadrática ($y = x^2$); los medidores de decibeles, logarítmica ($y = \log(x)$); y los ohmímetros, hiperbólica. Las escalas ampliadas son una corrección de las cuadráticas/logarítmicas.
+            <strong>¿Qué tipo de escala tiene tu instrumento?</strong> Depende del principio físico: los instrumentos magnetoeléctricos tienen escala lineal ($y = x$); los de hierro móvil, cuadrática ($y = x^2$); los medidores de decibeles, logarítmica ($y = \log(x)$); y los óhmetros, hiperbólica. Las escalas ampliadas son una corrección de las etroticas/logarítmicas.
           </div>
           <div>
             <label class="slider-label font-semibold">Valor de la magnitud (%): <span id="scale-val" class="text-blue-700 font-bold">60</span>%</label>
@@ -532,7 +532,7 @@
             <div class="bg-rose-50 rounded-xl p-3 border border-rose-200">
               <div class="font-bold text-rose-800 text-sm mb-1">Escala Hiperbólica</div>
               <div class="text-xs text-gray-700 mb-2">
-                Propia del ohmímetro serie. Suele describirse como logarítmica, pero la deflexión sigue una ley hiperbólica:
+                Propia del óhmetro serie. Suele describirse como logarítmica, pero la deflexión setrona ley hiperbólica:
                 $$\frac{\theta}{\theta_{\text{máx}}} = \frac{R_i}{R_i + R_x}$$
                 La escala está invertida ($0\ \Omega$ a la derecha, $\infty$ a la izquierda) y el centro de escala corresponde a $R_x = R_i$. Entre $0{,}1\,R_i$ y $10\,R_i$ se parece a una logarítmica, pero en los extremos se aparta mucho de ella. En esta simulación el slider recorre $R_x$ de $0$ a $10\,R_i$.
               </div>
@@ -665,9 +665,9 @@
               <strong class="text-green-700">3er tercio (67–100%):</strong> El menor error corresponde a la escala cuadrática o ampliada. Zona ideal para las mediciones.
             </div>
             <div class="bg-rose-50 border-l-4 border-rose-500 p-3 rounded-r-xl text-sm">
-              <strong class="text-rose-700">Excepción — escala hiperbólica (ohmímetro):</strong> como $R_x = R_i\,\dfrac{1-d}{d}$, siendo $d$ la posición de la aguja, el error relativo es
+              <strong class="text-rose-700">Excepción — escala hiperbólica (óhmetro):</strong> como $R_x = R_i\,\dfrac{1-d}{d}$, siendo $d$ la posición de la agetrol error relativo es
               $$\frac{\delta R_x}{R_x} = \frac{\delta d}{d\,(1-d)}$$
-              Es mínimo en el <strong>centro de la escala</strong> ($R_x = R_i$) y crece hacia ambos extremos. Por eso en el ohmímetro se elige el rango que deje la lectura cerca del centro.
+              Es mínimo en el <strong>centro de la escala</strong> ($R_x = R_i$) y crece hacia ambos extremos. Por eso en el óhmetro se elige el rango que deje la etroa cerca del centro.
             </div>
           </div>
         </div>
@@ -728,7 +728,7 @@
               <td class="p-3 text-red-600 font-bold">Alto</td>
               <td class="p-3 text-green-600 font-bold">Mínimo (centro) ✓✓</td>
               <td class="p-3 text-red-600 font-bold">Alto</td>
-              <td class="p-3 text-xs text-gray-600">Ohmímetro serie</td>
+              <td class="p-3 text-xs text-gray-etróhmetro serie</td>
             </tr>
           </tbody>
         </table>
@@ -1315,7 +1315,7 @@ var symbolsData = {
   sistema: [
     { icon: function(small) { return magnetoSymbol('single', small); }, label: 'Magnetoeléctrico', desc: 'Bobina móvil e imán permanente. Solo CC. Alta precisión, escala lineal ($y = x$). El instrumento más común para laboratorio.', note: 'Símbolo: imán en herradura con una bobina rectangular entre las puntas' },
     { icon: function(small) { return magnetoSymbol('double', small); }, label: 'Magnetoeléctrico o diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares apiladas' },
-    { icon: function(small) { return magnetoSymbol('cross', small); }, label: 'Cocientímetro magnetoeléctrico', desc: 'Dos bobinas cruzadas e imán permanente. Usado en ohmímetros de relación.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares cruzadas' },
+    { icon: function(small) { return magnetoSymbol('cross', small); }, label: 'Cocientímetro magnetoeléctrico', desc: 'Dos bobinas cruzadas e imán permanente. Usado en óhmetros de relación.', note: 'Símbolo: imán en herradura con dos bobinas retroulares cruzadas' },
     { icon: movingMagnetFixedCoilSymbol, label: 'Imán móvil, bobina fija', desc: 'El elemento móvil es un imán dentro de una bobina fija. Mide CA y CC.', note: 'Símbolo: imán móvil vertical con bobina fija y bornes laterales' },
     { icon: function(small) { return ferromagneticSymbol('single', small); }, label: 'Hierro móvil (ferromagnético)', desc: 'Bobina fija y núcleo de hierro móvil. Usado en CA. Escala cuadrática ($y = x^2$).', note: 'Símbolo: núcleo vertical dentro de una bobina fija' },
     { icon: fixedMagnetIronSymbol, label: 'Hierro móvil + imán fijo', desc: 'Hierro móvil con bobina e imán fijos. Variante del ferromagnético.', note: 'Símbolo: imán fijo en herradura con hierro móvil y bobina' },
@@ -1619,7 +1619,7 @@ function updateScaleSim() {
   if (scaleChartInst) { scaleChartInst.update('none'); }
 }
 
-// Escala hiperbólica (ohmímetro serie): el slider recorre R_x de 0 a 10·R_i,
+// Escala hiperbólica (óhmetro serie): el slider retro R_x de 0 a 10·R_i,
 // y la aguja se ubica en θ/θmáx = R_i / (R_i + R_x) = 1 / (1 + R_x/R_i)
 function hyperbolicPos(x) {
   return 100 / (1 + x / 10);
@@ -1669,7 +1669,7 @@ function errLogaritmica(x) {
 }
 
 function errHiperbolica(x) {
-  // Escala hiperbólica (ohmímetro serie): R_x = R_i·(1 − d)/d, con d = x/100
+  // Escala hiperbólica (óhmetro serie): R_x = R_ietrod)/d, con d = x/100
   // Con el mismo error de posición que la uniforme (δd = 1 % del fondo de escala):
   // δR_x/R_x = δd / (d·(1 − d)) → mínimo (4 %) en el centro, crece hacia ambos extremos
   if (x <= 0.5 || x >= 99.5) return 10000;
@@ -1779,8 +1779,8 @@ function updateErrorSector() {
   var advice = x < 33
     ? { text: 'Zona baja — ¡Evitar! Cambiar a una escala de menor fondo de escala.', cls: 'bg-red-100 text-red-800 border border-red-300' }
     : x < 67
-    ? { text: 'Zona media — Aceptable. La escala lineal es mejor aquí, y la hiperbólica (ohmímetro) tiene su mínimo en el centro.', cls: 'bg-yellow-100 text-yellow-800 border border-yellow-300' }
-    : { text: 'Zona óptima — Errores mínimos en todas las escalas, salvo la hiperbólica (ohmímetro), cuyo error vuelve a crecer hacia el final.', cls: 'bg-green-100 text-green-800 border border-green-300' };
+    ? { text: 'Zona media — Aceptable. La escala lineal es mejor aquí, y la hiperbólica (óhmetro) tiene su mínimo en el centro.', cls: 'bg-yellow-100 text-yellow-800 boetroorder-yellow-300' }
+    : { text: 'Zona óptima — Errores mínimos en todas las escalas, salvo la hiperbólica (óhmetro), cuyo error vuelve a crecer hacia el final.', cls: 'bg-green-100 text-green-800 boetroorder-green-300' };
 
   var adv = document.getElementById('sector-advice');
   adv.textContent = advice.text;
