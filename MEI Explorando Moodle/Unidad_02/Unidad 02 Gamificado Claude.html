@@ -88,7 +88,7 @@
     <div class="flex items-start gap-3">
       <div>
         <h2 class="font-bold text-lg text-gray-800 mb-1">¿Qué dice realmente tu instrumento?</h2>
-        <p class="text-gray-600 text-sm">Un voltímetro de clase 2,5 con escala de 500 V te indica 320 V. ¿Cuánto confías en esa lectura? ¿Importa en qué zona de la escala está la aguja? ¿Qué significan los símbolos del cuadrante? En esta unidad lo descubrirás a través de simulaciones y exploraciones interactivas.</p>
+        <p class="text-gray-600 text-sm">Un voltímetro de clase 2,5 con escala de 500 V te indica 320 V. ¿Cuánto confiás en esa lectura? ¿Importa en qué zona de la escala está la aguja? ¿Qué significan los símbolos del cuadrante? En esta unidad lo descubrirás a través de simulaciones y exploraciones interactivas.</p>
       </div>
     </div>
   </div>
@@ -261,7 +261,7 @@
                 <input type="range" id="res-a-slider" min="10" max="500" value="100" step="10" class="w-full" oninput="updateResSim()">
               </div>
               <div>
-                <label class="slider-label font-semibold">Resolución absoluta ($\text{Res}_{\text{abs}}$): <span id="res-abs-val" class="text-green-700 font-bold">0.5</span> V</label>
+                <label class="slider-label font-semibold">Resolución absoluta ($\text{Res}_{\text{abs}}$): <span id="res-abs-val" class="text-green-700 font-bold">0,5</span> V</label>
                 <input type="range" id="res-abs-slider" min="0.1" max="10" value="0.5" step="0.1" class="w-full" oninput="updateResSim()">
               </div>
               <div>
@@ -297,7 +297,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div class="space-y-3">
             <div>
-              <label class="slider-label font-semibold">Valor real de la magnitud: <span id="res-real-val" class="text-green-700 font-bold">43.27</span> V</label>
+              <label class="slider-label font-semibold">Valor real de la magnitud: <span id="res-real-val" class="text-green-700 font-bold">43,27</span> V</label>
               <input type="range" id="res-real-slider" min="0" max="100" value="43.27" step="0.01" class="w-full" oninput="updateResStairs()">
             </div>
             <div id="res-stairs-result" class="formula-box text-sm" style="line-height:2.2;"></div>
@@ -332,7 +332,7 @@
           <ul class="text-xs text-gray-700 space-y-1">
             <li>→ Voltímetro (tensión)</li>
             <li>→ Amperímetro (corriente)</li>
-            <li>→ Ohmetro (resistencia)</li>
+            <li>→ Óhmetro (resistencia)</li>
             <li>→ Megóhmetro (resistencia de aislación)</li>
           </ul>
         </div>
@@ -498,7 +498,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="space-y-4">
           <div class="info-box">
-            <strong>¿Qué tipo de escala tiene tu instrumento?</strong> Depende del principio físico: los instrumentos magnetoeléctricos tienen escala lineal ($y = x$); los de hierro móvil, cuadrática ($y = x^2$); los medidores de decibeles, logarítmica ($y = \log(x)$); y los óhmetros, hiperbólica. Las escalas ampliadas son una corrección de las cuadrátas/logarítmicas.
+            <strong>¿Qué tipo de escala tiene tu instrumento?</strong> Depende del principio físico: los instrumentos magnetoeléctricos tienen escala lineal ($y = x$); los de hierro móvil, cuadrática ($y = x^2$); los medidores de decibeles, logarítmica ($y = \log(x)$); y los óhmetros, hiperbólica. Las escalas ampliadas son una corrección de las cuadráticas/logarítmicas.
           </div>
           <div>
             <label class="slider-label font-semibold">Valor de la magnitud (%): <span id="scale-val" class="text-blue-700 font-bold">60</span>%</label>
@@ -541,7 +541,7 @@
               </div>
               <div class="flex justify-between text-xs text-rose-700 mt-1">
                 <span>$\infty$</span>
-                <span>$R_x / R_i =$ <span id="hyp-rx">6.0</span> · Posición aguja: <span id="pos-hyp">14.3</span>%</span>
+                <span>$R_x / R_i =$ <span id="hyp-rx">6,0</span> · Posición aguja: <span id="pos-hyp">14,3</span>%</span>
                 <span>$0\ \Omega$</span>
               </div>
             </div>
@@ -596,7 +596,7 @@
         <strong>Solución del fabricante:</strong> espejo detrás de la escala. Si se puede ver el reflejo de la aguja, el ángulo de visión no es perpendicular → leer nuevamente.
       </div>
       <div class="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm">
-        <strong>Acuidad visiva:</strong> el ojo humano puede discriminar a 30 cm una separación mínima de <strong>0,1 mm</strong> entre marcas de la escala.
+        <strong>Agudeza visual:</strong> el ojo humano puede discriminar a 30 cm una separación mínima de <strong>0,1 mm</strong> entre marcas de la escala.
       </div>
     </div>
   </div>
@@ -659,7 +659,7 @@
               <strong class="text-red-700">1er tercio (0–33%):</strong> Errores muy altos en todos los tipos. Las indicaciones en este tramo deben descartarse o evitarse.
             </div>
             <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-xl text-sm">
-              <strong class="text-yellow-700">2do tercio (33–67%):</strong> La escala lineal aventaja a la cuadrática y ampliada. Error moderado pero aceptable con el instrumento correcto.
+              <strong class="text-yellow-700">2do tercio (33–67%):</strong> La escala lineal aventaja a la cuadrática y a la ampliada. Error moderado pero aceptable con el instrumento correcto.
             </div>
             <div class="bg-green-50 border-l-4 border-green-500 p-3 rounded-r-xl text-sm">
               <strong class="text-green-700">3er tercio (67–100%):</strong> El menor error corresponde a la escala cuadrática o ampliada. Zona ideal para las mediciones.
@@ -667,7 +667,7 @@
             <div class="bg-rose-50 border-l-4 border-rose-500 p-3 rounded-r-xl text-sm">
               <strong class="text-rose-700">Excepción — escala hiperbólica (óhmetro):</strong> como $R_x = R_i\,\dfrac{1-d}{d}$, siendo $d$ la posición de la aguja, el error relativo es
               $$\frac{\delta R_x}{R_x} = \frac{\delta d}{d\,(1-d)}$$
-              Es mínimo en el <strong>centro de la escala</strong> ($R_x = R_i$) y crece hacia ambos extremos. Por eso en el óhmetro se elige el rango que deje la lecturaerca del centro.
+              Es mínimo en el <strong>centro de la escala</strong> ($R_x = R_i$) y crece hacia ambos extremos. Por eso en el óhmetro se elige el rango que deje la lectura cerca del centro.
             </div>
           </div>
         </div>
@@ -728,7 +728,7 @@
               <td class="p-3 text-red-600 font-bold">Alto</td>
               <td class="p-3 text-green-600 font-bold">Mínimo (centro) ✓✓</td>
               <td class="p-3 text-red-600 font-bold">Alto</td>
-              <td class="p-3 text-xs text-gray-600">Ohmetro serie</td>
+              <td class="p-3 text-xs text-gray-600">Óhmetro serie</td>
             </tr>
           </tbody>
         </table>
@@ -751,6 +751,9 @@
 // =============================================
 // TAB SWITCHING
 // =============================================
+// Rótulos de ejes de los gráficos con coma decimal
+Chart.defaults.locale = 'es-AR';
+
 function switchTab(id) {
   document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
@@ -797,7 +800,7 @@ function updateClaseSim() {
   if (!claseClasses.includes(C)) C = 1;
 
   var deltaX = (A * C) / 100;
-  var errRel = (deltaX / X * 100).toFixed(1);
+  var errRel = numTex(deltaX / X * 100, 1);
   var pctEscala = (X / A * 100).toFixed(0);
 
   var sector = pct < 0.33 ? 'red' : pct < 0.67 ? 'yellow' : 'green';
@@ -808,12 +811,12 @@ function updateClaseSim() {
     : 'Zona óptima — errores mínimos para este instrumento.';
 
   var html = [
-    '<div class="formula-box">$\\text{CLASE} = ' + C + ' \\qquad A = ' + A + '\\text{ unidades}$</div>',
+    '<div class="formula-box">$\\text{CLASE} = ' + numTex(C) + ' \\qquad A = ' + A + '\\text{ unidades}$</div>',
     '<div class="bg-blue-50 rounded-xl p-3 border border-blue-200 space-y-1">',
     '<div class="text-sm"><strong>Error absoluto máximo:</strong></div>',
-    '<div class="formula-box text-lg text-center">$$\\Delta X = \\frac{A \\times C}{100} = \\frac{' + A + ' \\times ' + C + '}{100} = \\mathbf{' + deltaX.toFixed(2) + '}\\text{ unidades}$$</div>',
-    '<div class="text-sm mt-2"><strong>Lectura:</strong> $X = ' + X + ' \\pm ' + deltaX.toFixed(2) + '\\text{ unidades}$</div>',
-    '<div class="text-sm"><strong>Valor verdadero:</strong> $' + (X - deltaX).toFixed(1) + ' \\le X_v \\le ' + (X + deltaX).toFixed(1) + '$</div>',
+    '<div class="formula-box text-lg text-center">$$\\Delta X = \\frac{A \\times C}{100} = \\frac{' + A + ' \\times ' + numTex(C) + '}{100} = \\mathbf{' + numTex(deltaX, 2) + '}\\text{ unidades}$$</div>',
+    '<div class="text-sm mt-2"><strong>Lectura:</strong> $X = ' + X + ' \\pm ' + numTex(deltaX, 2) + '\\text{ unidades}$</div>',
+    '<div class="text-sm"><strong>Valor verdadero:</strong> $' + numTex(X - deltaX, 1) + ' \\le X_v \\le ' + numTex(X + deltaX, 1) + '$</div>',
     '<div class="text-sm"><strong>Error relativo en esta lectura:</strong> <span class="font-bold text-red-700">$\\displaystyle e_r = \\frac{\\Delta X}{X} \\times 100 = ' + errRel + '\\,\\%$</span></div>',
     '<div class="text-sm"><strong>Posición en escala:</strong> $\\displaystyle \\frac{X}{A} \\times 100 = ' + pctEscala + '\\,\\%$</div>',
     '</div>',
@@ -833,7 +836,7 @@ function updateClaseSim() {
   var markerErr = deltaX / X * 100;
   var markerColor = sector === 'red' ? '#dc2626' : sector === 'yellow' ? '#ca8a04' : '#16a34a';
   var marker = [{ x: markerPos, y: Math.min(markerErr, yMax), real: markerErr }];
-  var title = 'Error relativo según posición de lectura (Clase ' + C + ')';
+  var title = 'Error relativo según posición de lectura (Clase ' + numText(C) + ')';
 
   if (claseChartInst) {
     claseChartInst.data.datasets[0].data = curve;
@@ -881,7 +884,7 @@ function updateClaseSim() {
           callbacks: {
             label: function(item) {
               var d = item.raw;
-              return 'Posición ' + d.x.toFixed(1) + '% → error ' + d.real.toFixed(2) + '%';
+              return 'Posición ' + numText(d.x, 1) + '% → error ' + numText(d.real, 2) + '%';
             }
           }
         }
@@ -915,7 +918,7 @@ function updateSensSim() {
   var di = parseInt(document.getElementById('di-slider').value);
   document.getElementById('dm-val').textContent = dm;
   document.getElementById('di-val').textContent = di;
-  var S = (di / dm).toFixed(3);
+  var S = numTex(di / dm, 3);
   document.getElementById('sens-result').innerHTML =
     '$$S = \\frac{\\Delta i}{\\Delta M} = \\frac{' + di + '}{' + dm + '} = \\mathbf{' + S + '} \\text{ mm/mA}$$';
   if (typeof renderMathInElement !== 'undefined') renderMathInElement(document.getElementById('sens-result'));
@@ -1014,12 +1017,12 @@ function updateResSim() {
   var abs = parseFloat(document.getElementById('res-abs-slider').value);
   var divs = parseInt(document.getElementById('res-div-slider').value);
   document.getElementById('res-a-val').textContent = A;
-  document.getElementById('res-abs-val').textContent = abs.toFixed(1);
+  document.getElementById('res-abs-val').textContent = numText(abs, 1);
   document.getElementById('res-div-val').textContent = divs;
-  var pct = (abs / A * 100).toFixed(3);
-  var divSize = (A / divs).toFixed(3);
+  var pct = numTex(abs / A * 100, 3);
+  var divSize = numTex(A / divs, 3);
   var resultsHTML = '<div class="space-y-3" style="line-height:2.4;">' +
-    '<div>Resolución relativa: $\\displaystyle \\text{Res}(\\%) = \\frac{' + abs.toFixed(1) + '}{' + A + '} \\times 100 = ' + pct + '\\,\\%$</div>' +
+    '<div>Resolución relativa: $\\displaystyle \\text{Res}(\\%) = \\frac{' + numTex(abs, 1) + '}{' + A + '} \\times 100 = ' + pct + '\\,\\%$</div>' +
     '<div>Tamaño de cada división: $\\displaystyle \\frac{A}{N} = \\frac{' + A + '}{' + divs + '} = ' + divSize + '\\text{ V}$</div>' +
     '<div>Lecturas distinguibles: $\\displaystyle \\frac{A}{\\text{Res}_{\\text{abs}}} \\approx ' + Math.round(A / abs) + '$</div>' +
     '</div>';
@@ -1041,7 +1044,7 @@ function updateResStairs() {
   var quant = function(x) { return Math.min(A, Math.round(x / res) * res); };
   var lectura = quant(v);
   var errQ = lectura - v;
-  document.getElementById('res-real-val').textContent = v.toFixed(2);
+  document.getElementById('res-real-val').textContent = numText(v, 2);
 
   // Ventana ampliada de ~10 escalones alrededor del valor real
   var width = Math.min(A, 10 * res);
@@ -1062,10 +1065,10 @@ function updateResStairs() {
   var marker = [{ x: v, y: lectura }];
 
   document.getElementById('res-stairs-result').innerHTML =
-    '<div>Valor real: $' + v.toFixed(2) + '\\text{ V}$</div>' +
-    '<div>Lectura: $' + lectura.toFixed(1) + '\\text{ V}$</div>' +
-    '<div>Error de cuantización: $' + (errQ >= 0 ? '+' : '') + errQ.toFixed(2) + '\\text{ V}$</div>' +
-    '<div class="text-xs text-gray-600">Máximo posible: $\\pm\\dfrac{\\text{Res}_{\\text{abs}}}{2} = \\pm' + (res / 2).toFixed(2) + '\\text{ V}$</div>';
+    '<div>Valor real: $' + numTex(v, 2) + '\\text{ V}$</div>' +
+    '<div>Lectura: $' + numTex(lectura, 1) + '\\text{ V}$</div>' +
+    '<div>Error de cuantización: $' + (errQ >= 0 ? '+' : '') + numTex(errQ, 2) + '\\text{ V}$</div>' +
+    '<div class="text-xs text-gray-600">Máximo posible: $\\pm\\dfrac{\\text{Res}_{\\text{abs}}}{2} = \\pm' + numTex(res / 2, 2) + '\\text{ V}$</div>';
   renderMathNode(document.getElementById('res-stairs-result'));
 
   if (resStairsChartInst) {
@@ -1096,7 +1099,7 @@ function updateResStairs() {
         legend: { position: 'top' },
         tooltip: {
           filter: function(item) { return item.datasetIndex === 2; },
-          callbacks: { label: function(item) { return 'Real ' + item.raw.x.toFixed(2) + ' V → lectura ' + item.raw.y.toFixed(1) + ' V'; } }
+          callbacks: { label: function(item) { return 'Real ' + numText(item.raw.x, 2) + ' V → lectura ' + numText(item.raw.y, 1) + ' V'; } }
         }
       },
       scales: {
@@ -1299,6 +1302,15 @@ function renderIcon(icon, small) {
   return icon;
 }
 
+// Coma decimal (SI / SIMELA): numText para texto plano, numTex para fórmulas KaTeX
+// ({,} evita que KaTeX agregue un espacio después de la coma)
+function numText(v, dec) {
+  return (dec === undefined ? String(v) : Number(v).toFixed(dec)).replace('.', ',');
+}
+function numTex(v, dec) {
+  return numText(v, dec).replace(',', '{,}');
+}
+
 function renderMathNode(el) {
   if (typeof renderMathInElement === 'undefined' || !el) return;
   renderMathInElement(el, {
@@ -1314,8 +1326,8 @@ function renderMathNode(el) {
 var symbolsData = {
   sistema: [
     { icon: function(small) { return magnetoSymbol('single', small); }, label: 'Magnetoeléctrico', desc: 'Bobina móvil e imán permanente. Solo CC. Alta precisión, escala lineal ($y = x$). El instrumento más común para laboratorio.', note: 'Símbolo: imán en herradura con una bobina rectangular entre las puntas' },
-    { icon: function(small) { return magnetoSymbol('double', small); }, label: 'Magnetoeléctrico o diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares apiladas' },
-    { icon: function(small) { return magnetoSymbol('cross', small); }, label: 'Cocientímetro magnetoeléctrico', desc: 'Dos bobinas cruzadas e imán permanente. Usado en óhmetros de relación.', note: 'Símbolo: imán en herradura con dos bobinas rectangures cruzadas' },
+    { icon: function(small) { return magnetoSymbol('double', small); }, label: 'Magnetoeléctrico diferencial', desc: 'Dos bobinas móviles e imán permanente. Permite medir diferencias de corriente.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares apiladas' },
+    { icon: function(small) { return magnetoSymbol('cross', small); }, label: 'Cocientímetro magnetoeléctrico', desc: 'Dos bobinas cruzadas e imán permanente. Usado en óhmetros de relación.', note: 'Símbolo: imán en herradura con dos bobinas rectangulares cruzadas' },
     { icon: movingMagnetFixedCoilSymbol, label: 'Imán móvil, bobina fija', desc: 'El elemento móvil es un imán dentro de una bobina fija. Mide CA y CC.', note: 'Símbolo: imán móvil vertical con bobina fija y bornes laterales' },
     { icon: function(small) { return ferromagneticSymbol('single', small); }, label: 'Hierro móvil (ferromagnético)', desc: 'Bobina fija y núcleo de hierro móvil. Usado en CA. Escala cuadrática ($y = x^2$).', note: 'Símbolo: núcleo vertical dentro de una bobina fija' },
     { icon: fixedMagnetIronSymbol, label: 'Hierro móvil + imán fijo', desc: 'Hierro móvil con bobina e imán fijos. Variante del ferromagnético.', note: 'Símbolo: imán fijo en herradura con hierro móvil y bobina' },
@@ -1411,7 +1423,8 @@ function updateDecoder() {
   var posicion = document.getElementById('dec-posicion').value;
   var tension = document.getElementById('dec-tension').value;
 
-  var claseVal = claseDecoderLabels[claseIdx] || 1.5;
+  var claseNum = claseDecoderLabels[claseIdx] || 1.5;
+  var claseVal = numText(claseNum);
   document.getElementById('dec-clase-val').textContent = claseVal;
 
   var sistMap = { magneto: { icon: function(small) { return magnetoSymbol('single', small); }, name: 'Magnetoeléctrico (bobina móvil + imán permanente)' }, ferro: { icon: function(small) { return ferromagneticSymbol('single', small); }, name: 'Ferromagnético (hierro móvil + bobina fija)' }, electro: { icon: electrodynamicSymbol, name: 'Electrodinámico (sin hierro)' }, induccion: { icon: inductionSymbol, name: 'Inductivo' }, electrostat: { icon: electrostaticSymbol, name: 'Electrostático' } };
@@ -1431,7 +1444,7 @@ function updateDecoder() {
     '<div>① <strong>' + renderIcon(s.icon, true) + '</strong> → ' + s.name + '</div>',
     '<div>② <strong>' + renderIcon(c.icon, true) + '</strong> → ' + c.name + '</div>',
     '<div>③ <strong>' + renderIcon(p.icon, true) + '</strong> → ' + p.name + '</div>',
-    '<div>④ <strong>' + claseVal + '</strong> → Clase de exactitud ' + claseVal + ' (error máx. $\\pm ' + claseVal + '\\,\\%$ del fondo de escala)</div>',
+    '<div>④ <strong>' + claseVal + '</strong> → Clase de exactitud ' + claseVal + ' (error máx. $\\pm ' + numTex(claseNum) + '\\,\\%$ del fondo de escala)</div>',
     '<div>⑤ <strong>' + renderIcon(t.icon, true) + '</strong> → ' + t.name + '</div>',
   ].join('');
   renderMathNode(document.getElementById('decoder-meaning'));
@@ -1607,12 +1620,12 @@ function updateScaleSim() {
   var hyp = hyperbolicPos(val);
   setNeedle('needle-hyp', hyp);
 
-  document.getElementById('pos-linear').textContent = lin.toFixed(1);
-  document.getElementById('pos-quad').textContent = quad.toFixed(1);
-  document.getElementById('pos-log').textContent = log10.toFixed(1);
-  document.getElementById('pos-amp').textContent = amp.toFixed(1);
-  document.getElementById('pos-hyp').textContent = hyp.toFixed(1);
-  document.getElementById('hyp-rx').textContent = (val / 10).toFixed(1);
+  document.getElementById('pos-linear').textContent = numText(lin, 1);
+  document.getElementById('pos-quad').textContent = numText(quad, 1);
+  document.getElementById('pos-log').textContent = numText(log10, 1);
+  document.getElementById('pos-amp').textContent = numText(amp, 1);
+  document.getElementById('pos-hyp').textContent = numText(hyp, 1);
+  document.getElementById('hyp-rx').textContent = numText(val / 10, 1);
 
   // Línea vertical del gráfico en el valor actual
   window.scaleMarkerPos = val;
@@ -1669,7 +1682,7 @@ function errLogaritmica(x) {
 }
 
 function errHiperbolica(x) {
-  // Escala hiperbólica (óhmetro serie): R_x = R_i·(1 − dd, con d = x/100
+  // Escala hiperbólica (óhmetro serie): R_x = R_i·(1 − d)/d, con d = x/100
   // Con el mismo error de posición que la uniforme (δd = 1 % del fondo de escala):
   // δR_x/R_x = δd / (d·(1 − d)) → mínimo (4 %) en el centro, crece hacia ambos extremos
   if (x <= 0.5 || x >= 99.5) return 10000;
@@ -1768,7 +1781,7 @@ function updateErrorSector() {
   }
 
   var eu = errUniforme(x), ec = errCuadratica(x), ea = errAmpliada(x), el = errLogaritmica(x), eh = errHiperbolica(x);
-  var fmt = function(v) { return v >= 99 ? 'Muy alto ⚠️' : (v > 0.5 ? v.toFixed(2) + ' (mod.)' : v.toFixed(3) + ' (bajo ✓)'); };
+  var fmt = function(v) { return v >= 99 ? 'Muy alto ⚠️' : (v > 0.5 ? numText(v, 2) + ' (mod.)' : numText(v, 3) + ' (bajo ✓)'); };
 
   document.getElementById('err-uniforme').textContent = fmt(eu);
   document.getElementById('err-cuadratica').textContent = fmt(ec);
@@ -1777,10 +1790,10 @@ function updateErrorSector() {
   document.getElementById('err-hiperbolica').textContent = fmt(eh);
 
   var advice = x < 33
-    ? { text: 'Zona baja — ¡Evitar! Cambiar a una escala de menor fondo de escala.', cls: 'bg-red-100 text-red-800 border border-red-300' }
+    ? { text: 'Zona baja — ¡Evitar! Cambiar a un rango de menor fondo de escala.', cls: 'bg-red-100 text-red-800 border border-red-300' }
     : x < 67
-    ? { text: 'Zona media — Aceptable. La escala lineal es mejor aquí, y la hiperbólica (óhmetro) tiene su mínimo en el centro.', cls: 'bg-yellow-100 text-yellow-800 border boer-yellow-300' }
-    : { text: 'Zona óptima — Errores mínimos en todas las escalas, salvo la hiperbólica (óhmetro), cuyo error vuelve a crecer hacia el final.', cls: 'bg-green-100 text-green-800 border boer-green-300' };
+    ? { text: 'Zona media — Aceptable. La escala lineal es mejor aquí, y la hiperbólica (óhmetro) tiene su mínimo en el centro.', cls: 'bg-yellow-100 text-yellow-800 border border-yellow-300' }
+    : { text: 'Zona óptima — Errores mínimos en todas las escalas, salvo la hiperbólica (óhmetro), cuyo error vuelve a crecer hacia el final.', cls: 'bg-green-100 text-green-800 border border-green-300' };
 
   var adv = document.getElementById('sector-advice');
   adv.textContent = advice.text;
