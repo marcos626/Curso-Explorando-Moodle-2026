@@ -26,3 +26,5 @@
 !/MEI Explorando Moodle/Unidad_12/
 
 
+# No sincronizar archivos PDF
+*.pdf

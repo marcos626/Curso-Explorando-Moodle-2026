@@ -39,21 +39,17 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   
-  /* Digital Display Font Simulation */
-  @font-face {
-    font-family: 'DSEG7';
-    src: url('https://cdn.jsdelivr.net/gh/keshikan/DSEG@v0.46/fonts/DSEG7-Classic/DSEG7Classic-Regular.woff2') format('woff2');
-  }
+  /* Display LCD de 7 segmentos (SVG) */
   .lcd-display {
-    font-family: 'DSEG7', 'Courier New', monospace;
     background-color: #a3c2a3; /* Typical LCD green/gray */
-    color: #2d372d;
-    text-shadow: 1px 1px 0px rgba(255,255,255,0.2);
     border: inset 4px #7a8c7a;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
   }
-  .lcd-bg { opacity: 0.1; position: absolute; left: 0; top: 0; z-index: 1; letter-spacing: inherit; }
-  .lcd-fg { position: relative; z-index: 2; letter-spacing: inherit; }
+  .lcd-display svg { width: 100%; height: auto; display: block; }
+  .seg { fill: #2d372d; opacity: 0.08; transition: opacity 0.08s; }
+  .seg.on { opacity: 0.92; }
+  .lcd-label { fill: #2d372d; font: bold 13px Arial, Helvetica, sans-serif; opacity: 0.85; }
+  .lcd-label.off { opacity: 0.08; }
 
   @media (max-width: 640px) {
     .chart-wrap { min-height: 200px; }
@@ -79,7 +75,6 @@
 <div class="max-w-6xl mx-auto px-3 mb-4">
   <div class="card p-4 border-l-4 border-blue-500">
     <div class="flex items-start gap-3">
-      <span class="text-3xl">🔌</span>
       <div>
         <h2 class="font-bold text-lg text-gray-800 mb-1">Del mundo analógico al universo digital</h2>
         <p class="text-gray-600 text-sm">¿Qué sucede realmente dentro de un multímetro cuando mides una tensión? El mundo real es analógico y continuo, pero nuestros instrumentos digitales procesan "unos y ceros". Explora cómo los instrumentos pasivos evolucionaron a activos, cómo funciona la pantalla de tu tester y cómo se digitaliza una señal mediante los conversores A/D.</p>
@@ -90,25 +85,25 @@
 
 <div class="max-w-6xl mx-auto px-3 mb-4">
   <div class="flex flex-wrap gap-2">
-    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-comparacion')">⚖️ Analógico vs Digital</button>
-    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-display')">🔢 Cuentas y Dígitos</button>
-    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ad')">🌊 Simulador A/D</button>
-    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-conversores')">⚙️ Tipos de Conversores</button>
-    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-error')">📏 Calculadora de Exactitud</button>
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-comparacion')">Analógico vs Digital</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-display')">Cuentas y Dígitos</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ad')">Simulador A/D</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-conversores')">Tipos de Conversores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-error')">Calculadora de Exactitud</button>
   </div>
 </div>
 
 <div id="tab-comparacion" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">⚖️ Clasificación y Comparación de Instrumentos</h2>
+      <h2 class="text-lg font-bold">Clasificación y Comparación de Instrumentos</h2>
       <p class="text-sm opacity-80 mt-1">Instrumentos Pasivos vs Activos, y las diferencias fundamentales entre tecnologías analógicas y digitales.</p>
     </div>
     <div class="p-5">
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
-          <h3 class="font-bold text-amber-800 text-lg mb-2">🧭 Instrumentos Analógicos</h3>
+          <h3 class="font-bold text-amber-800 text-lg mb-2">Instrumentos Analógicos</h3>
           <p class="text-sm text-gray-700 mb-3">Utilizan y expresan información analógica (función matemática continua). Usan mecanismos electromecánicos (cuadro móvil).</p>
           
           <div class="space-y-2 mb-3">
@@ -128,7 +123,7 @@
         </div>
 
         <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
-          <h3 class="font-bold text-blue-800 text-lg mb-2">📟 Instrumentos Digitales</h3>
+          <h3 class="font-bold text-blue-800 text-lg mb-2">Instrumentos Digitales</h3>
           <p class="text-sm text-gray-700 mb-3">Toman información analógica, la convierten a digital, la procesan mediante álgebra de Boole y presentan un resultado numérico.</p>
 
           <div class="space-y-2 mb-3">
@@ -160,7 +155,7 @@
 <div id="tab-display" class="tab-content max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">🔢 Multímetro Interactivo: Entendiendo el "Medio Dígito"</h2>
+      <h2 class="text-lg font-bold">Multímetro Interactivo: Entendiendo el "Medio Dígito"</h2>
       <p class="text-sm opacity-80 mt-1">¿Qué significa que un display tiene 3 ½ dígitos o es de "2000 cuentas"?</p>
     </div>
     <div class="p-5">
@@ -176,7 +171,7 @@
             <input type="range" id="voltaje-slider" min="0" max="2500" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updateDisplaySim()">
             <div class="flex justify-between text-xs text-gray-500 mt-1">
               <span>0 mV</span>
-              <span class="font-bold text-red-600">⚠ OL: Sobrecarga &gt;1999 mV</span>
+              <span class="font-bold text-red-600">OL: Sobrecarga &gt;1999 mV</span>
               <span>2500 mV</span>
             </div>
           </div>
@@ -189,13 +184,9 @@
         <div class="flex flex-col items-center justify-center bg-gray-900 p-8 rounded-xl border-4 border-gray-700 shadow-inner">
           <div class="text-gray-300 text-xs mb-2 font-bold tracking-widest w-full text-left">RANGO: 2000mV DC</div>
           
-          <div class="lcd-display p-4 rounded text-5xl sm:text-7xl font-bold relative flex items-end justify-end w-full max-w-[300px] h-[100px] sm:h-[120px] overflow-hidden">
-            <div class="lcd-bg flex absolute right-4">
-              <span>1</span><span>8</span><span>8</span><span>8</span>
-            </div>
-            <div class="lcd-fg flex tracking-widest" id="lcd-text">
-              000
-            </div>
+          <div class="lcd-display p-3 rounded w-full max-w-[340px]" id="lcd-svg"></div>
+          <div class="flex justify-between w-full max-w-[340px] text-[10px] text-gray-500 mt-1 px-3 font-mono">
+            <span>½ dígito</span><span>dígitos completos (0–9)</span>
           </div>
           
           <div class="text-gray-400 text-xs mt-2 font-mono" id="display-status">Lectura normal</div>
@@ -209,7 +200,7 @@
 <div id="tab-ad" class="tab-content max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">🌊 Simulador de Conversión Analógica a Digital (A/D)</h2>
+      <h2 class="text-lg font-bold">Simulador de Conversión Analógica a Digital (A/D)</h2>
       <p class="text-sm opacity-80 mt-1">Muestreo (Sampling) + Cuantificación (Quantization) + Codificación.</p>
     </div>
     <div class="p-4">
@@ -238,7 +229,7 @@
           </div>
 
           <div class="mt-3 p-3 bg-yellow-50 border border-yellow-300 rounded-lg text-xs text-yellow-900">
-            <strong>⚠️ Teorema de Nyquist-Shannon:</strong><br>
+            <strong>Teorema de Nyquist-Shannon:</strong><br>
             La frecuencia de muestreo debe ser al menos el <strong>doble</strong> de la frecuencia máxima de la señal: $f_s \geq 2 \cdot f_{max}$.<br>
             Por debajo de ese límite ocurre el <em>aliasing</em> (distorsión irreversible).
           </div>
@@ -246,7 +237,7 @@
         
         <div class="lg:col-span-2">
           <div id="nyquist-warn" class="hidden mb-2 p-2 bg-red-100 border border-red-400 text-red-800 text-xs font-bold rounded">
-            🚨 ¡Aliasing! La frecuencia de muestreo es demasiado baja. La señal reconstruida no representa la original (viola el Teorema de Nyquist).
+            ¡Aliasing! La frecuencia de muestreo es demasiado baja. La señal reconstruida no representa la original (viola el Teorema de Nyquist).
           </div>
           <div class="chart-wrap bg-white border rounded" style="min-height: 320px;">
             <canvas id="adcChart"></canvas>
@@ -261,7 +252,7 @@
 <div id="tab-conversores" class="tab-content max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">⚙️ Tipos de Conversores A/D</h2>
+      <h2 class="text-lg font-bold">Tipos de Conversores A/D</h2>
       <p class="text-sm opacity-80 mt-1">Diferentes técnicas de conversión. Haz clic en las tarjetas para ver sus características.</p>
     </div>
     <div class="p-5">
@@ -301,7 +292,7 @@
 <div id="tab-error" class="tab-content max-w-6xl mx-auto px-3 mb-8">
   <div class="card overflow-hidden mb-4">
     <div class="section-header">
-      <h2 class="text-lg font-bold">📏 Especificaciones y Calculadora de Exactitud</h2>
+      <h2 class="text-lg font-bold">Especificaciones y Calculadora de Exactitud</h2>
       <p class="text-sm opacity-80 mt-1">El error total de un instrumento digital depende del rango seleccionado y la lectura actual.</p>
     </div>
     <div class="p-5">
@@ -321,17 +312,23 @@
         </div>
 
         <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
-          <h3 class="font-bold text-gray-800 mb-4">🧮 Calculadora de Error</h3>
+          <h3 class="font-bold text-gray-800 mb-4">Calculadora de Error</h3>
           
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Valor Medido (Lectura)</label>
-              <input type="number" id="calc-lectura" value="35" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
+              <input type="number" id="calc-lectura" value="1.5" step="0.1" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1">Fondo de Escala (Rango)</label>
-              <input type="number" id="calc-rango" value="200" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
+              <input type="number" id="calc-rango" value="5" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
             </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-gray-600 mb-1">Cuentas del display</label>
+            <input type="number" id="calc-cuentas" value="5000" step="1" min="1" class="w-full p-2 border rounded text-right font-mono" oninput="calcError()">
+            <p class="text-xs text-gray-500 mt-1">Resolución = Rango / Cuentas = <span class="font-mono" id="res-resolucion">0.001</span></p>
           </div>
 
           <div class="grid grid-cols-2 gap-4 mb-4">
@@ -339,19 +336,23 @@
               <label class="block text-xs font-bold text-blue-800 mb-1">Error % de la Lectura</label>
               <div class="flex items-center">
                 <span class="mr-1">±</span>
-                <input type="number" id="calc-err-lec" value="0.02" step="0.01" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
+                <input type="number" id="calc-err-lec" value="0.05" step="0.01" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
                 <span class="ml-1">%</span>
               </div>
             </div>
             <div class="bg-orange-50 p-3 rounded border border-orange-100">
-              <label class="block text-xs font-bold text-orange-800 mb-1">Error % Fondo Escala</label>
+              <label class="block text-xs font-bold text-orange-800 mb-1">Término Constante</label>
               <div class="flex items-center">
                 <span class="mr-1">±</span>
-                <input type="number" id="calc-err-fe" value="0.01" step="0.01" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
-                <span class="ml-1">%</span>
+                <input type="number" id="calc-err-fe" value="1" step="1" class="w-full p-1 border rounded text-right font-mono" oninput="calcError()">
+                <select id="calc-err-fe-unidad" class="ml-1 p-1 border rounded text-xs" onchange="onUnidadConstChange()">
+                  <option value="cuentas" selected>cuentas</option>
+                  <option value="fs">% FS</option>
+                </select>
               </div>
             </div>
           </div>
+          <p class="text-xs text-gray-500 -mt-2 mb-4">Valores por defecto: Tektronix TX3, VCC rango 5 V, ±(0,05 % + 1 conteo) en modo 5.000 cuentas.</p>
 
           <div class="border-t border-gray-300 pt-4">
             <div class="flex justify-between items-center mb-1">
@@ -368,10 +369,25 @@
             </div>
             <div class="text-center mt-3 text-sm">
               Rango de valor real: <br>
-              <span class="font-mono font-bold bg-white px-2 py-1 border rounded" id="res-intervalo">[ 34.973 ; 35.027 ]</span>
+              <span class="font-mono font-bold bg-white px-2 py-1 border rounded" id="res-intervalo">[ 1.4983 ; 1.5017 ]</span>
+            </div>
+            <div class="flex justify-between items-center bg-purple-100 p-2 rounded mt-3">
+              <span class="font-bold text-purple-900">Error Relativo ($\varepsilon_r$):</span>
+              <span class="font-mono font-bold text-purple-700 text-lg" id="res-err-rel">± 0.117 %</span>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <div class="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-5">
+        <h3 class="font-bold text-gray-800 mb-1">Error relativo en función de la lectura</h3>
+        <p class="text-xs text-gray-600 mb-3">
+          $\varepsilon_r = \%_{lect} + \dfrac{E_{const}}{X} \cdot 100$ &nbsp;→ el término constante se reparte sobre una lectura cada vez mayor,
+          por eso $\varepsilon_r$ cae como una hipérbola al acercarse al fondo de escala. Conviene medir en el rango donde la lectura quede lo más cerca posible del FS.
+        </p>
+        <div style="position:relative;height:280px">
+          <canvas id="errRelChart"></canvas>
         </div>
       </div>
 
@@ -406,30 +422,86 @@ function switchTab(id) {
 
   // Lazy render charts
   if (id === 'tab-ad') setTimeout(updateADCSim, 50);
+  if (id === 'tab-error') setTimeout(calcError, 50);
 }
 
 // =====================================================
 // TAB 2: LCD DISPLAY SIMULATOR
 // =====================================================
+// Segmentos encendidos para cada dígito (a=arriba, b=sup. der., c=inf. der., d=abajo, e=inf. izq., f=sup. izq., g=medio)
+const SEG_MAP = {
+  '0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc',
+  '5': 'afgcd', '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg', ' ': ''
+};
+
+// Dibuja el display 3 ½ dígitos: posición 0 = medio dígito (solo segmentos b y c), 1..3 = dígitos completos
+function initDisplaySVG() {
+  const T = 10, G = 1.5, W = 44, H = 88, OY = 14;   // grosor, separación, ancho y alto del dígito
+  const hh = T / 2;
+  const hSeg = (x, y, len) => {
+    const x1 = x + G, x2 = x + len - G;
+    return [[x1, y], [x1 + hh, y - hh], [x2 - hh, y - hh], [x2, y], [x2 - hh, y + hh], [x1 + hh, y + hh]];
+  };
+  const vSeg = (x, y, len) => {
+    const y1 = y + G, y2 = y + len - G;
+    return [[x, y1], [x + hh, y1 + hh], [x + hh, y2 - hh], [x, y2], [x - hh, y2 - hh], [x - hh, y1 + hh]];
+  };
+  const segsAt = ox => ({
+    a: hSeg(ox, OY, W),
+    b: vSeg(ox + W, OY, H / 2),
+    c: vSeg(ox + W, OY + H / 2, H / 2),
+    d: hSeg(ox, OY + H, W),
+    e: vSeg(ox, OY + H / 2, H / 2),
+    f: vSeg(ox, OY, H / 2),
+    g: hSeg(ox, OY + H / 2, W)
+  });
+  const poly = (id, pts) => `<polygon class="seg" id="${id}" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+
+  let svg = '';
+  // Medio dígito: solo existen físicamente los segmentos b y c
+  const half = segsAt(28 - W);
+  svg += poly('d0-b', half.b) + poly('d0-c', half.c);
+  // Tres dígitos completos
+  for (let i = 1; i <= 3; i++) {
+    const s = segsAt(60 + 68 * (i - 1));
+    for (const k of 'abcdefg') svg += poly(`d${i}-${k}`, s[k]);
+  }
+  document.getElementById('lcd-svg').innerHTML =
+    `<svg viewBox="0 0 300 116" role="img" aria-label="Display de 7 segmentos de 3 ½ dígitos">
+       <g transform="translate(10,0) skewX(-6)">${svg}</g>
+       <text class="lcd-label" x="262" y="${OY + H + 3}">mV</text>
+       <text class="lcd-label off" id="lcd-ol" x="256" y="${OY + 12}">OL</text>
+     </svg>`;
+}
+
+// chars: 4 caracteres; el primero corresponde al medio dígito ('1' o ' ')
+function setDisplay(chars, overload) {
+  for (let i = 0; i < 4; i++) {
+    const on = SEG_MAP[chars[i]] || '';
+    for (const k of 'abcdefg') {
+      const el = document.getElementById(`d${i}-${k}`);
+      if (el) el.classList.toggle('on', on.includes(k));
+    }
+  }
+  document.getElementById('lcd-ol').classList.toggle('off', !overload);
+}
+
 function updateDisplaySim() {
   const valStr = document.getElementById('voltaje-slider').value;
   const val = parseInt(valStr, 10);
   document.getElementById('voltaje-val').innerText = val.toString().padStart(3, '0');
-  
-  const lcdText = document.getElementById('lcd-text');
+
   const displayStatus = document.getElementById('display-status');
 
   // Max valid value is 1999 for a 3 1/2 digit display on 2000 range
   if (val > 1999) {
-    lcdText.innerHTML = "<span style='font-size:0.55em;letter-spacing:2px'>OL</span>"; // Overrange: OL indication
-    displayStatus.innerHTML = "<span class='text-red-500 font-bold'>⚠️ Sobrecarga (Overrange / OL).</span> El instrumento supera su fondo de escala. Seleccioná un rango mayor.";
+    // Sobrecarga: solo queda encendido el "1" del medio dígito, los dígitos completos se apagan
+    setDisplay('1   ', true);
+    displayStatus.innerHTML = "<span class='text-red-500 font-bold'>Sobrecarga (Overrange / OL).</span> Solo el medio dígito marca \"1\": el instrumento supera su fondo de escala. Seleccioná un rango mayor.";
   } else {
-    // Format to 4 characters. If < 1000, don't show the leading '0' of the half digit (it's off)
-    let displayVal = val.toString();
-    if(val < 1000) {
-      displayVal = "&nbsp;" + val.toString().padStart(3, '0');
-    }
-    lcdText.innerHTML = displayVal;
+    // Si val < 1000 el medio dígito queda apagado
+    const s = val.toString().padStart(3, '0');
+    setDisplay(val >= 1000 ? '1' + s.slice(-3) : ' ' + s, false);
     displayStatus.innerHTML = "Lectura normal. Todos los dígitos operando.";
   }
 }
@@ -552,35 +624,35 @@ function updateADCSim() {
 // =====================================================
 const adcData = [
   {
-    name: 'Rampa Escalera', icon: '📈', type: 'Integrador', color: 'blue',
+    name: 'Rampa Escalera', type: 'Integrador', color: 'blue',
     desc: 'También llamado de pendiente simple. Compara la señal de entrada con una tensión generada por un DAC que sube en forma de escalera hasta igualar la entrada.',
     pros: 'Sencillo de implementar.',
     cons: 'Bastante lento (milisegundos). El tiempo de conversión depende de la amplitud de la señal de entrada.',
     extra: 'Precisión depende de la linealidad de la rampa.'
   },
   {
-    name: 'Aproximaciones Sucesivas', icon: '⚖️', type: 'No Integrador', color: 'red',
+    name: 'Aproximaciones Sucesivas', type: 'No Integrador', color: 'red',
     desc: 'Prueba la señal comparándola con valores binarios ponderados (mitad de escala, cuarto de escala, etc.) bit por bit, de mayor a menor peso.',
     pros: 'Muy rápido (microsegundos) y con buena resolución.',
     cons: 'Más complejo y costoso. Aumenta el error si la tensión de entrada varía durante la conversión.',
     extra: 'El tiempo de conversión es constante: T = n / f_reloj.'
   },
   {
-    name: 'Doble Rampa', icon: '🔁', type: 'Integrador', color: 'blue',
+    name: 'Doble Rampa', type: 'Integrador', color: 'blue',
     desc: 'Integra el voltaje de entrada por un tiempo fijo (rampa sube), y luego lo descarga a una tasa constante con una tensión de referencia (rampa baja). Se mide el tiempo de descarga.',
     pros: 'Excelente inmunidad al ruido (puede rechazar ruido de red de 50/60Hz). Gran exactitud y económicos.',
     cons: 'Excesiva lentitud (10 a 50 ms). Pierde exactitud en valores de tensión muy bajos.',
     extra: 'Es el método más utilizado en Multímetros Digitales convencionales.'
   },
   {
-    name: 'Voltaje a Frecuencia', icon: '〰️', type: 'Integrador', color: 'blue',
+    name: 'Voltaje a Frecuencia', type: 'Integrador', color: 'blue',
     desc: 'Convierte el voltaje en un tren de pulsos cuya frecuencia es directamente proporcional a la amplitud de la entrada. Un contador cuenta estos pulsos.',
     pros: 'Muy buen rechazo al ruido, baratos y de exactitud moderada.',
     cons: 'Velocidad de conversión limitada.',
     extra: 'Usado frecuentemente en medidores de panel de 3 a 3 ½ dígitos.'
   },
   {
-    name: 'Paralelo (Flash)', icon: '⚡', type: 'No Integrador', color: 'red',
+    name: 'Paralelo (Flash)', type: 'No Integrador', color: 'red',
     desc: 'Aplica la señal simultáneamente a un banco de comparadores (2^n - 1 comparadores). Cada uno tiene una tensión de referencia levemente mayor al anterior.',
     pros: 'Extremadamente rápidos (nanosegundos). Respuesta instantánea en ráfaga.',
     cons: 'Muy costosos, complejos y de baja resolución por el inmenso volumen de componentes (ej: 8 bits = 255 comparadores).',
@@ -596,7 +668,6 @@ function initADCCards() {
          onmouseover="this.style.borderColor='${adc.color==='blue'?'#93c5fd':'#fca5a5'}'"
          onmouseout="this.style.borderColor='transparent'"
          onclick="showADCDetail(${idx})">
-      <div class="text-3xl mb-2">${adc.icon}</div>
       <div class="font-bold text-gray-800 text-sm mb-1">${adc.name}</div>
       <span class="badge" style="font-size:0.65rem;background:${adc.color==='blue'?'#dbeafe':'#fee2e2'};color:${adc.color==='blue'?'#1e40af':'#991b1b'}">${adc.type}</span>
     </div>
@@ -605,7 +676,7 @@ function initADCCards() {
 
 function showADCDetail(idx) {
   const adc = adcData[idx];
-  document.getElementById('ad-title').textContent = adc.icon + ' ' + adc.name;
+  document.getElementById('ad-title').textContent = adc.name;
   
   const badge = document.getElementById('ad-type-badge');
   badge.textContent = adc.type;
@@ -616,7 +687,7 @@ function showADCDetail(idx) {
   document.getElementById('ad-desc').textContent = adc.desc;
   document.getElementById('ad-pros').textContent = adc.pros;
   document.getElementById('ad-cons').textContent = adc.cons;
-  document.getElementById('ad-extra').textContent = '💡 ' + adc.extra;
+  document.getElementById('ad-extra').textContent = adc.extra;
 
   document.getElementById('adc-detail').classList.remove('hidden');
 }
@@ -624,29 +695,146 @@ function showADCDetail(idx) {
 // =====================================================
 // TAB 5: ERROR CALCULATOR
 // =====================================================
+let errRelChartInst = null;
+
+// Al cambiar la unidad del término constante, convertir el valor para que represente el mismo error
+function onUnidadConstChange() {
+  const ran = parseFloat(document.getElementById('calc-rango').value) || 0;
+  const cuentas = parseFloat(document.getElementById('calc-cuentas').value) || 0;
+  const input = document.getElementById('calc-err-fe');
+  const val = parseFloat(input.value) || 0;
+  const res = cuentas > 0 ? ran / cuentas : 0;
+  if (document.getElementById('calc-err-fe-unidad').value === 'fs') {
+    // cuentas → % FS
+    input.value = ran > 0 ? +((val * res / ran) * 100).toPrecision(4) : 0;
+    input.step = '0.01';
+  } else {
+    // % FS → cuentas
+    input.value = res > 0 ? +((val * ran / 100) / res).toPrecision(4) : 0;
+    input.step = '1';
+  }
+  calcError();
+}
+
 function calcError() {
   const lec = parseFloat(document.getElementById('calc-lectura').value) || 0;
   const ran = parseFloat(document.getElementById('calc-rango').value) || 0;
+  const cuentas = parseFloat(document.getElementById('calc-cuentas').value) || 0;
   const errLec = parseFloat(document.getElementById('calc-err-lec').value) || 0;
   const errFe = parseFloat(document.getElementById('calc-err-fe').value) || 0;
+  const unidad = document.getElementById('calc-err-fe-unidad').value;
 
+  const res = cuentas > 0 ? ran / cuentas : 0;
   const errProp = (errLec * lec) / 100;
-  const errConst = (errFe * ran) / 100;
+  const errConst = unidad === 'cuentas' ? errFe * res : (errFe * ran) / 100;
   const errTotal = errProp + errConst;
 
+  document.getElementById('res-resolucion').textContent = +res.toPrecision(4);
   document.getElementById('res-err-lec').textContent = '± ' + errProp.toFixed(4);
   document.getElementById('res-err-fe').textContent = '± ' + errConst.toFixed(4);
   document.getElementById('res-err-total').textContent = '± ' + errTotal.toFixed(4);
-  
-  const min = (lec - errTotal).toFixed(3);
-  const max = (lec + errTotal).toFixed(3);
+
+  const min = (lec - errTotal).toFixed(4);
+  const max = (lec + errTotal).toFixed(4);
   document.getElementById('res-intervalo').textContent = `[ ${min} ; ${max} ]`;
+
+  const errRel = lec !== 0 ? (errTotal / Math.abs(lec)) * 100 : NaN;
+  document.getElementById('res-err-rel').textContent = isNaN(errRel) ? '—' : '± ' + errRel.toFixed(3) + ' %';
+
+  drawErrRelChart(lec, ran, errLec, errConst, errRel);
+}
+
+function drawErrRelChart(lec, ran, errLec, errConst, errRel) {
+  const canvas = document.getElementById('errRelChart');
+  if (!canvas || typeof Chart === 'undefined' || ran <= 0) return;
+  // El canvas no tiene tamaño mientras la pestaña está oculta
+  if (!document.getElementById('tab-error').classList.contains('active')) return;
+
+  const curva = [];
+  const N = 100;
+  for (let i = 0; i <= N; i++) {
+    const x = ran * (0.05 + 0.95 * i / N);
+    curva.push({ x: x, y: errLec + (errConst / x) * 100 });
+  }
+  const asintota = [{ x: ran * 0.05, y: errLec }, { x: ran, y: errLec }];
+  const punto = (lec > 0 && lec <= ran) ? [{ x: lec, y: errRel }] : [];
+
+  const data = {
+    datasets: [
+      {
+        label: 'εr total',
+        data: curva,
+        borderColor: '#7c3aed',
+        borderWidth: 2.5,
+        pointRadius: 0,
+        showLine: true
+      },
+      {
+        label: 'Solo % de lectura',
+        data: asintota,
+        borderColor: '#94a3b8',
+        borderWidth: 1.5,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        showLine: true
+      },
+      {
+        label: 'Lectura actual',
+        data: punto,
+        borderColor: '#e74c3c',
+        backgroundColor: '#e74c3c',
+        pointRadius: 7,
+        pointHoverRadius: 8,
+        showLine: false
+      }
+    ]
+  };
+
+  if (errRelChartInst) {
+    errRelChartInst.data = data;
+    errRelChartInst.options.scales.x.min = ran * 0.05;
+    errRelChartInst.options.scales.x.max = ran;
+    errRelChartInst.update('none');
+    return;
+  }
+
+  errRelChartInst = new Chart(canvas.getContext('2d'), {
+    type: 'scatter',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      scales: {
+        x: {
+          type: 'linear',
+          min: ran * 0.05, max: ran,
+          title: { display: true, text: 'Lectura X (5 % a 100 % del FS)' },
+          grid: { color: '#e2e8f0' }
+        },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Error relativo εr (%)' },
+          grid: { color: '#e2e8f0' },
+          ticks: { callback: v => v.toFixed(2) + ' %' }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: c => `X = ${+c.parsed.x.toPrecision(4)} → εr = ${c.parsed.y.toFixed(3)} %`
+          }
+        }
+      }
+    }
+  });
 }
 
 // =====================================================
 // INITIALIZATION
 // =====================================================
 document.addEventListener('DOMContentLoaded', () => {
+  initDisplaySVG();
   updateDisplaySim();
   initADCCards();
   calcError();
