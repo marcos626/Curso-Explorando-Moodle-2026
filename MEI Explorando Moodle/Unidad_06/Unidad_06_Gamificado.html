@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 6 - UTN FRLR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --light-bg: #f0f4f8;
+  }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  input[type=range] { accent-color: #2980b9; }
+  .chart-wrap { position: relative; min-height: 240px; max-height: 340px; height: 280px; width: 100%; margin-bottom: 1rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.95rem; color: #1e3a5f; }
+  .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.9rem; margin: 2px; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-yellow { background: #fef9c3; color: #854d0e; }
+  .badge-purple { background: #ede9fe; color: #5b21b6; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .warn-box { background: #fef2f2; border: 1px solid #f87171; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.85rem; color: #991b1b; }
+  .ok-box { background: #f0fdf4; border: 1px solid #4ade80; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.85rem; color: #166534; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 0.6rem; }
+  .stepper { display: flex; align-items: center; gap: 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 3px 8px; }
+  .stepper-val { font-weight: 700; color: #1d4ed8; min-width: 46px; text-align: right; font-size: 0.9rem; }
+  .stepper-unit { font-size: 0.75rem; color: #64748b; }
+  .stepper-arrows { display: flex; flex-direction: column; }
+  .stepper-btn { line-height: 1; font-size: 9px; width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border: none; cursor: pointer; color: #1e3a5f; padding: 0; }
+  .stepper-btn:hover { background: #93c5fd; }
+  .stepper-btn:first-child { border-radius: 3px 3px 0 0; }
+  .stepper-btn:last-child { border-radius: 0 0 3px 3px; margin-top: 1px; }
+  .seg-btn { transition: all 0.2s; background: #e2e8f0; color: #4a5568; border: 2px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+  .seg-btn.active { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+  .chip { cursor: pointer; transition: all 0.2s; border: 2px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.85rem; background: #fff; }
+  .chip:hover, .chip.active { border-color: #2980b9; background: #eff6ff; }
+  .quiz-opt { cursor: pointer; transition: all 0.2s; border: 2px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.9rem; }
+  .quiz-opt:hover { border-color: #2980b9; background: #eff6ff; }
+  .quiz-opt.correct { background: #dcfce7; border-color: #16a34a; color: #166534; }
+  .quiz-opt.wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .num-in { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 6px; font-size: 0.85rem; }
+  .lcd { background: #a9b98f; color: #1f2a14; font-family: 'Courier New', monospace; border-radius: 6px; padding: 10px 14px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.35); }
+  .lcd-main { font-size: 2rem; font-weight: 700; letter-spacing: 3px; }
+  .odo { display: inline-flex; gap: 2px; }
+  .odo span { display: inline-block; width: 22px; text-align: center; background: #111827; color: #f9fafb; font-family: 'Courier New', monospace; font-weight: 700; font-size: 1.15rem; border-radius: 3px; padding: 2px 0; }
+  .odo span.dec { background: #b91c1c; }
+  .achv { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; padding: 3px 10px; border: 1px dashed #cbd5e1; color: #94a3b8; background: #f8fafc; }
+  .achv.on { border-style: solid; border-color: #f59e0b; color: #92400e; background: #fef3c7; }
+  .toast { position: fixed; bottom: 20px; right: 20px; background: #1e3a5f; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); transform: translateY(140px); opacity: 0; transition: all 0.4s; z-index: 50; font-size: 0.9rem; }
+  .toast.show { transform: none; opacity: 1; }
+  .gauge-cv { width: 100%; height: 220px; display: block; }
+  table.lab td, table.lab th { border: 1px solid #e2e8f0; padding: 4px; }
+  @media (max-width: 640px) { .chart-wrap { min-height: 200px; height: 230px; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 6 · Medición de potencia y energía en sistemas de frecuencia industrial · Exploración gamificada</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <div class="flex items-start gap-3">
+      <span class="text-3xl">⚡</span>
+      <div>
+        <h2 class="font-bold text-lg text-gray-800 mb-1">¿Cómo sabe la distribuidora cuánta energía consumiste?</h2>
+        <p class="text-gray-600 text-sm">Todos los meses alguien lee un número que acumuló un disco de aluminio girando, o un microprocesador contando pulsos. Detrás de ese número hay un instrumento que convierte el producto $U \cdot I \cdot \cos\varphi$ en un ángulo o en vueltas. En esta unidad vas a explorar los instrumentos electrodinámicos (vatímetros, varímetros, fasímetros y frecuencímetros), el método de Aron para sistemas trifásicos y los contadores de energía de inducción y digitales.</p>
+        <div class="mt-2 flex flex-wrap gap-1">
+          <span class="badge badge-purple">Vatímetro electrodinámico</span>
+          <span class="badge badge-blue">Método de Aron · Blondel</span>
+          <span class="badge badge-green">Contador de inducción y digital</span>
+          <span class="badge badge-yellow">TP Nº 8</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-3">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-intro')">Principio</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-motor')">Par Motor & CA</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-vatimetro')">Vatímetro & Errores</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-logometros')">Varímetro & Logómetros</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-trifasico')">Trifásico (Aron)</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-induccion')">Inducción & Contador</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-tp')">TP Nº 8</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-quiz')">Quiz</button>
+  </div>
+</div>
+
+<!-- LOGROS -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-3">
+    <div class="flex items-center justify-between gap-2 mb-2">
+      <div class="text-sm font-bold text-gray-700">🏅 Logros <span id="ach-count" class="text-blue-700">0/9</span></div>
+      <button onclick="resetAch()" class="text-xs text-gray-500 hover:text-red-600">Reiniciar logros</button>
+    </div>
+    <div id="ach-strip" class="flex flex-wrap gap-2"></div>
+  </div>
+</div>
+
+<!-- =================== TAB 1: PRINCIPIO =================== -->
+<div id="tab-intro" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Instrumentos Electrodinámicos — Efecto Electrodinámico</h2>
+      <p class="text-sm opacity-80 mt-1">Dos conductores con corriente se atraen o se repelen. Ese es el motor de todo el instrumento.</p>
+    </div>
+    <div class="p-5">
+      <div class="info-box mb-4">
+        <strong>Idea clave:</strong> el instrumento electrodinámico es un <em>instrumento de bobina móvil en el que se reemplazó el imán fijo por una bobina</em>. Estudiado inicialmente por Ampère, implementado por Weber (1843) y desarrollado luego por Joule, Kelvin y Siemens. También se lo llama <em>electrodinamométrico</em>.
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-2 text-sm">Fuerza entre conductores paralelos</h3>
+          <p class="text-sm text-gray-600 mb-3">Cada corriente crea un campo magnético a su alrededor. Si las corrientes tienen <strong>igual sentido</strong>, los conductores se <strong>atraen</strong>; si tienen <strong>sentido contrario</strong>, se <strong>repelen</strong>.</p>
+          <div data-param="fI1"></div>
+          <div data-param="fI2"></div>
+          <div data-param="fD"></div>
+          <div class="flex gap-2 mb-3">
+            <button id="fdir-same" class="seg-btn active" onclick="setForceDir(1)">↑↑ Igual sentido</button>
+            <button id="fdir-opp" class="seg-btn" onclick="setForceDir(-1)">↑↓ Sentido contrario</button>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Fuerza por unidad de longitud:</span><span id="f-res" class="result-pill">--</span></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Efecto:</span><span id="f-eff" class="result-pill">--</span></div>
+          </div>
+          <div class="formula-box text-sm mt-3">$ \dfrac{F}{l} = \dfrac{\mu_0 \, i_1 \, i_2}{2\pi d} $</div>
+        </div>
+        <div>
+          <svg viewBox="0 0 440 260" class="w-full" style="max-height:300px;">
+            <defs>
+              <marker id="arrF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+            </defs>
+            <line x1="150" y1="30" x2="150" y2="230" stroke="#1e3a5f" stroke-width="5"/>
+            <line x1="290" y1="30" x2="290" y2="230" stroke="#1e3a5f" stroke-width="5"/>
+            <polygon points="150,95 140,115 160,115" fill="#facc15" stroke="#1e3a5f"/>
+            <g id="arrI2"><polygon points="290,95 280,115 300,115" fill="#facc15" stroke="#1e3a5f"/></g>
+            <text x="150" y="250" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">i₁</text>
+            <text x="290" y="250" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">i₂</text>
+            <line id="fArrL" x1="154" y1="160" x2="200" y2="160" stroke="#dc2626" stroke-width="3" marker-end="url(#arrF)"/>
+            <line id="fArrR" x1="286" y1="160" x2="240" y2="160" stroke="#dc2626" stroke-width="3" marker-end="url(#arrF)"/>
+            <text x="220" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626" id="fLbl">ATRACCIÓN</text>
+            <line x1="150" y1="215" x2="290" y2="215" stroke="#94a3b8" stroke-dasharray="4,3"/>
+            <text x="220" y="210" text-anchor="middle" font-size="11" fill="#475569">d</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Constitución -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Constitución — Bobina fija y bobina móvil</h2>
+      <p class="text-sm opacity-80 mt-1">Girá la bobina móvil y observá cómo cambia el par entre ambos campos.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg viewBox="0 0 360 260" class="w-full" style="max-height:300px;">
+          <defs>
+            <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#64748b" stroke-width="2"/></pattern>
+            <marker id="arrB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
+            <marker id="arrV" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/></marker>
+          </defs>
+          <line x1="40" y1="130" x2="320" y2="130" stroke="#cbd5e1" stroke-dasharray="4,3"/>
+          <rect x="30" y="112" width="55" height="36" fill="url(#hatch)" stroke="#334155" stroke-width="1.5"/>
+          <rect x="275" y="112" width="55" height="36" fill="url(#hatch)" stroke="#334155" stroke-width="1.5"/>
+          <text x="57" y="102" text-anchor="middle" font-size="10" font-weight="bold" fill="#334155">Bobina fija</text>
+          <text x="302" y="102" text-anchor="middle" font-size="10" font-weight="bold" fill="#334155">(2 secciones)</text>
+          <line x1="180" y1="230" x2="180" y2="40" stroke="#2563eb" stroke-width="2" marker-end="url(#arrB)"/>
+          <text x="188" y="48" font-size="12" font-weight="bold" fill="#2563eb">H₁</text>
+          <g id="movCoil" transform="rotate(-45 180 130)">
+            <rect x="115" y="124" width="130" height="12" rx="3" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+            <rect x="113" y="120" width="16" height="20" fill="#7c3aed"/>
+            <rect x="231" y="120" width="16" height="20" fill="#7c3aed"/>
+            <line x1="180" y1="130" x2="180" y2="62" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrV)"/>
+            <text x="186" y="72" font-size="12" font-weight="bold" fill="#7c3aed">H₂</text>
+          </g>
+          <circle cx="180" cy="130" r="4" fill="#1e3a5f"/>
+          <text x="180" y="252" text-anchor="middle" font-size="10" fill="#475569">Vista superior · eje perpendicular al papel</text>
+        </svg>
+      </div>
+      <div class="space-y-3">
+        <p class="text-sm text-gray-600">El par motor hace girar la bobina móvil hacia la posición en que <strong>los flujos coinciden</strong>. Lo equilibra el par antagonista de dos <strong>muelles espirales</strong>, que además conducen la corriente hacia la bobina móvil. El amortiguamiento es preferentemente <strong>neumático</strong>.</p>
+        <div data-param="cTheta"></div>
+        <div class="bg-blue-50 rounded-xl p-3">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Par relativo $\propto \sin\theta$:</span><span id="c-par" class="result-pill">--</span></div>
+          <div class="w-full bg-gray-200 rounded-full h-3 mt-2"><div id="c-bar" class="bg-purple-600 h-3 rounded-full transition-all" style="width:70%"></div></div>
+        </div>
+        <div class="info-box text-xs"><strong>Diferencia con el magnetoeléctrico:</strong> allí el flujo principal lo genera un imán permanente (constante). Aquí lo genera la bobina fija, que toma la energía del circuito medido → <strong>mayor consumo propio</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clasificación -->
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Clasificación y Características</h2>
+      <p class="text-sm opacity-80 mt-1">Según el circuito magnético y los bobinados — hacé clic para explorar.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div class="cursor-pointer rounded-lg p-3 bg-blue-50 border-2 border-blue-200 hover:border-blue-500 transition" onclick="showClass('aire')">
+          <div class="font-bold text-blue-800 text-sm">a) Electrodinámico</div>
+          <div class="text-xs text-gray-600">Una bobina móvil · núcleos de aire</div>
+        </div>
+        <div class="cursor-pointer rounded-lg p-3 bg-purple-50 border-2 border-purple-200 hover:border-purple-500 transition" onclick="showClass('hierro')">
+          <div class="font-bold text-purple-800 text-sm">b) Ferrodinámico</div>
+          <div class="text-xs text-gray-600">Una bobina móvil · núcleos de hierro</div>
+        </div>
+        <div class="cursor-pointer rounded-lg p-3 bg-green-50 border-2 border-green-200 hover:border-green-500 transition" onclick="showClass('logo')">
+          <div class="font-bold text-green-800 text-sm">c) Diferencial (logómetro)</div>
+          <div class="text-xs text-gray-600">Dos bobinas móviles cruzadas</div>
+        </div>
+      </div>
+      <div id="class-detail" class="hidden card border-2 border-blue-300 p-4 mb-4">
+        <h4 id="cd-title" class="font-bold text-blue-800 text-base mb-1"></h4>
+        <p id="cd-desc" class="text-sm text-gray-700 mb-2"></p>
+        <div id="cd-badges" class="flex flex-wrap gap-2"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="card p-3 border-l-4 border-green-500">
+          <div class="font-bold text-green-700 text-sm mb-1">✅ A favor</div>
+          <ul class="text-xs text-gray-600 list-disc list-inside space-y-1">
+            <li>Deflexiona con continua y con alterna (mide valores eficaces).</li>
+            <li>Puede usar material ferromagnético en los núcleos.</li>
+            <li>Hegemonía en la medición de potencia (vatímetros).</li>
+          </ul>
+        </div>
+        <div class="card p-3 border-l-4 border-red-500">
+          <div class="font-bold text-red-700 text-sm mb-1">❌ En contra</div>
+          <ul class="text-xs text-gray-600 list-disc list-inside space-y-1">
+            <li>Costo elevado y elevado consumo propio.</li>
+            <li>Escala no lineal (cuadrática) como amperímetro o voltímetro.</li>
+            <li>Sensible a campos externos → necesita blindaje.</li>
+            <li>Menor exactitud y precisión que el magnetoeléctrico.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 2: PAR MOTOR & CA =================== -->
+<div id="tab-motor" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Momento Motor y Antagonista</h2>
+      <p class="text-sm opacity-80 mt-1">De la energía magnética almacenada a la ecuación de desviación.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="formula-box space-y-3">
+        <div><strong>1) Energía de dos bobinas próximas:</strong></div>
+        <div>$ E = \tfrac{1}{2} L_f \, i_f^2 + \tfrac{1}{2} L_m \, i_m^2 + M \, i_f \, i_m $</div>
+        <div><strong>2) Par motor:</strong> sólo $M$ depende de $\alpha$</div>
+        <div>$ M_m = \dfrac{\partial E}{\partial \alpha} = i_f \, i_m \dfrac{\partial M}{\partial \alpha} $</div>
+        <div><strong>3) Par antagonista (muelles):</strong> $ M_a = C_a \, \alpha $</div>
+        <div><strong>4) Equilibrio:</strong> $ \alpha = \dfrac{1}{C_a}\dfrac{\partial M}{\partial \alpha}\, i_f \, i_m $</div>
+      </div>
+      <div class="formula-box space-y-3" style="border-left-color:#7c3aed;">
+        <div><strong>En corriente alterna</strong> ($\beta$ = desfasaje entre corrientes):</div>
+        <div>$ i_f = \hat I_f \sin \omega t \qquad i_m = \hat I_m \sin(\omega t - \beta) $</div>
+        <div>$ i_f \, i_m = \hat I_f \hat I_m \tfrac{1}{2}\left[\cos\beta - \cos(2\omega t - \beta)\right] $</div>
+        <div>El término de <strong>frecuencia doble</strong> no lo sigue el sistema móvil (inercia y topes), entonces:</div>
+        <div>$ \alpha = K \, I_f \, I_m \cos\beta $ &nbsp; (valores eficaces)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Simulador — Producto de corrientes y par medio</h2>
+      <p class="text-sm opacity-80 mt-1">Compará el par instantáneo con el valor medio que realmente "ve" la aguja.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6">
+      <div>
+        <div class="flex gap-2 mb-3">
+          <button id="mm-ca" class="seg-btn active" onclick="setMotorMode('ca')">Corriente alterna</button>
+          <button id="mm-cc" class="seg-btn" onclick="setMotorMode('cc')">Corriente continua</button>
+        </div>
+        <div data-param="mIf"></div>
+        <div data-param="mIm"></div>
+        <div id="beta-wrap" class="mb-3">
+          <label class="slider-label font-semibold">Desfasaje entre corrientes β: <span id="beta-val" class="text-blue-700 font-bold">30</span>°</label>
+          <input type="range" id="beta-slider" min="0" max="180" value="30" class="w-full" oninput="updateMotor()">
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Valor medio $I_f I_m \cos\beta$:</span><span id="m-avg" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Amplitud del término alterno:</span><span id="m-ac" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Frecuencia del par oscilante:</span><span id="m-freq" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Desviación (% fondo de escala):</span><span id="m-alpha" class="result-pill">--</span></div>
+        </div>
+        <p id="m-note" class="text-xs text-gray-600 mt-2"></p>
+      </div>
+      <div>
+        <div class="chart-wrap" style="height:320px;max-height:360px;"><canvas id="prodChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Amperímetro y Voltímetro electrodinámicos — Escala cuadrática</h2>
+      <p class="text-sm opacity-80 mt-1">Con las bobinas en serie, $i_f = i_m = i$ y la desviación es $\alpha = C\, i^2$.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="card p-3 border-t-4 border-blue-500">
+            <div class="font-bold text-blue-700 text-sm">Amperímetro</div>
+            <p class="text-xs text-gray-600">En serie con el circuito. Bobinas en serie ($\alpha = C\,i^2$) o en paralelo, con una resistencia de manganina en la rama móvil para limitarla a pocos mA.</p>
+          </div>
+          <div class="card p-3 border-t-4 border-purple-500">
+            <div class="font-bold text-purple-700 text-sm">Voltímetro</div>
+            <p class="text-xs text-gray-600">En paralelo. Bobinas en serie con una resistencia multiplicadora $R$: $\alpha = K (U/R)^2 = C\,U^2$.</p>
+          </div>
+        </div>
+        <div data-param="qI"></div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Desviación (escala cuadrática):</span><span id="q-res" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Si la escala fuera lineal:</span><span id="q-lin" class="result-pill">--</span></div>
+        </div>
+        <div class="info-box text-xs">Observá cómo las divisiones se <strong>amontonan al principio</strong>: la lectura de valores chicos es poco precisa. En CA, la indicación es directamente el <strong>valor eficaz</strong>.</div>
+      </div>
+      <div>
+        <canvas id="quadGauge" class="gauge-cv"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 3: VATÍMETRO =================== -->
+<div id="tab-vatimetro" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Vatímetro Electrodinámico — Conexión y Errores</h2>
+      <p class="text-sm opacity-80 mt-1">Bobina fija (amperimétrica) en serie · bobina móvil (voltimétrica) en paralelo.</p>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+        <div class="space-y-3">
+          <div class="formula-box space-y-2">
+            <div>$ I_m = I_d = \dfrac{U}{R_d} \qquad I_f = I_s $</div>
+            <div>$ \alpha = K\, I_f\, I_m \cos\beta = K' \, U\, I \cos\varphi = \text{potencia activa} $</div>
+            <div class="text-xs">La escala del vatímetro es <strong>uniforme</strong>. $R_d$ incluye la resistencia adicional $R_{ad}$.</div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="wc-gen" class="seg-btn" onclick="setWattConn('gen')">Voltimétrica del lado del generador</button>
+            <button id="wc-carga" class="seg-btn active" onclick="setWattConn('carga')">Voltimétrica del lado de la carga</button>
+          </div>
+          <div id="wc-desc" class="text-xs text-gray-600"></div>
+        </div>
+        <div>
+          <svg viewBox="0 0 420 230" class="w-full" style="max-height:260px;">
+            <text x="10" y="55" font-size="12" font-weight="bold" fill="#1e3a5f">I<tspan font-size="9" baseline-shift="sub">s</tspan> →</text>
+            <line x1="10" y1="65" x2="120" y2="65" stroke="#334155" stroke-width="2"/>
+            <path d="M120,65 q7.5,-14 15,0 q7.5,-14 15,0 q7.5,-14 15,0 q7.5,-14 15,0" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+            <text x="150" y="40" text-anchor="middle" font-size="11" font-weight="bold" fill="#2563eb">B<tspan font-size="8" baseline-shift="sub">s</tspan> (fija)</text>
+            <line x1="180" y1="65" x2="340" y2="65" stroke="#334155" stroke-width="2"/>
+            <text x="270" y="55" font-size="11" fill="#1e3a5f">I →</text>
+            <rect x="330" y="95" width="20" height="60" fill="#fef3c7" stroke="#334155" stroke-width="1.5"/>
+            <text x="362" y="130" font-size="12" font-weight="bold" fill="#1e3a5f">R</text>
+            <line x1="340" y1="65" x2="340" y2="95" stroke="#334155" stroke-width="2"/>
+            <line x1="340" y1="155" x2="340" y2="200" stroke="#334155" stroke-width="2"/>
+            <line x1="10" y1="200" x2="340" y2="200" stroke="#334155" stroke-width="2"/>
+            <line x1="395" y1="65" x2="395" y2="200" stroke="#475569" stroke-width="1"/>
+            <text x="402" y="135" font-size="12" font-weight="bold" fill="#475569">U</text>
+            <g id="vbGen">
+              <circle cx="100" cy="65" r="3.5" fill="#7c3aed"/>
+              <line x1="100" y1="65" x2="100" y2="85" stroke="#7c3aed" stroke-width="2"/>
+              <path d="M100,85 q14,7.5 0,15 q14,7.5 0,15 q14,7.5 0,15" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+              <rect x="92" y="135" width="16" height="40" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+              <line x1="100" y1="175" x2="100" y2="200" stroke="#7c3aed" stroke-width="2"/>
+              <text x="70" y="110" text-anchor="end" font-size="10" font-weight="bold" fill="#7c3aed">B<tspan font-size="8" baseline-shift="sub">d</tspan></text>
+              <text x="70" y="160" text-anchor="end" font-size="10" font-weight="bold" fill="#7c3aed">R<tspan font-size="8" baseline-shift="sub">ad</tspan></text>
+            </g>
+            <g id="vbLoad">
+              <circle cx="210" cy="65" r="3.5" fill="#7c3aed"/>
+              <line x1="210" y1="65" x2="210" y2="85" stroke="#7c3aed" stroke-width="2"/>
+              <path d="M210,85 q14,7.5 0,15 q14,7.5 0,15 q14,7.5 0,15" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+              <rect x="202" y="135" width="16" height="40" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+              <line x1="210" y1="175" x2="210" y2="200" stroke="#7c3aed" stroke-width="2"/>
+              <text x="240" y="110" font-size="10" font-weight="bold" fill="#7c3aed">B<tspan font-size="8" baseline-shift="sub">d</tspan></text>
+              <text x="240" y="160" font-size="10" font-weight="bold" fill="#7c3aed">R<tspan font-size="8" baseline-shift="sub">ad</tspan></text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6">
+        <div>
+          <div data-param="wU"></div>
+          <div data-param="wI"></div>
+          <div class="mb-3">
+            <label class="slider-label font-semibold">Ángulo de la carga φ: <span id="wphi-val" class="text-blue-700 font-bold">37</span>° <span id="wphi-type" class="badge badge-yellow">inductiva</span></label>
+            <input type="range" id="wphi-slider" min="-90" max="90" value="37" class="w-full" oninput="updateWatt()">
+          </div>
+          <div data-param="wRs"></div>
+          <div data-param="wRd"></div>
+          <div data-param="wSig"></div>
+          <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Potencia real en la carga:</span><span id="w-real" class="result-pill">--</span></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error de consumo:</span><span id="w-cons" class="result-pill">--</span></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error de fase:</span><span id="w-phase" class="result-pill">--</span></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Potencia indicada:</span><span id="w-ind" class="result-pill">--</span></div>
+            <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error relativo total:</span><span id="w-err" class="result-pill">--</span></div>
+          </div>
+          <div id="w-reco" class="ok-box mt-2"></div>
+        </div>
+        <div class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <h4 class="font-semibold text-gray-700 mb-1 text-sm">Diagrama fasorial (σ exagerado ×5)</h4>
+              <canvas id="wPhasor" class="gauge-cv" style="height:230px;"></canvas>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-700 mb-1 text-sm">Error de fase vs. ángulo de carga</h4>
+              <div class="chart-wrap" style="height:230px;min-height:200px;"><canvas id="phaseErrChart"></canvas></div>
+            </div>
+          </div>
+          <div class="formula-box text-sm space-y-2">
+            <div><strong>Generador:</strong> $ P_{med} = (U_s + U)\,I = U_s I + U I $ → error por consumo <em>amperimétrico</em> ($\approx I^2 R_s$).</div>
+            <div><strong>Carga:</strong> $ P_{med} = U\,(I + I_d) = U I + U I_d $ → error por consumo <em>voltimétrico</em> ($\approx U^2/R_d$).</div>
+            <div><strong>Fase:</strong> inductiva $\delta = \varphi - \sigma$ (indica de más) · capacitiva $\delta = \varphi + \sigma$ (indica de menos).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Constante de escala y ampliación del campo de medida</h2>
+      <p class="text-sm opacity-80 mt-1">Elegí los alcances y leé el vatímetro en divisiones, como en el laboratorio.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2">
+          <div><label class="slider-label font-semibold block">Alcance U</label>
+            <select id="wUa" class="num-in" onchange="updateWatt()"><option>75</option><option>150</option><option selected>300</option><option>600</option></select></div>
+          <div><label class="slider-label font-semibold block">Alcance I</label>
+            <select id="wIa" class="num-in" onchange="updateWatt()"><option>1</option><option>2.5</option><option selected>5</option><option>10</option></select></div>
+          <div><label class="slider-label font-semibold block">Divisiones</label>
+            <select id="wDiv" class="num-in" onchange="updateWatt()"><option>100</option><option>120</option><option selected>150</option></select></div>
+        </div>
+        <div class="formula-box text-sm">$ C_{vat} = \dfrac{\text{Alcance de tensión} \cdot \text{Alcance de intensidad}}{\text{Número de divisiones}} $</div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Constante $C_{vat}$:</span><span id="w-C" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Lectura:</span><span id="w-read" class="result-pill">--</span></div>
+        </div>
+        <div id="w-warn" class="space-y-1"></div>
+        <div class="card p-3 border-l-4 border-indigo-500">
+          <div class="font-bold text-indigo-700 text-sm mb-2">Ampliación del circuito voltimétrico</div>
+          <div data-param="aRd"></div>
+          <div data-param="aN"></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">$R_{ad} = R_d\,(n-1)$:</span><span id="a-Rad" class="result-pill">--</span></div>
+          <p class="text-xs text-gray-500 mt-1">El circuito amperimétrico se amplía dividiendo la bobina fija en secciones: en serie (0 a I) o en paralelo (0 a 2I).</p>
+        </div>
+      </div>
+      <div>
+        <canvas id="wattGauge" class="gauge-cv" style="height:250px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 4: VARÍMETRO & LOGÓMETROS =================== -->
+<div id="tab-logometros" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Varímetro — Conexión a 90°</h2>
+      <p class="text-sm opacity-80 mt-1">Un vatímetro mide reactiva si la corriente de su bobina voltimétrica atrasa 90° respecto de la tensión.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div class="formula-box">$ \alpha = K\,U\,I \sin\varphi = K\,U\,I \cos(90° - \varphi) $</div>
+        <p class="text-sm text-gray-600">Conexión inductiva: la bobina móvil $R_v$ en serie con $R_1 L_1$, en paralelo con $R_2$, y todo en serie con $R_{ad} L_{ad}$. El retraso total es $\sigma = \beta_1 + \beta_2$ y se ajusta a 90° con $R_2$ durante el contraste.</p>
+        <div data-param="vB1"></div>
+        <div data-param="vB2"></div>
+        <div class="mb-2">
+          <label class="slider-label font-semibold">Ángulo de la carga φ: <span id="vphi-val" class="text-blue-700 font-bold">40</span>°</label>
+          <input type="range" id="vphi-slider" min="-90" max="90" value="40" class="w-full" oninput="updateVar()">
+        </div>
+        <div id="v-status" class="rounded-xl p-2 text-center font-bold text-sm"></div>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Retraso total σ:</span><span id="v-sig" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Q real (U = 220 V, I = 5 A):</span><span id="v-real" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Indicación $UI\cos(\varphi-\sigma)$:</span><span id="v-ind" class="result-pill">--</span></div>
+        </div>
+        <div class="warn-box text-xs">Las reactancias dependen de la frecuencia: la conexión a 90° vale <strong>sólo para la frecuencia de contraste</strong> (p. ej. 50 Hz). Tampoco puede ampliarse el alcance con resistencias en serie (alterarían el diagrama vectorial): se usan <strong>transformadores de tensión</strong>.</div>
+        <div class="info-box text-xs">También existe la <strong>conexión a 90° capacitiva</strong>, con $R_v$ en serie con $C_2$, en paralelo con $R_2$, y todo en serie con $C_1$.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Logómetro — Sin muelles, dos pares motores opuestos</h2>
+      <p class="text-sm opacity-80 mt-1">La posición de equilibrio depende del cociente de dos corrientes.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-2 text-sm text-gray-600">
+        <p>No tiene par antagonista de resortes: lo reemplaza un <strong>segundo par motor</strong> de sentido contrario ($M_{m1} = M_{m2}$). Las dos bobinas móviles $2_A$ y $2_B$ están cruzadas un ángulo $\gamma$ y se alimentan con cintas muy flexibles de oro o plata.</p>
+        <p>Consecuencia: <strong>desconectado, la aguja no tiene posición determinada.</strong></p>
+      </div>
+      <div class="formula-box space-y-2">
+        <div>$ M_A = C_A\, I\, I_A \cos\varphi_1 \sin(\varphi - \alpha) $</div>
+        <div>$ M_B = C_B\, I\, I_B \cos\varphi_2 \sin\alpha $</div>
+        <div>Con $C_A = C_B$: $ \dfrac{I_A \cos\varphi_1}{I_B \cos\varphi_2} = \dfrac{\sin\alpha}{\sin(\varphi-\alpha)} $</div>
+        <div class="text-xs">La desviación es función del cociente de las <strong>componentes activas</strong> de ambas corrientes.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">Fasímetro (cofímetro)</h2>
+        <p class="text-xs opacity-80 mt-1">Bobina de intensidad $B_i$ + dos móviles $B_1$, $B_2$ con corrientes a 90°.</p>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="formula-box text-sm">$ \tan\alpha = \dfrac{k_2\, I_2}{k_1\, I_1}\tan\varphi \;\xrightarrow{k_1=k_2,\; I_1=I_2}\; \alpha = \varphi $</div>
+        <div>
+          <label class="slider-label font-semibold">Desfasaje φ: <span id="fphi-val" class="text-blue-700 font-bold">30</span>° <span id="fphi-type" class="badge badge-yellow">IND</span></label>
+          <input type="range" id="fphi-slider" min="-90" max="90" value="30" class="w-full" oninput="updateFas()">
+        </div>
+        <div data-param="fK"></div>
+        <canvas id="fasGauge" class="gauge-cv"></canvas>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">cos φ real:</span><span id="fas-real" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Lectura en escala:</span><span id="fas-read" class="result-pill">--</span></div>
+        </div>
+        <p class="text-xs text-gray-500">La escala es uniforme en φ pero <strong>alineal en cos φ</strong>. Eligiendo, por ejemplo, $I_1 = \sqrt{3}\, I_2$ se obtiene una escala de cos φ modificada. Indicación independiente de $U$ y de $I$.</p>
+      </div>
+    </div>
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">Frecuencímetro logométrico</h2>
+        <p class="text-xs opacity-80 mt-1">Rama $B_1$–$B$–$C$ (adelanta 90°) y rama $B_2$–$L$ (atrasa 90°).</p>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="formula-box text-sm">$ i_1 = 2\pi f\, U C \qquad i_2 = \dfrac{U}{2\pi f L} \qquad \tan\alpha = (2\pi)^2 L C \, f^2 $</div>
+        <div data-param="qL"></div>
+        <div data-param="qC"></div>
+        <div data-param="qF"></div>
+        <canvas id="freqGauge" class="gauge-cv"></canvas>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">$i_1$ / $i_2$ (U = 220 V):</span><span id="fr-i" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Desviación α:</span><span id="fr-a" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Centro de escala (α = 45°):</span><span id="fr-f0" class="result-pill">--</span></div>
+        </div>
+        <p class="text-xs text-gray-500">Lo que crece con $f^2$ es $\tan\alpha$: la escala se concentra en un rango estrecho alrededor de la frecuencia nominal (p. ej. 45–55 Hz).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 5: TRIFÁSICO =================== -->
+<div id="tab-trifasico" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">¿Cuántos vatímetros necesito? — Teorema de Blondel</h2>
+      <p class="text-sm opacity-80 mt-1">En un circuito de n conductores, la potencia activa es la suma algebraica de n − 1 vatímetros.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div>
+          <div class="slider-label font-semibold mb-1">Sistema</div>
+          <div class="flex gap-2">
+            <button id="ts-4" class="seg-btn active" onclick="setTri('hilos',4)">3 fases + neutro (tetrafilar)</button>
+            <button id="ts-3" class="seg-btn" onclick="setTri('hilos',3)">3 fases (trifilar)</button>
+          </div>
+        </div>
+        <div>
+          <div class="slider-label font-semibold mb-1">Carga</div>
+          <div class="flex gap-2">
+            <button id="tc-eq" class="seg-btn active" onclick="setTri('carga','eq')">Equilibrada</button>
+            <button id="tc-deq" class="seg-btn" onclick="setTri('carga','deq')">Desequilibrada</button>
+          </div>
+        </div>
+        <div class="formula-box text-sm">$ P_{trif} = V_{fR} I_{fR} \cos\varphi_R + V_{fS} I_{fS} \cos\varphi_S + V_{fT} I_{fT} \cos\varphi_T $<br>Equilibrada: $ P = 3\,V_f I_f \cos\varphi = \sqrt{3}\, V_L I_L \cos\varphi $</div>
+      </div>
+      <div id="tri-reco" class="card border-2 border-blue-300 p-4"></div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Método de Aron — Simulador con carga simétrica</h2>
+      <p class="text-sm opacity-80 mt-1">Vatímetro W1 en la línea R (U<sub>RS</sub>) y W3 en la línea T (U<sub>TS</sub>), como en el TP Nº 8.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6">
+      <div>
+        <div data-param="aUL"></div>
+        <div data-param="aIL"></div>
+        <div class="mb-3">
+          <label class="slider-label font-semibold">Ángulo de la carga φ: <span id="aphi-val" class="text-blue-700 font-bold">25</span>° <span id="aphi-type" class="badge badge-yellow">inductiva</span></label>
+          <input type="range" id="aphi-slider" min="-90" max="90" value="25" class="w-full" oninput="updateAron()">
+        </div>
+        <div class="formula-box text-sm mb-3">$ W_1 = U_L I_L \cos(30° + \varphi) \qquad W_3 = U_L I_L \cos(30° - \varphi) $<br>$ P = W_1 + W_3 \qquad Q = \sqrt{3}\,(W_3 - W_1) $</div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">W1:</span><span id="ar-w1" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">W3:</span><span id="ar-w3" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">P = W1 + W3:</span><span id="ar-p" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Q = √3 (W3 − W1):</span><span id="ar-q" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">cos φ:</span><span id="ar-fp" class="result-pill">--</span></div>
+        </div>
+        <div id="ar-msg" class="mt-2"></div>
+      </div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <h4 class="font-semibold text-gray-700 mb-1 text-sm">Diagrama fasorial</h4>
+            <canvas id="aronPhasor" class="gauge-cv" style="height:260px;"></canvas>
+          </div>
+          <div>
+            <h4 class="font-semibold text-gray-700 mb-1 text-sm">Lecturas por unidad vs. φ</h4>
+            <div class="chart-wrap" style="height:260px;"><canvas id="aronChart"></canvas></div>
+          </div>
+        </div>
+        <div class="info-box text-xs">Las lecturas coinciden con carga <strong>resistiva pura</strong> (φ = 0°). Para |φ| &gt; 60° una de las lecturas es <strong>negativa</strong>: la aguja deflexiona al revés, se invierten los bornes de <em>uno solo</em> de sus circuitos y la lectura se toma con signo negativo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">🔁 Del laboratorio al resultado</h2>
+        <p class="text-xs opacity-80 mt-1">Cargá tus lecturas de W1 y W3 (TP Nº 8, ítems 2 y 3).</p>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="slider-label font-semibold block">W1 [W]</label><input id="invW1" class="num-in" type="text" value="1500" oninput="updateInverse()"></div>
+          <div><label class="slider-label font-semibold block">W3 [W]</label><input id="invW3" class="num-in" type="text" value="3200" oninput="updateInverse()"></div>
+        </div>
+        <div id="inv-out" class="bg-blue-50 rounded-xl p-3 text-sm space-y-1"></div>
+        <p class="text-xs text-gray-500">$ \tan\varphi = \dfrac{\sqrt{3}\,(W_3 - W_1)}{W_1 + W_3} $ · El carácter (inductivo/capacitivo) depende de la conexión y de la secuencia de fases (aquí, RST como en la Fig. 2 del TP).</p>
+      </div>
+    </div>
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">🔀 Dos vatímetros con un solo instrumento</h2>
+        <p class="text-xs opacity-80 mt-1">Conmutador bipolar: el vatímetro entra y sale sin abrir las líneas.</p>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex gap-2">
+          <button id="sw-A" class="seg-btn" onclick="setSwitch('A')">Posición A</button>
+          <button id="sw-B" class="seg-btn active" onclick="setSwitch('B')">Posición B</button>
+          <button id="sw-C" class="seg-btn" onclick="setSwitch('C')">Posición C</button>
+        </div>
+        <div id="sw-desc" class="text-sm text-gray-700"></div>
+        <div class="warn-box text-xs">Medir en una línea, desconectar y pasar a la otra <strong>no es adecuado</strong>: al reconectar, el vatímetro soporta la corriente de arranque de la carga (muy elevada en un motor).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 6: INDUCCIÓN =================== -->
+<div id="tab-induccion" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Instrumentos de Inducción — Principio de campo errante</h2>
+      <p class="text-sm opacity-80 mt-1">Dos flujos alternos desfasados β inducen corrientes de Foucault en un disco de aluminio.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6">
+      <div class="space-y-3">
+        <div data-param="iBeta"></div>
+        <div data-param="iF"></div>
+        <div class="formula-box text-sm space-y-2">
+          <div>$ \varphi_1 = \Phi_{1max}\sin\omega t \qquad \varphi_2 = \Phi_{2max}\sin(\omega t + \beta) $</div>
+          <div>$ M_m = C_8 \, f\, \Phi_1 \Phi_2 \sin\beta \;\Rightarrow\; \alpha = C_{11}\, f\, I_1 I_2 \sin\beta $</div>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Par relativo (ref. 50 Hz, 90°):</span><span id="ind-par" class="result-pill">--</span></div>
+        </div>
+        <p class="text-xs text-gray-600">Cada corriente inducida está a 90° de su propio flujo (no produce fuerza con él), pero una parte de $i_1$ circula bajo el polo 2 y viceversa. Las dos interacciones actúan en sentidos opuestos sobre el disco y su resultante es un par <strong>constante</strong> proporcional a $\sin\beta$: máximo con β = 90°, nulo con β = 0°.</p>
+      </div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_2fr] gap-3 items-center">
+          <canvas id="indDisk" class="gauge-cv" style="height:170px;"></canvas>
+          <div class="chart-wrap" style="height:220px;min-height:200px;"><canvas id="indChart"></canvas></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="card p-3 border-l-4 border-green-500">
+            <div class="font-bold text-green-700 text-sm mb-1">✅ Ventajas</div>
+            <p class="text-xs text-gray-600">Par motor muy elevado. Escalas de hasta 330°, útiles en cuadros de maniobra y registradores.</p>
+          </div>
+          <div class="card p-3 border-l-4 border-red-500">
+            <div class="font-bold text-red-700 text-sm mb-1">❌ Desventajas</div>
+            <p class="text-xs text-gray-600">Sólo CA. Muy sensibles a la frecuencia y a la temperatura. Clases 1,5 – 2,5 – 5: no son de precisión.</p>
+          </div>
+        </div>
+        <div class="text-xs text-gray-500">Dos tipos constructivos: <strong>campo giratorio (Ferraris, tambor)</strong> y <strong>campo errante (disco)</strong>. Los contadores se fabrican exclusivamente con disco.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Contador de Energía Monofásico — Simulador</h2>
+      <p class="text-sm opacity-80 mt-1">Sin par antagonista: el disco gira continuamente y el integrador ciclométrico acumula las vueltas.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div class="flex gap-2">
+          <button id="cm-libre" class="seg-btn active" onclick="setMeterMode('libre')">Modo libre</button>
+          <button id="cm-desafio" class="seg-btn" onclick="setMeterMode('desafio')">🎯 Desafío: carga misteriosa</button>
+        </div>
+        <div id="meter-free-ctrl">
+          <div data-param="cI"></div>
+          <div data-param="cPF"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="slider-label font-semibold block">Constante $K_d$</label>
+            <select id="cKd" class="num-in" onchange="onKdChange()"><option value="360">360 rev/kWh</option><option value="600">600 rev/kWh</option><option value="750" selected>750 rev/kWh</option><option value="1200">1200 rev/kWh</option></select></div>
+          <div><label class="slider-label font-semibold block">Velocidad de simulación</label>
+            <select id="cSpd" class="num-in"><option value="1" selected>×1 (tiempo real)</option><option value="10">×10</option><option value="60">×60</option></select></div>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Potencia (U = 220 V):</span><span id="c-P" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Velocidad del disco:</span><span id="c-rpm" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Vueltas contadas:</span><span id="c-revs" class="result-pill">0</span></div>
+        </div>
+        <div id="challenge-box" class="hidden card p-3 border-2 border-orange-300 space-y-2">
+          <div class="text-sm text-gray-700">Una carga desconocida está conectada. Medí con el cronómetro cuántas vueltas da el disco y calculá la potencia: $ P[\text{kW}] = \dfrac{3600\, n}{K_d \, t} $</div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <button id="chrono-btn" onclick="toggleChrono()" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-lg">⏱️ Iniciar cronómetro</button>
+            <span id="chrono-out" class="text-sm font-mono text-gray-700">t = 0,0 s · n = 0,00</span>
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <input id="chal-ans" class="num-in" style="max-width:140px;" type="text" placeholder="P en W">
+            <button onclick="checkChallenge()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Verificar</button>
+            <button onclick="newChallenge()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg">Nueva carga</button>
+          </div>
+          <div id="chal-res" class="text-sm"></div>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div class="text-center">
+          <div class="text-xs font-semibold text-gray-500 mb-1">Integrador (kWh)</div>
+          <div id="odo" class="odo"></div>
+        </div>
+        <canvas id="meterDisk" class="gauge-cv" style="height:200px;"></canvas>
+        <button onclick="resetMeter()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg">🔄 Reiniciar contador</button>
+        <div>
+          <h4 class="font-semibold text-gray-700 mb-2 text-sm">Placa de características — hacé clic en cada dato</h4>
+          <div class="flex flex-wrap gap-2 mb-2" id="plate-chips"></div>
+          <div id="plate-desc" class="info-box text-xs">Elegí un dato de la placa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">Contador trifásico — Variantes constructivas</h2>
+      </div>
+      <div class="p-4 space-y-2">
+        <div class="card p-3 border-l-4 border-blue-500"><div class="font-bold text-blue-700 text-sm">Tres sistemas</div><p class="text-xs text-gray-600">Tres contadores monofásicos en un mismo eje: tres discos, dos bobinados por disco. Red tetrafilar.</p></div>
+        <div class="card p-3 border-l-4 border-purple-500"><div class="font-bold text-purple-700 text-sm">Dos sistemas</div><p class="text-xs text-gray-600">Dos discos en un eje; la conexión es la del método de los dos vatímetros (Aron). Red trifilar.</p></div>
+        <div class="card p-3 border-l-4 border-green-500"><div class="font-bold text-green-700 text-sm">Un solo disco</div><p class="text-xs text-gray-600">Sobre un único disco actúan tres o dos pares de bobinados, según conexión tetrafilar o trifilar.</p></div>
+        <p class="text-xs text-gray-500">La conexión es voltamperométrica, como la de un vatímetro: bobina de intensidad en serie y bobina de tensión en paralelo (4 bornes en el monofásico).</p>
+      </div>
+    </div>
+    <div class="card overflow-hidden">
+      <div class="section-header">
+        <h2 class="text-base font-bold">Contador digital — Ciclo del display</h2>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex flex-wrap gap-2">
+          <button id="lcd-mono" class="seg-btn active" onclick="setLcdType('mono')">Monofásico</button>
+          <button id="lcd-trif" class="seg-btn" onclick="setLcdType('trif')">Trifásico</button>
+          <button class="seg-btn" onclick="lcdNext()">▶ Pulsador de lectura</button>
+          <button id="lcd-auto" class="seg-btn active" onclick="toggleLcdAuto()">Auto</button>
+        </div>
+        <div class="lcd">
+          <div class="flex items-baseline justify-between gap-2">
+            <span id="lcd-tag" class="font-bold text-lg">—</span>
+            <span id="lcd-val" class="lcd-main">8888888</span>
+            <span id="lcd-unit" class="font-bold text-sm">—</span>
+          </div>
+        </div>
+        <div id="lcd-desc" class="text-xs text-gray-600"></div>
+        <p class="text-xs text-gray-500">Medición estática (sin partes móviles): sensores de corriente (shunt) y tensión → conversores A/D → microprocesador → display, memoria FRAM, reloj de tiempo real y puerto óptico (IrDA). Más que un medidor, es un <strong>analizador de red</strong>: mide también reactiva, aparente, tensión, corriente, frecuencia, factor de potencia y distorsión.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 7: TP Nº 8 =================== -->
+<div id="tab-tp" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">📝 T. P. Nº 8 — Medición de potencia activa, reactiva y aparente</h2>
+      <p class="text-sm opacity-80 mt-1">Unidades 6 y 7 · Resolución de ejercicios, problemas de ingeniería y formación experimental.</p>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="info-box"><strong>Objetivo:</strong> medir potencia en CA con el método voltímetro–amperímetro y con vatímetro, en sistemas monofásicos y trifásicos. Equipamiento: voltímetro, amperímetro, vatímetro, fasímetro de tablero RB, analizador de redes CE, multímetros UNI-T UT70A y Mastech MS8201, frecuencímetros analógico y digital.</div>
+
+      <div class="card p-4 border-l-4 border-blue-300">
+        <div class="flex items-start gap-2 mb-2"><span class="badge badge-blue">1</span><p class="font-semibold text-gray-800 text-sm">¿Cuántos bornes de conexión tiene un vatímetro y cómo deben conectarse?</p></div>
+        <button onclick="toggleSol('sol1')" class="text-xs font-bold text-blue-700 hover:underline">Ver respuesta</button>
+        <div id="sol1" class="hidden mt-2 info-box text-sm">Cuatro bornes: dos del circuito amperimétrico (bobina fija, <strong>en serie</strong> con la carga) y dos del circuito voltimétrico (bobina móvil + $R_{ad}$, <strong>en paralelo</strong>). Los bornes marcados (±/✱) de ambos circuitos se unen del mismo lado para que la deflexión sea positiva, y la derivación voltimétrica puede tomarse antes o después de la bobina amperimétrica según cuál error de consumo convenga minimizar.</div>
+      </div>
+
+      <div class="card p-4 border-l-4 border-blue-300">
+        <div class="flex items-start gap-2 mb-2"><span class="badge badge-blue">2</span><p class="font-semibold text-gray-800 text-sm">¿Por qué la aguja de un vatímetro puede deflexionar en sentido contrario?</p></div>
+        <button onclick="toggleSol('sol2')" class="text-xs font-bold text-blue-700 hover:underline">Ver respuesta</button>
+        <div id="sol2" class="hidden mt-2 info-box text-sm">Porque el producto $U I \cos\beta$ resulta negativo: (a) un circuito (voltimétrico o amperimétrico) está conectado con la <strong>polaridad invertida</strong>; (b) en el método de Aron con $|\varphi| &gt; 60°$ una lectura es negativa; (c) el sentido de la potencia se invierte (la "carga" entrega energía, p. ej. generación). Solución: invertir los bornes de <strong>uno solo</strong> de los circuitos y registrar la lectura con signo negativo.</div>
+      </div>
+
+      <div class="card p-4 border-l-4 border-blue-300" id="ej3-card">
+        <div class="flex items-start gap-2 mb-2"><span class="badge badge-blue">3</span><p class="font-semibold text-gray-800 text-sm">¿Cuál es el valor de la resistencia cuando se disipan 320 W con una caída de 35 V?</p></div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <input id="ej3-R" class="num-in" style="max-width:140px;" type="text" placeholder="R en Ω">
+          <button onclick="checkEj3()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Verificar</button>
+          <button onclick="toggleSol('sol3')" class="text-xs font-bold text-blue-700 hover:underline">Ver resolución</button>
+        </div>
+        <div id="ej3-res" class="text-sm mt-2"></div>
+        <div id="sol3" class="hidden mt-2 formula-box text-sm">$ R = \dfrac{U^2}{P} = \dfrac{35^2}{320} = \dfrac{1225}{320} \approx 3{,}83\ \Omega $</div>
+      </div>
+
+      <div class="card p-4 border-l-4 border-blue-300" id="ej4-card">
+        <div class="flex items-start gap-2 mb-2"><span class="badge badge-blue">4</span><p class="font-semibold text-gray-800 text-sm">Una carga monofásica recibe tensión y corriente senoidales de <strong>amplitudes</strong> 250 V y 3,4 A, con factor de potencia 0,41. Calcular P, S y Q.</p></div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
+          <div><label class="slider-label block">P [W]</label><input id="ej4-P" class="num-in" type="text"></div>
+          <div><label class="slider-label block">S [VA]</label><input id="ej4-S" class="num-in" type="text"></div>
+          <div><label class="slider-label block">Q [VAR]</label><input id="ej4-Q" class="num-in" type="text"></div>
+          <div class="flex gap-2"><button onclick="checkEj4()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Verificar</button>
+          <button onclick="toggleSol('sol4')" class="text-xs font-bold text-blue-700 hover:underline">Resolución</button></div>
+        </div>
+        <div id="ej4-res" class="text-sm mt-2"></div>
+        <div id="sol4" class="hidden mt-2 formula-box text-sm space-y-2">
+          <div>¡Ojo! Son <strong>amplitudes</strong>: $ U = \dfrac{250}{\sqrt2} = 176{,}8\ \text{V} \qquad I = \dfrac{3{,}4}{\sqrt2} = 2{,}404\ \text{A} $</div>
+          <div>$ S = U I = \tfrac{1}{2}\,250 \cdot 3{,}4 = 425\ \text{VA} $</div>
+          <div>$ P = S\cos\varphi = 425 \cdot 0{,}41 = 174{,}3\ \text{W} $</div>
+          <div>$ Q = S\sin\varphi = 425\sqrt{1-0{,}41^2} = 387{,}6\ \text{VAR} $</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔬 Práctico de laboratorio — Tabla de resultados</h2>
+      <p class="text-sm opacity-80 mt-1">Ingresá I, U y P medidos; la tabla calcula S, Q, f.d.p. y φ. Usá la pestaña "Trifásico" para las lecturas de Aron del motor.</p>
+    </div>
+    <div class="p-5">
+      <div class="overflow-x-auto">
+        <table class="lab w-full text-sm border-collapse">
+          <thead><tr class="bg-gray-100">
+            <th class="text-left">Carga Zc</th><th>I [A]</th><th>U [V]</th><th>P [W]</th><th>Carácter</th><th>S [VA]</th><th>Q [VAR]</th><th>f.d.p.</th><th>φ [°]</th>
+          </tr></thead>
+          <tbody id="lab-body"></tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button onclick="exportLabCSV()" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-2 rounded-lg">⬇️ Exportar CSV</button>
+        <button onclick="clearLab()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg">Limpiar tabla</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">$ S = U I \qquad \cos\varphi = P/S \qquad Q = \pm\sqrt{S^2 - P^2} $ (positivo inductivo, negativo capacitivo). Si P &gt; S la tabla avisa: revisá lecturas o error de consumo.</p>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🦺 Trabajo de campo — Checklist de seguridad</h2>
+      <p class="text-sm opacity-80 mt-1">Medición con pinza amperométrica en el Tablero Principal de la Universidad (rol: observador).</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="safety-list" class="space-y-2"></div>
+      <div class="space-y-3">
+        <div class="w-full bg-gray-200 rounded-full h-3"><div id="safety-bar" class="bg-green-600 h-3 rounded-full transition-all" style="width:0%"></div></div>
+        <div id="safety-status" class="text-sm text-gray-600"></div>
+        <div class="info-box text-xs">Guía orientativa para el informe: las indicaciones del docente durante la práctica y la normativa vigente (Reglamentación AEA, Ley 19.587 de Higiene y Seguridad en el Trabajo) tienen prioridad. El informe debe detallar normas de seguridad, técnicas de medición y resultados.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== TAB 8: QUIZ =================== -->
+<div id="tab-quiz" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🧠 Quiz — Unidad 6: Potencia y Energía</h2>
+      <p class="text-sm opacity-80 mt-1">Seleccioná la respuesta correcta en cada pregunta.</p>
+    </div>
+    <div class="p-5">
+      <div class="flex items-center gap-4 mb-5 bg-gray-50 rounded-xl p-3">
+        <div class="text-3xl font-bold text-blue-700" id="quiz-score">0</div>
+        <div class="flex-1">
+          <div class="text-sm text-gray-600 mb-1">Puntos acumulados · <span id="quiz-answered">0</span>/<span id="quiz-total">0</span> respondidas</div>
+          <div class="w-full bg-gray-200 rounded-full h-3"><div id="quiz-progress" class="bg-blue-600 h-3 rounded-full transition-all" style="width:0%"></div></div>
+        </div>
+        <button onclick="resetQuiz()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition">🔄 Reiniciar</button>
+      </div>
+      <div id="quiz-container" class="space-y-6"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</div>
+    <div>Guía de Estudios Unidad 6 · Trabajo Práctico Nº 8. Año 2026</div>
+    <div class="mt-1 text-xs">Material didáctico gamificado.</div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// =============================================
+// UTILIDADES
+// =============================================
+var DEG = Math.PI / 180;
+function $(id) { return document.getElementById(id); }
+function fmt(v, d) {
+  if (v === undefined || v === null || !isFinite(v)) return '—';
+  d = d || 0;
+  if (Math.abs(v) < 0.5 * Math.pow(10, -d)) v = 0;
+  return v.toFixed(d).replace('.', ',');
+}
+function rv(id) { return parseFloat($(id).value); }
+function parseNum(s) { return parseFloat(String(s).replace(',', '.')); }
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function fmtPow(v, unit) {
+  var a = Math.abs(v);
+  if (a >= 1e6) return fmt(v / 1e6, 2) + ' M' + unit;
+  if (a >= 1e3) return fmt(v / 1e3, 2) + ' k' + unit;
+  return fmt(v, 1) + ' ' + unit;
+}
+function setupCanvas(cv) {
+  var W = cv.clientWidth || 400, H = cv.clientHeight || 220, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx: ctx, W: W, H: H };
+}
+function setSeg(ids, activeId) {
+  ids.forEach(function (id) { var b = $(id); if (b) b.classList.toggle('active', id === activeId); });
+}
+function renderMath(el) {
+  if (typeof renderMathInElement === 'undefined' || !el) return;
+  renderMathInElement(el, {
+    delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+    throwOnError: false
+  });
+}
+function arrow(ctx, x0, y0, x1, y1, color, width, label) {
+  var a = Math.atan2(y1 - y0, x1 - x0), h = 8;
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 2;
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - h * Math.cos(a - 0.4), y1 - h * Math.sin(a - 0.4));
+  ctx.lineTo(x1 - h * Math.cos(a + 0.4), y1 - h * Math.sin(a + 0.4));
+  ctx.closePath(); ctx.fill();
+  if (label) {
+    ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(label, x1 + 12 * Math.cos(a), y1 + 12 * Math.sin(a) + 4);
+  }
+}
+
+// =============================================
+// STEPPERS GENÉRICOS
+// =============================================
+var P = {};
+function defParam(key, cfg) { P[key] = cfg; }
+function pv(key) { return P[key].val; }
+function renderSteppers() {
+  document.querySelectorAll('[data-param]').forEach(function (el) {
+    var k = el.getAttribute('data-param'), c = P[k];
+    if (!c) return;
+    el.className = 'stepper-row';
+    el.innerHTML = '<label class="slider-label font-semibold">' + c.label + '</label>' +
+      '<div class="stepper"><span id="' + k + '-val" class="stepper-val">' + fmt(c.val, c.dec) + '</span>' +
+      '<span class="stepper-unit">' + c.unit + '</span><div class="stepper-arrows">' +
+      '<button type="button" class="stepper-btn" onclick="stepParam(\'' + k + '\',1)">▲</button>' +
+      '<button type="button" class="stepper-btn" onclick="stepParam(\'' + k + '\',-1)">▼</button></div></div>';
+  });
+}
+function stepParam(key, dir) {
+  try {
+    var c = P[key];
+    c.val = +clamp(c.val + dir * c.step, c.min, c.max).toFixed(6);
+    var el = $(key + '-val');
+    if (el) el.textContent = fmt(c.val, c.dec);
+    if (c.fn) c.fn();
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// GAUGE ANALÓGICO GENÉRICO
+// =============================================
+// o: { sweep (°), ticks: [{f, label, major}], needle (0..1), title, readout, band:{f0,f1,color} }
+function drawGauge(cv, o) {
+  var s = setupCanvas(cv), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#fffdf5'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+  var sw = o.sweep, big = sw > 150;
+  var cx = W / 2, cy = big ? H * 0.66 : H * 0.86;
+  var r = big ? Math.min(W * 0.42, H * 0.55) : Math.min(W * 0.44, H * 0.7);
+  function ang(f) { return (-90 - sw / 2 + f * sw) * DEG; }
+  if (o.band) {
+    ctx.strokeStyle = o.band.color; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.arc(cx, cy, r - 4, ang(o.band.f0), ang(o.band.f1)); ctx.stroke();
+  }
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, ang(0), ang(1)); ctx.stroke();
+  ctx.fillStyle = '#334155'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  (o.ticks || []).forEach(function (t) {
+    var a = ang(t.f), len = t.major ? 12 : 6;
+    ctx.lineWidth = t.major ? 1.6 : 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+    ctx.lineTo(cx + (r - len) * Math.cos(a), cy + (r - len) * Math.sin(a));
+    ctx.stroke();
+    if (t.label !== undefined && t.label !== '') {
+      ctx.fillText(t.label, cx + (r - 24) * Math.cos(a), cy + (r - 24) * Math.sin(a) + 3);
+    }
+  });
+  if (o.title) {
+    ctx.fillStyle = '#1e3a5f'; ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(o.title, cx, cy - r * 0.42);
+  }
+  var nf = clamp(o.needle, -0.03, 1.03), na = ang(nf);
+  ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + (r - 8) * Math.cos(na), cy + (r - 8) * Math.sin(na)); ctx.stroke();
+  ctx.fillStyle = '#1e3a5f'; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fill();
+  if (o.readout) {
+    ctx.fillStyle = '#475569'; ctx.font = '11px sans-serif';
+    ctx.fillText(o.readout, cx, big ? H - 8 : Math.min(H - 4, cy + 14));
+  }
+}
+
+// =============================================
+// LOGROS
+// =============================================
+var ACH = [
+  { id: 'explorador', t: '🧭 Explorador', d: 'Visitaste todas las pestañas' },
+  { id: 'repulsion', t: '🧲 Repulsión', d: 'Invertiste el sentido de una corriente' },
+  { id: 'sobrecarga', t: '🔥 Bobina en peligro', d: 'Sobrecargaste una bobina sin que la aguja llegue a fondo' },
+  { id: 'conexion90', t: '📐 Conexión 90°', d: 'Lograste σ = 90° en el varímetro' },
+  { id: 'aronneg', t: '↩️ Lectura negativa', d: 'Llevaste |φ| más allá de 60° en Aron' },
+  { id: 'contador', t: '⚡ Lector de medidores', d: 'Resolviste el desafío del contador' },
+  { id: 'tp', t: '📝 TP al día', d: 'Resolviste los ejercicios 3 y 4 del TP Nº 8' },
+  { id: 'seguridad', t: '🦺 Seguridad primero', d: 'Completaste el checklist del trabajo de campo' },
+  { id: 'quiz', t: '🏆 Quiz maestro', d: 'Al menos 12 respuestas correctas en el quiz' }
+];
+var ACH_KEY = 'me1-u6-logros';
+var achState = {};
+try { achState = JSON.parse(localStorage.getItem(ACH_KEY) || '{}') || {}; } catch (e) { achState = {}; }
+function saveAch() { try { localStorage.setItem(ACH_KEY, JSON.stringify(achState)); } catch (e) { } }
+function renderAch() {
+  var n = 0;
+  $('ach-strip').innerHTML = ACH.map(function (a) {
+    if (achState[a.id]) n++;
+    return '<span class="achv' + (achState[a.id] ? ' on' : '') + '" title="' + a.d + '">' + (achState[a.id] ? a.t : '🔒 ' + a.t.split(' ').slice(1).join(' ')) + '</span>';
+  }).join('');
+  $('ach-count').textContent = n + '/' + ACH.length;
+}
+var toastTimer = null;
+function toast(msg) {
+  var t = $('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2800);
+}
+function unlock(id) {
+  if (achState[id]) return;
+  var a = ACH.filter(function (x) { return x.id === id; })[0];
+  if (!a) return;
+  achState[id] = true; saveAch(); renderAch();
+  toast('🏅 Logro desbloqueado: ' + a.t + ' — ' + a.d);
+}
+function resetAch() { achState = {}; visited = {}; saveAch(); renderAch(); }
+
+// =============================================
+// NAVEGACIÓN
+// =============================================
+var TAB_IDS = ['tab-intro', 'tab-motor', 'tab-vatimetro', 'tab-logometros', 'tab-trifasico', 'tab-induccion', 'tab-tp', 'tab-quiz'];
+var activeTab = 'tab-intro';
+var visited = { 'tab-intro': true };
+function switchTab(id) {
+  try {
+    document.querySelectorAll('.tab-content').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    $(id).classList.add('active');
+    var idx = TAB_IDS.indexOf(id), btns = document.querySelectorAll('.tab-btn');
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+    activeTab = id;
+    visited[id] = true;
+    if (Object.keys(visited).length === TAB_IDS.length) unlock('explorador');
+    setTimeout(function () {
+      if (id === 'tab-intro') { updateForce(); updateCoil(); }
+      if (id === 'tab-motor') { updateMotor(); updateQuad(); }
+      if (id === 'tab-vatimetro') { updateWatt(); }
+      if (id === 'tab-logometros') { updateVar(); updateFas(); updateFreq(); }
+      if (id === 'tab-trifasico') { updateAron(); updateInverse(); }
+      if (id === 'tab-induccion') { updateInd(); updateMeterInfo(); }
+      if (id === 'tab-quiz') { buildQuiz(); }
+    }, 80);
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 1: PRINCIPIO
+// =============================================
+var forceDir = 1;
+defParam('fI1', { label: 'Corriente i₁', unit: 'A', min: 1, max: 20, step: 1, val: 10, dec: 0, fn: updateForce });
+defParam('fI2', { label: 'Corriente i₂', unit: 'A', min: 1, max: 20, step: 1, val: 10, dec: 0, fn: updateForce });
+defParam('fD', { label: 'Separación d', unit: 'cm', min: 0.5, max: 10, step: 0.5, val: 2, dec: 1, fn: updateForce });
+defParam('cTheta', { label: 'Ángulo θ entre H₁ y H₂', unit: '°', min: 0, max: 90, step: 5, val: 45, dec: 0, fn: updateCoil });
+
+function setForceDir(d) {
+  forceDir = d;
+  setSeg(['fdir-same', 'fdir-opp'], d === 1 ? 'fdir-same' : 'fdir-opp');
+  if (d === -1) unlock('repulsion');
+  updateForce();
+}
+function updateForce() {
+  try {
+    var F = 2e-7 * pv('fI1') * pv('fI2') / (pv('fD') / 100); // N/m
+    $('f-res').textContent = fmt(F * 1000, 2) + ' mN/m';
+    $('f-eff').textContent = forceDir === 1 ? 'Atracción' : 'Repulsión';
+    $('arrI2').setAttribute('transform', forceDir === 1 ? '' : 'rotate(180 290 105)');
+    var len = 18 + 40 * Math.min(1, F / 4e-3);
+    var L = $('fArrL'), R = $('fArrR');
+    if (forceDir === 1) {
+      L.setAttribute('x1', 154); L.setAttribute('x2', 154 + len);
+      R.setAttribute('x1', 286); R.setAttribute('x2', 286 - len);
+    } else {
+      L.setAttribute('x1', 146); L.setAttribute('x2', 146 - len);
+      R.setAttribute('x1', 294); R.setAttribute('x2', 294 + len);
+    }
+    $('fLbl').textContent = forceDir === 1 ? 'ATRACCIÓN' : 'REPULSIÓN';
+  } catch (e) { console.error(e); }
+}
+function updateCoil() {
+  try {
+    var th = pv('cTheta'), par = Math.sin(th * DEG);
+    $('movCoil').setAttribute('transform', 'rotate(' + (-th) + ' 180 130)');
+    $('c-par').textContent = fmt(par * 100, 0) + ' %';
+    $('c-bar').style.width = (par * 100) + '%';
+  } catch (e) { console.error(e); }
+}
+var classData = {
+  aire: { title: 'a) Electrodinámico — núcleos de aire', desc: 'Una bobina móvil dentro de una bobina fija, sin hierro. Sin histéresis ni corrientes parásitas: es el tipo más exacto y se usa en amperímetros, voltímetros y vatímetros de CC y CA, incluso como patrón de laboratorio. Su campo propio es débil: es sensible a campos externos y necesita blindaje.', badges: [['Patrones de laboratorio', 'badge-blue'], ['CC y CA', 'badge-green'], ['Requiere blindaje', 'badge-red']] },
+  hierro: { title: 'b) Ferrodinámico — núcleos de hierro', desc: 'El circuito magnético de hierro concentra el flujo: mayor par motor y menor influencia de campos externos, a costa de errores por histéresis y corrientes parásitas. Se usa en amperímetros, voltímetros y vatímetros de CC y CA, típicamente de tablero.', badges: [['Mayor par', 'badge-green'], ['Tableros', 'badge-blue'], ['Histéresis', 'badge-yellow']] },
+  logo: { title: 'c) Diferencial — logómetro', desc: 'Dos bobinas móviles cruzadas sobre el mismo eje, sin muelles: el par antagonista es un segundo par motor opuesto. La indicación depende del cociente de dos corrientes. Se usa como cofímetro (fasímetro) y frecuencímetro.', badges: [['Sin muelles', 'badge-purple'], ['Cofímetro', 'badge-blue'], ['Frecuencímetro', 'badge-green']] }
+};
+function showClass(k) {
+  var d = classData[k]; if (!d) return;
+  $('cd-title').textContent = d.title;
+  $('cd-desc').textContent = d.desc;
+  $('cd-badges').innerHTML = d.badges.map(function (b) { return '<span class="badge ' + b[1] + '">' + b[0] + '</span>'; }).join('');
+  $('class-detail').classList.remove('hidden');
+}
+
+// =============================================
+// TAB 2: PAR MOTOR
+// =============================================
+var motorMode = 'ca', charts = {};
+defParam('mIf', { label: 'Corriente bobina fija I<sub>f</sub>', unit: 'A', min: 0.5, max: 5, step: 0.5, val: 3, dec: 1, fn: updateMotor });
+defParam('mIm', { label: 'Corriente bobina móvil I<sub>m</sub>', unit: 'A', min: 0.1, max: 1, step: 0.1, val: 0.8, dec: 1, fn: updateMotor });
+defParam('qI', { label: 'Corriente medida I', unit: 'A', min: 0, max: 5, step: 0.25, val: 2, dec: 2, fn: updateQuad });
+
+function setMotorMode(m) {
+  motorMode = m;
+  setSeg(['mm-ca', 'mm-cc'], 'mm-' + m);
+  $('beta-wrap').style.opacity = m === 'cc' ? 0.4 : 1;
+  $('beta-slider').disabled = (m === 'cc');
+  updateMotor();
+}
+function ensureProdChart() {
+  if (charts.prod) return charts.prod;
+  if (typeof Chart === 'undefined') return null;
+  charts.prod = new Chart($('prodChart').getContext('2d'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'i_f (A)', data: [], borderColor: '#2563eb', borderWidth: 1.5, pointRadius: 0, yAxisID: 'y1' },
+      { label: 'i_m (A)', data: [], borderColor: '#7c3aed', borderWidth: 1.5, pointRadius: 0, yAxisID: 'y1' },
+      { label: 'i_f · i_m (par instantáneo)', data: [], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.12)', borderWidth: 2.2, pointRadius: 0, fill: true },
+      { label: 'Valor medio → aguja', data: [], borderColor: '#dc2626', borderWidth: 2.5, borderDash: [6, 4], pointRadius: 0 }
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 150 },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 't (ms)' }, ticks: { font: { size: 9 } } },
+        y: { title: { display: true, text: 'i_f · i_m (A²)' }, ticks: { font: { size: 9 } } },
+        y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Corriente (A)' }, ticks: { font: { size: 9 } } }
+      }
+    }
+  });
+  return charts.prod;
+}
+function updateMotor() {
+  try {
+    var If = pv('mIf'), Im = pv('mIm');
+    var b = motorMode === 'cc' ? 0 : rv('beta-slider');
+    $('beta-val').textContent = Math.round(b);
+    var w = 2 * Math.PI * 50, f = [], m = [], p = [], avg = [];
+    var mean = If * Im * Math.cos(b * DEG);
+    for (var i = 0; i <= 240; i++) {
+      var t = i / 240 * 0.04, x = +(t * 1000).toFixed(3), a, c;
+      if (motorMode === 'cc') { a = If; c = Im; }
+      else { a = If * Math.SQRT2 * Math.sin(w * t); c = Im * Math.SQRT2 * Math.sin(w * t - b * DEG); }
+      f.push({ x: x, y: a }); m.push({ x: x, y: c }); p.push({ x: x, y: a * c }); avg.push({ x: x, y: mean });
+    }
+    var ch = ensureProdChart();
+    if (ch) { ch.data.datasets[0].data = f; ch.data.datasets[1].data = m; ch.data.datasets[2].data = p; ch.data.datasets[3].data = avg; ch.update(); }
+    $('m-avg').textContent = fmt(mean, 3) + ' A²';
+    $('m-ac').textContent = motorMode === 'cc' ? '0 (no hay)' : fmt(If * Im, 3) + ' A²';
+    $('m-freq').textContent = motorMode === 'cc' ? '—' : '100 Hz (2f)';
+    $('m-alpha').textContent = fmt(mean / 5 * 100, 1) + ' %';
+    var note = '';
+    if (motorMode === 'cc') note = 'En CC el producto es constante: α = K·I_f·I_m.';
+    else if (b > 90) note = 'Con β > 90° el valor medio es negativo: la aguja intenta deflexionar al revés (tope mecánico).';
+    else if (b === 90) note = 'Con β = 90° el par medio es nulo aunque circulen corrientes: base del varímetro (conexión a 90°).';
+    else note = 'El par oscila al doble de la frecuencia de red; el sistema móvil, por su inercia, sólo responde al valor medio.';
+    $('m-note').textContent = note;
+  } catch (e) { console.error(e); }
+}
+function updateQuad() {
+  try {
+    var I = pv('qI'), Imax = 5, ticks = [];
+    for (var v = 0; v <= Imax + 1e-9; v += 0.25) {
+      var major = Math.abs(v - Math.round(v)) < 1e-9;
+      ticks.push({ f: Math.pow(v / Imax, 2), major: major || Math.abs(v * 2 - Math.round(v * 2)) < 1e-9 && v >= 2, label: major ? String(v) : '' });
+    }
+    var fq = Math.pow(I / Imax, 2);
+    drawGauge($('quadGauge'), { sweep: 100, ticks: ticks, needle: fq, title: 'A ≈', readout: 'Escala cuadrática: α = C·I²' });
+    $('q-res').textContent = fmt(fq * 100, 1) + ' % del fondo';
+    $('q-lin').textContent = fmt(I / Imax * 100, 1) + ' % del fondo';
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 3: VATÍMETRO
+// =============================================
+var wattConn = 'carga';
+defParam('wU', { label: 'Tensión U', unit: 'V', min: 20, max: 600, step: 10, val: 220, dec: 0, fn: updateWatt });
+defParam('wI', { label: 'Corriente I', unit: 'A', min: 0.5, max: 12, step: 0.5, val: 5, dec: 1, fn: updateWatt });
+defParam('wRs', { label: 'R bobina amperimétrica R<sub>s</sub>', unit: 'Ω', min: 0.01, max: 1, step: 0.01, val: 0.05, dec: 2, fn: updateWatt });
+defParam('wRd', { label: 'R circuito voltimétrico R<sub>d</sub>', unit: 'kΩ', min: 1, max: 50, step: 1, val: 10, dec: 0, fn: updateWatt });
+defParam('wSig', { label: 'Desfasaje de la voltimétrica σ', unit: '°', min: 0, max: 3, step: 0.1, val: 0.5, dec: 1, fn: updateWatt });
+defParam('aRd', { label: 'R<sub>d</sub> de la bobina móvil', unit: 'kΩ', min: 0.5, max: 20, step: 0.5, val: 2, dec: 1, fn: updateAmpl });
+defParam('aN', { label: 'Factor de ampliación n', unit: '×', min: 1, max: 20, step: 1, val: 5, dec: 0, fn: updateAmpl });
+
+function setWattConn(c) {
+  wattConn = c;
+  setSeg(['wc-gen', 'wc-carga'], 'wc-' + c);
+  updateWatt();
+}
+function updateAmpl() {
+  $('a-Rad').textContent = fmt(pv('aRd') * (pv('aN') - 1), 1) + ' kΩ';
+}
+function phiType(phi) {
+  if (Math.abs(phi) < 0.5) return ['resistiva', 'badge-green'];
+  return phi > 0 ? ['inductiva', 'badge-yellow'] : ['capacitiva', 'badge-blue'];
+}
+function setPhiLabel(valId, typeId, phi) {
+  $(valId).textContent = Math.round(phi);
+  var t = phiType(phi), el = $(typeId);
+  el.textContent = t[0]; el.className = 'badge ' + t[1];
+}
+function ensurePhaseErrChart() {
+  if (charts.perr) return charts.perr;
+  if (typeof Chart === 'undefined') return null;
+  charts.perr = new Chart($('phaseErrChart').getContext('2d'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Error de fase (%)', data: [], borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0 },
+      { label: 'Carga actual', data: [], borderColor: '#dc2626', backgroundColor: '#dc2626', pointRadius: 6, showLine: false }
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 } } } },
+      scales: {
+        x: { type: 'linear', min: -85, max: 85, title: { display: true, text: 'φ (°)' }, ticks: { font: { size: 9 } } },
+        y: { min: -20, max: 20, title: { display: true, text: 'e (%)' }, ticks: { font: { size: 9 } } }
+      }
+    }
+  });
+  return charts.perr;
+}
+function phaseErrPct(phi, sg) {
+  var c = Math.cos(phi * DEG);
+  return (Math.cos((phi - sg) * DEG) - c) / c * 100;
+}
+function drawWattPhasor(phi, sg) {
+  var s = setupCanvas($('wPhasor')), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  var cx = W / 2, cy = H - 22, L = Math.min(H - 50, W / 2 - 20);
+  function v(a, len) { return [cx + len * Math.sin(a * DEG), cy - len * Math.cos(a * DEG)]; }
+  var u = v(0, L), is = v(phi, L * 0.8), id = v(sg * 5, L * 0.5);
+  arrow(ctx, cx, cy, u[0], u[1], '#1e3a5f', 2.5, 'U');
+  arrow(ctx, cx, cy, is[0], is[1], '#2563eb', 2.2, 'Is');
+  arrow(ctx, cx, cy, id[0], id[1], '#7c3aed', 2, 'Id');
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, 30, -Math.PI / 2, (-90 + phi) * DEG, phi < 0); ctx.stroke();
+  ctx.fillStyle = '#475569'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('φ = ' + Math.round(phi) + '°', cx + (phi >= 0 ? 52 : -52), cy - 14);
+  ctx.fillText('δ = φ − σ = ' + fmt(phi - sg, 1) + '°', cx, H - 5);
+}
+function updateWatt() {
+  try {
+    var U = pv('wU'), I = pv('wI'), phi = rv('wphi-slider'), Rs = pv('wRs'), Rd = pv('wRd') * 1000, sg = pv('wSig');
+    setPhiLabel('wphi-val', 'wphi-type', phi);
+    $('vbGen').style.opacity = wattConn === 'gen' ? 1 : 0.12;
+    $('vbLoad').style.opacity = wattConn === 'carga' ? 1 : 0.12;
+    $('wc-desc').innerHTML = wattConn === 'gen'
+      ? 'La bobina voltimétrica mide $U_d = U_s + U$: se suma la caída en la bobina amperimétrica. Conveniente con <strong>corrientes chicas</strong> (cargas de alta impedancia). El apunte la llama <em>conexión corta</em>.'
+      : 'La bobina amperimétrica conduce $I_s = I + I_d$: se suma la corriente voltimétrica. Conveniente con <strong>corrientes grandes</strong> (cargas de baja impedancia). El apunte la llama <em>conexión larga</em>.';
+    renderMath($('wc-desc'));
+    var Preal = U * I * Math.cos(phi * DEG);
+    var Pphase = U * I * Math.cos((phi - sg) * DEG);
+    var consGen = I * I * Rs, consLoad = U * U / Rd;
+    var Pcons = wattConn === 'gen' ? consGen : consLoad;
+    var Pind = Pphase + Pcons, eTot = Pind - Preal;
+    $('w-real').textContent = fmtPow(Preal, 'W');
+    $('w-cons').textContent = '+' + fmtPow(Pcons, 'W');
+    $('w-phase').textContent = (Pphase - Preal >= 0 ? '+' : '') + fmtPow(Pphase - Preal, 'W');
+    $('w-ind').textContent = fmtPow(Pind, 'W');
+    $('w-err').textContent = Math.abs(Preal) < 1e-6 ? '∞ (P ≈ 0)' : fmt(eTot / Math.abs(Preal) * 100, 2) + ' %';
+    var better = consGen < consLoad ? 'del lado del generador' : 'del lado de la carga';
+    $('w-reco').innerHTML = 'Con estos valores, el menor error de consumo se obtiene con la voltimétrica <strong>' + better + '</strong> (I²R<sub>s</sub> = ' + fmtPow(consGen, 'W') + ' vs U²/R<sub>d</sub> = ' + fmtPow(consLoad, 'W') + ').';
+    drawWattPhasor(phi, sg);
+    var ch = ensurePhaseErrChart(), curve = [];
+    for (var x = -85; x <= 85; x++) curve.push({ x: x, y: clamp(phaseErrPct(x, sg), -20, 20) });
+    if (ch) {
+      ch.data.datasets[0].data = curve;
+      ch.data.datasets[1].data = Math.abs(phi) <= 85 ? [{ x: phi, y: clamp(phaseErrPct(phi, sg), -20, 20) }] : [];
+      ch.update();
+    }
+    // Constante y lectura
+    var Ua = parseFloat($('wUa').value), Ia = parseFloat($('wIa').value), dv = parseFloat($('wDiv').value);
+    var C = Ua * Ia / dv, read = Pind / C;
+    $('w-C').textContent = fmt(C, 2) + ' W/div';
+    $('w-read').textContent = fmt(read, 1) + ' div → ' + fmtPow(read * C, 'W');
+    var warns = [];
+    if (U > Ua) warns.push('⚠️ Bobina voltimétrica sobrecargada: U = ' + U + ' V > alcance ' + Ua + ' V.');
+    if (I > Ia) warns.push('⚠️ Bobina amperimétrica sobrecargada: I = ' + fmt(I, 1) + ' A > alcance ' + fmt(Ia, 1) + ' A.');
+    if (read > dv) warns.push('⚠️ Fuera de escala: la aguja pega contra el tope.');
+    if (read < 0) warns.push('↩️ Deflexión inversa: invertir los bornes de un solo circuito.');
+    if ((U > Ua || I > Ia) && read >= 0 && read < dv) {
+      warns.push('💡 ¡La aguja no llega a fondo pero una bobina está sobrecargada! Con bajo cos φ hay que vigilar U e I con voltímetro y amperímetro.');
+      unlock('sobrecarga');
+    }
+    $('w-warn').innerHTML = warns.map(function (w) { return '<div class="warn-box">' + w + '</div>'; }).join('') || '<div class="ok-box">✅ Ambos circuitos dentro de alcance.</div>';
+    var ticks = [];
+    for (var k = 0; k <= 30; k++) { var val = dv * k / 30; ticks.push({ f: k / 30, major: k % 5 === 0, label: k % 5 === 0 ? String(Math.round(val)) : '' }); }
+    drawGauge($('wattGauge'), { sweep: 90, ticks: ticks, needle: read / dv, title: 'W', readout: 'C = ' + fmt(C, 2) + ' W/div · lectura ' + fmt(read, 1) + ' div' });
+    updateAmpl();
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 4: VARÍMETRO, FASÍMETRO, FRECUENCÍMETRO
+// =============================================
+defParam('vB1', { label: 'Retraso β₁ (I₁ respecto de U<sub>v</sub>)', unit: '°', min: 0, max: 90, step: 1, val: 55, dec: 0, fn: updateVar });
+defParam('vB2', { label: 'Retraso β₂ (U<sub>v</sub> respecto de U)', unit: '°', min: 0, max: 60, step: 1, val: 28, dec: 0, fn: updateVar });
+defParam('fK', { label: 'Relación k₂I₂ / k₁I₁', unit: '', min: 0.5, max: 2, step: 0.1, val: 1, dec: 1, fn: updateFas });
+defParam('qL', { label: 'Inductancia L', unit: 'H', min: 0.2, max: 3, step: 0.1, val: 1, dec: 1, fn: updateFreq });
+defParam('qC', { label: 'Capacidad C', unit: 'µF', min: 1, max: 30, step: 0.1, val: 10.1, dec: 1, fn: updateFreq });
+defParam('qF', { label: 'Frecuencia de red f', unit: 'Hz', min: 20, max: 100, step: 0.5, val: 50, dec: 1, fn: updateFreq });
+
+function updateVar() {
+  try {
+    var sg = pv('vB1') + pv('vB2'), phi = rv('vphi-slider'), U = 220, I = 5;
+    $('vphi-val').textContent = Math.round(phi);
+    var Qr = U * I * Math.sin(phi * DEG), Qi = U * I * Math.cos((phi - sg) * DEG);
+    $('v-sig').textContent = sg + '°';
+    $('v-real').textContent = fmt(Qr, 0) + ' VAR';
+    $('v-ind').textContent = fmt(Qi, 0) + ' VAR';
+    var st = $('v-status');
+    if (sg === 90) {
+      st.textContent = '✅ σ = β₁ + β₂ = 90°: el instrumento mide potencia reactiva';
+      st.style.background = '#dcfce7'; st.style.color = '#166534';
+      unlock('conexion90');
+    } else {
+      st.textContent = '⚠️ σ = ' + sg + '°: ajustá R₂ (β) hasta lograr 90°';
+      st.style.background = '#fef9c3'; st.style.color = '#854d0e';
+    }
+  } catch (e) { console.error(e); }
+}
+function updateFas() {
+  try {
+    var phi = rv('fphi-slider'), k = pv('fK');
+    $('fphi-val').textContent = Math.round(phi);
+    var t = phiType(phi), el = $('fphi-type');
+    el.textContent = phi > 0.5 ? 'IND' : (phi < -0.5 ? 'CAP' : 'R');
+    el.className = 'badge ' + t[1];
+    var a = Math.abs(phi) >= 89.99 ? Math.sign(phi) * 90 : Math.atan(k * Math.tan(phi * DEG)) / DEG;
+    var ticks = [];
+    [0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1].forEach(function (c) {
+      var ang = Math.acos(c) / DEG;
+      ticks.push({ f: (90 + ang) / 180, major: true, label: (c === 1 ? '1' : String(c).replace('.', ',')) });
+      if (c !== 1) ticks.push({ f: (90 - ang) / 180, major: true, label: String(c).replace('.', ',') });
+    });
+    for (var g = -90; g <= 90; g += 10) ticks.push({ f: (g + 90) / 180, major: false });
+    drawGauge($('fasGauge'), { sweep: 120, ticks: ticks, needle: (a + 90) / 180, title: 'cos φ', readout: '◄ CAP          IND ►', band: { f0: (90 - 25.8) / 180, f1: (90 + 25.8) / 180, color: 'rgba(34,197,94,0.25)' } });
+    $('fas-real').textContent = fmt(Math.cos(phi * DEG), 3) + (phi > 0.5 ? ' ind' : (phi < -0.5 ? ' cap' : ''));
+    $('fas-read').textContent = fmt(Math.cos(a * DEG), 3) + (Math.abs(k - 1) > 0.01 ? ' (descalibrado)' : ' ✓');
+  } catch (e) { console.error(e); }
+}
+function updateFreq() {
+  try {
+    var L = pv('qL'), C = pv('qC') * 1e-6, f = pv('qF'), U = 220;
+    var aOf = function (fr) { return Math.atan(Math.pow(2 * Math.PI * fr, 2) * L * C) / DEG; };
+    var a = aOf(f), f0 = 1 / (2 * Math.PI * Math.sqrt(L * C));
+    var ticks = [];
+    for (var fv = 20; fv <= 100; fv += 5) {
+      var lbl = [20, 30, 40, 50, 60, 80, 100].indexOf(fv) >= 0;
+      ticks.push({ f: aOf(fv) / 90, major: lbl, label: lbl ? String(fv) : '' });
+    }
+    drawGauge($('freqGauge'), { sweep: 90, ticks: ticks, needle: a / 90, title: 'Hz', readout: 'tan α = (2π)²·L·C·f²' });
+    var i1 = 2 * Math.PI * f * C * U, i2 = U / (2 * Math.PI * f * L);
+    $('fr-i').textContent = fmt(i1 * 1000, 0) + ' / ' + fmt(i2 * 1000, 0) + ' mA';
+    $('fr-a').textContent = fmt(a, 1) + '°';
+    $('fr-f0').textContent = fmt(f0, 1) + ' Hz';
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 5: TRIFÁSICO
+// =============================================
+var triSel = { hilos: 4, carga: 'eq' };
+defParam('aUL', { label: 'Tensión de línea U<sub>L</sub>', unit: 'V', min: 100, max: 600, step: 10, val: 380, dec: 0, fn: updateAron });
+defParam('aIL', { label: 'Corriente de línea I<sub>L</sub>', unit: 'A', min: 0.5, max: 30, step: 0.5, val: 10, dec: 1, fn: updateAron });
+
+var triReco = {
+  '4eq': ['Un vatímetro fase–neutro', 'Las tres fases consumen lo mismo: se mide una y se multiplica por tres.', '$ P = 3\\,W $', ['1 vatímetro', 'badge-green']],
+  '3eq': ['Un vatímetro con neutro artificial', 'Se crea un neutro artificial con resistencias R₁ = R₂ = R<sub>u</sub> + R<sub>ad</sub> en la salida del circuito voltimétrico. También sirve el método de Aron.', '$ P = 3\\,W $', ['1 vatímetro + R₁, R₂', 'badge-blue']],
+  '4deq': ['Tres vatímetros', 'Cada fase consume distinto: un vatímetro por fase, con las ramas voltimétricas al neutro (Blondel: n − 1 = 3).', '$ P = W_1 + W_2 + W_3 $', ['3 vatímetros', 'badge-yellow']],
+  '3deq': ['Método de Aron (dos vatímetros)', 'Blondel: con 3 conductores bastan n − 1 = 2 vatímetros, para cualquier simetría o equilibrio. Alternativa: tres vatímetros con neutro artificial (unión de las salidas voltimétricas si son iguales).', '$ P = W_1 + W_3 $', ['2 vatímetros', 'badge-purple']]
+};
+function setTri(k, v) {
+  triSel[k] = v;
+  setSeg(['ts-4', 'ts-3'], 'ts-' + triSel.hilos);
+  setSeg(['tc-eq', 'tc-deq'], 'tc-' + triSel.carga);
+  var r = triReco[String(triSel.hilos) + triSel.carga], el = $('tri-reco');
+  el.innerHTML = '<div class="text-xs font-semibold text-gray-500 uppercase mb-1">Método recomendado</div>' +
+    '<h4 class="font-bold text-blue-800 text-base mb-1">' + r[0] + '</h4>' +
+    '<p class="text-sm text-gray-700 mb-2">' + r[1] + '</p>' +
+    '<div class="formula-box text-sm mb-2">' + r[2] + '</div>' +
+    '<span class="badge ' + r[3][1] + '">' + r[3][0] + '</span>' +
+    (triSel.hilos === 4 && triSel.carga === 'deq' ? ' <span class="badge badge-blue">Aron sólo si I<sub>N</sub> = 0</span>' : '');
+  renderMath(el);
+}
+function ensureAronChart() {
+  if (charts.aron) return charts.aron;
+  if (typeof Chart === 'undefined') return null;
+  var w1 = [], w3 = [], p = [], q = [];
+  for (var x = -90; x <= 90; x += 2) {
+    w1.push({ x: x, y: Math.cos((30 + x) * DEG) });
+    w3.push({ x: x, y: Math.cos((30 - x) * DEG) });
+    p.push({ x: x, y: Math.sqrt(3) * Math.cos(x * DEG) });
+    q.push({ x: x, y: Math.sqrt(3) * Math.sin(x * DEG) });
+  }
+  charts.aron = new Chart($('aronChart').getContext('2d'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'W1', data: w1, borderColor: '#2563eb', borderWidth: 2, pointRadius: 0 },
+      { label: 'W3', data: w3, borderColor: '#7c3aed', borderWidth: 2, pointRadius: 0 },
+      { label: 'P', data: p, borderColor: '#16a34a', borderWidth: 2, pointRadius: 0, borderDash: [5, 3] },
+      { label: 'Q', data: q, borderColor: '#f59e0b', borderWidth: 2, pointRadius: 0, borderDash: [5, 3] },
+      { label: 'Actual', data: [], borderColor: '#dc2626', backgroundColor: '#dc2626', pointRadius: 5, showLine: false }
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 14 } } },
+      scales: {
+        x: { type: 'linear', min: -90, max: 90, title: { display: true, text: 'φ (°)' }, ticks: { stepSize: 30, font: { size: 9 } } },
+        y: { min: -1.8, max: 1.8, title: { display: true, text: 'por unidad de U_L·I_L' }, ticks: { font: { size: 9 } } }
+      }
+    }
+  });
+  return charts.aron;
+}
+function drawAronPhasor(phi) {
+  var s = setupCanvas($('aronPhasor')), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  var cx = W / 2, cy = H / 2 + 10, Lv = Math.min(W, H) * 0.24, Li = Lv * 0.75;
+  function pt(a, L) { return [cx + L * Math.cos(a * DEG), cy - L * Math.sin(a * DEG)]; }
+  var aR = 90, aS = -30, aT = 210;
+  var R = pt(aR, Lv), S = pt(aS, Lv), T = pt(aT, Lv);
+  ctx.setLineDash([4, 3]); ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(R[0], R[1]); ctx.lineTo(S[0], S[1]); ctx.lineTo(T[0], T[1]); ctx.closePath(); ctx.stroke();
+  ctx.setLineDash([]);
+  arrow(ctx, cx, cy, R[0], R[1], '#1e3a5f', 2, 'Ur');
+  arrow(ctx, cx, cy, S[0], S[1], '#1e3a5f', 2, 'Us');
+  arrow(ctx, cx, cy, T[0], T[1], '#1e3a5f', 2, 'Ut');
+  // Tensiones compuestas medidas por los vatímetros (desde el origen)
+  var Urs = [R[0] - S[0] + cx, R[1] - S[1] + cy], Uts = [T[0] - S[0] + cx, T[1] - S[1] + cy];
+  ctx.globalAlpha = 0.85;
+  arrow(ctx, cx, cy, Urs[0], Urs[1], '#2563eb', 1.8, 'Urs');
+  arrow(ctx, cx, cy, Uts[0], Uts[1], '#7c3aed', 1.8, 'Uts');
+  ctx.globalAlpha = 1;
+  var Ir = pt(aR - phi, Li), It = pt(aT - phi, Li), Is = pt(aS - phi, Li);
+  arrow(ctx, cx, cy, Ir[0], Ir[1], '#db2777', 2.2, 'Ir');
+  arrow(ctx, cx, cy, It[0], It[1], '#db2777', 2.2, 'It');
+  ctx.globalAlpha = 0.35; arrow(ctx, cx, cy, Is[0], Is[1], '#db2777', 1.5, 'Is'); ctx.globalAlpha = 1;
+  ctx.fillStyle = '#475569'; ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('W1: ∠(Urs, Ir) = 30° + φ = ' + Math.round(30 + phi) + '°', 6, 14);
+  ctx.fillText('W3: ∠(Uts, It) = 30° − φ = ' + Math.round(30 - phi) + '°', 6, 28);
+}
+function updateAron() {
+  try {
+    var UL = pv('aUL'), IL = pv('aIL'), phi = rv('aphi-slider');
+    setPhiLabel('aphi-val', 'aphi-type', phi);
+    var W1 = UL * IL * Math.cos((30 + phi) * DEG), W3 = UL * IL * Math.cos((30 - phi) * DEG);
+    var Pt = W1 + W3, Qt = Math.sqrt(3) * (W3 - W1);
+    $('ar-w1').textContent = fmtPow(W1, 'W');
+    $('ar-w3').textContent = fmtPow(W3, 'W');
+    $('ar-p').textContent = fmtPow(Pt, 'W');
+    $('ar-q').textContent = fmtPow(Qt, 'VAR');
+    $('ar-fp').textContent = fmt(Math.cos(phi * DEG), 3);
+    var msg = '';
+    if (Math.abs(phi) > 60) {
+      msg = '<div class="warn-box">↩️ ' + (phi > 0 ? 'W1' : 'W3') + ' es negativa (|φ| &gt; 60°): la aguja deflexiona al revés. Invertí los bornes de uno de sus circuitos y sumá la lectura con signo negativo.</div>';
+      unlock('aronneg');
+    } else if (Math.abs(Math.abs(phi) - 60) < 0.5) {
+      msg = '<div class="info-box">Con |φ| = 60° (cos φ = 0,5) una de las lecturas es exactamente cero.</div>';
+    } else if (Math.abs(phi) < 0.5) {
+      msg = '<div class="ok-box">Carga resistiva pura: W1 = W3.</div>';
+    }
+    $('ar-msg').innerHTML = msg;
+    drawAronPhasor(phi);
+    var ch = ensureAronChart();
+    if (ch) {
+      ch.data.datasets[4].data = [{ x: phi, y: Math.cos((30 + phi) * DEG) }, { x: phi, y: Math.cos((30 - phi) * DEG) }];
+      ch.update();
+    }
+  } catch (e) { console.error(e); }
+}
+function updateInverse() {
+  try {
+    var W1 = parseNum($('invW1').value), W3 = parseNum($('invW3').value), out = $('inv-out');
+    if (!isFinite(W1) || !isFinite(W3)) { out.innerHTML = 'Ingresá dos lecturas numéricas (podés usar coma decimal y signo negativo).'; return; }
+    var Pt = W1 + W3, Qt = Math.sqrt(3) * (W3 - W1), S = Math.hypot(Pt, Qt);
+    var phi = Math.atan2(Qt, Pt) / DEG;
+    var car = Math.abs(Qt) < 1e-9 ? 'resistiva' : (Qt > 0 ? 'inductiva' : 'capacitiva');
+    out.innerHTML = '<div class="flex justify-between"><span>P = W1 + W3</span><strong>' + fmtPow(Pt, 'W') + '</strong></div>' +
+      '<div class="flex justify-between"><span>Q = √3 (W3 − W1)</span><strong>' + fmtPow(Qt, 'VAR') + '</strong></div>' +
+      '<div class="flex justify-between"><span>S</span><strong>' + fmtPow(S, 'VA') + '</strong></div>' +
+      '<div class="flex justify-between"><span>cos φ · φ</span><strong>' + fmt(S ? Pt / S : NaN, 3) + ' · ' + fmt(phi, 1) + '°</strong></div>' +
+      '<div class="flex justify-between"><span>Carácter de la carga</span><strong>' + car + '</strong></div>';
+  } catch (e) { console.error(e); }
+}
+var swData = {
+  A: 'El circuito amperimétrico entra en paralelo con el conmutador en la línea A y, al enclavar, queda en serie en esa línea <strong>sin dejar de alimentar la carga</strong>. El voltimétrico queda entre las líneas A y C.',
+  B: 'La carga está conectada a la red y el vatímetro está <strong>aislado</strong>. Es la posición para conectar la carga (corriente de arranque) y para invertir bornes si una lectura resultó negativa.',
+  C: 'Igual que A pero sobre la línea B: el amperimétrico en serie con la línea B y el voltimétrico entre las líneas B y C. P = lectura A + lectura C (con su signo).'
+};
+function setSwitch(p) {
+  setSeg(['sw-A', 'sw-B', 'sw-C'], 'sw-' + p);
+  $('sw-desc').innerHTML = swData[p];
+}
+
+// =============================================
+// TAB 6: INDUCCIÓN Y CONTADOR
+// =============================================
+defParam('iBeta', { label: 'Desfasaje entre flujos β', unit: '°', min: 0, max: 180, step: 5, val: 90, dec: 0, fn: updateInd });
+defParam('iF', { label: 'Frecuencia f', unit: 'Hz', min: 40, max: 60, step: 1, val: 50, dec: 0, fn: updateInd });
+defParam('cI', { label: 'Corriente de la carga I', unit: 'A', min: 0, max: 40, step: 0.5, val: 5, dec: 1, fn: updateMeterInfo });
+defParam('cPF', { label: 'Factor de potencia cos φ', unit: '', min: 0.1, max: 1, step: 0.05, val: 0.9, dec: 2, fn: updateMeterInfo });
+
+var indTorque = 1, indAngle = 0;
+function ensureIndChart() {
+  if (charts.ind) return charts.ind;
+  if (typeof Chart === 'undefined') return null;
+  charts.ind = new Chart($('indChart').getContext('2d'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'F₁ ∝ i₁·φ₂', data: [], borderColor: '#2563eb', borderWidth: 1.5, pointRadius: 0 },
+      { label: 'F₂ ∝ i₂·φ₁', data: [], borderColor: '#7c3aed', borderWidth: 1.5, pointRadius: 0 },
+      { label: 'Par neto (F₁ − F₂)', data: [], borderColor: '#dc2626', borderWidth: 2.5, pointRadius: 0 }
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 14 } } },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 't (ms)' }, ticks: { font: { size: 9 } } },
+        y: { min: -1.1, max: 1.1, ticks: { font: { size: 9 } } }
+      }
+    }
+  });
+  return charts.ind;
+}
+function updateInd() {
+  try {
+    var b = pv('iBeta') * DEG, f = pv('iF'), w = 2 * Math.PI * f;
+    var F1 = [], F2 = [], N = [];
+    for (var i = 0; i <= 200; i++) {
+      var t = i / 200 * 2 / f, x = +(t * 1000).toFixed(3);
+      var a = Math.cos(w * t) * Math.sin(w * t + b), c = Math.cos(w * t + b) * Math.sin(w * t);
+      F1.push({ x: x, y: a }); F2.push({ x: x, y: c }); N.push({ x: x, y: a - c });
+    }
+    var ch = ensureIndChart();
+    if (ch) { ch.data.datasets[0].data = F1; ch.data.datasets[1].data = F2; ch.data.datasets[2].data = N; ch.update(); }
+    indTorque = (f / 50) * Math.sin(b);
+    $('ind-par').textContent = fmt(indTorque * 100, 0) + ' %';
+  } catch (e) { console.error(e); }
+}
+function drawIndDisk(dt) {
+  indAngle += indTorque * dt * 2 * Math.PI * 0.6;
+  var s = setupCanvas($('indDisk')), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  var cx = W / 2, cy = H / 2, r = Math.min(W, H) * 0.4;
+  var g = ctx.createRadialGradient(cx - r / 3, cy - r / 3, 5, cx, cy, r);
+  g.addColorStop(0, '#f1f5f9'); g.addColorStop(1, '#94a3b8');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill();
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + r * Math.cos(indAngle), cy + r * Math.sin(indAngle)); ctx.stroke();
+  ctx.fillStyle = '#1e3a5f'; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2 * Math.PI); ctx.fill();
+  ctx.fillStyle = 'rgba(37,99,235,0.35)'; ctx.fillRect(cx - r - 6, cy - 12, 22, 24);
+  ctx.fillStyle = 'rgba(124,58,237,0.35)'; ctx.fillRect(cx + r - 16, cy - 12, 22, 24);
+  ctx.fillStyle = '#475569'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('disco de aluminio', cx, H - 4);
+}
+
+// --- Contador ---
+var meter = { revs: 0, kwh: 0, angle: 0, simT: 0 };
+var meterMode = 'libre', challengeP = 0, chrono = { on: false, t0: 0, r0: 0, t: 0, n: 0 };
+function meterPower() {
+  return meterMode === 'desafio' ? challengeP : 220 * pv('cI') * pv('cPF');
+}
+function updateMeterInfo() {
+  try {
+    var Pw = meterPower(), Kd = parseFloat($('cKd').value);
+    var rpm = Pw / 1000 * Kd / 60;
+    $('c-P').textContent = meterMode === 'desafio' ? '??? W' : fmt(Pw, 0) + ' W';
+    $('c-rpm').textContent = meterMode === 'desafio' ? '??? rpm' : fmt(rpm, 2) + ' rpm';
+  } catch (e) { console.error(e); }
+}
+function onKdChange() {
+  if (chrono.on) toggleChrono();
+  updateMeterInfo();
+}
+function setMeterMode(m) {
+  meterMode = m;
+  setSeg(['cm-libre', 'cm-desafio'], 'cm-' + m);
+  $('challenge-box').classList.toggle('hidden', m !== 'desafio');
+  $('meter-free-ctrl').style.display = m === 'desafio' ? 'none' : '';
+  $('cSpd').disabled = (m === 'desafio');
+  if (m === 'desafio') { $('cSpd').value = '1'; newChallenge(); }
+  updateMeterInfo();
+}
+function newChallenge() {
+  challengeP = Math.round((300 + Math.random() * 2700) / 10) * 10;
+  chrono = { on: false, t0: 0, r0: 0, t: 0, n: 0 };
+  $('chrono-btn').textContent = '⏱️ Iniciar cronómetro';
+  $('chrono-out').textContent = 't = 0,0 s · n = 0,00';
+  $('chal-res').innerHTML = '';
+  $('chal-ans').value = '';
+  updateMeterInfo();
+}
+function toggleChrono() {
+  if (!chrono.on) {
+    chrono.on = true; chrono.t0 = meter.simT; chrono.r0 = meter.revs;
+    $('chrono-btn').textContent = '⏹️ Detener';
+  } else {
+    chrono.on = false;
+    $('chrono-btn').textContent = '⏱️ Iniciar cronómetro';
+  }
+}
+function checkChallenge() {
+  var v = parseNum($('chal-ans').value), out = $('chal-res');
+  if (!isFinite(v)) { out.innerHTML = '<span class="text-red-700">Ingresá un número en W.</span>'; return; }
+  var e = Math.abs(v - challengeP) / challengeP * 100;
+  if (e <= 5) {
+    out.innerHTML = '<span class="text-green-700 font-bold">✅ ¡Correcto! P = ' + challengeP + ' W (tu error: ' + fmt(e, 1) + ' %).</span>';
+    unlock('contador');
+  } else {
+    out.innerHTML = '<span class="text-red-700">❌ Error de ' + fmt(e, 0) + ' %. Revisá: P[kW] = 3600·n / (K<sub>d</sub>·t). Contá más vueltas para reducir el error de lectura.</span>';
+  }
+}
+function resetMeter() {
+  meter = { revs: 0, kwh: 0, angle: 0, simT: 0 };
+  chrono = { on: false, t0: 0, r0: 0, t: 0, n: 0 };
+  if ($('chrono-btn')) $('chrono-btn').textContent = '⏱️ Iniciar cronómetro';
+}
+function stepMeter(dt) {
+  var spd = parseFloat($('cSpd').value), Kd = parseFloat($('cKd').value), Pw = meterPower();
+  var rps = Pw / 1000 * Kd / 3600 * spd;
+  meter.simT += dt * spd;
+  meter.revs += rps * dt;
+  meter.angle += rps * dt * 2 * Math.PI;
+  meter.kwh += Pw / 1000 * dt * spd / 3600;
+  $('c-revs').textContent = fmt(meter.revs, 2);
+  if (chrono.on) {
+    chrono.t = meter.simT - chrono.t0; chrono.n = meter.revs - chrono.r0;
+    $('chrono-out').textContent = 't = ' + fmt(chrono.t, 1) + ' s · n = ' + fmt(chrono.n, 2);
+  }
+  var k = meter.kwh % 100000, ip = Math.floor(k), dec = Math.floor((k - ip) * 10);
+  var s = ('00000' + ip).slice(-5) + dec, html = '';
+  for (var i = 0; i < 6; i++) html += '<span' + (i === 5 ? ' class="dec"' : '') + '>' + s[i] + '</span>';
+  $('odo').innerHTML = html;
+}
+function drawMeterDisk() {
+  var s = setupCanvas($('meterDisk')), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#e5e7eb'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2;
+  ctx.fillRect(W * 0.08, H * 0.12, W * 0.84, H * 0.76); ctx.strokeRect(W * 0.08, H * 0.12, W * 0.84, H * 0.76);
+  var cx = W / 2, cy = H * 0.55, rx = W * 0.33, ry = H * 0.13;
+  ctx.fillStyle = '#9ca3af'; ctx.beginPath(); ctx.ellipse(cx, cy + 5, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
+  var g = ctx.createLinearGradient(cx - rx, 0, cx + rx, 0);
+  g.addColorStop(0, '#cbd5e1'); g.addColorStop(0.5, '#f1f5f9'); g.addColorStop(1, '#94a3b8');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, 2 * Math.PI); ctx.fill();
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 1; ctx.stroke();
+  for (var k = 0; k < 2; k++) {
+    var a = meter.angle + k * Math.PI, sx = cx + rx * Math.cos(a), sy = cy + ry * Math.sin(a);
+    if (Math.sin(a) > -0.2) {
+      ctx.fillStyle = k === 0 ? '#dc2626' : '#1f2937';
+      ctx.fillRect(sx - 4, sy - 2, 8, 9);
+    }
+  }
+  ctx.fillStyle = '#334155'; ctx.fillRect(cx - 2, cy - H * 0.35, 4, H * 0.35);
+  ctx.fillStyle = 'rgba(30,58,95,0.15)'; ctx.fillRect(cx - rx * 0.25, cy - ry - 14, rx * 0.5, 12);
+  ctx.fillStyle = '#475569'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('Marca roja: contá cada vez que pasa por el frente', cx, H * 0.95);
+  ctx.fillText('kWh  ·  ' + $('cKd').value + ' rev/kWh  ·  220 V  50 Hz', cx, H * 0.22);
+}
+var plateData = [
+  ['220 V', 'Tensión nominal: alimenta la bobina de tensión, conectada en paralelo con la carga.'],
+  ['50 Hz', 'Frecuencia de funcionamiento. El par motor es proporcional a f: la indicación sólo es válida a la frecuencia de contraste.'],
+  ['5(40) A', 'Corriente nominal 5 A; entre paréntesis, la corriente máxima de sobrecarga admisible: 40 A.'],
+  ['750 rev/kWh', 'Constante del contador K_d (velocidad de giro): el disco da 750 vueltas por kWh. Su inversa es la energía por vuelta: 1000/750 ≈ 1,33 Wh/rev (en algunos medidores se indica así, p. ej. “Kd 3,6 Wh/rev”).'],
+  ['Clase 2', 'Clase de exactitud: error admisible ±2 %.'],
+  ['Monofásico', 'Dos electroimanes y un disco; 4 bornes de conexión (voltamperométrica, como un vatímetro).']
+];
+function buildPlate() {
+  $('plate-chips').innerHTML = plateData.map(function (p, i) {
+    return '<span class="chip" id="plate-' + i + '" onclick="showPlate(' + i + ')">' + p[0] + '</span>';
+  }).join('');
+}
+function showPlate(i) {
+  plateData.forEach(function (_, j) { $('plate-' + j).classList.toggle('active', i === j); });
+  $('plate-desc').innerHTML = '<strong>' + plateData[i][0] + ':</strong> ' + plateData[i][1];
+}
+// --- LCD contador digital ---
+var lcdStates = {
+  mono: [
+    { tag: '', val: '8888888', unit: 'TEST', desc: 'Prueba del display: al comienzo del ciclo se activan todos los segmentos.' },
+    { tag: '▸', val: '00931', unit: 'kWh', desc: 'Energía activa total.' },
+    { tag: '▸', val: '00596', unit: 'kVArh', desc: 'Energía reactiva total.' },
+    { tag: '▸', val: '03.86', unit: 'kW', desc: 'Demanda máxima de potencia.' },
+    { tag: '▸', val: '3.5', unit: 'A', desc: 'Intensidad de corriente instantánea.' }
+  ],
+  trif: [
+    { tag: '', val: '88888888888', unit: 'TEST', desc: 'Prueba del display: se activan todos los segmentos.' },
+    { tag: 'tot', val: '000925', unit: 'kWh', desc: 'Energía activa total.' },
+    { tag: 'tot', val: '000217', unit: 'kVArh', desc: 'Energía reactiva total.' },
+    { tag: 'Md', val: '042.34', unit: 'kW', desc: 'Demanda máxima de potencia.' },
+    { tag: 'L1', val: '0014', unit: 'A', desc: 'Corriente instantánea de la fase 1.' },
+    { tag: 'L2', val: '0017', unit: 'A', desc: 'Corriente instantánea de la fase 2.' },
+    { tag: 'L3', val: '0009', unit: 'A', desc: 'Corriente instantánea de la fase 3.' }
+  ]
+};
+var lcdType = 'mono', lcdIdx = 0, lcdAuto = true;
+function showLcd() {
+  var st = lcdStates[lcdType][lcdIdx];
+  $('lcd-tag').textContent = st.tag || ' ';
+  $('lcd-val').textContent = st.val;
+  $('lcd-unit').textContent = st.unit;
+  $('lcd-desc').textContent = st.desc;
+}
+function lcdNext() { lcdIdx = (lcdIdx + 1) % lcdStates[lcdType].length; showLcd(); }
+function setLcdType(t) { lcdType = t; lcdIdx = 0; setSeg(['lcd-mono', 'lcd-trif'], 'lcd-' + t); showLcd(); }
+function toggleLcdAuto() { lcdAuto = !lcdAuto; $('lcd-auto').classList.toggle('active', lcdAuto); }
+setInterval(function () { if (lcdAuto && activeTab === 'tab-induccion') lcdNext(); }, 2200);
+
+// =============================================
+// TAB 7: TP Nº 8
+// =============================================
+var tpSolved = { e3: false, e4: false };
+function toggleSol(id) { var el = $(id); el.classList.toggle('hidden'); renderMath(el); }
+function near(v, ref, tol) { return isFinite(v) && Math.abs(v - ref) / Math.abs(ref) <= tol; }
+function checkTP() { if (tpSolved.e3 && tpSolved.e4) unlock('tp'); }
+function checkEj3() {
+  var v = parseNum($('ej3-R').value), ok = near(v, 1225 / 320, 0.02);
+  $('ej3-res').innerHTML = ok ? '<span class="text-green-700 font-bold">✅ Correcto: R ≈ 3,83 Ω</span>' : '<span class="text-red-700">❌ Revisá: P = U²/R.</span>';
+  if (ok) { tpSolved.e3 = true; checkTP(); }
+}
+function checkEj4() {
+  var S = 250 * 3.4 / 2, Pp = S * 0.41, Q = S * Math.sqrt(1 - 0.41 * 0.41);
+  var okP = near(parseNum($('ej4-P').value), Pp, 0.02), okS = near(parseNum($('ej4-S').value), S, 0.02), okQ = near(parseNum($('ej4-Q').value), Q, 0.02);
+  var msg = [okP ? '✅ P' : '❌ P', okS ? '✅ S' : '❌ S', okQ ? '✅ Q' : '❌ Q'].join(' · ');
+  if (!okS && near(parseNum($('ej4-S').value), 2 * S, 0.02)) msg += ' — ¿usaste amplitudes en lugar de valores eficaces?';
+  $('ej4-res').innerHTML = '<span class="' + (okP && okS && okQ ? 'text-green-700 font-bold' : 'text-gray-700') + '">' + msg + '</span>';
+  if (okP && okS && okQ) { tpSolved.e4 = true; checkTP(); }
+}
+var labRows = [['R', 'res'], ['L', 'ind'], ['C', 'cap'], ['RL', 'ind'], ['RC', 'cap'], ['RLC', 'ind']];
+function buildLab() {
+  $('lab-body').innerHTML = labRows.map(function (r, i) {
+    var sel = '<select id="lab-c' + i + '" class="num-in" onchange="updateLab()">' +
+      ['res', 'ind', 'cap'].map(function (o) { return '<option value="' + o + '"' + (o === r[1] ? ' selected' : '') + '>' + { res: 'resistiva', ind: 'inductiva', cap: 'capacitiva' }[o] + '</option>'; }).join('') + '</select>';
+    return '<tr><td class="font-bold">' + r[0] + '</td>' +
+      '<td><input id="lab-i' + i + '" class="num-in" type="text" oninput="updateLab()"></td>' +
+      '<td><input id="lab-u' + i + '" class="num-in" type="text" oninput="updateLab()"></td>' +
+      '<td><input id="lab-p' + i + '" class="num-in" type="text" oninput="updateLab()"></td>' +
+      '<td>' + sel + '</td>' +
+      '<td id="lab-s' + i + '" class="text-center font-mono">—</td><td id="lab-q' + i + '" class="text-center font-mono">—</td>' +
+      '<td id="lab-f' + i + '" class="text-center font-mono">—</td><td id="lab-ph' + i + '" class="text-center font-mono">—</td></tr>';
+  }).join('');
+}
+function labCalc(i) {
+  var I = parseNum($('lab-i' + i).value), U = parseNum($('lab-u' + i).value), Pp = parseNum($('lab-p' + i).value);
+  if (!isFinite(I) || !isFinite(U) || !isFinite(Pp)) return null;
+  var S = U * I, sg = { res: 0, ind: 1, cap: -1 }[$('lab-c' + i).value];
+  var fp = S > 0 ? Pp / S : NaN, bad = Pp > S * 1.0001;
+  var Q = bad ? NaN : sg * Math.sqrt(Math.max(0, S * S - Pp * Pp));
+  var ph = bad ? NaN : sg * Math.acos(clamp(fp, -1, 1)) / DEG;
+  return { S: S, Q: Q, fp: fp, ph: ph, bad: bad };
+}
+function updateLab() {
+  labRows.forEach(function (_, i) {
+    var r = labCalc(i), ids = ['s', 'q', 'f', 'ph'];
+    if (!r) { ids.forEach(function (k) { $('lab-' + k + i).textContent = '—'; }); return; }
+    $('lab-s' + i).textContent = fmt(r.S, 1);
+    $('lab-q' + i).textContent = r.bad ? 'P > S ⚠️' : fmt(r.Q, 1);
+    $('lab-f' + i).textContent = fmt(r.fp, 3);
+    $('lab-ph' + i).textContent = r.bad ? '—' : fmt(r.ph, 1);
+    $('lab-q' + i).style.color = r.bad ? '#b91c1c' : '';
+  });
+}
+function exportLabCSV() {
+  var lines = ['Carga;I [A];U [V];P [W];Caracter;S [VA];Q [VAR];fdp;phi [grados]'];
+  labRows.forEach(function (row, i) {
+    var r = labCalc(i);
+    lines.push([row[0], $('lab-i' + i).value, $('lab-u' + i).value, $('lab-p' + i).value, $('lab-c' + i).value,
+      r ? fmt(r.S, 2) : '', r && !r.bad ? fmt(r.Q, 2) : '', r ? fmt(r.fp, 3) : '', r && !r.bad ? fmt(r.ph, 1) : ''].join(';'));
+  });
+  var blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'TP8_tabla_potencias.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function clearLab() { buildLab(); }
+var safetyItems = [
+  'Verificar la categoría de medición (CAT III / CAT IV) de la pinza y de las puntas, acorde al tablero.',
+  'Inspeccionar pinza, puntas y cables: aislación sana, sin fisuras ni conductores expuestos.',
+  'Usar EPP: guantes dieléctricos, protección ocular/facial, ropa adecuada y calzado aislante.',
+  'Comprobar el instrumento sobre una fuente conocida antes y después de la medición.',
+  'Seleccionar función y rango antes de acercarse a las partes con tensión.',
+  'Abrazar con la pinza un único conductor (nunca el cable completo con ida y vuelta).',
+  'Delimitar la zona, mantener distancia de seguridad y no trabajar solo.',
+  'Registrar valores, condiciones de carga e instrumentos usados para el informe.'
+];
+function buildSafety() {
+  $('safety-list').innerHTML = safetyItems.map(function (s, i) {
+    return '<label class="flex items-start gap-2 text-sm text-gray-700 cursor-pointer"><input type="checkbox" id="saf-' + i + '" onchange="updateSafety()" class="mt-1"> <span>' + s + '</span></label>';
+  }).join('');
+  updateSafety();
+}
+function updateSafety() {
+  var n = 0;
+  safetyItems.forEach(function (_, i) { if ($('saf-' + i).checked) n++; });
+  $('safety-bar').style.width = (n / safetyItems.length * 100) + '%';
+  $('safety-status').textContent = n + ' de ' + safetyItems.length + ' verificaciones completas.';
+  if (n === safetyItems.length) unlock('seguridad');
+}
+
+// =============================================
+// TAB 8: QUIZ
+// =============================================
+var quizData = [
+  { q: 'El instrumento electrodinámico puede describirse como un instrumento de bobina móvil en el que…',
+    opts: ['Se agregó un núcleo de hierro móvil', 'Se reemplazó el imán fijo por una bobina', 'Se eliminaron los muelles espirales', 'Se reemplazó la bobina móvil por un disco'],
+    ans: 1, exp: 'El campo principal lo genera una bobina fija en lugar de un imán permanente; por eso toma energía del circuito y tiene mayor consumo.' },
+  { q: 'Dos conductores paralelos recorridos por corrientes de igual sentido…',
+    opts: ['Se repelen', 'No interactúan', 'Se atraen', 'Giran alrededor de su eje'],
+    ans: 2, exp: 'Corrientes de igual sentido se atraen; de sentido contrario se repelen: es el efecto electrodinámico.' },
+  { q: '¿Por qué el par motor se reduce a $M_m = i_f\\, i_m\\, \\partial M/\\partial\\alpha$?',
+    opts: ['Porque las corrientes son continuas', 'Porque las autoinductancias y corrientes no dependen de α; sólo la mutua inductancia varía con el ángulo', 'Porque el par antagonista es nulo', 'Porque la energía magnética es constante'],
+    ans: 1, exp: 'Al derivar la energía respecto de α, sólo sobrevive el término de la mutua inductancia M.' },
+  { q: 'En corriente alterna, la desviación de un instrumento electrodinámico es proporcional a:',
+    opts: ['$\\hat I_f \\hat I_m$', '$I_f I_m \\cos\\beta$ (valores eficaces)', '$I_f + I_m$', '$I_f I_m \\sin\\beta$'],
+    ans: 1, exp: '$\\alpha = K I_f I_m \\cos\\beta$: producto de valores eficaces por el coseno del desfasaje entre corrientes.' },
+  { q: 'El término de frecuencia doble del par instantáneo no afecta la lectura porque:',
+    opts: ['Se cancela con el par antagonista', 'La inercia del sistema móvil (y los topes) impiden seguirlo', 'El amortiguador lo rectifica', 'Sólo existe en CC'],
+    ans: 1, exp: 'El sistema móvil no puede oscilar a 100 Hz: responde al valor medio.' },
+  { q: 'En el vatímetro electrodinámico, la bobina fija…',
+    opts: ['Tiene muchas espiras y va en paralelo', 'Tiene pocas espiras, baja resistencia y va en serie con la carga', 'Se conecta entre dos fases siempre', 'No conduce corriente'],
+    ans: 1, exp: 'La bobina fija es el circuito amperimétrico (serie); la móvil, de muchas espiras y alta resistencia, es el voltimétrico (paralelo).' },
+  { q: 'Si la bobina voltimétrica se conecta del lado de la carga (después de la amperimétrica), el vatímetro indica:',
+    opts: ['P + I²R_s (error en exceso)', 'P + U·I_d (error en exceso por consumo voltimétrico)', 'P − U·I_d (error en defecto)', 'Exactamente P'],
+    ans: 1, exp: 'La bobina amperimétrica conduce I + I_d: $P_{med} = UI + UI_d$, un error en exceso.' },
+  { q: 'Con carga capacitiva, el error de fase del vatímetro (σ) hace que:',
+    opts: ['Indique más que la potencia real', 'Indique menos, porque δ = φ + σ', 'No haya error', 'La aguja deflexione al revés siempre'],
+    ans: 1, exp: 'Con carga capacitiva el ángulo entre corrientes crece a φ + σ, su coseno disminuye y la indicación es menor que la real.' },
+  { q: 'Para convertir un vatímetro electrodinámico en varímetro se necesita que…',
+    opts: ['La bobina fija se conecte en paralelo', 'La corriente de la bobina voltimétrica atrase 90° respecto de la tensión', 'Se agregue un resorte más rígido', 'Se use corriente continua'],
+    ans: 1, exp: '$UI\\sin\\varphi = UI\\cos(90°-\\varphi)$: se logra con la "conexión a 90°" (σ = β₁ + β₂ = 90°).' },
+  { q: 'La característica principal de un logómetro es:',
+    opts: ['Tener escala lineal', 'No tener par antagonista de muelles: lo reemplaza un segundo par motor opuesto', 'Funcionar sólo en CC', 'Tener una sola bobina'],
+    ans: 1, exp: 'Sin muelles, la indicación depende del cociente de dos corrientes y, desconectado, la aguja queda en posición indeterminada.' },
+  { q: 'Método de Aron con carga simétrica inductiva de cos φ = 0,5. ¿Cuánto indica W1 (conexión del TP)?',
+    opts: ['La mitad de P', 'Cero', 'Igual que W3', 'Un valor negativo grande'],
+    ans: 1, exp: '$W_1 = U_L I_L \\cos(30° + 60°) = 0$: toda la potencia la indica W3.' },
+  { q: 'Con las lecturas de Aron (carga simétrica), la potencia reactiva es:',
+    opts: ['$Q = W_1 + W_3$', '$Q = \\sqrt{3}\\,(W_3 - W_1)$', '$Q = (W_3 - W_1)/\\sqrt{3}$', '$Q = 3\\,W_1$'],
+    ans: 1, exp: 'La diferencia de lecturas vale $U_L I_L \\sin\\varphi = Q/\\sqrt3$.' },
+  { q: 'Un contador de 750 rev/kWh da 15 vueltas en 60 s. ¿Qué potencia consume la carga?',
+    opts: ['0,75 kW', '1,2 kW', '12 kW', '0,2 kW'],
+    ans: 1, exp: '$P = \\dfrac{3600 \\cdot 15}{750 \\cdot 60} = 1{,}2$ kW.' },
+  { q: '¿Cuál afirmación sobre los instrumentos de inducción es correcta?',
+    opts: ['Miden CC y CA', 'Son muy precisos (clase 0,1)', 'Sólo funcionan en CA y son sensibles a la frecuencia y a la temperatura', 'No tienen partes móviles'],
+    ans: 2, exp: 'Su principio requiere flujos alternos; el par depende de f. Se construyen para clases 1,5 – 2,5 – 5.' }
+];
+var quizAnswered = [], quizScore = 0, quizBuilt = false;
+function buildQuiz(force) {
+  try {
+    if (quizBuilt && !force) return;
+    quizBuilt = true;
+    quizAnswered = quizData.map(function () { return null; });
+    quizScore = 0;
+    $('quiz-total').textContent = quizData.length;
+    $('quiz-container').innerHTML = quizData.map(function (q, qi) {
+      return '<div class="card p-4 border-l-4 border-blue-300" id="q-card-' + qi + '">' +
+        '<div class="flex items-start gap-2 mb-3"><span class="badge badge-blue">' + (qi + 1) + '</span><p class="font-semibold text-gray-800 text-sm flex-1">' + q.q + '</p></div>' +
+        '<div class="space-y-2">' + q.opts.map(function (opt, oi) {
+          return '<div class="quiz-opt" id="opt-' + qi + '-' + oi + '" onclick="selectOpt(' + qi + ',' + oi + ')">' + opt + '</div>';
+        }).join('') + '</div>' +
+        '<div id="exp-' + qi + '" class="hidden mt-3 info-box text-sm"></div></div>';
+    }).join('');
+    renderMath($('quiz-container'));
+    updateQuizScore();
+  } catch (e) { console.error(e); }
+}
+function selectOpt(qi, oi) {
+  try {
+    if (quizAnswered[qi] !== null) return;
+    quizAnswered[qi] = oi;
+    var correct = quizData[qi].ans;
+    for (var i = 0; i < quizData[qi].opts.length; i++) {
+      var el = $('opt-' + qi + '-' + i);
+      if (i === correct) el.classList.add('correct');
+      else if (i === oi) el.classList.add('wrong');
+      el.style.pointerEvents = 'none';
+    }
+    if (oi === correct) quizScore++;
+    $('q-card-' + qi).style.borderLeftColor = oi === correct ? '#16a34a' : '#dc2626';
+    var ex = $('exp-' + qi);
+    ex.textContent = (oi === correct ? '✅ ' : '❌ ') + quizData[qi].exp;
+    ex.classList.remove('hidden');
+    renderMath(ex);
+    updateQuizScore();
+  } catch (e) { console.error(e); }
+}
+function updateQuizScore() {
+  var answered = quizAnswered.filter(function (a) { return a !== null; }).length;
+  $('quiz-score').textContent = quizScore;
+  $('quiz-answered').textContent = answered;
+  $('quiz-progress').style.width = (quizData.length ? answered / quizData.length * 100 : 0) + '%';
+  if (answered === quizData.length && quizScore >= 12) unlock('quiz');
+}
+function resetQuiz() { buildQuiz(true); }
+
+// =============================================
+// ANIMACIÓN Y ARRANQUE
+// =============================================
+var lastT = null;
+function animLoop(ts) {
+  try {
+    if (lastT === null) lastT = ts;
+    var dt = Math.min(0.1, (ts - lastT) / 1000);
+    lastT = ts;
+    if (activeTab === 'tab-induccion') {
+      stepMeter(dt);
+      drawMeterDisk();
+      drawIndDisk(dt);
+    }
+  } catch (e) { console.error(e); }
+  requestAnimationFrame(animLoop);
+}
+window.addEventListener('resize', function () {
+  if (activeTab === 'tab-motor') updateQuad();
+  if (activeTab === 'tab-vatimetro') updateWatt();
+  if (activeTab === 'tab-logometros') { updateFas(); updateFreq(); }
+  if (activeTab === 'tab-trifasico') updateAron();
+});
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    renderSteppers();
+    renderAch();
+    renderMath(document.body);
+    setTri('hilos', 4);
+    setSwitch('B');
+    buildPlate();
+    buildLab();
+    buildSafety();
+    setLcdType('mono');
+    updateForce();
+    updateCoil();
+    requestAnimationFrame(animLoop);
+    console.log('Medidas Electronicas I Unidad 6 - cargado correctamente.');
+  } catch (e) { console.error(e); }
+});
+</script>
+</body>
+</html>
