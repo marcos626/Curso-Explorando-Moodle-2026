@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medidas Electrónicas I - Unidad 9 - UTN FRLR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+  .tab-btn { transition: all 0.3s ease; }
+  .tab-btn.active { background: #1e3a5f; color: white; }
+  .tab-btn:not(.active) { background: #e2e8f0; color: #4a5568; }
+  .tab-btn:not(.active):hover { background: #cbd5e0; }
+  .tab-btn.ok:not(.active) { background: #dcfce7; color: #166534; }
+  .tab-btn.ok.active { background: #16a34a; color: #fff; }
+  .tab-btn.bad:not(.active) { background: #fee2e2; color: #991b1b; }
+  .tab-btn.bad.active { background: #dc2626; color: #fff; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  input[type=range] { accent-color: #2980b9; width: 100%; }
+  .chart-wrap { position: relative; height: 260px; width: 100%; margin-bottom: 0.5rem; }
+  .formula-box { background: #eef2ff; border-left: 4px solid #2980b9; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.95rem; color: #1e3a5f; }
+  .result-pill { display: inline-block; background: #1e3a5f; color: white; border-radius: 20px; padding: 4px 14px; font-weight: 600; font-size: 0.9rem; margin: 2px; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px; padding: 2px 10px; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-yellow { background: #fef9c3; color: #854d0e; }
+  .badge-purple { background: #ede9fe; color: #5b21b6; }
+  .badge-gray { background: #e5e7eb; color: #6b7280; }
+  .info-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 0.75rem; font-size: 0.88rem; }
+  .warn-box { background: #fef2f2; border: 1px solid #f87171; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.85rem; color: #991b1b; }
+  .ok-box { background: #f0fdf4; border: 1px solid #4ade80; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.85rem; color: #166534; }
+  .ext-box { background: #f5f3ff; border: 1px dashed #8b5cf6; border-radius: 8px; padding: 0.6rem 0.75rem; font-size: 0.85rem; color: #4c1d95; }
+  .section-header { background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 100%); color: white; border-radius: 10px 10px 0 0; padding: 1rem 1.25rem; }
+  .nav-header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
+  canvas { max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .slider-label { font-size: 0.85rem; color: #4a5568; }
+  .stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 0.6rem; }
+  .stepper { display: flex; align-items: center; gap: 6px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 3px 8px; }
+  .stepper-val { font-weight: 700; color: #1d4ed8; min-width: 46px; text-align: right; font-size: 0.9rem; }
+  .stepper-unit { font-size: 0.75rem; color: #64748b; }
+  .stepper-arrows { display: flex; flex-direction: column; }
+  .stepper-btn { line-height: 1; font-size: 9px; width: 16px; height: 12px; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border: none; cursor: pointer; color: #1e3a5f; padding: 0; }
+  .stepper-btn:hover { background: #93c5fd; }
+  .stepper-btn:first-child { border-radius: 3px 3px 0 0; }
+  .stepper-btn:last-child { border-radius: 0 0 3px 3px; margin-top: 1px; }
+  .seg-btn { transition: all 0.2s; background: #e2e8f0; color: #4a5568; border: 2px solid #cbd5e1; border-radius: 8px; padding: 5px 9px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+  .seg-btn.active { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+  .seg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .chip { cursor: pointer; transition: all 0.2s; border: 2px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-weight: 700; font-size: 0.82rem; background: #fff; }
+  .chip:hover, .chip.active { border-color: #2980b9; background: #eff6ff; }
+  .chip.done { border-color: #16a34a; background: #f0fdf4; }
+  .quiz-opt { cursor: pointer; transition: all 0.2s; border: 2px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.9rem; }
+  .quiz-opt:hover { border-color: #2980b9; background: #eff6ff; }
+  .quiz-opt.correct { background: #dcfce7; border-color: #16a34a; color: #166534; }
+  .quiz-opt.wrong { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+  .num-in { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 6px; font-size: 0.85rem; }
+  .toast { position: fixed; bottom: 20px; right: 20px; background: #1e3a5f; color: #fff; padding: 10px 16px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); transform: translateY(140px); opacity: 0; transition: all 0.4s; z-index: 50; font-size: 0.9rem; font-weight: 600; max-width: 360px; }
+  .toast.show { transform: none; opacity: 1; }
+  .toast.ok { background: #16a34a; }
+  .toast.bad { background: #dc2626; }
+  .toast.gold { background: linear-gradient(135deg, #b45309, #f59e0b); }
+  .gauge-cv { width: 100%; height: 200px; display: block; }
+  table.lab td, table.lab th { border: 1px solid #e2e8f0; padding: 4px; text-align: center; }
+  table.lab input { width: 100%; min-width: 60px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 4px; font-size: 0.8rem; text-align: center; }
+  table.dat td, table.dat th { border: 1px solid #e2e8f0; padding: 4px 6px; text-align: center; font-size: 0.8rem; }
+  table.dat td.hl { background: #fde68a; font-weight: 700; }
+  table.dat tr.hl td { background: #fef3c7; }
+  /* Caja de décadas */
+  .decbox { display: inline-flex; gap: 3px; align-items: center; background: #111827; padding: 5px 7px; border-radius: 8px; }
+  .dec { display: flex; flex-direction: column; align-items: center; }
+  .dec button { width: 26px; height: 15px; font-size: 9px; line-height: 1; background: #374151; color: #e5e7eb; border: none; cursor: pointer; }
+  .dec button:hover { background: #2563eb; }
+  .dec button:first-child { border-radius: 4px 4px 0 0; }
+  .dec button:last-child { border-radius: 0 0 4px 4px; }
+  .dec .dig { width: 26px; text-align: center; background: #f9fafb; color: #111827; font-family: 'Courier New', monospace; font-weight: 700; font-size: 1.05rem; padding: 1px 0; }
+  .dec .dw { font-size: 8px; color: #9ca3af; margin-top: 2px; }
+  .dec-sep { color: #f9fafb; font-weight: 700; font-family: 'Courier New', monospace; }
+  .dec-unit { color: #fbbf24; font-weight: 700; font-size: 0.8rem; margin-left: 4px; }
+  .dec-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .logro { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 700; border-radius: 9999px; padding: 2px 9px; background: rgba(255,255,255,0.15); color: #cbd5e1; }
+  .logro.on { background: #fbbf24; color: #78350f; }
+  .ex-card { border: 1px solid #e2e8f0; border-radius: 10px; }
+  .ex-card summary { cursor: pointer; padding: 0.6rem 0.9rem; font-weight: 600; font-size: 0.9rem; color: #1e3a5f; list-style: none; }
+  .ex-card summary::-webkit-details-marker { display: none; }
+  .ex-card[open] summary { border-bottom: 1px solid #e2e8f0; }
+  .ex-card.solved { border-color: #4ade80; background: #f7fef9; }
+  .flow-step { border-left: 3px solid #2980b9; padding-left: 10px; margin-bottom: 8px; }
+  @media (max-width: 640px) { .chart-wrap { height: 220px; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="nav-header text-white p-4 mb-4 shadow-lg">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+    <div>
+      <div class="text-xs font-semibold opacity-75 uppercase tracking-widest">UTN · Facultad Regional La Rioja</div>
+      <h1 class="text-xl sm:text-2xl font-bold mt-0.5">Medidas Electrónicas I</h1>
+      <div class="text-xs opacity-80 mt-0.5">Unidad 9 · Puentes para corriente continua y alterna · Exploración gamificada</div>
+    </div>
+    <div class="flex gap-2 flex-wrap justify-center">
+      <span class="badge badge-blue">4º Año Ing. Electrónica</span>
+      <span class="badge" style="background:#fef3c7;color:#92400e;">Año 2026</span>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto mt-3">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="text-xs font-bold uppercase tracking-wider opacity-80">Logros</span>
+      <span id="logro-count" class="text-xs font-bold">0 / 9</span>
+      <div class="flex-1 bg-white/20 rounded-full h-2"><div id="logro-bar" class="bg-yellow-400 h-2 rounded-full transition-all" style="width:0%"></div></div>
+    </div>
+    <div id="logro-list" class="flex flex-wrap gap-1"></div>
+  </div>
+</div>
+
+<!-- HOOK -->
+<div class="max-w-6xl mx-auto px-3 mb-4">
+  <div class="card p-4 border-l-4 border-yellow-400">
+    <h2 class="font-bold text-lg text-gray-800 mb-1">¿Cómo se mide una resistencia con cuatro cifras si el instrumento indica cero?</h2>
+    <p class="text-gray-600 text-sm">Un óhmetro de aguja da errores del 3 al 5 % en el centro de la escala y del 30 % o más en los extremos, y además depende de su pila. Un <strong>puente</strong> no mide: <strong>compara</strong>. Se ajustan resistencias patrón hasta que el detector indica <strong>cero</strong>, y en ese punto el resultado sólo depende de los patrones. En esta unidad vas a equilibrar puentes de Wheatstone, de hilo, de Kelvin y de alterna, a operar el <strong>Normameter R1</strong> y el conjunto <strong>B24A + AL5401</strong> del laboratorio, y a localizar una falla en un cable con el método de Murray.</p>
+    <div class="mt-2 flex flex-wrap gap-1">
+      <span class="badge badge-purple">Métodos de cero</span>
+      <span class="badge badge-blue">Wheatstone · Kirchhoff · Kelvin</span>
+      <span class="badge badge-green">Maxwell · Sauty-Wien · Heaviside</span>
+      <span class="badge badge-gray">Ampliación: Hay · Schering · Wien</span>
+      <span class="badge badge-yellow">TP Nº 9</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION TABS -->
+<div class="max-w-6xl mx-auto px-3 mb-3">
+  <div class="flex flex-wrap gap-2">
+    <button class="tab-btn active rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-intro')">Principio</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-sens')">Sensibilidad & Error</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-norma')">Normameter R1</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-kelvin')">Kirchhoff & Kelvin</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-ca')">Puentes de CA</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-b24a')">B24A + AL5401</button>
+    <button class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold" onclick="switchTab('tab-tp')">TP Nº 9</button>
+  </div>
+</div>
+
+<!-- =================== TAB 1: PRINCIPIO =================== -->
+<div id="tab-intro" class="tab-content active max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Métodos de cero — Comparar en lugar de medir</h2>
+      <p class="text-sm opacity-80 mt-1">El detector no necesita estar calibrado: sólo tiene que decir cuándo hay cero.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="info-box lg:col-span-2">
+        <strong>Idea clave:</strong> en un método de cero (o por valor nulo) se ajustan patrones hasta que un <em>detector de equilibrio</em> indica una diferencia nula: dos tensiones iguales, o una corriente anulada en una rama. Por eso son los métodos de <strong>máxima exactitud</strong> del laboratorio. El <strong>circuito puente</strong> es una conexión en serie cerrada de cuatro elementos, con la fuente en una diagonal y el detector en la otra.
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-600">Óhmetro, centro de escala</span><span class="badge badge-yellow">3 a 5 %</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Óhmetro, extremos</span><span class="badge badge-red">30 % o más</span></div>
+        <div class="flex justify-between"><span class="text-gray-600">Puente de laboratorio</span><span class="badge badge-green">0,1 % a ppm</span></div>
+        <p class="text-xs text-gray-500">Historia: el circuito lo describió S. H. Christie en 1833; Sir Charles Wheatstone lo popularizó en 1843.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 1 — Equilibrá el puente de Wheatstone</h2>
+      <p class="text-sm opacity-80 mt-1">Hay una resistencia incógnita conectada. Elegí la relación R₂/R₁, girá las décadas de comparación R₃ y llevá el galvanómetro a cero.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg id="wh-svg" viewBox="0 0 440 300" class="w-full" style="max-height:320px;">
+          <defs>
+            <marker id="arrG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+          </defs>
+          <!-- fuente: C arriba, D abajo, por la izquierda -->
+          <polyline points="220,30 220,12 22,12 22,288 220,288 220,270" fill="none" stroke="#334155" stroke-width="2"/>
+          <rect x="12" y="143" width="20" height="8" fill="#ffffff"/>
+          <line x1="10" y1="142" x2="34" y2="142" stroke="#334155" stroke-width="2"/>
+          <line x1="15" y1="152" x2="29" y2="152" stroke="#334155" stroke-width="4"/>
+          <text x="28" y="182" font-size="12" font-weight="bold" fill="#1e3a5f" id="wh-Elbl">E</text>
+          <!-- rombo -->
+          <line x1="60" y1="150" x2="220" y2="30" stroke="#334155" stroke-width="2"/>
+          <line x1="220" y1="30" x2="380" y2="150" stroke="#334155" stroke-width="2"/>
+          <line x1="60" y1="150" x2="220" y2="270" stroke="#334155" stroke-width="2"/>
+          <line x1="220" y1="270" x2="380" y2="150" stroke="#334155" stroke-width="2"/>
+          <rect x="115" y="82" width="50" height="16" fill="#fff" stroke="#1e3a5f" stroke-width="2" transform="rotate(-36.87 140 90)"/>
+          <rect x="275" y="82" width="50" height="16" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2" transform="rotate(36.87 300 90)"/>
+          <rect x="115" y="202" width="50" height="16" fill="#fff" stroke="#1e3a5f" stroke-width="2" transform="rotate(36.87 140 210)"/>
+          <rect x="275" y="202" width="50" height="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2" transform="rotate(-36.87 300 210)"/>
+          <text x="112" y="70" font-size="13" font-weight="bold" fill="#1e3a5f">R₁</text>
+          <text x="318" y="70" font-size="13" font-weight="bold" fill="#1d4ed8">R₃</text>
+          <text x="112" y="245" font-size="13" font-weight="bold" fill="#1e3a5f">R₂</text>
+          <text x="318" y="245" font-size="13" font-weight="bold" fill="#dc2626">Rx</text>
+          <text x="108" y="84" font-size="10" fill="#64748b" id="wh-R1lbl"></text>
+          <text x="320" y="84" font-size="10" fill="#64748b" id="wh-R3lbl"></text>
+          <text x="104" y="232" font-size="10" fill="#64748b" id="wh-R2lbl"></text>
+          <text x="322" y="232" font-size="10" fill="#dc2626">¿?</text>
+          <!-- detector -->
+          <line x1="60" y1="150" x2="198" y2="150" stroke="#334155" stroke-width="2"/>
+          <line x1="242" y1="150" x2="380" y2="150" stroke="#334155" stroke-width="2"/>
+          <circle cx="220" cy="150" r="22" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+          <text x="220" y="156" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e3a5f">G</text>
+          <line id="wh-Iarrow" x1="150" y1="138" x2="185" y2="138" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrG)"/>
+          <text x="165" y="132" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">I<tspan font-size="8" dy="2">G</tspan></text>
+          <g id="wh-prot">
+            <rect x="85" y="143" width="34" height="14" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+            <text x="102" y="168" text-anchor="middle" font-size="9" fill="#b45309">R lim</text>
+          </g>
+          <!-- nodos -->
+          <circle cx="60" cy="150" r="4" fill="#1e3a5f"/><circle cx="380" cy="150" r="4" fill="#1e3a5f"/>
+          <circle cx="220" cy="30" r="4" fill="#1e3a5f"/><circle cx="220" cy="270" r="4" fill="#1e3a5f"/>
+          <text x="48" y="140" font-size="13" font-weight="bold" fill="#1e3a5f">A</text>
+          <text x="386" y="140" font-size="13" font-weight="bold" fill="#1e3a5f">B</text>
+          <text x="228" y="46" font-size="13" font-weight="bold" fill="#1e3a5f">C</text>
+          <text x="228" y="266" font-size="13" font-weight="bold" fill="#1e3a5f">D</text>
+        </svg>
+        <canvas id="wh-galv" class="gauge-cv" style="height:170px;"></canvas>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Relación R₂/R₁ (llave selectora)</div>
+        <div id="wh-ratio" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="dec-row"><span class="slider-label font-semibold">Comparación R₃ (décadas)</span><div id="wh-R3"></div></div>
+        <div data-param="whE"></div>
+        <div class="slider-label font-semibold mb-1">Protección del galvanómetro (Figs. 9-4 y 9-5)</div>
+        <div class="flex gap-2 mb-3">
+          <button id="wh-mode-prot" class="seg-btn active" onclick="setWhMode('prot')">Pulsador + R limitadora</button>
+          <button id="wh-mode-dir" class="seg-btn" onclick="setWhMode('dir')">Llave permanente (directo)</button>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">V<sub>A</sub> − V<sub>B</sub>:</span><span id="wh-ud" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Corriente I<sub>G</sub>:</span><span id="wh-ig" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Lectura (R₂/R₁)·R₃:</span><span id="wh-read" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Golpes de aguja:</span><span id="wh-hits" class="result-pill" style="background:#b91c1c;">0</span></div>
+        </div>
+        <div id="wh-status" class="mt-3 text-sm"></div>
+        <div class="flex gap-2 mt-3">
+          <button onclick="newWhUnknown()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Nueva incógnita</button>
+          <button onclick="toggleSol('wh-hint')" class="text-xs font-bold text-blue-700 hover:underline">Pista</button>
+        </div>
+        <div id="wh-hint" class="hidden mt-2 info-box text-xs">Si la aguja va a la <strong>derecha</strong> (I<sub>G</sub> &gt; 0) falta resistencia de comparación: subí R₃. Empezá por la década mayor. Si con R₃ = 9999 Ω la aguja sigue a la derecha, subí la relación; si con R₃ chica sigue a la izquierda, bajala. Para aprovechar las cuatro cifras, R₃ debe quedar entre 1000 y 9999 Ω. Cerca del cero pasá a la llave permanente: la protección resta sensibilidad.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Condición de equilibrio — La regla de las ramas enfrentadas</h2>
+      <p class="text-sm opacity-80 mt-1">Figura 9-1: R₁ (A–C), R₃ (C–B), R₂ (A–D), Rx (D–B); fuente entre C y D; galvanómetro entre A y B.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="formula-box space-y-2">
+        <div>$ I_G = 0 \;\Rightarrow\; V_A = V_B \qquad I_1 = I_2 \qquad I_3 = I_x $</div>
+        <div>$ R_1 I_1 = R_3 I_3 \qquad R_2 I_2 = R_x I_x $</div>
+        <div>$ \dfrac{R_2 I_2}{R_1 I_1} = \dfrac{R_x I_x}{R_3 I_3} \;\Rightarrow\; \dfrac{R_2}{R_1} = \dfrac{R_x}{R_3} $</div>
+        <div class="text-lg">$ \boxed{R_x \, R_1 = R_3 \, R_2} \qquad R_x = R_3 \dfrac{R_2}{R_1} $</div>
+      </div>
+      <div class="space-y-3 text-sm text-gray-700">
+        <p><strong>Regla nemotécnica:</strong> en el equilibrio, el producto de las resistencias <em>enfrentadas</em> es igual. La regla vale para todos los puentes de la unidad, incluso los de alterna (con impedancias).</p>
+        <p>En la práctica se fija <strong>R₂/R₁ = relación</strong> (potencia de 10, con una llave selectora) y se varía <strong>R₃ = comparación</strong> (décadas o dial) hasta el cero. El resultado es relación × comparación.</p>
+        <div class="ok-box">El resultado <strong>no depende de E</strong> ni del tipo de señal. La tensión de la fuente sólo está limitada por la potencia que disipan las resistencias (valores típicos: 1 a 20 V).</div>
+        <div class="flex flex-wrap gap-1">
+          <span class="badge badge-blue">Medición de resistencias</span>
+          <span class="badge badge-blue">Base de otros puentes de CC y CA</span>
+          <span class="badge badge-purple">Galgas extensiométricas</span>
+          <span class="badge badge-purple">Manómetros de vacío</span>
+          <span class="badge badge-purple">Circuitos resonantes LCR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-quiz="tab-intro"></div>
+</div>
+
+<!-- =================== TAB 2: SENSIBILIDAD =================== -->
+<div id="tab-sens" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Equivalente de Thévenin — ¿El detector "ve" el desequilibrio?</h2>
+      <p class="text-sm opacity-80 mt-1">Se analiza el puente desde los bornes del galvanómetro para un pequeño apartamiento ΔRx (UTN FRM · UNLP cap. 4).</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <p class="text-sm text-gray-600 mb-3">Configuración: R₂ = Rx y R₁ = R₃ = m·Rx, de modo que el puente está en equilibrio y m fija cuánto se parecen las ramas de un mismo divisor.</p>
+        <div class="slider-label font-semibold mb-1">Resistencia a medir Rx</div>
+        <div id="se-rx" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="slider-label font-semibold mb-1">Relación de brazos m = R₃/Rx</div>
+        <div id="se-m" class="flex flex-wrap gap-1 mb-3"></div>
+        <div data-param="seE"></div>
+        <div data-param="seRg"></div>
+        <div data-param="seI0"></div>
+        <div data-param="seEc"></div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1 mt-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">R<sub>Th</sub>:</span><span id="se-rth" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">ΔU<sub>Th</sub> para ΔRx/Rx = 0,1 %:</span><span id="se-uth" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">I<sub>G</sub> para ΔRx/Rx = 0,1 %:</span><span id="se-ig" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error de insensibilidad e<sub>i</sub>:</span><span id="se-ei" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Potencia en Rx:</span><span id="se-p" class="result-pill">--</span></div>
+        </div>
+        <div id="se-status" class="mt-3 text-sm"></div>
+      </div>
+      <div>
+        <div class="formula-box text-sm space-y-2 mb-3">
+          <div>$ U_{Th} = E\left(\dfrac{R_x}{R_3 + R_x} - \dfrac{R_2}{R_1 + R_2}\right) \qquad R_{Th} = R_1 \| R_2 + R_3 \| R_x $</div>
+          <div>$ I_G = \dfrac{U_{Th}}{R_{Th} + R_G} \qquad e_i = \dfrac{(\Delta R_x)_i}{R_x} = \dfrac{\Delta_0 I_G \,(R_{Th} + R_G)}{\partial U_{Th} / \partial(\Delta R_x / R_x)} $</div>
+        </div>
+        <div class="slider-label font-semibold mb-1">Error de insensibilidad vs. tensión de alimentación</div>
+        <div class="chart-wrap"><canvas id="seChart"></canvas></div>
+        <p class="text-xs text-gray-500">Línea discontinua: objetivo e<sub>i</sub> ≈ e<sub>construcción</sub>/10. Zona roja: se supera la potencia admisible de Rx (0,25 W).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Lo que dice el apunte — Error y sensibilidad del puente</h2>
+      <p class="text-sm opacity-80 mt-1">La exactitud no depende de E, pero la sensibilidad y el error de lectura sí.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <div class="formula-box space-y-3">
+          <div>$ \dfrac{\Delta R_x}{R_x} \cong \dfrac{R_3 + R_4}{E \, S_g} $</div>
+          <div>$ S_p = \dfrac{\alpha}{\Delta R_x} = \dfrac{E \, S_g}{\dfrac{R_x}{R_2} + 2 + \dfrac{R_2}{R_x}} $</div>
+        </div>
+        <p class="text-sm text-gray-700">S<sub>g</sub> es la sensibilidad del galvanómetro y α su deflexión. <strong>Cuanto mayor es E, menor es el error y mayor la sensibilidad.</strong> El denominador $ \tfrac{R_x}{R_2} + 2 + \tfrac{R_2}{R_x} $ es mínimo (vale 4) cuando las dos ramas del mismo divisor son iguales.</p>
+        <div class="slider-label font-semibold">Fuentes de error (apunte · Purkait · Stanley-Wolf)</div>
+        <ul class="text-sm text-gray-700 list-disc pl-5 space-y-1">
+          <li>Tolerancia de las resistencias patrón: $ e_x = \pm(e_{R1} + e_{R2} + e_{R3}) $</li>
+          <li>Sensibilidad insuficiente del detector (error de insensibilidad e<sub>i</sub>)</li>
+          <li>Resistencia de contactos y cables (crítica en valores bajos: puente de Kelvin)</li>
+          <li>Calentamiento por la corriente: variación de R con la temperatura</li>
+          <li>FEM térmicas: se anulan midiendo con la polaridad de la fuente invertida</li>
+        </ul>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Sensibilidad relativa del divisor vs. m = R₃/Rx</div>
+        <div class="chart-wrap"><canvas id="mChart"></canvas></div>
+        <p class="text-xs text-gray-500">$ \Delta U / (E\,\delta) = 1/(m + 2 + 1/m) $. El punto marca la m elegida arriba.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🔬 Determinación experimental del error de insensibilidad (UNLP, ej. 4.2)</h2>
+      <p class="text-sm opacity-80 mt-1">Después del equilibrio se desplaza R₃ a ambos lados y se anotan las deflexiones. Se interpola linealmente.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="slider-label block">R₃d [Ω]</label><input id="ux-R3d" class="num-in" type="text" value="2512"></div>
+          <div><label class="slider-label block">δd [div]</label><input id="ux-dd" class="num-in" type="text" value="5"></div>
+          <div><label class="slider-label block">R₃i [Ω]</label><input id="ux-R3i" class="num-in" type="text" value="2497"></div>
+          <div><label class="slider-label block">δi [div] (a la izquierda: 6)</label><input id="ux-di" class="num-in" type="text" value="6"></div>
+          <div><label class="slider-label block">Resolución Δδ [div]</label><input id="ux-res" class="num-in" type="text" value="0,1"></div>
+          <div><label class="slider-label block">Error de construcción [%]</label><input id="ux-ec" class="num-in" type="text" value="0,06"></div>
+        </div>
+        <button onclick="calcUnlp()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Calcular</button>
+        <div id="ux-res-out" class="mt-3 text-sm"></div>
+      </div>
+      <div class="formula-box text-sm space-y-2">
+        <div>$ R_3 = R_{3d} - \delta_d \dfrac{R_{3d} - R_{3i}}{\delta_d + \delta_i} $</div>
+        <div>$ (\Delta R_3)_i = \pm \Delta\delta \, \dfrac{R_{3d} - R_{3i}}{\delta_d + \delta_i} \qquad e_i = \dfrac{(\Delta R_3)_i}{R_3} $</div>
+        <div class="text-xs text-gray-600">(δ<sub>d</sub> y δ<sub>i</sub> en valor absoluto; las deflexiones tienen sentidos opuestos.) Criterio de la UNLP: e<sub>i</sub> ≈ 1/10 del error de construcción. Menor no agrega exactitud; mayor desperdicia los patrones.</div>
+      </div>
+    </div>
+  </div>
+  <div data-quiz="tab-sens"></div>
+</div>
+
+<!-- =================== TAB 3: NORMAMETER R1 =================== -->
+<div id="tab-norma" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Normameter R1 — El puente de la Figura 9-2</h2>
+      <p class="text-sm opacity-80 mt-1">Puente portátil austríaco de NORMA Messtechnik (Viena), c. 1968. El apunte lo cita como «Fuente: Norman».</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between gap-2"><span class="text-gray-500">Rango</span><span class="font-semibold text-right">0,08 Ω a 60.000 Ω (6 rangos)</span></div>
+        <div class="flex justify-between gap-2"><span class="text-gray-500">Alimentación</span><span class="font-semibold text-right">Pila de 4,5 V o acumulador externo</span></div>
+        <div class="flex justify-between gap-2"><span class="text-gray-500">Alterna</span><span class="font-semibold text-right">Zumbador de ≈ 800 Hz + auriculares</span></div>
+        <div class="flex justify-between gap-2"><span class="text-gray-500">Tamaño y masa</span><span class="font-semibold text-right">175 × 100 × 55 mm · 0,7 kg</span></div>
+        <div class="flex justify-between gap-2"><span class="text-gray-500">Historia</span><span class="font-semibold text-right">Vendido por Cropico; hoy en la Gallery Oldham</span></div>
+      </div>
+      <div class="lg:col-span-2 space-y-2">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+          <div class="chip" onclick="showNormaPart('T')"><span class="badge badge-blue">T</span> Bornes</div>
+          <div class="chip" onclick="showNormaPart('B')"><span class="badge badge-blue">B</span> Multiplicador</div>
+          <div class="chip" onclick="showNormaPart('A')"><span class="badge badge-blue">A</span> Dial</div>
+          <div class="chip" onclick="showNormaPart('G')"><span class="badge badge-blue">G</span> Galvanómetro</div>
+        </div>
+        <div id="norma-part" class="info-box">Tocá un mando del panel para ver qué hace.</div>
+        <div class="warn-box"><strong>Aclaración de nomenclatura:</strong> el apunte llama «relación» a la llave B y «comparación» al dial A. Según el esquema interno del instrumento ocurre lo contrario: el <strong>dial A</strong> es un reóstato que reparte la resistencia entre los <strong>brazos de relación</strong>, y la llave <strong>B</strong> elige el <strong>resistor patrón</strong> (el fabricante la llama «multiplicador»). El resultado es el mismo: el panel trae grabado <strong>A × B = X Ω</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 2 — Medí con el Normameter</h2>
+      <p class="text-sm opacity-80 mt-1">Elegí B, girá el dial A hasta el cero y leé Rx = A × B. Bonus: lográ la mejor exactitud (±0,5 %).</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <canvas id="nm-dial" style="width:100%;height:270px;display:block;"></canvas>
+        <div class="flex items-center gap-2 mt-2">
+          <button onclick="nudgeA(-1)" class="seg-btn">◀◀</button>
+          <button onclick="nudgeA(-0.1)" class="seg-btn">◀</button>
+          <input id="nm-a" type="range" min="0" max="108" step="0.02" value="54" oninput="updateNorma()">
+          <button onclick="nudgeA(0.1)" class="seg-btn">▶</button>
+          <button onclick="nudgeA(1)" class="seg-btn">▶▶</button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">La escala de A no es lineal: el cursor recorre un reóstato de 108 Ω entre dos resistores de 33 Ω.</p>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Multiplicador B (resistor patrón 3,15 Ω × B)</div>
+        <div id="nm-B" class="flex flex-wrap gap-1 mb-3"></div>
+        <canvas id="nm-galv" class="gauge-cv" style="height:160px;"></canvas>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1 mt-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Lectura del dial A:</span><span id="nm-Aval" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Rx = A × B:</span><span id="nm-rx" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Exactitud (hoja de datos):</span><span id="nm-acc" class="result-pill">--</span></div>
+        </div>
+        <div id="nm-status" class="mt-3 text-sm"></div>
+        <div class="flex gap-2 mt-3">
+          <button onclick="newNormaUnknown()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Nueva incógnita</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Rangos, exactitud y esquema interno</h2>
+      <p class="text-sm opacity-80 mt-1">Hoja de datos del fabricante y esquema relevado por richardsradios.co.uk. La celda resaltada es tu medición actual.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="overflow-x-auto">
+        <table class="dat w-full border-collapse" id="nm-table">
+          <thead><tr class="bg-gray-100"><th rowspan="2">Rango [Ω]</th><th rowspan="2">B</th><th colspan="3">Exactitud según la zona del dial A</th></tr>
+          <tr class="bg-gray-100"><th>0,8 … 1</th><th>1 … 10</th><th>10 … 12</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="ok-box mt-3"><strong>Regla práctica:</strong> elegí B para que la lectura de A caiga entre 1 y 10. Los rangos se solapan, así que siempre existe ese B, salvo en los extremos del instrumento.</div>
+      </div>
+      <div class="space-y-3 text-sm text-gray-700">
+        <div class="flow-step"><strong>Brazos de relación (dial A):</strong> 33 Ω + reóstato de 108 Ω + 33 Ω. Si el cursor está en la posición a, la relación es $ \dfrac{33 + a}{141 - a} $, que va de ≈ 0,23 a ≈ 4,3.</div>
+        <div class="flow-step"><strong>Brazo patrón (llave B):</strong> 0,315 · 3,15 · 31,5 · 315 · 3150 · 15.750 Ω, es decir, 3,15 Ω × B.</div>
+        <div class="formula-box">$ A = 3{,}15 \cdot \dfrac{33 + a}{141 - a} \qquad R_x = A \times B $</div>
+        <p>Con el cursor centrado (a = 54 Ω) la relación vale 1, y por eso <strong>3,15 queda en el centro de la escala</strong>.</p>
+        <div class="formula-box text-sm"><strong>Rango de medición (apunte, 9.2.4):</strong> con relación de 0,1 a 10.000 y comparación de 0,8 a 12: $ R_{x\,max} = 10.000 \times 12 = 120\ \text{k}\Omega $ y $ R_{x\,min} = 0{,}1 \times 0{,}8 = 0{,}08\ \Omega $.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Alimentación en alterna — Zumbador y auriculares</h2>
+      <p class="text-sm opacity-80 mt-1">Tres bornes laterales aceptan un zumbador de ≈ 800 Hz; el cero se busca por el mínimo de tono.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="info-box"><strong>¿Por qué alterna?</strong> Al medir líquidos con una celda de conductividad, la corriente continua <strong>polariza los electrodos</strong> (aparece una FEM que falsea el resultado). Con alterna eso no ocurre. El detector pasa a ser un auricular: no hay aguja, sólo un tono que se hace mínimo en el equilibrio.</div>
+      <div class="grid grid-cols-2 gap-2 text-sm">
+        <div class="card p-3"><div class="font-bold text-gray-800">Electrolitos</div><div class="text-xs text-gray-600">Resistencia de fluidos y conductividad específica</div></div>
+        <div class="card p-3"><div class="font-bold text-gray-800">Titulación</div><div class="text-xs text-gray-600">Punto final por el cambio brusco de conductividad</div></div>
+        <div class="card p-3"><div class="font-bold text-gray-800">Puesta a tierra</div><div class="text-xs text-gray-600">Medición de resistencias de tierra</div></div>
+        <div class="card p-3"><div class="font-bold text-gray-800">Temperatura</div><div class="text-xs text-gray-600">Con termocupla y la tabla pegada en la tapa</div></div>
+      </div>
+    </div>
+  </div>
+  <div data-quiz="tab-norma"></div>
+</div>
+
+<!-- =================== TAB 4: KIRCHHOFF & KELVIN =================== -->
+<div id="tab-kelvin" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 3 — Puente de Kirchhoff (hilo calibrado)</h2>
+      <p class="text-sm opacity-80 mt-1">R₁ y R₂ son dos tramos de un mismo hilo homogéneo de 1 m. Deslizá el contacto A hasta el cero.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg viewBox="0 0 460 250" class="w-full" style="max-height:260px;">
+          <line x1="30" y1="160" x2="430" y2="160" stroke="#b45309" stroke-width="6"/>
+          <g id="kc-ruler"></g>
+          <line x1="30" y1="160" x2="230" y2="40" stroke="#334155" stroke-width="2"/>
+          <line x1="230" y1="40" x2="430" y2="160" stroke="#334155" stroke-width="2"/>
+          <rect x="105" y="92" width="50" height="16" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2" transform="rotate(-30.96 130 100)"/>
+          <rect x="305" y="92" width="50" height="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2" transform="rotate(30.96 330 100)"/>
+          <text x="96" y="84" font-size="13" font-weight="bold" fill="#1d4ed8">R₃</text>
+          <text x="350" y="84" font-size="13" font-weight="bold" fill="#dc2626">R₄ = Rx</text>
+          <line id="kc-gline" x1="230" y1="40" x2="230" y2="150" stroke="#334155" stroke-width="2"/>
+          <circle id="kc-gc" cx="230" cy="95" r="16" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+          <text id="kc-gt" x="230" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">G</text>
+          <polygon id="kc-slider" points="230,152 222,140 238,140" fill="#dc2626"/>
+          <text x="22" y="182" font-size="13" font-weight="bold" fill="#1e3a5f">C</text>
+          <text x="432" y="182" font-size="13" font-weight="bold" fill="#1e3a5f">D</text>
+          <text x="236" y="36" font-size="13" font-weight="bold" fill="#1e3a5f">B</text>
+          <text id="kc-A" x="230" y="182" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">A</text>
+          <text id="kc-lca" x="130" y="215" text-anchor="middle" font-size="11" fill="#1e3a5f">l_CA</text>
+          <text id="kc-lad" x="330" y="215" text-anchor="middle" font-size="11" fill="#1e3a5f">l_AD</text>
+          <polyline points="30,160 30,235 200,235" fill="none" stroke="#334155" stroke-width="2"/>
+          <polyline points="260,235 430,235 430,160" fill="none" stroke="#334155" stroke-width="2"/>
+          <line x1="215" y1="225" x2="215" y2="245" stroke="#334155" stroke-width="2"/>
+          <line x1="222" y1="229" x2="222" y2="241" stroke="#334155" stroke-width="4"/>
+          <line x1="200" y1="235" x2="215" y2="235" stroke="#334155" stroke-width="2"/>
+          <line x1="222" y1="235" x2="260" y2="235" stroke="#334155" stroke-width="2"/>
+          <text x="232" y="230" font-size="11" fill="#1e3a5f">E</text>
+        </svg>
+        <div class="flex items-center gap-2 mt-1">
+          <button onclick="nudgeKc(-10)" class="seg-btn">◀◀</button>
+          <button onclick="nudgeKc(-1)" class="seg-btn">◀</button>
+          <input id="kc-x" type="range" min="20" max="980" step="1" value="500" oninput="updateKirch()">
+          <button onclick="nudgeKc(1)" class="seg-btn">▶</button>
+          <button onclick="nudgeKc(10)" class="seg-btn">▶▶</button>
+        </div>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Resistencia patrón R₃</div>
+        <div id="kc-R3" class="flex flex-wrap gap-1 mb-3"></div>
+        <canvas id="kc-galv" class="gauge-cv" style="height:150px;"></canvas>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1 mt-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">l<sub>CA</sub> / l<sub>AD</sub>:</span><span id="kc-ls" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Rx = R₃·l<sub>AD</sub>/l<sub>CA</sub>:</span><span id="kc-rx" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error por ±1 mm de lectura:</span><span id="kc-err" class="result-pill">--</span></div>
+        </div>
+        <div id="kc-status" class="mt-3 text-sm"></div>
+        <button onclick="newKirchUnknown()" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Nueva incógnita</button>
+      </div>
+    </div>
+    <div class="px-5 pb-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="formula-box text-sm space-y-2">
+        <div>$ R_4 R_1 = R_3 R_2 \qquad R_1 = \rho\,\dfrac{l_{CA}}{S} \qquad R_2 = \rho\,\dfrac{l_{AD}}{S} $</div>
+        <div>$ R_x = R_3 \dfrac{\rho\, l_{AD}/S}{\rho\, l_{CA}/S} = R_3 \dfrac{l_{AD}}{l_{CA}} $</div>
+        <div class="text-xs">ρ y S se simplifican: el resultado es el patrón por un cociente de longitudes, en mm u otra unidad. Su ventaja es la rapidez para encontrar el equilibrio.</div>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Error relativo por ±1 mm de lectura vs. posición del contacto</div>
+        <div class="chart-wrap" style="height:200px;"><canvas id="kcChart"></canvas></div>
+        <p class="text-xs text-gray-500">$ \dfrac{\Delta R_x}{R_x} = \Delta l \left(\dfrac{1}{l_{CA}} + \dfrac{1}{l_{AD}}\right) $: es mínimo en el centro del hilo. Elegí R₃ para que el equilibrio caiga cerca de los 500 mm.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Resistencias bajas — El problema del conductor de unión</h2>
+      <p class="text-sm opacity-80 mt-1">Con Rx del orden de la décima de ohm, el cable que une el patrón con la incógnita pesa tanto como la medición (UTN FRM, UNLP fig. 4.5).</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg viewBox="0 0 440 150" class="w-full" style="max-height:170px;">
+          <rect x="30" y="92" width="90" height="18" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2"/>
+          <text x="75" y="105" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">R₃ (patrón)</text>
+          <line x1="120" y1="101" x2="320" y2="101" stroke="#b45309" stroke-width="5"/>
+          <rect x="320" y="92" width="90" height="18" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+          <text x="365" y="105" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">Rx</text>
+          <text x="120" y="128" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">m</text>
+          <text x="320" y="128" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">n</text>
+          <text x="220" y="135" text-anchor="middle" font-size="11" fill="#b45309">Ry (conductor de unión)</text>
+          <line id="kv-pline" x1="220" y1="40" x2="220" y2="98" stroke="#334155" stroke-width="2"/>
+          <circle id="kv-pdot" cx="220" cy="101" r="5" fill="#dc2626"/>
+          <text id="kv-plbl" x="228" y="88" font-size="12" font-weight="bold" fill="#dc2626">p</text>
+          <circle cx="220" cy="28" r="14" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+          <text x="220" y="33" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">G</text>
+          <text x="240" y="20" font-size="10" fill="#64748b">al nudo de R₁–R₂</text>
+        </svg>
+        <div class="slider-label font-semibold">Punto de conexión del galvanómetro sobre Ry (m → n)</div>
+        <input id="kv-f" type="range" min="0" max="1" step="0.01" value="0" oninput="updateKelvinLead()">
+        <div data-param="kvRx"></div>
+        <div data-param="kvRy"></div>
+        <div class="slider-label font-semibold mb-1">Relación R₁/R₂</div>
+        <div id="kv-k" class="flex flex-wrap gap-1 mb-3"></div>
+      </div>
+      <div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">R<sub>mp</sub> / R<sub>np</sub>:</span><span id="kv-split" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Valor indicado por el puente:</span><span id="kv-read" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error de medición:</span><span id="kv-err" class="result-pill">--</span></div>
+        </div>
+        <div id="kv-status" class="mt-3 text-sm"></div>
+        <div class="formula-box text-sm mt-3 space-y-1">
+          <div>$ R_x + R_{np} = \dfrac{R_1}{R_2}\,(R_3 + R_{mp}) $</div>
+          <div>Error nulo si $ \dfrac{R_{np}}{R_{mp}} = \dfrac{R_1}{R_2} $</div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">En m se mide Rx + Ry (error en exceso); en n, Ry se suma al patrón (error en defecto). Existe un punto intermedio p de error nulo. El puente doble de Kelvin fija ese punto con un segundo par de brazos de relación.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Puente de Kelvin — Doble puente de Thomson</h2>
+      <p class="text-sm opacity-80 mt-1">Figura 9-8 del apunte: patrón R firme al puente, unión r muy pequeña, brazos r₁, r₂, r<sub>a</sub> y r<sub>b</sub> cientos o miles de veces mayores.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg viewBox="0 0 440 230" class="w-full" style="max-height:240px;">
+          <polyline points="40,170 40,60 200,60" fill="none" stroke="#334155" stroke-width="2"/>
+          <polyline points="240,60 400,60 400,170" fill="none" stroke="#334155" stroke-width="2"/>
+          <circle cx="220" cy="60" r="16" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+          <text x="220" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">G</text>
+          <rect x="95" y="52" width="44" height="16" fill="#e0e7ff" stroke="#1e3a5f" stroke-width="1.5"/><text x="117" y="46" text-anchor="middle" font-size="11" fill="#1e3a5f">r<tspan font-size="8" dy="3">b</tspan></text>
+          <rect x="300" y="52" width="44" height="16" fill="#e0e7ff" stroke="#1e3a5f" stroke-width="1.5"/><text x="322" y="46" text-anchor="middle" font-size="11" fill="#1e3a5f">r<tspan font-size="8" dy="3">a</tspan></text>
+          <line x1="220" y1="76" x2="220" y2="110" stroke="#334155" stroke-width="2"/>
+          <polyline points="140,170 140,110 300,110 300,170" fill="none" stroke="#334155" stroke-width="2"/>
+          <rect x="155" y="102" width="40" height="16" fill="#ede9fe" stroke="#5b21b6" stroke-width="1.5"/><text x="175" y="98" text-anchor="middle" font-size="11" fill="#5b21b6">r₂</text>
+          <rect x="245" y="102" width="40" height="16" fill="#ede9fe" stroke="#5b21b6" stroke-width="1.5"/><text x="265" y="98" text-anchor="middle" font-size="11" fill="#5b21b6">r₁</text>
+          <line x1="20" y1="170" x2="420" y2="170" stroke="#334155" stroke-width="3"/>
+          <rect x="60" y="162" width="60" height="16" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2"/><text x="90" y="196" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">R</text>
+          <rect x="190" y="164" width="60" height="12" fill="#fde68a" stroke="#b45309" stroke-width="1.5"/><text x="220" y="196" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">r</text>
+          <rect x="320" y="162" width="60" height="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="350" y="196" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">Rx</text>
+          <polyline points="20,170 20,215 200,215" fill="none" stroke="#334155" stroke-width="2"/>
+          <polyline points="240,215 420,215 420,170" fill="none" stroke="#334155" stroke-width="2"/>
+          <line x1="212" y1="205" x2="212" y2="225" stroke="#334155" stroke-width="2"/><line x1="220" y1="209" x2="220" y2="221" stroke="#334155" stroke-width="4"/>
+          <line x1="200" y1="215" x2="212" y2="215" stroke="#334155" stroke-width="2"/><line x1="220" y1="215" x2="240" y2="215" stroke="#334155" stroke-width="2"/>
+          <text x="228" y="210" font-size="11" fill="#1e3a5f">E</text>
+        </svg>
+        <div data-param="tkR"></div>
+        <div data-param="tkRat"></div>
+        <div data-param="tkMis"></div>
+        <div data-param="tkr"></div>
+      </div>
+      <div>
+        <div class="formula-box text-sm space-y-2 mb-3">
+          <div><strong>Apunte:</strong> se ajustan r<sub>b</sub> y r₂ manteniendo $ \dfrac{r_b}{r_a} = \dfrac{r_2}{r_1} $ (diferencia &lt; 1 %), y entonces $ R_x = R \dfrac{r_a}{r_b} $</div>
+          <div><strong>Expresión completa (UTN FRM, ec. 16):</strong></div>
+          <div>$ R_x = R\dfrac{r_a}{r_b} + \dfrac{r_2\, r}{r_1 + r_2 + r}\left(\dfrac{r_a}{r_b} - \dfrac{r_1}{r_2}\right) $</div>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Rx real (con desajuste):</span><span id="tk-rx" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Rx calculada = R·r<sub>a</sub>/r<sub>b</sub>:</span><span id="tk-rx0" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Error del término de corrección:</span><span id="tk-err" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Wheatstone simple (mide Rx + r):</span><span id="tk-wh" class="result-pill">--</span></div>
+        </div>
+        <div id="tk-status" class="mt-3 text-sm"></div>
+        <p class="text-xs text-gray-500 mt-2">Rango típico: de ≈ 1 Ω hasta 0,00001 Ω. Las resistencias de contacto quedan en serie con los brazos altos y su efecto es despreciable. Se toman dos lecturas invirtiendo la polaridad para anular las FEM térmicas.</p>
+      </div>
+    </div>
+  </div>
+  <div data-quiz="tab-kelvin"></div>
+</div>
+
+<!-- =================== TAB 5: PUENTES DE CA =================== -->
+<div id="tab-ca" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Puente de alterna — Dos condiciones de equilibrio</h2>
+      <p class="text-sm opacity-80 mt-1">Figura 9-9: las resistencias se reemplazan por impedancias y la fuente es alterna.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="formula-box text-sm space-y-2">
+        <div>$ Z_1 Z_3 = Z_2 Z_4 \qquad Z_k = R_k + jX_k $</div>
+        <div>$ R_1R_3 - X_1X_3 = R_2R_4 - X_2X_4 $ <span class="text-xs">(partes reales)</span></div>
+        <div>$ R_1X_3 + X_1R_3 = R_2X_4 + X_2R_4 $ <span class="text-xs">(partes imaginarias)</span></div>
+        <div class="border-t pt-2">Forma polar (UTN FRM): $ Z_1Z_3 = Z_2Z_4 $ en módulo y $ \theta_1 + \theta_3 = \theta_2 + \theta_4 $</div>
+      </div>
+      <div class="space-y-2 text-sm text-gray-700">
+        <p>Es una igualdad de números complejos: hay que cumplir <strong>dos condiciones a la vez</strong>, así que el equilibrio exige regular <strong>dos elementos</strong> en lugar de uno. Por eso se usan configuraciones simplificadas, en las que algunas ramas son resistencias puras.</p>
+        <p><strong>Detectores:</strong> galvanómetro de vibración, auriculares (audio), osciloscopio o un detector electrónico sincrónico.</p>
+        <div class="info-box text-xs"><strong>Convergencia:</strong> si los dos ajustes interactúan, el equilibrio «se desliza»: cada retoque de un control corre el mínimo del otro. En el plano complejo de abajo lo vas a ver como una espiral hacia el origen.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 4 — Laboratorio de puentes de CA</h2>
+      <p class="text-sm opacity-80 mt-1">Elegí un puente, regulá los dos elementos y llevá la tensión del detector a cero. Cada puente equilibrado queda marcado.</p>
+    </div>
+    <div class="p-5">
+      <div class="flex flex-wrap gap-2 mb-1" id="ca-chips"></div>
+      <div class="text-xs text-gray-500 mb-4">Verdes: del apunte. Violetas: ampliación (UTN FRM · UNLP · Purkait).</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <svg viewBox="0 0 440 300" class="w-full" style="max-height:310px;">
+            <line x1="60" y1="140" x2="220" y2="30" stroke="#334155" stroke-width="2"/>
+            <line x1="220" y1="30" x2="380" y2="140" stroke="#334155" stroke-width="2"/>
+            <line x1="60" y1="140" x2="220" y2="250" stroke="#334155" stroke-width="2"/>
+            <line x1="220" y1="250" x2="380" y2="140" stroke="#334155" stroke-width="2"/>
+            <rect x="105" y="77" width="70" height="20" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="2" transform="rotate(-34.5 140 85)"/>
+            <rect x="265" y="77" width="70" height="20" rx="4" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2" transform="rotate(34.5 300 85)"/>
+            <rect x="105" y="187" width="70" height="20" rx="4" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2" transform="rotate(34.5 140 195)"/>
+            <rect x="265" y="187" width="70" height="20" rx="4" fill="#dbeafe" stroke="#1e3a5f" stroke-width="2" transform="rotate(-34.5 300 195)"/>
+            <text x="98" y="64" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">Z₁</text>
+            <text x="342" y="64" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">Z₂</text>
+            <text x="342" y="226" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">Z₃</text>
+            <text x="98" y="226" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">Z₄</text>
+            <text id="ca-l1" x="20" y="96" font-size="11" fill="#dc2626"></text>
+            <text id="ca-l2" x="300" y="44" font-size="11" fill="#1e3a5f"></text>
+            <text id="ca-l3" x="312" y="252" font-size="11" fill="#1e3a5f"></text>
+            <text id="ca-l4" x="12" y="250" font-size="11" fill="#1e3a5f"></text>
+            <line x1="220" y1="30" x2="220" y2="118" stroke="#334155" stroke-width="2"/>
+            <line x1="220" y1="162" x2="220" y2="250" stroke="#334155" stroke-width="2"/>
+            <circle cx="220" cy="140" r="22" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+            <text x="220" y="145" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e3a5f">Det</text>
+            <polyline points="60,140 60,285 196,285" fill="none" stroke="#334155" stroke-width="2"/>
+            <polyline points="244,285 380,285 380,140" fill="none" stroke="#334155" stroke-width="2"/>
+            <circle cx="220" cy="285" r="13" fill="#fff" stroke="#1e3a5f" stroke-width="2"/>
+            <text x="220" y="290" text-anchor="middle" font-size="13" fill="#1e3a5f">~</text>
+            <text id="ca-src" x="250" y="276" font-size="11" fill="#1e3a5f"></text>
+            <text x="48" y="132" font-size="12" font-weight="bold" fill="#1e3a5f">A</text>
+            <text x="386" y="132" font-size="12" font-weight="bold" fill="#1e3a5f">B</text>
+            <text x="228" y="24" font-size="12" font-weight="bold" fill="#1e3a5f">C</text>
+            <text x="228" y="266" font-size="12" font-weight="bold" fill="#1e3a5f">D</text>
+          </svg>
+          <div id="ca-desc" class="text-sm text-gray-700 mt-2"></div>
+        </div>
+        <div>
+          <div id="ca-controls"></div>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <div>
+              <div class="slider-label font-semibold">Detector |U<sub>D</sub>/U|</div>
+              <div class="w-full bg-gray-200 rounded-full h-4 mt-1 overflow-hidden"><div id="ca-bar" class="h-4 rounded-full transition-all" style="width:50%;background:#dc2626;"></div></div>
+              <div id="ca-db" class="text-center font-bold text-lg mt-1" style="color:#1e3a5f;">-- dB</div>
+              <div class="text-xs text-gray-500 text-center">Equilibrio: menos de −80 dB</div>
+              <div class="flex justify-between items-center mt-2"><span class="text-xs font-semibold text-gray-700">Ajustes:</span><span id="ca-moves" class="result-pill">0</span></div>
+            </div>
+            <div>
+              <div class="slider-label font-semibold">U<sub>D</sub> en el plano complejo</div>
+              <canvas id="ca-plane" style="width:100%;height:170px;display:block;"></canvas>
+            </div>
+          </div>
+          <div id="ca-status" class="mt-3 text-sm"></div>
+          <div class="flex gap-2 mt-3 flex-wrap">
+            <button onclick="newCaUnknown()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Nueva incógnita</button>
+            <button onclick="toggleSol('ca-eqs')" class="text-xs font-bold text-blue-700 hover:underline">Ver ecuaciones de equilibrio</button>
+          </div>
+        </div>
+      </div>
+      <div id="ca-eqs" class="hidden mt-4 formula-box text-sm"></div>
+      <div id="ca-heav" class="hidden mt-4"></div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Resumen de puentes de CA</h2>
+      <p class="text-sm opacity-80 mt-1">Convención de la unidad: Z₁ es la incógnita (A–C), Z₃ es la rama enfrentada (B–D).</p>
+    </div>
+    <div class="p-5 overflow-x-auto">
+      <table class="dat w-full border-collapse">
+        <thead><tr class="bg-gray-100"><th>Puente</th><th>Mide</th><th>Ramas</th><th>Resultado</th><th>Observación</th></tr></thead>
+        <tbody>
+          <tr><td class="font-semibold">Maxwell (apunte)</td><td>L<sub>x</sub>, R<sub>x</sub></td><td>Z₂ = R₂ + jωL₂ patrón; Z₃ = R₃; Z₄ = R₄</td><td>$ R_x = R_2\frac{R_4}{R_3} \;\; L_x = L_2\frac{R_4}{R_3} $</td><td>Comparación con una inductancia patrón</td></tr>
+          <tr><td class="font-semibold">Sauty-Wien (apunte)</td><td>C<sub>x</sub>, R<sub>x</sub></td><td>Z₂ = R₂; Z₃ = R₃; Z₄ = R₄ − j/ωC₄</td><td>$ R_x = R_4\frac{R_2}{R_3} \;\; C_x = C_4\frac{R_3}{R_2} $</td><td>R<sub>x</sub> representa las pérdidas · 50 a 60 Hz</td></tr>
+          <tr><td class="font-semibold">Heaviside (apunte)</td><td>M</td><td>Maxwell con las dos bobinas en serie</td><td>$ M = \frac{L_{x1} - L_{x2}}{4} $</td><td>Dos mediciones: a favor y en oposición</td></tr>
+          <tr style="background:#faf5ff"><td class="font-semibold">Maxwell-Wien</td><td>L<sub>x</sub>, R<sub>x</sub></td><td>Z₃ = R₃ ‖ C₃; Z₂ = R₂; Z₄ = R₄</td><td>$ R_x = \frac{R_2R_4}{R_3} \;\; L_x = R_2R_4C_3 $</td><td>Bobinas de Q medio (1 &lt; Q &lt; 10)</td></tr>
+          <tr style="background:#faf5ff"><td class="font-semibold">Hay</td><td>L<sub>x</sub>, R<sub>x</sub></td><td>Z₃ = R₃ − j/ωC₃ (serie)</td><td>$ L_x = \frac{R_2R_4C_3}{1 + \omega^2C_3^2R_3^2} $</td><td>Q alto (Q &gt; 10) · $ Q = 1/(\omega C_3 R_3) $</td></tr>
+          <tr style="background:#faf5ff"><td class="font-semibold">Schering</td><td>C<sub>x</sub>, D</td><td>Z₂ = C₂ patrón; Z₃ = R₃ ‖ C₃; Z₄ = R₄</td><td>$ C_x = C_2\frac{R_3}{R_4} \;\; D = \omega R_3 C_3 $</td><td>Aislaciones, ángulos cercanos a 90°</td></tr>
+          <tr style="background:#faf5ff"><td class="font-semibold">Wien</td><td>f</td><td>Z₁ = R − j/ωC; Z₂ = R ‖ C; R₄/R₃ = 2</td><td>$ f = \frac{1}{2\pi R C} $</td><td>Filtros y osciladores; sensible a armónicas</td></tr>
+        </tbody>
+      </table>
+      <div class="ext-box mt-3"><strong>Ampliación — Tierra de Wagner:</strong> en frecuencias altas, las capacidades parásitas de los nudos a tierra desvían corriente y falsean el equilibrio. Se agrega una rama auxiliar (Z₅–Z₆) entre la fuente y tierra, y se equilibra alternadamente con el puente principal hasta que el detector queda al potencial de tierra (UNLP 5.4.1 · Purkait 6.7).</div>
+    </div>
+  </div>
+  <div data-quiz="tab-ca"></div>
+</div>
+
+<!-- =================== TAB 6: B24A + AL5401 =================== -->
+<div id="tab-b24a" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">B24A + AL5401 — Un puente de campo para cables</h2>
+      <p class="text-sm opacity-80 mt-1">B24A (AOIP): Wheatstone, Varley y Murray, de 0,1 Ω a 11 MΩ. AL5401: detector de cero electrónico y fuente autónoma.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
+      <div class="space-y-2">
+        <div class="font-bold text-gray-800">Puente B24A</div>
+        <div class="flow-step">Selector <strong>W / V / M</strong>: Wheatstone, Varley, Murray</div>
+        <div class="flow-step">Relación <strong>ρ</strong> (0,001 a 1000) y cuatro décadas <strong>R</strong> (×1000, ×100, ×10, ×1)</div>
+        <div class="flow-step">Galvanoscopio integrado: 10⁻⁶ A/div, R<sub>int</sub> = 150 Ω; pulsadores G 0,01 · G 0,1 · G 1</div>
+        <div class="formula-box text-center">$ R_x = \rho \cdot R $</div>
+      </div>
+      <div class="space-y-2">
+        <div class="font-bold text-gray-800">El problema del B24A solo</div>
+        <div class="warn-box">Falla de alta resistencia: la pila interna da poca tensión y el galvanoscopio no alcanza. Hacía falta una batería de ~90 V y un galvanómetro de espejo.</div>
+        <div class="warn-box">Localización de un corte: con 800 Hz y auricular sólo se oye un mínimo, <strong>sin signo</strong>: no dice hacia dónde mover R.</div>
+      </div>
+      <div class="space-y-2">
+        <div class="font-bold text-gray-800">Lo que agrega el AL5401</div>
+        <div class="ok-box">Detector tipo chopper: ±10 µV a ±10 mV a fondo de escala; deriva &lt; 1 µV/°C</div>
+        <div class="ok-box">Fuentes con corriente limitada: <strong>BT</strong> 50 V CC (20 mA) · <strong>HT</strong> 300 V CC (3 mA) · <strong>CA</strong> ±50 V a ≈ 1,25 Hz</div>
+        <div class="ok-box">Aislación galvánica (flyback + optoacopladores MCT2)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 5 — Medir con el método de Wheatstone (B24A + AL5401)</h2>
+      <p class="text-sm opacity-80 mt-1">Procedimiento del manual: K2 en BT, K1 en 10 mV, selector en W, ρ = 0,001 y R = 10.000. Después, a equilibrar.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div class="slider-label font-semibold mb-1">Relación ρ (números negros)</div>
+        <div id="b-rho" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="dec-row"><span class="slider-label font-semibold">Décadas R</span><div id="b-R"></div></div>
+        <div class="slider-label font-semibold mb-1">Fuente del puente (K2 del AL5401)</div>
+        <div id="b-src" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="slider-label font-semibold mb-1">Detector</div>
+        <div id="b-det" class="flex flex-wrap gap-1 mb-2"></div>
+        <div id="b-sens" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="overflow-x-auto">
+          <table class="dat w-full border-collapse" id="b-table">
+            <thead><tr class="bg-gray-100"><th>Rx a medir [Ω]</th><th>ρ</th><th>Exactitud</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <canvas id="b-galv" class="gauge-cv" style="height:190px;"></canvas>
+        <div class="bg-blue-50 rounded-xl p-3 space-y-1 mt-2">
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Tensión sobre el puente:</span><span id="b-vb" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Lectura ρ·R:</span><span id="b-read" class="result-pill">--</span></div>
+          <div class="flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Exactitud (tabla):</span><span id="b-acc" class="result-pill">--</span></div>
+        </div>
+        <div id="b-status" class="mt-3 text-sm"></div>
+        <div class="flex gap-2 mt-3">
+          <button onclick="newB24Unknown()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Nueva incógnita</button>
+          <button onclick="toggleSol('b-proc')" class="text-xs font-bold text-blue-700 hover:underline">Procedimiento</button>
+        </div>
+        <div id="b-proc" class="hidden mt-2 info-box text-xs space-y-1">
+          <div>1. Conectar Rx entre X1 y X2 del AL5401.</div>
+          <div>2. AL5401: K2 en BT (50 V) y K1 en 10 mV.</div>
+          <div>3. B24A: selector en W, ρ = 0,001 y R = 10.000.</div>
+          <div>4. Pulsar P y G1. Si la aguja va a la izquierda, subir ρ (0,01; 0,1…) hasta que vaya a la derecha.</div>
+          <div>5. Equilibrar con las décadas R, de la mayor a la menor. Si la aguja va a la izquierda, reducir R; a la derecha, aumentar.</div>
+          <div>6. Bajar el rango de K1 (1 mV, 100 µV, 10 µV) y reajustar. Leer Rx = ρ·R.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">🎯 Misión 6 — Localizar una falla a tierra (lazo de Murray)</h2>
+      <p class="text-sm opacity-80 mt-1">Un par de cobre de 0,9 mm tiene una falla de aislación a tierra en un conductor. El extremo lejano está en cortocircuito (lazo).</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <svg viewBox="0 0 460 210" class="w-full" style="max-height:220px;">
+          <rect x="10" y="40" width="90" height="120" rx="8" fill="#e5e7eb" stroke="#475569"/>
+          <text x="55" y="60" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e3a5f">B24A (M)</text>
+          <text x="55" y="80" text-anchor="middle" font-size="10" fill="#1e3a5f">R<tspan font-size="8" dy="3">M</tspan><tspan dy="-3"> · r</tspan></text>
+          <text x="96" y="74" text-anchor="end" font-size="10" fill="#1e3a5f">X1</text>
+          <text x="96" y="128" text-anchor="end" font-size="10" fill="#1e3a5f">X2</text>
+          <text x="55" y="150" text-anchor="middle" font-size="10" fill="#1e3a5f">T</text>
+          <line x1="100" y1="70" x2="430" y2="70" stroke="#b45309" stroke-width="4"/>
+          <line x1="100" y1="124" x2="430" y2="124" stroke="#b45309" stroke-width="4"/>
+          <line x1="430" y1="70" x2="430" y2="124" stroke="#334155" stroke-width="3"/>
+          <text x="436" y="100" font-size="10" fill="#334155">corto</text>
+          <line x1="55" y1="160" x2="55" y2="190" stroke="#334155" stroke-width="2"/>
+          <line x1="35" y1="190" x2="75" y2="190" stroke="#334155" stroke-width="2"/>
+          <line x1="40" y1="195" x2="70" y2="195" stroke="#334155" stroke-width="2"/>
+          <line x1="45" y1="200" x2="65" y2="200" stroke="#334155" stroke-width="2"/>
+          <line x1="80" y1="190" x2="440" y2="190" stroke="#94a3b8" stroke-dasharray="5,4"/>
+          <text x="300" y="186" font-size="10" fill="#64748b">tierra / pantalla</text>
+          <g id="mu-fault" style="display:none">
+            <line id="mu-fl" x1="250" y1="70" x2="250" y2="190" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+            <text id="mu-ft" x="250" y="62" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">⚡ falla</text>
+          </g>
+          <g id="mu-guess" style="display:none">
+            <polygon id="mu-gp" points="250,58 244,46 256,46" fill="#2563eb"/>
+            <text id="mu-gt" x="250" y="40" text-anchor="middle" font-size="10" font-weight="bold" fill="#2563eb">tu estimación</text>
+          </g>
+          <line x1="100" y1="150" x2="430" y2="150" stroke="#cbd5e1"/>
+          <text x="100" y="146" font-size="9" fill="#64748b">0</text>
+          <text id="mu-Ltxt" x="430" y="146" text-anchor="end" font-size="9" fill="#64748b">L</text>
+        </svg>
+        <div class="bg-gray-50 rounded-xl p-3 text-sm space-y-1">
+          <div class="flex justify-between"><span>Longitud del par L:</span><span id="mu-L" class="font-bold">--</span></div>
+          <div class="flex justify-between"><span>Resistencia de lazo R<sub>2L</sub> (medida en W):</span><span id="mu-R2L" class="font-bold">--</span></div>
+          <div class="flex justify-between"><span>Resistencia de la falla:</span><span id="mu-Rf" class="font-bold">desconocida</span></div>
+        </div>
+        <div class="formula-box text-sm mt-3 space-y-1">
+          <div>$ \dfrac{R_X}{R_{2L}} = \dfrac{R_M}{R_M + r} \qquad L_x = 2L\,\dfrac{R_M}{R_M + r} $</div>
+          <div class="text-xs">La resistencia de la falla no entra en la ecuación de equilibrio: sólo reduce la sensibilidad. Con fallas de alta resistencia se pasa a HT (300 V).</div>
+        </div>
+      </div>
+      <div>
+        <div class="slider-label font-semibold mb-1">Brazo r</div>
+        <div id="mu-r" class="flex flex-wrap gap-1 mb-3"></div>
+        <div class="dec-row"><span class="slider-label font-semibold">Décadas R<sub>M</sub></span><div id="mu-RM"></div></div>
+        <div class="slider-label font-semibold mb-1">Fuente (K2)</div>
+        <div id="mu-src" class="flex flex-wrap gap-1 mb-2"></div>
+        <div class="slider-label font-semibold mb-1">Rango del detector AL5401 (K1)</div>
+        <div id="mu-k1" class="flex flex-wrap gap-1 mb-2"></div>
+        <canvas id="mu-galv" class="gauge-cv" style="height:150px;"></canvas>
+        <div class="grid grid-cols-2 gap-2 mt-2 items-end">
+          <div><label class="slider-label block">Distancia a la falla estimada [m]</label><input id="mu-in" class="num-in" type="text"></div>
+          <button onclick="checkMurray()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Excavar aquí</button>
+        </div>
+        <div id="mu-status" class="mt-3 text-sm"></div>
+        <button onclick="newMurray()" class="mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg">Nueva falla</button>
+      </div>
+    </div>
+    <div class="px-5 pb-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div class="font-bold text-gray-800 text-sm mb-2">Calculadora — Método de Varley</div>
+        <p class="text-xs text-gray-600 mb-2">Primero se mide R<sub>2L</sub> en W y luego se reequilibra en V. A diferencia de Murray, no hace falta conocer la resistencia por kilómetro.</p>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="slider-label block">R<sub>2L</sub> [Ω]</label><input id="va-r2l" class="num-in" type="text" value="7,5"></div>
+          <div><label class="slider-label block">ρ<sub>V</sub></label><input id="va-rho" class="num-in" type="text" value="0,375"></div>
+          <div><label class="slider-label block">R<sub>V</sub> [Ω]</label><input id="va-rv" class="num-in" type="text" value="10"></div>
+          <div><label class="slider-label block">Resistencia por km [Ω/km]</label><input id="va-rk" class="num-in" type="text" value="0,5"></div>
+        </div>
+        <button onclick="calcVarley()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Calcular</button>
+        <div id="va-out" class="mt-2 text-sm"></div>
+        <div class="formula-box text-sm mt-2">$ R_X = \dfrac{R_{2L} - \rho_V R_V}{\rho_V + 1} \qquad L_x = \dfrac{R_X}{r_{km}} $</div>
+      </div>
+      <div>
+        <div class="font-bold text-gray-800 text-sm mb-2">Detector de cero tipo chopper (AL5401)</div>
+        <div class="flex flex-wrap gap-1 mb-2" id="ch-chips"></div>
+        <div id="ch-detail" class="info-box text-sm">Tocá un bloque de la cadena.</div>
+        <div class="text-xs text-gray-600 mt-2">Rangos: G = G₁·G₂·½. Con el galvanómetro de ±500 mV y G = 50.000 se obtienen ±10 µV a fondo de escala. Exactitud ±20 %: es un detector de cero, no un voltímetro.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Detección sincrónica — Localización de cortes</h2>
+      <p class="text-sm opacity-80 mt-1">La misma señal de ≈ 1,25 Hz (320 Hz del chopper divididos) invierte la fuente del puente y la polaridad del detector.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div class="flex gap-2 mb-2">
+          <button id="sy-old" class="seg-btn active" onclick="setSync(false)">800 Hz + auricular</button>
+          <button id="sy-new" class="seg-btn" onclick="setSync(true)">AL5401: ±50 V a 1,25 Hz</button>
+        </div>
+        <div data-param="syD"></div>
+        <canvas id="sy-cv" style="width:100%;height:190px;display:block;"></canvas>
+      </div>
+      <div class="space-y-3 text-sm text-gray-700">
+        <div id="sy-text" class="info-box"></div>
+        <div class="overflow-x-auto">
+          <table class="dat w-full border-collapse">
+            <thead><tr class="bg-gray-100"><th>Aspecto</th><th>B24A solo</th><th>B24A + AL5401</th></tr></thead>
+            <tbody>
+              <tr><td>Detector</td><td>Galvanoscopio integrado</td><td>Chopper ±10 µV a ±10 mV</td></tr>
+              <tr><td>Excitación</td><td>Pila interna</td><td>50 V / 300 V CC, ±50 V CA</td></tr>
+              <tr><td>Fallas de alta R</td><td>Batería de ~90 V + galvanómetro de espejo</td><td>HT 300 V: 10 MΩ y más</td></tr>
+              <tr><td>Cortes</td><td>800 Hz + auricular, sin signo</td><td>1,25 Hz sincrónico: criterio de CC</td></tr>
+              <tr><td>Montaje</td><td>Varios equipos sueltos</td><td>Un accesorio; el AL5401-2 aloja el B24A</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-quiz="tab-b24a"></div>
+</div>
+
+<!-- =================== TAB 7: TP Nº 9 =================== -->
+<div id="tab-tp" class="tab-content max-w-6xl mx-auto px-3 mb-8">
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Trabajo Práctico Nº 9 — Puentes de medida</h2>
+      <p class="text-sm opacity-80 mt-1">Medición de resistencias por métodos de cero. Puente de Wheatstone. Puente de Murray.</p>
+    </div>
+    <div class="p-5 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
+      <div class="info-box lg:col-span-2"><strong>Objetivos:</strong> diferenciar los métodos de medición y adquirir habilidades para el equilibrio de puentes. <strong>Equipamiento:</strong> puente de Wheatstone comercial, puente B24A, detector de cero AL5401, voltímetro analógico y voltímetro digital.</div>
+      <div class="space-y-1">
+        <div class="flow-step">1. Medir una resistencia con el puente comercial</div>
+        <div class="flow-step">2. Medir la misma con B24A + AL5401 (modo W)</div>
+        <div class="flow-step">3. Comparar capacitores en CA (modo Murray)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Práctico de laboratorio — Tabla de resistencias</h2>
+      <p class="text-sm opacity-80 mt-1">Cargá las lecturas: la tabla calcula Rx en cada instrumento, la exactitud y la diferencia con el multímetro.</p>
+    </div>
+    <div class="p-5">
+      <div class="overflow-x-auto">
+        <table class="lab w-full text-sm border-collapse">
+          <thead><tr class="bg-gray-100">
+            <th>Resistor</th><th>Normameter A</th><th>B</th><th>Rx Norma [Ω]</th><th>± %</th><th>B24A ρ</th><th>R [Ω]</th><th>Rx B24A [Ω]</th><th>± %</th><th>Multímetro [Ω]</th><th>Δ Norma–B24A [%]</th><th>Δ Mult.–B24A [%]</th>
+          </tr></thead>
+          <tbody id="lab-body"></tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button onclick="addLabRow()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Agregar fila</button>
+        <button onclick="exportLabCSV()" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Exportar CSV</button>
+        <button onclick="clearLab()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg">Limpiar tabla</button>
+      </div>
+      <div class="info-box text-xs mt-3"><strong>Pregunta del TP:</strong> ¿para qué valores de resistencia es más precisa la medición con puentes que con multímetros digitales y analógicos? Pista: mirá la exactitud del multímetro en sus rangos extremos y la tabla de exactitud del B24A.</div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Medición de capacidades con el B24A (modo Murray, en CA)</h2>
+      <p class="text-sm opacity-80 mt-1">C<sub>E</sub> conocido entre X2 y T; C<sub>X</sub> entre X1 y T. Ambos mayores que 0,02 µF y no polarizados.</p>
+    </div>
+    <div class="p-5">
+      <div class="overflow-x-auto">
+        <table class="lab w-full text-sm border-collapse">
+          <thead><tr class="bg-gray-100"><th>Capacitor</th><th>C<sub>E</sub> [µF]</th><th>r</th><th>R [Ω]</th><th>C<sub>X</sub> = C<sub>E</sub>·R/r [µF]</th><th>Capacímetro [µF]</th><th>Diferencia [%]</th></tr></thead>
+          <tbody id="cap-body"></tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button onclick="addCapRow()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Agregar fila</button>
+        <button onclick="exportCapCSV()" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Exportar CSV</button>
+      </div>
+      <div class="formula-box text-sm mt-3">$ C_X = C_E \cdot \dfrac{R}{r} \qquad r = 10,\ 100 \text{ o } 1000 $</div>
+    </div>
+  </div>
+
+  <div class="card overflow-hidden mb-4">
+    <div class="section-header">
+      <h2 class="text-lg font-bold">Ejercicios resueltos</h2>
+      <p class="text-sm opacity-80 mt-1">Cooper-Helfrick cap. 5 · UNLP cap. 4 · Purkait 4.5 · Stanley-Wolf cap. 10. Usá coma decimal. Tolerancia ±2 %.</p>
+    </div>
+    <div class="p-5">
+      <div class="flex items-center gap-2 mb-3"><span class="text-sm font-semibold text-gray-700">Resueltos:</span><span id="ex-count" class="result-pill">0</span></div>
+      <div id="ex-list" class="space-y-2"></div>
+    </div>
+  </div>
+  <div data-quiz="tab-tp"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="max-w-6xl mx-auto px-3 mb-8">
+  <div class="card p-4 text-center text-sm text-gray-500">
+    <div class="font-semibold text-gray-700 mb-1">Medidas Electrónicas I · UTN Facultad Regional La Rioja</div>
+    <div>Titular: Ing. Walter Sotomayor · JTP: Ing. Federico Miskoski · Auxiliar: Ing. Marcos Santillán</div>
+    <div>Guía de Estudios Unidad 9 · Trabajo Práctico Nº 9. Año 2026</div>
+    <div class="mt-1 text-xs">Material didáctico gamificado. Los simuladores usan modelos simplificados con fines didácticos.</div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script>
+// =============================================
+// UTILIDADES
+// =============================================
+var DEG = Math.PI / 180;
+function $(id) { return document.getElementById(id); }
+function fmt(v, d) {
+  if (v === undefined || v === null || !isFinite(v)) return '—';
+  d = d || 0;
+  if (Math.abs(v) < 0.5 * Math.pow(10, -d)) v = 0;
+  var s = v.toFixed(d).split('.');
+  s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return s.join(',');
+}
+// Formato con cifras significativas y prefijo SI
+function fmtSI(v, unit, sig) {
+  if (!isFinite(v)) return '—';
+  sig = sig || 4;
+  var a = Math.abs(v);
+  var pre = [[1e9, 'G'], [1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
+  if (a === 0) return '0 ' + unit;
+  for (var i = 0; i < pre.length; i++) {
+    if (a >= pre[i][0] * 0.9999999) {
+      var x = v / pre[i][0], ax = Math.abs(x);
+      var d = Math.max(0, sig - 1 - Math.floor(Math.log10(ax) + 1e-9));
+      return fmt(x, d) + ' ' + pre[i][1] + unit;
+    }
+  }
+  return fmt(v / 1e-12, 2) + ' p' + unit;
+}
+function parseNum(s) {
+  s = String(s).trim().replace(/\s/g, '');
+  if (s.indexOf(',') >= 0) s = s.replace(/\./g, '').replace(',', '.');
+  return parseFloat(s);
+}
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function rint(a, b) { return Math.floor(rnd(a, b + 1)); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function toggleSol(id) { var e = $(id); if (e) { e.classList.toggle('hidden'); renderMath(e); } }
+function setupCanvas(cv) {
+  var W = cv.clientWidth || 400, H = cv.clientHeight || 220, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx: ctx, W: W, H: H };
+}
+function setSeg(ids, activeId) {
+  ids.forEach(function (id) { var b = $(id); if (b) b.classList.toggle('active', id === activeId); });
+}
+// Grupo de botones segmentados generado desde datos
+function buildSeg(containerId, items, current, onPick) {
+  var el = $(containerId); if (!el) return;
+  el.innerHTML = items.map(function (it, i) {
+    return '<button type="button" class="seg-btn' + (it.v === current ? ' active' : '') + '" data-i="' + i + '">' + it.t + '</button>';
+  }).join('');
+  Array.prototype.forEach.call(el.children, function (b) {
+    b.onclick = function () {
+      Array.prototype.forEach.call(el.children, function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      onPick(items[+b.getAttribute('data-i')].v);
+    };
+  });
+}
+function renderMath(el) {
+  if (typeof renderMathInElement === 'undefined' || !el) return;
+  renderMathInElement(el, {
+    delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+    throwOnError: false
+  });
+}
+function statusBox(id, kind, html) {
+  var e = $(id); if (!e) return;
+  e.innerHTML = html ? '<div class="' + kind + '">' + html + '</div>' : '';
+}
+
+// =============================================
+// STEPPERS GENÉRICOS
+// =============================================
+var P = {};
+function defParam(key, cfg) { P[key] = cfg; }
+function pv(key) { return P[key].val; }
+function renderSteppers() {
+  document.querySelectorAll('[data-param]').forEach(function (el) {
+    var k = el.getAttribute('data-param'), c = P[k];
+    if (!c) return;
+    el.className = 'stepper-row';
+    el.innerHTML = '<label class="slider-label font-semibold">' + c.label + '</label>' +
+      '<div class="stepper"><span id="' + k + '-val" class="stepper-val">' + fmt(c.val, c.dec) + '</span>' +
+      '<span class="stepper-unit">' + c.unit + '</span><div class="stepper-arrows">' +
+      '<button type="button" class="stepper-btn" onclick="stepParam(\'' + k + '\',1)">▲</button>' +
+      '<button type="button" class="stepper-btn" onclick="stepParam(\'' + k + '\',-1)">▼</button></div></div>';
+  });
+}
+function stepParam(key, dir) {
+  try {
+    var c = P[key];
+    c.val = +clamp(c.val + dir * c.step, c.min, c.max).toFixed(6);
+    var el = $(key + '-val');
+    if (el) el.textContent = fmt(c.val, c.dec);
+    if (c.fn) c.fn();
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// CAJA DE DÉCADAS (como las de los puentes reales)
+// =============================================
+var DB = {};
+function defDec(key, cfg) {
+  cfg.d = cfg.d || []; while (cfg.d.length < cfg.n) cfg.d.push(0);
+  cfg.maxDigit = cfg.maxDigit || 9;
+  DB[key] = cfg;
+}
+function decVal(key) {
+  var c = DB[key], v = 0;
+  for (var i = 0; i < c.n; i++) v += c.d[i] * Math.pow(10, c.n - 1 - i);
+  return v * c.mult;
+}
+function setDecVal(key, value) {
+  var c = DB[key], u = Math.round(value / c.mult);
+  for (var i = c.n - 1; i >= 0; i--) {
+    var dig = (i === 0) ? Math.min(c.maxDigit, u) : u % 10;
+    c.d[i] = dig; u = (u - dig) / 10;
+  }
+}
+function renderDec(key, containerId) {
+  var c = DB[key], el = $(containerId); if (!el) return;
+  c.cont = containerId;
+  var h = '<div class="decbox">';
+  for (var i = 0; i < c.n; i++) {
+    var w = Math.pow(10, c.n - 1 - i) * c.mult;
+    h += '<div class="dec"><button type="button" onclick="stepDec(\'' + key + '\',' + i + ',1)">▲</button>' +
+      '<div class="dig" id="' + key + '-d' + i + '">' + c.d[i] + '</div>' +
+      '<button type="button" onclick="stepDec(\'' + key + '\',' + i + ',-1)">▼</button>' +
+      '<div class="dw">×' + fmtW(w) + '</div></div>';
+  }
+  h += '<span class="dec-unit">' + c.unit + '</span></div>';
+  el.innerHTML = h;
+}
+function fmtW(w) { return w >= 1 ? fmt(w, 0) : fmt(w, Math.ceil(-Math.log10(w) - 1e-9)); }
+function stepDec(key, i, dir) {
+  try {
+    var c = DB[key];
+    c.d[i] = clamp(c.d[i] + dir, 0, c.maxDigit);
+    var e = $(key + '-d' + i); if (e) e.textContent = c.d[i];
+    if (c.fn) c.fn(key);
+  } catch (e) { console.error(e); }
+}
+function refreshDec(key) { var c = DB[key]; if (c && c.cont) renderDec(key, c.cont); }
+
+// =============================================
+// GALVANÓMETRO DE CERO CENTRAL
+// =============================================
+// x: -1..1 (fracción de fondo de escala). o: {title, sub, left, right}
+function drawGalv(cv, x, o) {
+  if (!cv) return;
+  o = o || {};
+  var s = setupCanvas(cv), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#fffdf5'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+  var cx = W / 2, cy = H * 0.92, r = Math.min(W * 0.42, H * 0.78), sw = 100;
+  function ang(f) { return (-90 + f * sw / 2) * DEG; }
+  // banda de cero
+  ctx.strokeStyle = '#86efac'; ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.arc(cx, cy, r - 4, ang(-0.05), ang(0.05)); ctx.stroke();
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r, ang(-1), ang(1)); ctx.stroke();
+  ctx.fillStyle = '#334155'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  for (var k = -10; k <= 10; k++) {
+    var a = ang(k / 10), len = k % 5 === 0 ? 12 : 6;
+    ctx.lineWidth = k % 5 === 0 ? 1.6 : 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+    ctx.lineTo(cx + (r - len) * Math.cos(a), cy + (r - len) * Math.sin(a));
+    ctx.stroke();
+    if (k % 5 === 0) ctx.fillText(k === 0 ? '0' : (k > 0 ? '+' : '−') + Math.abs(k), cx + (r - 22) * Math.cos(a), cy + (r - 22) * Math.sin(a) + 3);
+  }
+  ctx.fillStyle = '#1e3a5f'; ctx.font = 'bold 12px sans-serif';
+  if (o.title) ctx.fillText(o.title, cx, cy - r * 0.45);
+  ctx.font = '10px sans-serif'; ctx.fillStyle = '#64748b';
+  if (o.sub) ctx.fillText(o.sub, cx, cy - r * 0.45 + 14);
+  if (o.left) { ctx.textAlign = 'left'; ctx.fillText(o.left, 6, 14); }
+  if (o.right) { ctx.textAlign = 'right'; ctx.fillText(o.right, W - 6, 14); }
+  var sat = Math.abs(x) > 1;
+  var nf = clamp(x, -1.06, 1.06), na = ang(nf);
+  ctx.strokeStyle = sat ? '#b91c1c' : '#dc2626'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + (r - 6) * Math.cos(na), cy + (r - 6) * Math.sin(na)); ctx.stroke();
+  ctx.fillStyle = '#1e3a5f'; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, 2 * Math.PI); ctx.fill();
+  if (sat) { ctx.fillStyle = '#b91c1c'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('¡TOPE!', cx, cy - r * 0.2); }
+}
+
+// =============================================
+// CARTEL TEMPORAL Y LOGROS
+// =============================================
+var toastTimer = null;
+function toast(msg, kind) {
+  var t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind ? ' ' + kind : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 3200);
+}
+var LOGROS = [
+  { id: 'wh', t: '⚖️ Wheatstone' },
+  { id: 'sens', t: '🔍 Detector justo' },
+  { id: 'norma', t: '🎛️ Zona ±0,5 %' },
+  { id: 'kirch', t: '📏 Hilo calibrado' },
+  { id: 'kelvin', t: '🔗 Punto p' },
+  { id: 'ca', t: '〰️ Puente de CA' },
+  { id: 'mutua', t: '🧲 Inductancia mutua' },
+  { id: 'b24a', t: '🔬 B24A a 10 µV' },
+  { id: 'murray', t: '⛏️ Falla localizada' }
+];
+var logrosOn = {};
+function renderLogros() {
+  $('logro-list').innerHTML = LOGROS.map(function (l) {
+    return '<span class="logro' + (logrosOn[l.id] ? ' on' : '') + '">' + l.t + '</span>';
+  }).join('');
+  var n = Object.keys(logrosOn).length;
+  $('logro-count').textContent = n + ' / ' + LOGROS.length;
+  $('logro-bar').style.width = (n / LOGROS.length * 100) + '%';
+}
+function unlock(id) {
+  if (logrosOn[id]) return;
+  logrosOn[id] = true;
+  var l = LOGROS.filter(function (x) { return x.id === id; })[0];
+  renderLogros();
+  toast('🏆 Logro desbloqueado: ' + (l ? l.t : id), 'gold');
+}
+
+// =============================================
+// NAVEGACIÓN
+// =============================================
+var TAB_IDS = ['tab-intro', 'tab-sens', 'tab-norma', 'tab-kelvin', 'tab-ca', 'tab-b24a', 'tab-tp'];
+var activeTab = 'tab-intro';
+function tabBtn(id) { return document.querySelectorAll('.tab-btn')[TAB_IDS.indexOf(id)]; }
+function switchTab(id) {
+  try {
+    document.querySelectorAll('.tab-content').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    $(id).classList.add('active');
+    var b = tabBtn(id); if (b) b.classList.add('active');
+    activeTab = id;
+    setTimeout(function () { refreshTab(id); }, 60);
+  } catch (e) { console.error(e); }
+}
+function refreshTab(id) {
+  if (id === 'tab-intro') updateWh();
+  if (id === 'tab-sens') updateSens();
+  if (id === 'tab-norma') updateNorma();
+  if (id === 'tab-kelvin') { updateKirch(); updateKelvinLead(); updateThomson(); }
+  if (id === 'tab-ca') updateCa();
+  if (id === 'tab-b24a') { updateB24(); updateMurray(); drawSync(); }
+}
+
+// =============================================
+// TAB 1: WHEATSTONE
+// =============================================
+var RATIOS = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
+function ratioTxt(k) { return k >= 1 ? fmt(k, 0) : fmt(k, Math.round(-Math.log10(k))); }
+var wh = { k: 1, Rx: 4711, mode: 'prot', hits: 0, sat: false, done: false };
+var WH_RG = 100, WH_RLIM = 100000, WH_FS = 50e-6;
+defParam('whE', { label: 'Tensión de la fuente E', unit: 'V', min: 1, max: 20, step: 1, val: 4, dec: 0, fn: updateWh });
+defDec('whR3', { n: 4, mult: 1, unit: 'Ω', d: [5, 0, 0, 0], fn: updateWh });
+function initWh() {
+  buildSeg('wh-ratio', RATIOS.map(function (k) { return { v: k, t: ratioTxt(k) }; }), wh.k, function (v) { wh.k = v; updateWh(); });
+  renderDec('whR3', 'wh-R3');
+  newWhUnknown(true);
+}
+function newWhUnknown(silent) {
+  wh.Rx = pick(RATIOS) * rint(1000, 9999);
+  wh.done = false;
+  if (!silent) toast('Se conectó una nueva resistencia incógnita', '');
+  updateWh();
+}
+function setWhMode(m) {
+  wh.mode = m;
+  setSeg(['wh-mode-prot', 'wh-mode-dir'], m === 'prot' ? 'wh-mode-prot' : 'wh-mode-dir');
+  updateWh();
+}
+function updateWh() {
+  try {
+    var E = pv('whE'), R1 = 1000, R2 = wh.k * 1000, R3 = decVal('whR3'), Rx = wh.Rx;
+    var VA = E * R2 / (R1 + R2), VB = E * Rx / (R3 + Rx);
+    var Rth = R1 * R2 / (R1 + R2) + (R3 + Rx > 0 ? R3 * Rx / (R3 + Rx) : 0);
+    var Rs = Rth + WH_RG + (wh.mode === 'prot' ? WH_RLIM : 0);
+    var ig = (VB - VA) / Rs;   // positivo: aguja a la derecha → falta R3
+    var x = ig / WH_FS;
+    $('wh-ud').textContent = fmtSI(VA - VB, 'V', 3);
+    $('wh-ig').textContent = fmtSI(Math.abs(ig), 'A', 3) + (Math.abs(x) < 0.005 ? '' : (ig > 0 ? ' (B→A)' : ' (A→B)'));
+    var read = wh.k * R3;
+    $('wh-read').textContent = fmtSI(read, 'Ω', 4);
+    $('wh-R1lbl').textContent = '1 kΩ';
+    $('wh-R2lbl').textContent = fmtSI(R2, 'Ω', 3);
+    $('wh-R3lbl').textContent = fmtSI(R3, 'Ω', 4);
+    $('wh-Elbl').textContent = 'E = ' + fmt(E, 0) + ' V';
+    $('wh-prot').style.display = wh.mode === 'prot' ? '' : 'none';
+    var arr = $('wh-Iarrow');
+    if (Math.abs(x) < 0.005) arr.style.display = 'none';
+    else {
+      arr.style.display = '';
+      if (ig < 0) { arr.setAttribute('x1', 150); arr.setAttribute('x2', 185); }
+      else { arr.setAttribute('x1', 185); arr.setAttribute('x2', 150); }
+    }
+    // golpes de aguja
+    var sat = Math.abs(x) > 1.05;
+    if (sat && !wh.sat && wh.mode === 'dir') {
+      wh.hits++; $('wh-hits').textContent = wh.hits;
+      toast('¡La aguja golpeó el tope! Usá el pulsador con la resistencia limitadora lejos del equilibrio.', 'bad');
+    }
+    wh.sat = sat;
+    drawGalv($('wh-galv'), x, { title: 'G', sub: wh.mode === 'prot' ? 'con R limitadora' : 'llave permanente', left: '← bajar R₃', right: 'subir R₃ →' });
+    var err = Math.abs(read - Rx) / Rx;
+    if (err < 1e-6) {
+      if (wh.mode === 'prot') statusBox('wh-status', 'info-box', 'La aguja está en cero, pero con la resistencia limitadora el galvanómetro es poco sensible. Pasá a la <strong>llave permanente</strong> y verificá que siga en cero.');
+      else if (R3 < 1000) statusBox('wh-status', 'info-box', '¡Equilibrio! Pero R₃ = ' + fmt(R3, 0) + ' Ω usa menos de cuatro décadas: cambiá la relación para que R₃ quede entre 1000 y 9999 Ω y ganar cifras.');
+      else {
+        statusBox('wh-status', 'ok-box', '<strong>¡Equilibrio con cuatro cifras!</strong> Rx = (R₂/R₁)·R₃ = ' + ratioTxt(wh.k) + ' × ' + fmt(R3, 0) + ' Ω = <strong>' + fmtSI(read, 'Ω', 4) + '</strong>');
+        if (!wh.done) { wh.done = true; unlock('wh'); }
+      }
+    } else if (Math.abs(x) < 0.02) {
+      statusBox('wh-status', 'info-box', 'La aguja parece estar en cero, pero el puente no está equilibrado: falta sensibilidad. Subí E o pasá a la llave permanente.');
+    } else statusBox('wh-status', '', '');
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 2: SENSIBILIDAD Y ERROR
+// =============================================
+var se = { Rx: 1000, m: 1 }, seChart = null, mChart = null;
+var SE_PADM = 0.25;
+defParam('seE', { label: 'Tensión E', unit: 'V', min: 1, max: 50, step: 1, val: 5, dec: 0, fn: updateSens });
+defParam('seRg', { label: 'Resistencia del galvanómetro R<sub>G</sub>', unit: 'Ω', min: 10, max: 2000, step: 10, val: 300, dec: 0, fn: updateSens });
+defParam('seI0', { label: 'Mínima corriente detectable Δ₀I<sub>G</sub>', unit: 'µA', min: 0.01, max: 2, step: 0.01, val: 0.32, dec: 2, fn: updateSens });
+defParam('seEc', { label: 'Error de construcción del puente', unit: '%', min: 0.01, max: 1, step: 0.01, val: 0.06, dec: 2, fn: updateSens });
+function initSens() {
+  buildSeg('se-rx', [10, 100, 1000, 1e4, 1e5, 1e6].map(function (v) { return { v: v, t: fmtSI(v, 'Ω', 1) }; }), se.Rx, function (v) { se.Rx = v; updateSens(); });
+  buildSeg('se-m', [0.01, 0.1, 1, 10, 100].map(function (v) { return { v: v, t: ratioTxt(v) }; }), se.m, function (v) { se.m = v; updateSens(); });
+}
+function seModel(E, Rx, m, Rg, I0) {
+  var Rth = 2 * m * Rx / (1 + m);
+  var dU = E * m / Math.pow(1 + m, 2);          // dU/dδ
+  var ei = I0 * (Rth + Rg) / dU;                // fracción
+  var Pmax = Math.max(Math.pow(E / (1 + m), 2) / Rx, Math.pow(E * m / (1 + m), 2) / (m * Rx));
+  return { Rth: Rth, dU: dU, ei: ei, P: Pmax };
+}
+function updateSens() {
+  try {
+    var E = pv('seE'), Rg = pv('seRg'), I0 = pv('seI0') * 1e-6, ec = pv('seEc') / 100, Rx = se.Rx, m = se.m;
+    var r = seModel(E, Rx, m, Rg, I0);
+    $('se-rth').textContent = fmtSI(r.Rth, 'Ω', 3);
+    $('se-uth').textContent = fmtSI(r.dU * 1e-3, 'V', 3);
+    $('se-ig').textContent = fmtSI(r.dU * 1e-3 / (r.Rth + Rg), 'A', 3);
+    $('se-ei').textContent = fmt(r.ei * 100, 4) + ' %';
+    $('se-p').textContent = fmtSI(r.P, 'W', 3);
+    var msg = [], kind = 'ok-box';
+    if (r.P > SE_PADM) { kind = 'warn-box'; msg.push('La potencia en las ramas supera los 0,25 W admisibles: bajá E.'); }
+    if (r.ei > ec / 10 * 1.0001) { if (kind !== 'warn-box') kind = 'info-box'; msg.push('e<sub>i</sub> es mayor que e<sub>construcción</sub>/10: el detector desperdicia la calidad de los patrones. Subí E, elegí un galvanómetro más sensible o acercá m a 1.'); }
+    if (!msg.length) {
+      msg.push('e<sub>i</sub> ≤ e<sub>construcción</sub>/10 sin superar la potencia admisible: el detector está bien elegido.');
+      unlock('sens');
+    }
+    statusBox('se-status', kind, msg.join(' '));
+    drawSeCharts(E, Rx, m, Rg, I0, ec);
+  } catch (e) { console.error(e); }
+}
+function drawSeCharts(E, Rx, m, Rg, I0, ec) {
+  if (typeof Chart === 'undefined') return;
+  var ok = [], hot = [], target = [];
+  for (var u = 1; u <= 50; u++) {
+    var r = seModel(u, Rx, m, Rg, I0), pt = { x: u, y: r.ei * 100 };
+    if (r.P <= SE_PADM) ok.push(pt); else hot.push(pt);
+    target.push({ x: u, y: ec * 10 });
+  }
+  var cur = [{ x: E, y: seModel(E, Rx, m, Rg, I0).ei * 100 }];
+  var ds = [
+    { label: 'e_i admisible', data: ok, borderColor: '#2563eb', backgroundColor: '#2563eb', showLine: true, pointRadius: 0, borderWidth: 2 },
+    { label: 'P > 0,25 W', data: hot, borderColor: '#dc2626', backgroundColor: '#dc2626', showLine: true, pointRadius: 0, borderWidth: 2 },
+    { label: 'e_constr / 10', data: target, borderColor: '#16a34a', borderDash: [6, 4], showLine: true, pointRadius: 0, borderWidth: 1.5 },
+    { label: 'E elegida', data: cur, borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 6, showLine: false }
+  ];
+  if (!seChart) {
+    seChart = new Chart($('seChart'), { type: 'scatter', data: { datasets: ds }, options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      scales: { x: { title: { display: true, text: 'E [V]' }, min: 0, max: 50 }, y: { type: 'logarithmic', title: { display: true, text: 'e_i [%]' } } },
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } } } });
+  } else { seChart.data.datasets = ds; seChart.update(); }
+  var mc = [];
+  for (var i = -20; i <= 20; i++) { var mm = Math.pow(10, i / 10); mc.push({ x: mm, y: 4 / (mm + 2 + 1 / mm) }); }
+  var ds2 = [
+    { label: 'Sensibilidad relativa', data: mc, borderColor: '#2563eb', showLine: true, pointRadius: 0, borderWidth: 2 },
+    { label: 'm elegida', data: [{ x: m, y: 4 / (m + 2 + 1 / m) }], borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 6 }
+  ];
+  if (!mChart) {
+    mChart = new Chart($('mChart'), { type: 'scatter', data: { datasets: ds2 }, options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      scales: { x: { type: 'logarithmic', title: { display: true, text: 'm = R₃/Rx' }, ticks: { callback: function (v) { return [0.01, 0.1, 1, 10, 100].indexOf(+(+v).toPrecision(1)) >= 0 && Math.abs(Math.log10(v) - Math.round(Math.log10(v))) < 1e-6 ? ratioTxt(v) : ''; } } }, y: { min: 0, max: 1.05, title: { display: true, text: 'relativa al máximo' } } },
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } } } });
+  } else { mChart.data.datasets = ds2; mChart.update(); }
+}
+function calcUnlp() {
+  try {
+    var R3d = parseNum($('ux-R3d').value), R3i = parseNum($('ux-R3i').value);
+    var dd = Math.abs(parseNum($('ux-dd').value)), di = Math.abs(parseNum($('ux-di').value));
+    var res = parseNum($('ux-res').value), ec = parseNum($('ux-ec').value);
+    if (![R3d, R3i, dd, di, res, ec].every(isFinite) || dd + di === 0) { statusBox('ux-res-out', 'warn-box', 'Revisá los datos.'); return; }
+    var k = (R3d - R3i) / (dd + di), R3 = R3d - dd * k, dR = res * k, ei = dR / R3 * 100;
+    var tot = ec + ei, abs = R3 * tot / 100;
+    statusBox('ux-res-out', ei <= ec / 10 * 1.05 ? 'ok-box' : 'info-box',
+      'R₃ en equilibrio = <strong>' + fmt(R3, 1) + ' Ω</strong> · (ΔR₃)<sub>i</sub> = ±' + fmt(dR, 3) + ' Ω · e<sub>i</sub> = ±' + fmt(ei, 4) + ' %<br>' +
+      'Error total ≈ ±' + fmt(tot, 4) + ' % → Rx = (' + fmt(R3, 0) + ' ± ' + fmt(Math.ceil(abs), 0) + ') Ω (con relación 1)' +
+      (ei <= ec / 10 * 1.05 ? '<br>e<sub>i</sub> es despreciable frente al error de construcción.' : '<br>e<sub>i</sub> no es despreciable: hay que aumentar la sensibilidad.'));
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 3: NORMAMETER R1
+// =============================================
+var NM_B = [0.1, 1, 10, 100, 1000, 5000];
+var nm = { B: 1, Rx: 47, done: false };
+var NM_TABLE = [
+  ['0,08 … 1,2', 0.1], ['0,8 … 12', 1], ['8 … 120', 10], ['80 … 1.200', 100], ['800 … 12.000', 1000], ['4.000 … 60.000', 5000]
+];
+var NM_PARTS = {
+  T: '<strong>T — Bornes de medición:</strong> se conecta la resistencia incógnita Rx. Para valores bajos conviene usar cables cortos y gruesos: su resistencia se suma a Rx.',
+  B: '<strong>B — Multiplicador:</strong> llave de 0,1 · 1 · 10 · 100 · 1000 · 5000. Según el esquema real elige el resistor patrón (3,15 Ω × B). El apunte la llama «relación».',
+  A: '<strong>A — Dial:</strong> reóstato de relación con escala de 0,8 a 12 (3,15 en el centro). Se gira hasta que el galvanómetro indica cero. El apunte lo llama «comparación».',
+  G: '<strong>G — Galvanómetro:</strong> detector de cero para CC. Con el zumbador de CA se reemplaza por auriculares y se busca el mínimo de tono.'
+};
+function showNormaPart(k) { $('norma-part').innerHTML = NM_PARTS[k]; }
+function nmA(a) { return 3.15 * (33 + a) / (141 - a); }
+function nmPos(A) { return (141 * A - 103.95) / (A + 3.15); }
+function nmAcc(A, B) {
+  if (B === 0.1 || B === 5000) return 2;
+  return (A >= 1 && A <= 10) ? 0.5 : 2;
+}
+function initNorma() {
+  buildSeg('nm-B', NM_B.map(function (b) { return { v: b, t: 'B = ' + ratioTxt(b) }; }), nm.B, function (v) { nm.B = v; updateNorma(); });
+  newNormaUnknown(true);
+}
+function newNormaUnknown(silent) {
+  nm.Rx = Math.pow(10, rnd(0.02, 3.98));
+  nm.Rx = +nm.Rx.toPrecision(3);
+  nm.done = false;
+  if (!silent) toast('Nueva resistencia en los bornes T', '');
+  updateNorma();
+}
+function nudgeA(d) { var s = $('nm-a'); s.value = clamp(+s.value + d, 0, 108); updateNorma(); }
+function updateNorma() {
+  try {
+    var a = +$('nm-a').value, A = nmA(a), B = nm.B, Rx = nm.Rx;
+    var p = 33 + a, q = 141 - a, Rs = 3.15 * B, E = 4.5;
+    var Ud = E * (p / (p + q) - Rx / (Rx + Rs));
+    var Rth = p * q / (p + q) + Rx * Rs / (Rx + Rs);
+    var ig = Ud / (Rth + 50), x = -ig / 20e-6;
+    drawGalv($('nm-galv'), x, { title: 'G', sub: 'pila de 4,5 V', left: '← bajar A', right: 'subir A →' });
+    drawNormaDial(a);
+    var acc = nmAcc(A, B);
+    $('nm-Aval').textContent = fmt(A, 3);
+    $('nm-rx').textContent = fmtSI(A * B, 'Ω', 3);
+    $('nm-acc').textContent = '± ' + fmt(acc, 1) + ' %';
+    // tabla de exactitud
+    var zone = A < 1 ? 0 : (A <= 10 ? 1 : 2);
+    var rows = NM_TABLE.map(function (r) {
+      var ext = (r[1] === 0.1 || r[1] === 5000), cur = r[1] === B;
+      var cells = ext ? '<td colspan="3"' + (cur ? ' class="hl"' : '') + '>± 2 %</td>' :
+        [0, 1, 2].map(function (z) { return '<td' + (cur && z === zone ? ' class="hl"' : '') + '>± ' + (z === 1 ? '0,5' : '2') + ' %</td>'; }).join('');
+      return '<tr' + (cur ? ' class="hl"' : '') + '><td>' + r[0] + '</td><td>' + ratioTxt(r[1]) + '</td>' + cells + '</tr>';
+    }).join('');
+    $('nm-table').querySelector('tbody').innerHTML = rows;
+    var err = Math.abs(A * B - Rx) / Rx;
+    if (err < 0.0015) {
+      var res = 'Equilibrio: Rx = ' + fmt(A, 3) + ' × ' + ratioTxt(B) + ' = <strong>' + fmtSI(A * B, 'Ω', 3) + ' ± ' + fmt(acc, 1) + ' %</strong>';
+      if (acc === 0.5) {
+        statusBox('nm-status', 'ok-box', res + '. ¡Mejor exactitud del instrumento!');
+        if (!nm.done) { nm.done = true; unlock('norma'); }
+      } else statusBox('nm-status', 'info-box', res + '. Probá otro B para que A caiga entre 1 y 10' + ((B === 0.1 || B === 5000) && (Rx < 0.8 || Rx > 12000) ? ' (aunque en este extremo del rango no es posible).' : '.'));
+    } else if (Math.abs(x) > 1.05) statusBox('nm-status', 'warn-box', 'La aguja está contra el tope: el puente está muy desequilibrado. Probá con otro multiplicador B.');
+    else statusBox('nm-status', '', '');
+  } catch (e) { console.error(e); }
+}
+function drawNormaDial(a) {
+  var cv = $('nm-dial'); if (!cv) return;
+  var s = setupCanvas(cv), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#e5e7eb'; ctx.fillRect(0, 0, W, H);
+  var cx = W / 2, cy = H / 2 + 8, R = Math.min(W, H) * 0.42;
+  ctx.fillStyle = '#f8fafc'; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.fill();
+  ctx.strokeStyle = '#475569'; ctx.lineWidth = 2; ctx.stroke();
+  function angOf(pos) { return (135 + pos / 108 * 270) * DEG; }
+  ctx.strokeStyle = '#86efac'; ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.arc(cx, cy, R - 6, angOf(nmPos(1)), angOf(nmPos(10))); ctx.stroke();
+  var marks = [0.8, 0.9, 1, 1.5, 2, 2.5, 3, 3.15, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  var labels = { 0.8: '0,8', 1: '1', 2: '2', 3.15: '3,15', 5: '5', 8: '8', 10: '10', 12: '12' };
+  ctx.fillStyle = '#1e3a5f'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+  marks.forEach(function (m) {
+    var an = angOf(nmPos(m)), big = labels[m] !== undefined;
+    ctx.strokeStyle = m === 3.15 ? '#dc2626' : '#1e3a5f'; ctx.lineWidth = big ? 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + (R - 2) * Math.cos(an), cy + (R - 2) * Math.sin(an));
+    ctx.lineTo(cx + (R - (big ? 16 : 10)) * Math.cos(an), cy + (R - (big ? 16 : 10)) * Math.sin(an));
+    ctx.stroke();
+    if (big) { ctx.fillStyle = m === 3.15 ? '#dc2626' : '#1e3a5f'; ctx.fillText(labels[m], cx + (R - 28) * Math.cos(an), cy + (R - 28) * Math.sin(an) + 4); }
+  });
+  // perilla
+  ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.arc(cx, cy, R * 0.42, 0, 2 * Math.PI); ctx.fill();
+  var an = angOf(a);
+  ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(cx + R * 0.1 * Math.cos(an), cy + R * 0.1 * Math.sin(an)); ctx.lineTo(cx + (R - 4) * Math.cos(an), cy + (R - 4) * Math.sin(an)); ctx.stroke();
+  ctx.fillStyle = '#f9fafb'; ctx.font = 'bold 13px sans-serif'; ctx.fillText('A', cx, cy + 5);
+  ctx.fillStyle = '#1e3a5f'; ctx.font = 'bold 12px sans-serif'; ctx.fillText('A × B = X Ω', cx, 16);
+  ctx.font = '10px sans-serif'; ctx.fillStyle = '#16a34a'; ctx.fillText('zona verde: ±0,5 %', cx, H - 6);
+}
+
+// =============================================
+// TAB 4: KIRCHHOFF (HILO)
+// =============================================
+var kc = { R3: 10, Rx: 10, done: false }, kcChart = null;
+var KC_R3 = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+function initKirch() {
+  buildSeg('kc-R3', KC_R3.map(function (v) { return { v: v, t: fmtSI(v, 'Ω', 1) }; }), kc.R3, function (v) { kc.R3 = v; updateKirch(); });
+  var g = '';
+  for (var i = 0; i <= 10; i++) {
+    var px = 30 + i * 40;
+    g += '<line x1="' + px + '" y1="166" x2="' + px + '" y2="' + (i % 5 === 0 ? 178 : 172) + '" stroke="#475569" stroke-width="1"/>';
+    if (i % 5 === 0) g += '<text x="' + px + '" y="198" text-anchor="middle" font-size="9" fill="#64748b">' + (i * 100) + ' mm</text>';
+  }
+  $('kc-ruler').innerHTML = g;
+  newKirchUnknown(true);
+}
+function newKirchUnknown(silent) {
+  do {
+    var R3 = pick(KC_R3), x0 = rint(150, 850);
+    kc.Rx = R3 * (1000 - x0) / x0;
+  } while (kc.Rx < 0.5 || kc.Rx > 2000);
+  kc.done = false;
+  if (!silent) toast('Nueva resistencia en la rama R₄', '');
+  updateKirch();
+}
+function kcErr(x) { return (1 / x + 1 / (1000 - x)); }
+function nudgeKc(d) { var s = $('kc-x'); s.value = clamp(+s.value + d, 20, 980); updateKirch(); }
+function updateKirch() {
+  try {
+    var x = +$('kc-x').value, R3 = kc.R3, Rx = kc.Rx, E = 2;
+    var VA = E * (1000 - x) / 1000, VB = E * Rx / (R3 + Rx);
+    var Rw1 = 10 * x / 1000, Rw2 = 10 * (1000 - x) / 1000;
+    var Rth = Rw1 * Rw2 / (Rw1 + Rw2) + R3 * Rx / (R3 + Rx);
+    var ig = (VA - VB) / (Rth + 50), xn = ig / 50e-6;
+    drawGalv($('kc-galv'), xn, { title: 'G', left: '← mover a la izquierda', right: 'mover a la derecha →' });
+    var px = 30 + x / 1000 * 400;
+    $('kc-slider').setAttribute('points', px + ',152 ' + (px - 8) + ',140 ' + (px + 8) + ',140');
+    $('kc-gline').setAttribute('x2', px);
+    var mx = (230 + px) / 2;
+    $('kc-gc').setAttribute('cx', mx); $('kc-gt').setAttribute('x', mx);
+    $('kc-A').setAttribute('x', px);
+    $('kc-lca').setAttribute('x', (30 + px) / 2); $('kc-lca').textContent = 'lCA = ' + x + ' mm';
+    $('kc-lad').setAttribute('x', (px + 430) / 2); $('kc-lad').textContent = 'lAD = ' + (1000 - x) + ' mm';
+    var read = R3 * (1000 - x) / x, er = kcErr(x);
+    $('kc-ls').textContent = x + ' / ' + (1000 - x) + ' mm';
+    $('kc-rx').textContent = fmtSI(read, 'Ω', 4);
+    $('kc-err').textContent = '± ' + fmt(er * 100, 2) + ' %';
+    var balanced = Math.abs(read - Rx) / Rx <= er * 0.55;
+    if (balanced) {
+      if (x >= 300 && x <= 700) {
+        statusBox('kc-status', 'ok-box', '<strong>¡Equilibrio!</strong> Rx = ' + fmtSI(R3, 'Ω', 1) + ' × ' + (1000 - x) + '/' + x + ' = <strong>' + fmtSI(read, 'Ω', 3) + ' ± ' + fmt(er * 100, 2) + ' %</strong>. El contacto quedó en la zona central, de menor error.');
+        if (!kc.done) { kc.done = true; unlock('kirch'); }
+      } else statusBox('kc-status', 'info-box', 'Equilibrado, pero cerca de un extremo del hilo el error por ±1 mm es de ' + fmt(er * 100, 2) + ' %. Cambiá R₃ para que el cero quede entre 300 y 700 mm.');
+    } else statusBox('kc-status', '', '');
+    drawKcChart(x);
+  } catch (e) { console.error(e); }
+}
+function drawKcChart(x) {
+  if (typeof Chart === 'undefined') return;
+  var d = [];
+  for (var i = 50; i <= 950; i += 10) d.push({ x: i, y: kcErr(i) * 100 });
+  var ds = [
+    { label: 'Error por ±1 mm', data: d, borderColor: '#2563eb', showLine: true, pointRadius: 0, borderWidth: 2 },
+    { label: 'Posición actual', data: [{ x: x, y: kcErr(x) * 100 }], borderColor: '#dc2626', backgroundColor: '#dc2626', pointRadius: 6 }
+  ];
+  if (!kcChart) {
+    kcChart = new Chart($('kcChart'), { type: 'scatter', data: { datasets: ds }, options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      scales: { x: { min: 0, max: 1000, title: { display: true, text: 'lCA [mm]' } }, y: { min: 0, max: 2.5, title: { display: true, text: 'ΔRx/Rx [%]' } } },
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } } } });
+  } else { kcChart.data.datasets = ds; kcChart.update(); }
+}
+
+// =============================================
+// TAB 4: CONDUCTOR DE UNIÓN (KELVIN)
+// =============================================
+var kv = { k: 1, done: false };
+defParam('kvRx', { label: 'Rx real', unit: 'mΩ', min: 10, max: 1000, step: 10, val: 100, dec: 0, fn: updateKelvinLead });
+defParam('kvRy', { label: 'Conductor de unión Ry', unit: 'mΩ', min: 1, max: 100, step: 1, val: 20, dec: 0, fn: updateKelvinLead });
+function initKelvin() {
+  buildSeg('kv-k', [0.1, 0.5, 1, 2, 10].map(function (v) { return { v: v, t: ratioTxt(v) }; }), kv.k, function (v) { kv.k = v; updateKelvinLead(); });
+}
+function updateKelvinLead() {
+  try {
+    var f = +$('kv-f').value, Rx = pv('kvRx'), Ry = pv('kvRy'), k = kv.k;
+    var Rmp = f * Ry, Rnp = (1 - f) * Ry;
+    var read = Rx + Rnp - k * Rmp, err = (read - Rx) / Rx;
+    var px = 120 + f * 200;
+    $('kv-pline').setAttribute('x1', px); $('kv-pline').setAttribute('x2', px);
+    $('kv-pdot').setAttribute('cx', px); $('kv-plbl').setAttribute('x', px + 8);
+    $('kv-split').textContent = fmt(Rmp, 1) + ' / ' + fmt(Rnp, 1) + ' mΩ';
+    $('kv-read').textContent = fmt(read, 2) + ' mΩ';
+    $('kv-err').textContent = (err >= 0 ? '+' : '') + fmt(err * 100, 2) + ' %';
+    var f0 = 1 / (1 + k);
+    if (Math.abs(err) < 0.005) {
+      statusBox('kv-status', 'ok-box', '¡Punto p encontrado! R<sub>np</sub>/R<sub>mp</sub> = ' + fmt(Rnp / Math.max(Rmp, 1e-9), 2) + ' ≈ R₁/R₂ = ' + ratioTxt(k) + '. La resistencia del conductor de unión ya no afecta la medición.');
+      if (!kv.done && Ry / Rx >= 0.05) { kv.done = true; unlock('kelvin'); }
+    } else statusBox('kv-status', err > 0 ? 'warn-box' : 'info-box', err > 0 ? 'Error en exceso: parte de Ry se suma a Rx. El punto de error nulo está en f = ' + fmt(f0, 2) + ' del recorrido.' : 'Error en defecto: Ry se está sumando al patrón. Mové el contacto hacia m.');
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 4: DOBLE PUENTE DE THOMSON
+// =============================================
+defParam('tkR', { label: 'Patrón R', unit: 'mΩ', min: 1, max: 1000, step: 1, val: 100, dec: 0, fn: updateThomson });
+defParam('tkRat', { label: 'Relación r<sub>a</sub> / r<sub>b</sub>', unit: '', min: 0.1, max: 10, step: 0.1, val: 1, dec: 1, fn: updateThomson });
+defParam('tkMis', { label: 'Desajuste de r₁/r₂ respecto de r<sub>a</sub>/r<sub>b</sub>', unit: '%', min: -5, max: 5, step: 0.5, val: 1, dec: 1, fn: updateThomson });
+defParam('tkr', { label: 'Unión r', unit: 'mΩ', min: 0, max: 100, step: 1, val: 10, dec: 0, fn: updateThomson });
+function updateThomson() {
+  try {
+    var R = pv('tkR') / 1000, rat = pv('tkRat'), mis = pv('tkMis') / 100, r = pv('tkr') / 1000;
+    var r2 = 100, r1 = r2 * rat * (1 + mis);
+    var Rx0 = R * rat;
+    var corr = r2 * r / (r1 + r2 + r) * (rat - r1 / r2);
+    var Rx = Rx0 + corr;
+    var err = (Rx0 - Rx) / Rx;
+    $('tk-rx').textContent = fmt(Rx * 1000, 4) + ' mΩ';
+    $('tk-rx0').textContent = fmt(Rx0 * 1000, 4) + ' mΩ';
+    $('tk-err').textContent = (err >= 0 ? '+' : '') + fmt(err * 100, 3) + ' %';
+    $('tk-wh').textContent = fmt((Rx + r) * 1000, 2) + ' mΩ (' + fmt(r / Rx * 100, 1) + ' % de error)';
+    if (Math.abs(mis) <= 0.01 + 1e-9) statusBox('tk-status', 'ok-box', 'Desajuste dentro del 1 % del apunte: el término de corrección deja un error de ' + fmt(Math.abs(err) * 100, 3) + ' %, mucho menor que el ' + fmt(r / Rx * 100, 1) + ' % del Wheatstone simple.');
+    else statusBox('tk-status', 'warn-box', 'Desajuste mayor que el 1 %: el término de corrección deja de ser despreciable, sobre todo si r es grande.');
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 5: PUENTES DE CA
+// =============================================
+// Aritmética compleja mínima
+function cx(re, im) { return { re: re, im: im || 0 }; }
+function cadd(a, b) { return cx(a.re + b.re, a.im + b.im); }
+function csub(a, b) { return cx(a.re - b.re, a.im - b.im); }
+function cmul(a, b) { return cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re); }
+function cdiv(a, b) { var d = b.re * b.re + b.im * b.im; return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d); }
+function cabs(a) { return Math.hypot(a.re, a.im); }
+function cpar(a, b) { return cdiv(cmul(a, b), cadd(a, b)); }
+function ZR(R) { return cx(R, 0); }
+function ZL(L, w) { return cx(0, w * L); }
+function ZC(C, w) { return cx(0, -1 / (w * C)); }
+
+var ca = { cfg: 'maxwell', s: {}, u: {}, moves: 0, trail: [], done: {}, balanced: false, heav: { L1: null, L2: null } };
+function caChanged() { ca.moves++; updateCa(); }
+// Décadas usadas por los puentes
+defDec('mxR2', { n: 4, mult: 0.1, unit: 'Ω', d: [5, 0, 0, 0], fn: caChanged });
+defDec('mxL2', { n: 4, mult: 0.1, unit: 'mH', d: [5, 0, 0, 0], fn: caChanged });
+defDec('swR4', { n: 4, mult: 0.1, unit: 'Ω', d: [0, 1, 0, 0], fn: caChanged });
+defDec('swC4', { n: 4, mult: 1, unit: 'nF', d: [5, 0, 0, 0], fn: caChanged });
+defDec('hvR2', { n: 4, mult: 0.1, unit: 'Ω', d: [5, 0, 0, 0], fn: caChanged });
+defDec('hvL2', { n: 4, mult: 0.1, unit: 'mH', d: [5, 0, 0, 0], fn: caChanged });
+defDec('mwR2', { n: 4, mult: 1, unit: 'Ω', d: [5, 0, 0, 0], fn: caChanged });
+defDec('mwR3', { n: 5, mult: 10, unit: 'Ω', d: [0, 5, 0, 0, 0], fn: caChanged });
+defDec('hyR2', { n: 4, mult: 1, unit: 'Ω', d: [5, 0, 0, 0], fn: caChanged });
+defDec('hyR3', { n: 5, mult: 0.1, unit: 'Ω', d: [0, 1, 0, 0, 0], fn: caChanged });
+defDec('scR4', { n: 5, mult: 0.1, unit: 'Ω', d: [1, 0, 0, 0, 0], fn: caChanged });
+defDec('scC3', { n: 4, mult: 0.01, unit: 'nF', d: [0, 1, 0, 0], fn: caChanged });
+defDec('wiR', { n: 4, mult: 10, unit: 'Ω', d: [1, 0, 0, 0], fn: caChanged });
+
+var W1k = 2 * Math.PI * 1000, W50 = 2 * Math.PI * 50;
+var CA_CFG = {
+  maxwell: {
+    name: 'Maxwell', ext: false, f: 1000,
+    lab: ['Rx + jωLx (¿?)', 'R₂ + jωL₂ patrón', 'R₃ = 1 kΩ', 'R₄'],
+    desc: 'Puente de Maxwell del apunte (fig. 9-10): compara la bobina incógnita con una <strong>inductancia patrón</strong> regulable (L₂ con su resistencia R₂). R₃ y R₄ son resistencias: fijá la relación R₄/R₃ y ajustá R₂ y L₂.',
+    ctrl: [{ t: 'seg', k: 'mxRat', label: 'Relación R₄/R₃', items: [0.1, 1, 10] }, { t: 'dec', k: 'mxR2', label: 'R₂' }, { t: 'dec', k: 'mxL2', label: 'L₂' }],
+    gen: function () {
+      var rat = pick([0.1, 1, 10]);
+      ca.u = { Rx: rint(50, 9999) * 0.1 * rat, Lx: rint(100, 9999) * 0.1e-3 * rat };
+    },
+    Z: function () {
+      var w = W1k, R4 = ca.s.mxRat * 1000;
+      return [cx(ca.u.Rx, w * ca.u.Lx), cx(decVal('mxR2'), w * decVal('mxL2') * 1e-3), ZR(1000), ZR(R4)];
+    },
+    res: function () {
+      var k = ca.s.mxRat;
+      return 'R<sub>x</sub> = R₂·R₄/R₃ = <strong>' + fmtSI(decVal('mxR2') * k, 'Ω', 4) + '</strong> · L<sub>x</sub> = L₂·R₄/R₃ = <strong>' + fmtSI(decVal('mxL2') * 1e-3 * k, 'H', 4) + '</strong>';
+    },
+    eqs: '$ Z_1 = R_x + j\\omega L_x \\quad Z_2 = R_2 + j\\omega L_2 \\quad Z_3 = R_3 \\quad Z_4 = R_4 $<br>$ (R_x + j\\omega L_x)R_3 = (R_2 + j\\omega L_2)R_4 \\;\\Rightarrow\\; R_x R_3 = R_2 R_4 \\quad \\omega L_x R_3 = \\omega L_2 R_4 $<br>$ R_x = R_2\\dfrac{R_4}{R_3} \\qquad L_x = L_2\\dfrac{R_4}{R_3} $ — cada control actúa sobre una sola condición: converge rápido.'
+  },
+  sauty: {
+    name: 'Sauty-Wien', ext: false, f: 50,
+    lab: ['Rx − j/ωCx (¿?)', 'R₂', 'R₃ = 1 kΩ', 'R₄ − j/ωC₄ patrón'],
+    desc: 'Puente de Sauty-Wien del apunte (fig. 9-11): mide la capacidad C<sub>x</sub> y su resistencia de pérdidas R<sub>x</sub> comparando con un <strong>capacitor patrón</strong> C₄ (con su R₄) en la rama enfrentada. Alimentación senoidal de 50 Hz.',
+    ctrl: [{ t: 'seg', k: 'swR2', label: 'R₂', items: [100, 1000, 10000] }, { t: 'dec', k: 'swC4', label: 'C₄' }, { t: 'dec', k: 'swR4', label: 'R₄' }],
+    gen: function () {
+      var R2 = pick([100, 1000, 10000]), C4 = rint(100, 9999) * 1e-9, R4 = rint(5, 999) * 0.1;
+      ca.u = { Cx: C4 * 1000 / R2, Rx: R2 * R4 / 1000 };
+    },
+    Z: function () {
+      var w = W50;
+      return [cadd(ZR(ca.u.Rx), ZC(ca.u.Cx, w)), ZR(ca.s.swR2), ZR(1000), cadd(ZR(decVal('swR4')), ZC(Math.max(decVal('swC4'), 0.001) * 1e-9, w))];
+    },
+    res: function () {
+      var R2 = ca.s.swR2;
+      return 'C<sub>x</sub> = C₄·R₃/R₂ = <strong>' + fmtSI(decVal('swC4') * 1e-9 * 1000 / R2, 'F', 4) + '</strong> · R<sub>x</sub> = R₄·R₂/R₃ = <strong>' + fmtSI(decVal('swR4') * R2 / 1000, 'Ω', 4) + '</strong>';
+    },
+    eqs: '$ Z_1 = R_x - \\dfrac{j}{\\omega C_x} \\quad Z_2 = R_2 \\quad Z_3 = R_3 \\quad Z_4 = R_4 - \\dfrac{j}{\\omega C_4} $<br>$ \\left(R_x - \\dfrac{j}{\\omega C_x}\\right)R_3 = R_2\\left(R_4 - \\dfrac{j}{\\omega C_4}\\right) $<br>$ R_x = R_4\\dfrac{R_2}{R_3} \\qquad C_x = C_4\\dfrac{R_3}{R_2} $ — R<sub>x</sub> representa las pérdidas del capacitor.'
+  },
+  heaviside: {
+    name: 'Heaviside', ext: false, f: 1000,
+    lab: ['L₁ + L₂ ± 2M (¿?)', 'R₂ + jωL₂ patrón', 'R₃ = 1 kΩ', 'R₄ = 1 kΩ'],
+    desc: 'Puente de Heaviside (apunte 9.8): es un Maxwell con R₄/R₃ = 1 que mide las dos bobinas <strong>en serie</strong>. Equilibrá con polaridad <strong>a favor</strong>, registrá L<sub>x1</sub>; invertí la conexión, equilibrá otra vez y registrá L<sub>x2</sub>.',
+    ctrl: [{ t: 'seg', k: 'hvPol', label: 'Conexión de las bobinas', items: [1, -1], txt: ['A favor (+2M)', 'En oposición (−2M)'] }, { t: 'dec', k: 'hvR2', label: 'R₂' }, { t: 'dec', k: 'hvL2', label: 'L₂' }],
+    gen: function () {
+      ca.u = { L1: rint(100, 400) * 1e-3, L2: rint(100, 400) * 1e-3, M: rint(20, 90) * 1e-3, R: rint(100, 900) * 0.1 };
+      ca.heav = { L1: null, L2: null };
+    },
+    Z: function () {
+      var w = W1k, L = ca.u.L1 + ca.u.L2 + 2 * ca.s.hvPol * ca.u.M;
+      return [cx(ca.u.R, w * L), cx(decVal('hvR2'), w * decVal('hvL2') * 1e-3), ZR(1000), ZR(1000)];
+    },
+    res: function () {
+      return 'L<sub>x' + (ca.s.hvPol > 0 ? '1' : '2') + '</sub> = L₂ = <strong>' + fmtSI(decVal('hvL2') * 1e-3, 'H', 4) + '</strong> · R = <strong>' + fmtSI(decVal('hvR2'), 'Ω', 4) + '</strong>. Registrala abajo.';
+    },
+    eqs: '$ L_{x1} = L_1 + L_2 + 2M \\qquad L_{x2} = L_1 + L_2 - 2M $<br>$ L = L_{x1} - L_{x2} = 4M \\qquad M = \\dfrac{L}{4} $'
+  },
+  mwien: {
+    name: 'Maxwell-Wien', ext: true, f: 1000,
+    lab: ['Rx + jωLx (¿?)', 'R₂', 'R₃ ‖ C₃', 'R₄ = 1 kΩ'],
+    desc: '<span class="badge badge-purple">Ampliación</span> Puente de Maxwell inductancia-capacitancia (UTN FRM, fig. 7): mide L<sub>x</sub> con un <strong>capacitor patrón</strong> en paralelo con R₃. Se ajustan R₂ y R₃. Como R₂ actúa sobre las dos condiciones, el equilibrio <strong>se desliza</strong>. Apto para 1 &lt; Q &lt; 10.',
+    ctrl: [{ t: 'seg', k: 'mwC3', label: 'C₃ fijo', items: [10e-9, 100e-9], txt: ['10 nF', '100 nF'] }, { t: 'dec', k: 'mwR2', label: 'R₂' }, { t: 'dec', k: 'mwR3', label: 'R₃' }],
+    gen: function () {
+      var C3 = pick([10e-9, 100e-9]), Q = rnd(1.5, 8), R3 = Math.max(100, Math.round(Q / (W1k * C3) / 10) * 10), R2 = rint(200, 9999);
+      ca.u = { Rx: R2 * 1000 / R3, Lx: R2 * 1000 * C3, C3: C3 };
+    },
+    Z: function () {
+      var w = W1k;
+      return [cx(ca.u.Rx, w * ca.u.Lx), ZR(decVal('mwR2')), cpar(ZR(Math.max(decVal('mwR3'), 1)), ZC(ca.s.mwC3, w)), ZR(1000)];
+    },
+    res: function () {
+      var R2 = decVal('mwR2'), R3 = decVal('mwR3'), C3 = ca.s.mwC3;
+      return 'R<sub>x</sub> = R₂R₄/R₃ = <strong>' + fmtSI(R2 * 1000 / R3, 'Ω', 4) + '</strong> · L<sub>x</sub> = R₂R₄C₃ = <strong>' + fmtSI(R2 * 1000 * C3, 'H', 4) + '</strong> · Q = ωC₃R₃ = <strong>' + fmt(W1k * C3 * R3, 2) + '</strong>';
+    },
+    eqs: '$ Z_1 = Z_2 Z_4 Y_3 = R_2 R_4\\left(\\dfrac{1}{R_3} + j\\omega C_3\\right) $<br>$ R_x = \\dfrac{R_2 R_4}{R_3} \\qquad L_x = R_2 R_4 C_3 \\qquad Q = \\omega C_3 R_3 $'
+  },
+  hay: {
+    name: 'Hay', ext: true, f: 1000,
+    lab: ['Rx + jωLx (¿?)', 'R₂', 'R₃ − j/ωC₃', 'R₄ = 1 kΩ'],
+    desc: '<span class="badge badge-purple">Ampliación</span> Puente de Hay (UTN FRM, fig. 8): el capacitor patrón está <strong>en serie</strong> con R₃. Para Q alto, R₃ resulta chica. Es el indicado para bobinas con Q &gt; 10.',
+    ctrl: [{ t: 'seg', k: 'hyC3', label: 'C₃ fijo', items: [10e-9, 100e-9], txt: ['10 nF', '100 nF'] }, { t: 'dec', k: 'hyR2', label: 'R₂' }, { t: 'dec', k: 'hyR3', label: 'R₃' }],
+    gen: function () {
+      var C3 = pick([10e-9, 100e-9]), Q = rnd(10, 40), R3 = Math.max(1, Math.round(1 / (W1k * C3 * Q) * 10) / 10), R2 = rint(200, 9999);
+      var a = Math.pow(W1k * C3 * R3, 2);
+      ca.u = { Lx: R2 * 1000 * C3 / (1 + a), Rx: W1k * W1k * C3 * C3 * R3 * R2 * 1000 / (1 + a) };
+    },
+    Z: function () {
+      var w = W1k;
+      return [cx(ca.u.Rx, w * ca.u.Lx), ZR(decVal('hyR2')), cadd(ZR(decVal('hyR3')), ZC(ca.s.hyC3, w)), ZR(1000)];
+    },
+    res: function () {
+      var R2 = decVal('hyR2'), R3 = decVal('hyR3'), C3 = ca.s.hyC3, a = Math.pow(W1k * C3 * R3, 2);
+      return 'L<sub>x</sub> = <strong>' + fmtSI(R2 * 1000 * C3 / (1 + a), 'H', 4) + '</strong> · R<sub>x</sub> = <strong>' + fmtSI(W1k * W1k * C3 * C3 * R3 * R2 * 1000 / (1 + a), 'Ω', 4) + '</strong> · Q = 1/(ωC₃R₃) = <strong>' + fmt(1 / (W1k * C3 * Math.max(R3, 1e-9)), 1) + '</strong>';
+    },
+    eqs: '$ L_x = \\dfrac{R_2 R_4 C_3}{1 + \\omega^2 C_3^2 R_3^2} \\qquad R_x = \\dfrac{\\omega^2 C_3^2 R_3 R_2 R_4}{1 + \\omega^2 C_3^2 R_3^2} $<br>$ Q = \\dfrac{1}{\\omega C_3 R_3} \\;\\Rightarrow\\; L_x = \\dfrac{R_2R_4C_3}{1 + (1/Q)^2} \\approx R_2R_4C_3 $ si Q &gt; 10.'
+  },
+  schering: {
+    name: 'Schering', ext: true, f: 1000,
+    lab: ['Rx − j/ωCx (¿?)', 'C₂ patrón', 'R₃ = 1 kΩ ‖ C₃', 'R₄'],
+    desc: '<span class="badge badge-purple">Ampliación</span> Puente de Schering (UTN FRM, fig. 10): el patrón C₂ es de mica o de aire (casi sin pérdidas). Se ajustan R₄ (da C<sub>x</sub>) y C₃ (da el factor de disipación D). Se usa para aislaciones.',
+    ctrl: [{ t: 'seg', k: 'scC2', label: 'C₂ patrón', items: [10e-9, 100e-9], txt: ['10 nF', '100 nF'] }, { t: 'dec', k: 'scR4', label: 'R₄' }, { t: 'dec', k: 'scC3', label: 'C₃' }],
+    gen: function () {
+      var C2 = pick([10e-9, 100e-9]), R4 = rint(1000, 99999) * 0.1, C3 = rint(10, 1000) * 0.01e-9;
+      ca.u = { Cx: C2 * 1000 / R4, Rx: R4 * C3 / C2 };
+    },
+    Z: function () {
+      var w = W1k;
+      return [cadd(ZR(ca.u.Rx), ZC(ca.u.Cx, w)), ZC(ca.s.scC2, w), cpar(ZR(1000), ZC(Math.max(decVal('scC3'), 1e-6) * 1e-9, w)), ZR(Math.max(decVal('scR4'), 0.01))];
+    },
+    res: function () {
+      var R4 = decVal('scR4'), C3 = decVal('scC3') * 1e-9, C2 = ca.s.scC2;
+      return 'C<sub>x</sub> = C₂R₃/R₄ = <strong>' + fmtSI(C2 * 1000 / R4, 'F', 4) + '</strong> · R<sub>x</sub> = R₄C₃/C₂ = <strong>' + fmtSI(R4 * C3 / C2, 'Ω', 3) + '</strong> · D = ωR₃C₃ = <strong>' + fmt(W1k * 1000 * C3, 4) + '</strong>';
+    },
+    eqs: '$ Z_1 = Z_2 Z_4 Y_3 = \\dfrac{-j}{\\omega C_2}\\,R_4\\left(\\dfrac{1}{R_3} + j\\omega C_3\\right) $<br>$ C_x = C_2\\dfrac{R_3}{R_4} \\qquad R_x = R_4\\dfrac{C_3}{C_2} \\qquad D = \\omega C_x R_x = \\omega R_3 C_3 $'
+  },
+  wien: {
+    name: 'Wien', ext: true, f: null,
+    lab: ['R − j/ωC', 'R ‖ C', 'R₃ = 1 kΩ', 'R₄ = 2 kΩ'],
+    desc: '<span class="badge badge-purple">Ampliación</span> Puente de Wien (UTN FRM, fig. 11): la fuente tiene una <strong>frecuencia desconocida</strong>. Con R₁ = R₂ = R en tándem, C₁ = C₂ = C y R₄/R₃ = 2, el puente se equilibra sólo cuando f = 1/(2πRC). Con un solo control se mide la frecuencia.',
+    ctrl: [{ t: 'seg', k: 'wiC', label: 'C (las dos ramas)', items: [10e-9, 100e-9], txt: ['10 nF', '100 nF'] }, { t: 'dec', k: 'wiR', label: 'R en tándem' }],
+    gen: function () {
+      var C = pick([10e-9, 100e-9]), R = rint(100, 9999) * 10;
+      ca.u = { f: 1 / (2 * Math.PI * R * C) };
+    },
+    Z: function () {
+      var w = 2 * Math.PI * ca.u.f, R = Math.max(decVal('wiR'), 1), C = ca.s.wiC;
+      return [cadd(ZR(R), ZC(C, w)), cpar(ZR(R), ZC(C, w)), ZR(1000), ZR(2000)];
+    },
+    res: function () {
+      return 'f = 1/(2πRC) = <strong>' + fmtSI(1 / (2 * Math.PI * decVal('wiR') * ca.s.wiC), 'Hz', 4) + '</strong>';
+    },
+    eqs: '$ \\dfrac{R_4}{R_3} = \\dfrac{R_1}{R_2} + \\dfrac{C_2}{C_1} \\qquad f = \\dfrac{1}{2\\pi\\sqrt{R_1 R_2 C_1 C_2}} $<br>Con R₁ = R₂ = R y C₁ = C₂ = C: $ R_4/R_3 = 2 \\qquad f = \\dfrac{1}{2\\pi R C} $. Las armónicas de la fuente no se anulan y enmascaran el mínimo.'
+  }
+};
+var CA_ORDER = ['maxwell', 'sauty', 'heaviside', 'mwien', 'hay', 'schering', 'wien'];
+function initCa() {
+  ca.s = { mxRat: 1, swR2: 1000, hvPol: 1, mwC3: 10e-9, hyC3: 100e-9, scC2: 100e-9, wiC: 10e-9 };
+  CA_ORDER.forEach(function (k) { CA_CFG[k].u = null; });
+  buildCaChips();
+  selectCa('maxwell');
+}
+function buildCaChips() {
+  $('ca-chips').innerHTML = CA_ORDER.map(function (k) {
+    var c = CA_CFG[k];
+    return '<button type="button" class="chip' + (k === ca.cfg ? ' active' : '') + (ca.done[k] ? ' done' : '') + '" style="' + (c.ext ? 'border-style:dashed;color:#5b21b6;' : 'color:#166534;') + '" onclick="selectCa(\'' + k + '\')">' + (ca.done[k] ? '✓ ' : '') + c.name + '</button>';
+  }).join('');
+}
+function selectCa(k) {
+  ca.cfg = k;
+  var c = CA_CFG[k];
+  var h = '';
+  c.ctrl.forEach(function (ct) {
+    if (ct.t === 'dec') h += '<div class="dec-row"><span class="slider-label font-semibold">' + ct.label + '</span><div id="cc-' + ct.k + '"></div></div>';
+    else h += '<div class="slider-label font-semibold mb-1">' + ct.label + '</div><div id="cc-' + ct.k + '" class="flex flex-wrap gap-1 mb-3"></div>';
+  });
+  $('ca-controls').innerHTML = h;
+  c.ctrl.forEach(function (ct) {
+    if (ct.t === 'dec') renderDec(ct.k, 'cc-' + ct.k);
+    else buildSeg('cc-' + ct.k, ct.items.map(function (v, i) { return { v: v, t: ct.txt ? ct.txt[i] : ratioTxt(v) }; }), ca.s[ct.k], function (v) { ca.s[ct.k] = v; caChanged(); });
+  });
+  for (var i = 0; i < 4; i++) $('ca-l' + (i + 1)).textContent = c.lab[i];
+  $('ca-src').textContent = c.f ? 'U ~ ' + fmtSI(c.f, 'Hz', 2) : 'U ~ f = ¿?';
+  $('ca-desc').innerHTML = c.desc;
+  $('ca-eqs').innerHTML = c.eqs; renderMath($('ca-eqs'));
+  if (!c.uSaved) { c.gen(); c.uSaved = ca.u; } else ca.u = c.uSaved;
+  ca.moves = 0; ca.trail = []; ca.balanced = false;
+  $('ca-heav').classList.toggle('hidden', k !== 'heaviside');
+  buildCaChips();
+  renderHeav();
+  updateCa();
+}
+function newCaUnknown() {
+  var c = CA_CFG[ca.cfg];
+  c.gen(); c.uSaved = ca.u;
+  ca.moves = 0; ca.trail = []; ca.balanced = false;
+  renderHeav();
+  toast('Nueva incógnita en el puente de ' + c.name, '');
+  updateCa();
+}
+function updateCa() {
+  try {
+    var c = CA_CFG[ca.cfg]; if (!ca.u) return;
+    var Z = c.Z();
+    var VC = cdiv(Z[1], cadd(Z[0], Z[1])), VD = cdiv(Z[2], cadd(Z[2], Z[3]));
+    var ud = csub(VC, VD), m = cabs(ud);
+    var db = m > 0 ? 20 * Math.log10(m) : -200;
+    $('ca-db').textContent = db < -150 ? '−∞ dB' : fmt(db, 1) + ' dB';
+    var frac = clamp((db + 100) / 100, 0, 1);
+    var bar = $('ca-bar');
+    bar.style.width = (frac * 100) + '%';
+    bar.style.background = db < -80 ? '#16a34a' : (db < -50 ? '#f59e0b' : '#dc2626');
+    $('ca-moves').textContent = ca.moves;
+    ca.trail.push(ud); if (ca.trail.length > 60) ca.trail.shift();
+    drawCaPlane();
+    var bal = db < -80;
+    if (bal) {
+      statusBox('ca-status', 'ok-box', '<strong>¡Puente equilibrado en ' + ca.moves + ' ajustes!</strong><br>' + c.res());
+      if (!ca.balanced) {
+        ca.balanced = true;
+        if (!ca.done[ca.cfg]) { ca.done[ca.cfg] = true; buildCaChips(); unlock('ca'); }
+        var nd = Object.keys(ca.done).length;
+        if (nd === CA_ORDER.length) toast('¡Equilibraste los siete puentes de CA!', 'gold');
+      }
+    } else {
+      ca.balanced = false;
+      statusBox('ca-status', db < -50 ? 'info-box' : '', db < -50 ? 'Muy cerca: retocá las décadas menores.' : '');
+    }
+    renderHeav(bal);
+  } catch (e) { console.error(e); }
+}
+function drawCaPlane() {
+  var cv = $('ca-plane'); if (!cv) return;
+  var s = setupCanvas(cv), ctx = s.ctx, W = s.W, H = s.H;
+  ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, W, H);
+  var cxp = W / 2, cyp = H / 2, R = Math.min(W, H) * 0.45;
+  ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+  [0.25, 0.5, 0.75, 1].forEach(function (f) { ctx.beginPath(); ctx.arc(cxp, cyp, R * f, 0, 2 * Math.PI); ctx.stroke(); });
+  ctx.beginPath(); ctx.moveTo(cxp - R, cyp); ctx.lineTo(cxp + R, cyp); ctx.moveTo(cxp, cyp - R); ctx.lineTo(cxp, cyp + R); ctx.stroke();
+  ctx.fillStyle = '#64748b'; ctx.font = '9px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('Re', cxp + R - 12, cyp - 3); ctx.fillText('Im', cxp + 3, cyp - R + 9);
+  ctx.fillText('0 dB', cxp + R + 1, cyp + 10);
+  ctx.fillText('−100 dB = centro', 4, H - 4);
+  function map(z) {
+    var m = cabs(z); if (m === 0) return [cxp, cyp];
+    var r = clamp((20 * Math.log10(m) + 100) / 100, 0, 1) * R;
+    return [cxp + r * z.re / m, cyp - r * z.im / m];
+  }
+  var n = ca.trail.length;
+  for (var i = 1; i < n; i++) {
+    var a = map(ca.trail[i - 1]), b = map(ca.trail[i]);
+    ctx.strokeStyle = 'rgba(56,189,248,' + (0.15 + 0.85 * i / n) + ')'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+  }
+  if (n) { var p = map(ca.trail[n - 1]); ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, 2 * Math.PI); ctx.fill(); }
+}
+function renderHeav(bal) {
+  var el = $('ca-heav'); if (!el) return;
+  if (ca.cfg !== 'heaviside') { el.innerHTML = ''; return; }
+  var h = ca.heav, pol = ca.s.hvPol;
+  var html = '<div class="card p-4 border border-blue-200"><div class="font-bold text-gray-800 mb-2">🧲 Registro de mediciones — Heaviside</div>' +
+    '<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm items-center">' +
+    '<div>L<sub>x1</sub> (a favor): <span class="result-pill">' + (h.L1 !== null ? fmtSI(h.L1, 'H', 4) : '—') + '</span></div>' +
+    '<div>L<sub>x2</sub> (en oposición): <span class="result-pill">' + (h.L2 !== null ? fmtSI(h.L2, 'H', 4) : '—') + '</span></div>' +
+    '<button type="button" ' + (bal ? '' : 'disabled ') + 'onclick="recordHeav()" class="' + (bal ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed') + ' text-white text-xs font-bold px-3 py-2 rounded-lg">Registrar L<sub>x' + (pol > 0 ? '1' : '2') + '</sub> = L₂</button></div>';
+  if (h.L1 !== null && h.L2 !== null) {
+    var M = (h.L1 - h.L2) / 4;
+    html += '<div class="ok-box mt-3">$ M = \\dfrac{L_{x1} - L_{x2}}{4} = \\dfrac{' + fmt(h.L1 * 1e3, 1) + ' - ' + fmt(h.L2 * 1e3, 1) + '}{4}\\ \\text{mH} = ' + fmt(M * 1e3, 2) + '\\ \\text{mH} $ · Valor real: ' + fmt(ca.u.M * 1e3, 0) + ' mH</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html; renderMath(el);
+}
+function recordHeav() {
+  var L = decVal('hvL2') * 1e-3;
+  if (ca.s.hvPol > 0) ca.heav.L1 = L; else ca.heav.L2 = L;
+  toast('Registrado L_x' + (ca.s.hvPol > 0 ? '1' : '2') + ' = ' + fmtSI(L, 'H', 4), 'ok');
+  if (ca.heav.L1 !== null && ca.heav.L2 !== null) {
+    var M = (ca.heav.L1 - ca.heav.L2) / 4;
+    if (Math.abs(M - ca.u.M) / ca.u.M < 0.01) unlock('mutua');
+  } else toast('Ahora invertí la conexión de las bobinas y volvé a equilibrar', '');
+  renderHeav(true);
+}
+
+// =============================================
+// TAB 6: B24A + AL5401 (WHEATSTONE)
+// =============================================
+var SRC = {
+  pila: { t: 'Pila interna (≈ 4,5 V)', E: 4.5, I: Infinity },
+  BT: { t: 'BT 50 V (20 mA)', E: 50, I: 0.02 },
+  HT: { t: 'HT 300 V (3 mA)', E: 300, I: 0.003 }
+};
+var K1 = [{ v: 10e-3, t: '10 mV' }, { v: 1e-3, t: '1 mV' }, { v: 100e-6, t: '100 µV' }, { v: 10e-6, t: '10 µV' }];
+var GK = [{ v: 0.01, t: 'G 0,01' }, { v: 0.1, t: 'G 0,1' }, { v: 1, t: 'G 1' }];
+var B24_ACC = [[0.1, 1, 0.001, '1 %'], [1, 10, 0.001, '0,5 %'], [10, 100, 0.01, '0,1 %'], [100, 1e3, 0.1, '0,1 %'], [1e3, 1e4, 1, '0,1 %'], [1e4, 1e5, 10, '0,1 %'], [1e5, 1e6, 100, '0,1 % a 0,2 %'], [1e6, 1e7, 1000, '0,2 % a 0,5 %']];
+var b = { rho: 0.001, src: 'BT', det: 'AL', g: 1, k1: 10e-3, Rx: 1000, done: false, sat: false };
+defDec('bR', { n: 4, mult: 1, unit: 'Ω', maxDigit: 10, d: [10, 0, 0, 0], fn: function () { updateB24(); } });
+function initB24() {
+  buildSeg('b-rho', RATIOS.map(function (k) { return { v: k, t: 'ρ = ' + ratioTxt(k) }; }), b.rho, function (v) { b.rho = v; updateB24(); });
+  renderDec('bR', 'b-R');
+  buildSeg('b-src', Object.keys(SRC).map(function (k) { return { v: k, t: SRC[k].t }; }), b.src, function (v) { b.src = v; updateB24(); });
+  buildSeg('b-det', [{ v: 'AL', t: 'AL5401 (electrónico)' }, { v: 'G', t: 'Galvanoscopio del B24A' }], b.det, function (v) { b.det = v; buildB24Sens(); updateB24(); });
+  buildB24Sens();
+  $('b-table').querySelector('tbody').innerHTML = B24_ACC.map(function (r, i) {
+    return '<tr id="b-row' + i + '"><td>' + fmtSI(r[0], 'Ω', 1).replace(' Ω', '') + ' a ' + fmtSI(r[1], 'Ω', 1) + '</td><td>' + ratioTxt(r[2]) + '</td><td>' + r[3] + '</td></tr>';
+  }).join('');
+  newB24Unknown(true);
+}
+function buildB24Sens() {
+  if (b.det === 'AL') buildSeg('b-sens', K1.map(function (k) { return { v: k.v, t: 'K1: ' + k.t }; }), b.k1, function (v) { b.k1 = v; updateB24(); });
+  else buildSeg('b-sens', GK.map(function (k) { return { v: k.v, t: k.t }; }), b.g, function (v) { b.g = v; updateB24(); });
+}
+function newB24Unknown(silent) {
+  b.Rx = pick(RATIOS) * rint(1000, 10999);
+  b.done = false;
+  if (!silent) toast('Nueva resistencia entre X1 y X2', '');
+  updateB24();
+}
+function b24Acc(R) { for (var i = 0; i < B24_ACC.length; i++) if (R >= B24_ACC[i][0] && R < B24_ACC[i][1]) return i; return R >= 1e7 ? 7 : 0; }
+function updateB24() {
+  try {
+    var R = decVal('bR'), P = b.rho * 1000, Q = 1000, Rx = b.Rx, s = SRC[b.src];
+    var Rload = (Rx + P) * (R + Q) / (Rx + P + R + Q);
+    var Vb = Math.min(s.E, s.I * Rload);
+    var Ud = Vb * (Rx / (Rx + P) - R / (R + Q));
+    var x, sub;
+    if (b.det === 'AL') { x = Ud / b.k1; sub = 'AL5401 · K1 = ' + fmtSI(b.k1, 'V', 1) + ' FS'; }
+    else {
+      var Rth = Rx * P / (Rx + P) + R * Q / (R + Q);
+      var ig = Ud / (Rth + 150);
+      x = ig * b.g / 1e-6 / 10; sub = 'galvanoscopio · ' + (b.g === 1 ? 'G 1' : 'G ' + fmt(b.g, 2)) + ' · 1 µA/div';
+    }
+    drawGalv($('b-galv'), x, { title: b.det === 'AL' ? 'AL5401' : 'B24A', sub: sub, left: '← reducir R', right: 'aumentar R →' });
+    var sat = Math.abs(x) > 1.05;
+    if (sat && !b.sat && b.det === 'G' && b.g === 1) toast('Golpe de aguja en el galvanoscopio: empezá con G 0,01', 'bad');
+    b.sat = sat;
+    var read = b.rho * R, ai = b24Acc(read);
+    $('b-vb').textContent = fmtSI(Vb, 'V', 3) + (Vb < s.E - 1e-9 ? ' (limitada por corriente)' : '');
+    $('b-read').textContent = fmtSI(read, 'Ω', 5);
+    $('b-acc').textContent = '± ' + B24_ACC[ai][3];
+    B24_ACC.forEach(function (r, i) { var row = $('b-row' + i); if (row) row.className = i === ai ? 'hl' : ''; });
+    var exact = Math.abs(read - Rx) / Rx < 1e-9;
+    var rhoOk = Math.abs(B24_ACC[b24Acc(Rx)][2] - b.rho) < 1e-12;
+    if (exact) {
+      if (b.det === 'AL' && b.k1 === 10e-6) {
+        statusBox('b-status', 'ok-box', '<strong>¡Equilibrio confirmado a 10 µV!</strong> Rx = ρ·R = ' + ratioTxt(b.rho) + ' × ' + fmt(R, 0) + ' Ω = <strong>' + fmtSI(read, 'Ω', 5) + ' ± ' + B24_ACC[ai][3] + '</strong>' + (rhoOk ? '' : '<br>Nota: la tabla del manual recomienda ρ = ' + ratioTxt(B24_ACC[b24Acc(Rx)][2]) + ' para este valor.'));
+        if (!b.done) { b.done = true; unlock('b24a'); }
+      } else statusBox('b-status', 'info-box', 'La aguja está en cero. Para confirmarlo, ' + (b.det === 'AL' ? 'bajá el rango de K1 hasta 10 µV.' : 'pasá al detector AL5401 y bajá K1 hasta 10 µV.'));
+    } else if (Math.abs(x) < 0.03) statusBox('b-status', 'info-box', 'Parece cero, pero falta sensibilidad: subí la tensión de la fuente o el rango del detector.');
+    else statusBox('b-status', '', '');
+  } catch (e) { console.error(e); }
+}
+
+// =============================================
+// TAB 6: LAZO DE MURRAY
+// =============================================
+var mu = { L: 3, rkm: 27.1, Lx: 1, Rf: 1e5, r: 1000, src: 'BT', k1: 10e-3, done: false };
+defDec('muRM', { n: 4, mult: 1, unit: 'Ω', maxDigit: 10, d: [1, 0, 0, 0], fn: function () { updateMurray(); } });
+function initMurray() {
+  buildSeg('mu-r', [10, 100, 1000].map(function (v) { return { v: v, t: 'r = ' + v }; }), mu.r, function (v) { mu.r = v; updateMurray(); });
+  renderDec('muRM', 'mu-RM');
+  buildSeg('mu-src', Object.keys(SRC).map(function (k) { return { v: k, t: SRC[k].t }; }), mu.src, function (v) { mu.src = v; updateMurray(); });
+  buildSeg('mu-k1', K1.map(function (k) { return { v: k.v, t: k.t }; }), mu.k1, function (v) { mu.k1 = v; updateMurray(); });
+  newMurray(true);
+}
+function newMurray(silent) {
+  mu.L = Math.round(rnd(1, 8) * 10) / 10;
+  mu.Lx = mu.L * rnd(0.08, 0.92);
+  mu.Rf = Math.pow(10, rnd(3, 7.3));
+  mu.done = false;
+  $('mu-fault').style.display = 'none'; $('mu-guess').style.display = 'none';
+  $('mu-in').value = '';
+  statusBox('mu-status', '', '');
+  $('mu-L').textContent = fmt(mu.L, 1) + ' km';
+  $('mu-R2L').textContent = fmt(2 * mu.L * mu.rkm, 2) + ' Ω (27,1 Ω/km)';
+  $('mu-Ltxt').textContent = fmt(mu.L * 1000, 0) + ' m';
+  $('mu-Rf').textContent = 'desconocida';
+  if (!silent) toast('Nueva falla en el cable', '');
+  updateMurray();
+}
+function updateMurray() {
+  try {
+    var R2L = 2 * mu.L * mu.rkm, X = mu.Lx * mu.rkm, RM = decVal('muRM'), r = mu.r, s = SRC[mu.src];
+    var Rload = (RM + X) * (r + R2L - X) / (RM + X + r + R2L - X);
+    var I = Math.min(s.E / (mu.Rf + Rload), s.I);
+    var Vb = I * Rload;
+    var Ud = Vb * (X / (RM + X) - (R2L - X) / (r + R2L - X));
+    var x = Ud / mu.k1;
+    drawGalv($('mu-galv'), x, { title: 'AL5401', sub: 'K1 = ' + fmtSI(mu.k1, 'V', 1) + ' · puente: ' + fmtSI(Vb, 'V', 2), left: '← reducir RM', right: 'aumentar RM →' });
+  } catch (e) { console.error(e); }
+}
+function checkMurray() {
+  var g = parseNum($('mu-in').value);
+  if (!isFinite(g)) { statusBox('mu-status', 'warn-box', 'Ingresá la distancia en metros.'); return; }
+  var Lm = mu.L * 1000, real = mu.Lx * 1000, err = g - real;
+  var gx = 100 + clamp(g / Lm, 0, 1) * 330, fx = 100 + mu.Lx / mu.L * 330;
+  $('mu-guess').style.display = ''; $('mu-gp').setAttribute('points', gx + ',58 ' + (gx - 6) + ',46 ' + (gx + 6) + ',46'); $('mu-gt').setAttribute('x', gx);
+  $('mu-fault').style.display = ''; $('mu-fl').setAttribute('x1', fx); $('mu-fl').setAttribute('x2', fx); $('mu-ft').setAttribute('x', fx);
+  $('mu-Rf').textContent = fmtSI(mu.Rf, 'Ω', 2);
+  var RM = decVal('muRM'), est = 2 * Lm * RM / (RM + mu.r);
+  var expl = 'Con R<sub>M</sub> = ' + fmt(RM, 0) + ' Ω y r = ' + mu.r + ': L<sub>x</sub> = 2L·R<sub>M</sub>/(R<sub>M</sub> + r) = ' + fmt(est, 0) + ' m. La falla estaba a <strong>' + fmt(real, 0) + ' m</strong> (resistencia de falla ' + fmtSI(mu.Rf, 'Ω', 2) + ').';
+  if (Math.abs(err) <= 0.01 * Lm) {
+    statusBox('mu-status', 'ok-box', '<strong>¡Excavaste en el lugar correcto!</strong> Error: ' + fmt(Math.abs(err), 0) + ' m. ' + expl);
+    if (!mu.done) { mu.done = true; unlock('murray'); }
+  } else statusBox('mu-status', 'warn-box', 'Fallaste por ' + fmt(Math.abs(err), 0) + ' m: hubo que abrir la vereda dos veces. ' + expl);
+}
+function calcVarley() {
+  var R2L = parseNum($('va-r2l').value), rho = parseNum($('va-rho').value), RV = parseNum($('va-rv').value), rk = parseNum($('va-rk').value);
+  if (![R2L, rho, RV, rk].every(isFinite)) { statusBox('va-out', 'warn-box', 'Revisá los datos.'); return; }
+  var RX = (R2L - rho * RV) / (rho + 1);
+  statusBox('va-out', 'ok-box', 'R<sub>X</sub> = ' + fmt(RX, 3) + ' Ω → L<sub>x</sub> = ' + fmt(RX / rk, 3) + ' km · Largo de cada conductor = ' + fmt(R2L / 2 / rk, 3) + ' km');
+}
+var CHOP = [
+  { t: '1 · Filtro RC', d: 'Filtro RC de tres celdas: τ = 68 ms, corte en 2,5 Hz y 60 dB/década. Rechaza el zumbido de red y el ruido antes de modular.' },
+  { t: '2 · Modulador', d: 'Compuertas analógicas CMOS CD4007 «cortan» la señal continua a ≈ 320 Hz: la convierten en una onda cuadrada de amplitud proporcional al desequilibrio.' },
+  { t: '3 · A1 LM308A', d: 'Amplificador de alterna de bajo ruido. Al amplificar en CA, el offset y la deriva del amplificador no pasan: ésa es la ventaja del chopper.' },
+  { t: '4 · Demodulador', d: 'Demodulador sincrónico de ganancia ½. La fase se puede invertir con una compuerta XOR CD4070: así se recupera el signo del desequilibrio.' },
+  { t: '5 · A2 LM308A', d: 'Amplificador diferencial de continua de baja deriva que excita el galvanómetro de ±500 mV. Deriva de cero total < 1 µV/°C.' },
+  { t: 'Reloj', d: 'CD4047: oscilador a 2F y divisor por 2 → 320 Hz con ciclo de trabajo exacto, sin ajuste. Dividiendo esa señal se obtienen los 1,25 Hz de la fuente de CA.' }
+];
+function initChopper() {
+  $('ch-chips').innerHTML = CHOP.map(function (c, i) { return '<button type="button" class="chip" onclick="showChop(' + i + ')">' + c.t + '</button>'; }).join('');
+}
+function showChop(i) {
+  Array.prototype.forEach.call($('ch-chips').children, function (b, k) { b.classList.toggle('active', k === i); });
+  $('ch-detail').innerHTML = '<strong>' + CHOP[i].t + ':</strong> ' + CHOP[i].d;
+}
+// Detección sincrónica
+var syncNew = false;
+defParam('syD', { label: 'Desequilibrio del puente', unit: '%', min: -5, max: 5, step: 0.5, val: 2, dec: 1, fn: drawSync });
+function setSync(v) {
+  syncNew = v;
+  setSeg(['sy-old', 'sy-new'], v ? 'sy-new' : 'sy-old');
+  $('sy-text').innerHTML = v ?
+    '<strong>AL5401:</strong> la fuente del puente es una cuadrada de ±50 V a ≈ 1,25 Hz, y el detector invierte su polaridad <strong>en sincronismo</strong>. El producto fuente × detector da un valor medio con <strong>signo</strong>: la aguja va a un lado o al otro, como en CC. Probá desequilibrios positivos y negativos.' :
+    '<strong>Antes:</strong> generador de 800 Hz y auricular. El oído sólo percibe la <strong>amplitud</strong> del tono: +2 % y −2 % suenan igual. El mínimo no dice si hay que subir o bajar R, y el equilibrio se busca a tientas.';
+  drawSync();
+}
+function drawSync() {
+  var cv = $('sy-cv'); if (!cv) return;
+  var s = setupCanvas(cv), ctx = s.ctx, W = s.W, H = s.H, d = pv('syD') / 5;
+  ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, W, H);
+  var rows = syncNew ? ['Fuente ±50 V', 'Salida del puente', 'Tras demodular'] : ['Fuente 800 Hz', 'Salida del puente', 'Lo que oye el auricular'];
+  var h = H / 3;
+  ctx.font = '10px sans-serif'; ctx.textAlign = 'left';
+  for (var r = 0; r < 3; r++) {
+    var y0 = h * r + h / 2;
+    ctx.strokeStyle = '#334155'; ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(W, y0); ctx.stroke();
+    ctx.fillStyle = '#94a3b8'; ctx.fillText(rows[r], 4, h * r + 11);
+    ctx.strokeStyle = ['#38bdf8', '#facc15', '#4ade80'][r]; ctx.lineWidth = 1.8; ctx.beginPath();
+    for (var i = 0; i <= W; i++) {
+      var t = i / W, v;
+      if (syncNew) {
+        var sq = (Math.floor(t * 4) % 2 === 0) ? 1 : -1;
+        v = r === 0 ? sq : (r === 1 ? sq * d : d);
+      } else {
+        var sn = Math.sin(2 * Math.PI * 24 * t);
+        v = r === 0 ? sn : (r === 1 ? sn * d : Math.abs(d) * (i % 2 ? 1 : 0.98));
+      }
+      var y = y0 - v * h * 0.38;
+      if (i === 0) ctx.moveTo(i, y); else ctx.lineTo(i, y);
+    }
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'right';
+  ctx.fillText(syncNew ? 'Aguja: ' + (d > 0 ? '→ derecha' : d < 0 ? '← izquierda' : 'cero') : 'Volumen: ' + fmt(Math.abs(d) * 100, 0) + ' % (sin signo)', W - 6, H - 6);
+}
+
+// =============================================
+// TAB 7: TP — TABLAS DE LABORATORIO
+// =============================================
+var labRows = [], capRows = [];
+function buildLab() {
+  labRows = [{ n: 'R1' }, { n: 'R2' }, { n: 'R3' }];
+  capRows = [{ n: 'C1' }, { n: 'C2' }];
+  renderLab(); renderCap();
+}
+function addLabRow() { labRows.push({ n: 'R' + (labRows.length + 1) }); renderLab(); }
+function addCapRow() { capRows.push({ n: 'C' + (capRows.length + 1) }); renderCap(); }
+function clearLab() { buildLab(); }
+function inp(tbl, i, k, v) { return '<td><input value="' + (v === undefined ? '' : v) + '" oninput="' + tbl + '[' + i + '].' + k + '=this.value;' + (tbl === 'labRows' ? 'calcLab' : 'calcCap') + '(' + i + ')"></td>'; }
+function renderLab() {
+  $('lab-body').innerHTML = labRows.map(function (r, i) {
+    return '<tr>' + inp('labRows', i, 'n', r.n) + inp('labRows', i, 'A', r.A) + inp('labRows', i, 'B', r.B) +
+      '<td id="lr-n' + i + '"></td><td id="lr-na' + i + '"></td>' + inp('labRows', i, 'rho', r.rho) + inp('labRows', i, 'R', r.R) +
+      '<td id="lr-b' + i + '"></td><td id="lr-ba' + i + '"></td>' + inp('labRows', i, 'M', r.M) + '<td id="lr-d1' + i + '"></td><td id="lr-d2' + i + '"></td></tr>';
+  }).join('');
+  labRows.forEach(function (r, i) { calcLab(i); });
+}
+function labCalc(r) {
+  var A = parseNum(r.A), B = parseNum(r.B), rho = parseNum(r.rho), R = parseNum(r.R), M = parseNum(r.M);
+  var o = {};
+  if (isFinite(A) && isFinite(B)) { o.n = A * B; o.na = nmAcc(A, B); }
+  if (isFinite(rho) && isFinite(R)) { o.b = rho * R; o.ba = B24_ACC[b24Acc(o.b)][3]; }
+  if (o.n !== undefined && o.b !== undefined) o.d1 = (o.n - o.b) / o.b * 100;
+  if (isFinite(M) && o.b !== undefined) o.d2 = (M - o.b) / o.b * 100;
+  return o;
+}
+function calcLab(i) {
+  var o = labCalc(labRows[i]);
+  $('lr-n' + i).textContent = o.n !== undefined ? fmt(o.n, 4) : '';
+  $('lr-na' + i).textContent = o.na !== undefined ? fmt(o.na, 1) : '';
+  $('lr-b' + i).textContent = o.b !== undefined ? fmt(o.b, 4) : '';
+  $('lr-ba' + i).textContent = o.ba || '';
+  $('lr-d1' + i).textContent = o.d1 !== undefined ? fmt(o.d1, 3) : '';
+  $('lr-d2' + i).textContent = o.d2 !== undefined ? fmt(o.d2, 3) : '';
+}
+function renderCap() {
+  $('cap-body').innerHTML = capRows.map(function (r, i) {
+    return '<tr>' + inp('capRows', i, 'n', r.n) + inp('capRows', i, 'CE', r.CE) + inp('capRows', i, 'r', r.r) + inp('capRows', i, 'R', r.R) +
+      '<td id="cr-x' + i + '"></td>' + inp('capRows', i, 'M', r.M) + '<td id="cr-d' + i + '"></td></tr>';
+  }).join('');
+  capRows.forEach(function (r, i) { calcCap(i); });
+}
+function capCalc(r) {
+  var CE = parseNum(r.CE), rr = parseNum(r.r), R = parseNum(r.R), M = parseNum(r.M), o = {};
+  if (isFinite(CE) && isFinite(rr) && isFinite(R) && rr !== 0) o.x = CE * R / rr;
+  if (o.x !== undefined && isFinite(M)) o.d = (o.x - M) / M * 100;
+  return o;
+}
+function calcCap(i) {
+  var o = capCalc(capRows[i]);
+  $('cr-x' + i).textContent = o.x !== undefined ? fmt(o.x, 4) : '';
+  $('cr-d' + i).textContent = o.d !== undefined ? fmt(o.d, 2) : '';
+}
+function csvCell(v) { return v === undefined || v === null ? '' : String(v).replace(/;/g, ','); }
+function numCsv(v, d) { return v === undefined ? '' : v.toFixed(d).replace('.', ','); }
+function download(name, text) {
+  var blob = new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function exportLabCSV() {
+  var t = 'Resistor;A;B;Rx Norma [Ohm];Exactitud Norma [%];rho;R [Ohm];Rx B24A [Ohm];Exactitud B24A;Multimetro [Ohm];Dif Norma-B24A [%];Dif Mult-B24A [%]\n';
+  labRows.forEach(function (r) {
+    var o = labCalc(r);
+    t += [csvCell(r.n), csvCell(r.A), csvCell(r.B), numCsv(o.n, 4), numCsv(o.na, 1), csvCell(r.rho), csvCell(r.R), numCsv(o.b, 4), csvCell(o.ba), csvCell(r.M), numCsv(o.d1, 3), numCsv(o.d2, 3)].join(';') + '\n';
+  });
+  download('TP9_resistencias.csv', t);
+}
+function exportCapCSV() {
+  var t = 'Capacitor;CE [uF];r;R [Ohm];Cx [uF];Capacimetro [uF];Diferencia [%]\n';
+  capRows.forEach(function (r) {
+    var o = capCalc(r);
+    t += [csvCell(r.n), csvCell(r.CE), csvCell(r.r), csvCell(r.R), numCsv(o.x, 4), csvCell(r.M), numCsv(o.d, 2)].join(';') + '\n';
+  });
+  download('TP9_capacitores.csv', t);
+}
+
+// =============================================
+// TAB 7: EJERCICIOS
+// =============================================
+// f: [etiqueta, unidad, respuesta, tolerancia relativa]
+var EX = [
+  { src: 'UNLP · Ejemplo 4.1', t: 'Tensión máxima de un puente para X ≈ 2500 Ω',
+    q: 'Se mide X ≈ 2500 Ω (P<sub>adm</sub> = 0,5 W) con un puente X = (R₁/R₂)·R₃, con R₁ = R₂ = 1000 Ω (0,25 W cada una) y R₃ ≈ 2500 Ω. Calculá la corriente admisible de la rama R₁–X y la tensión máxima que puede aplicarse al puente.',
+    f: [['I<sub>adm</sub> (rama R₁–X)', 'mA', 14.14, 0.02], ['U<sub>adm</sub>', 'V', 49.5, 0.02]],
+    sol: '$ I_{(R_1-X)} = \\sqrt{\\dfrac{0{,}5}{2500}} = 14{,}1\\ \\text{mA} \\qquad I_{(R_2-R_3)} = \\sqrt{\\dfrac{0{,}25}{1000}} = 15{,}8\\ \\text{mA} $<br>Manda la rama R₁–X: $ U_{adm} = 14{,}1\\ \\text{mA} \\cdot 3500\\ \\Omega \\approx 49\\ \\text{V} $. La UNLP redondea a 14 mA y 49 V. En la práctica la tensión se sube de a poco hasta tener buena sensibilidad en la última década.' },
+  { src: 'UNLP · Ejemplo 4.2', t: 'Error de insensibilidad determinado en forma experimental',
+    q: 'Tras equilibrar, el operador movió R₃: con R₃d = 2512 Ω leyó δd = 5 div (a la derecha) y con R₃i = 2497 Ω, δi = 6 div (a la izquierda). La resolución del detector es 0,1 div. Hallá R₃ de equilibrio y e<sub>i</sub>.',
+    f: [['R₃ (equilibrio)', 'Ω', 2505.2, 0.0005], ['e<sub>i</sub>', '%', 0.00544, 0.05]],
+    sol: '$ R_3 = 2512 - 5\\cdot\\dfrac{2512 - 2497}{5 + 6} = 2505{,}2\\ \\Omega $<br>$ (\\Delta R_3)_i = \\pm 0{,}1 \\cdot \\dfrac{15}{11} = \\pm 0{,}136\\ \\Omega \\qquad e_i = \\dfrac{0{,}136}{2505} = \\pm 0{,}0054\\ \\% $ (la UNLP informa 0,0056 % porque redondea a 0,14 Ω).<br>Es despreciable frente al ±0,06 % de construcción: $ X = (2505 \\pm 2)\\ \\Omega $.' },
+  { src: 'Cooper-Helfrick · 5-1', t: 'Resolución de un puente de Wheatstone',
+    q: 'Puente alimentado con 10 V; ramas superiores de 1 kΩ y 1 kΩ; abajo, la incógnita (50 Ω) y el patrón (0 a 100 Ω, resolución 0,001 Ω). El galvanómetro tiene 100 Ω y se pueden leer 0,5 µA. ¿Cuál es la resolución del puente en ohms y en % de Rx?',
+    f: [['Resolución', 'Ω', 0.0108, 0.08], ['Resolución', '% de Rx', 0.0215, 0.08]],
+    sol: '$ \\dfrac{\\partial U_{Th}}{\\partial R} = \\dfrac{E R_a}{(R_a + R_x)^2} = \\dfrac{10 \\cdot 1000}{1050^2} = 9{,}07\\ \\text{mV}/\\Omega $<br>$ R_{Th} = 2\\,(1000 \\| 50) = 95{,}2\\ \\Omega \\qquad \\Delta R = \\dfrac{0{,}5\\ \\mu\\text{A}\\,(95{,}2 + 100)}{9{,}07\\ \\text{mV}/\\Omega} \\approx 0{,}011\\ \\Omega $ ≈ 0,02 % de Rx. La limita el galvanómetro, no el patrón.' },
+  { src: 'Cooper-Helfrick · 5-2', t: 'Deflexión de un puente Kelvin',
+    q: 'Puente Kelvin con ramas de relación de 100 Ω; galvanómetro de 500 Ω y 200 mm/µA. Rx = 0,1002 Ω, patrón en 0,1000 Ω, I = 10 A. Despreciando Ry, calculá I<sub>G</sub>, la deflexión y el ΔR que produce 1 mm (escribí 6e-7 o 0,0000006).',
+    f: [['I<sub>G</sub>', 'µA', 1.667, 0.02], ['Deflexión', 'mm', 333, 0.02], ['ΔR para 1 mm', 'Ω', 6e-7, 0.03]],
+    sol: '$ U_{Th} = \\tfrac12 I (R_x - R_3) = \\tfrac12 \\cdot 10 \\cdot 0{,}0002 = 1\\ \\text{mV} \\qquad R_{Th} \\approx 50 + 50 = 100\\ \\Omega $<br>$ I_G = \\dfrac{1\\ \\text{mV}}{600\\ \\Omega} = 1{,}67\\ \\mu\\text{A} \\Rightarrow 333\\ \\text{mm} $ (fuera de escala)<br>$ \\Delta R = \\dfrac{(1/200)\\ \\mu\\text{A} \\cdot 600\\ \\Omega}{5\\ \\text{A}} = 6\\times10^{-7}\\ \\Omega $' },
+  { src: 'Cooper-Helfrick · 5-3', t: 'Valor de la incógnita a partir de la deflexión',
+    q: 'Kelvin con ramas de 1000 Ω, galvanómetro de 100 Ω y 500 mm/µA, I = 10 A, patrón en 0,1000 Ω. La deflexión es de 30 mm (hacia el lado de Rx > patrón). ¿Cuánto vale Rx?',
+    f: [['R<sub>x</sub>', 'Ω', 0.100013, 0.000005]],
+    sol: '$ I_G = 30/500 = 0{,}06\\ \\mu\\text{A} \\qquad \\Delta R = \\dfrac{I_G (R_{Th} + R_G)}{I/2} = \\dfrac{0{,}06\\ \\mu\\text{A} \\cdot 1100}{5} = 1{,}32\\times10^{-5}\\ \\Omega $<br>$ R_x \\approx 0{,}100013\\ \\Omega $ (si la deflexión fuera al otro lado, 0,099987 Ω).' },
+  { src: 'Cooper-Helfrick · 5-4', t: 'Rama desconocida de un puente de CA',
+    q: 'Puente a 1000 Hz: AB = 2000 Ω ‖ 0,047 µF; BC = 1000 Ω en serie con 0,47 µF; DA = 0,5 µF; CD desconocida. Equilibrio Z<sub>AB</sub>Z<sub>CD</sub> = Z<sub>BC</sub>Z<sub>DA</sub>. Expresá CD como R en serie con C.',
+    f: [['R', 'Ω', 40.1, 0.02], ['C', 'µF', 0.833, 0.02]],
+    sol: '$ Z_{CD} = Z_{BC}\\,Z_{DA}\\,Y_{AB} \\approx 40{,}1 - j\\,191\\ \\Omega $ → R ≈ 40,1 Ω en serie con $ C = \\dfrac{1}{\\omega \\cdot 191} \\approx 0{,}833\\ \\mu\\text{F} $.' },
+  { src: 'Cooper-Helfrick · 5-5', t: 'Constantes de la rama CD como circuito serie',
+    q: 'Puente a 1000 Hz: AB = 0,2 µF puro; BC = 500 Ω puro; DA = 300 Ω ‖ 0,1 µF; CD desconocida. Hallá R y L en serie.',
+    f: [['R', 'Ω', 34.3, 0.02], ['L', 'mH', 29.0, 0.02]],
+    sol: '$ Z_{CD} = \\dfrac{Z_{BC} Z_{DA}}{Z_{AB}} \\approx 34{,}3 + j\\,182\\ \\Omega $ → R ≈ 34,3 Ω y $ L = 182/\\omega \\approx 29{,}0\\ \\text{mH} $ (el libro da 29 mH).' },
+  { src: 'Cooper-Helfrick · 5-6', t: 'Rama DA en serie y en paralelo',
+    q: 'Puente a 1000 Hz: AB = 1000 Ω ‖ 0,5 µF; BC = 1000 Ω en serie con 0,5 µF; CD = 30 mH en serie con 200 Ω. Hallá DA como R–C serie y como R–C paralelo.',
+    f: [['R serie', 'Ω', 77.9, 0.02], ['C serie', 'µF', 10.15, 0.02], ['R paralelo', 'Ω', 81.0, 0.02], ['C paralelo', 'µF', 0.395, 0.02]],
+    sol: '$ Z_{DA} = \\dfrac{Z_{AB} Z_{CD}}{Z_{BC}} \\approx 77{,}9 - j\\,15{,}7\\ \\Omega $ (capacitiva)<br>Serie: 77,9 Ω con 10,15 µF · Paralelo: $ Y = 1/Z $ → 81,0 Ω con 0,395 µF.' },
+  { src: 'Cooper-Helfrick · 5-7', t: '¿Se puede equilibrar ajustando sólo R<sub>s</sub>?',
+    q: 'AB = 0,2 µF; BC = 500 Ω; CD = 50 Ω en serie con 0,1 H; DA = 0,4 µF en serie con R<sub>s</sub>; ω = 5000 rad/s. a) ¿Qué R<sub>s</sub> pide la parte real? b) No equilibra: ¿qué resistencia hay que agregar en serie con CD?',
+    f: [['R<sub>s</sub>', 'Ω', 1000, 0.01], ['R′ en serie con CD', 'Ω', 200, 0.01]],
+    sol: 'DA requerida: $ Z_{AB} Z_{CD}/Z_{BC} = 1000 - j\\,100\\ \\Omega $, pero 0,4 µF da −j500 Ω: con R<sub>s</sub> = 1000 Ω la parte imaginaria no cierra.<br>Con R′ en serie con CD: parte imaginaria $ -1000\\,(50 + R\') = 500 \\cdot (-500) \\Rightarrow R\' = 200\\ \\Omega $ (CD queda con 250 Ω), y $ R_s = 1000\\ \\Omega $.' },
+  { src: 'Cooper-Helfrick · 5-8', t: 'Frecuencia de equilibrio',
+    q: 'AB = 1000 Ω ‖ 0,159 µF; BC = 1000 Ω; CD = 500 Ω; DA = 0,636 µF en serie con R desconocida. Hallá la frecuencia de equilibrio y R.',
+    f: [['f', 'Hz', 1000, 0.02], ['R', 'Ω', 250, 0.02]],
+    sol: '$ Z_{DA} = \\tfrac12 Z_{AB} $. Con τ = R₁C₁: $ \\omega^2 = \\dfrac{1}{500\\,\\tau\\,C_3 - \\tau^2} $ → f ≈ 1 kHz (ωτ ≈ 1) y $ R = \\dfrac{500}{1 + \\omega^2\\tau^2} = 250\\ \\Omega $.' },
+  { src: 'Purkait · Ejemplo 4.8', t: 'Lazo de Murray: falla a tierra',
+    q: 'Cable con falla de 5,2 km de largo, en lazo con un cable sano igual. En el equilibrio, las ramas de relación valen 100 Ω y 41,2 Ω. ¿A qué distancia del extremo de ensayo está la falla?',
+    f: [['L<sub>x</sub>', 'km', 3.03, 0.01]],
+    sol: '$ L_x = \\dfrac{Q}{P + Q}\\,2L = \\dfrac{41{,}2}{141{,}2} \\cdot 2 \\cdot 5{,}2 = 3{,}03\\ \\text{km} $' },
+  { src: 'Purkait · Ejemplo 4.9', t: 'Lazo de Varley: cortocircuito',
+    q: 'Cables iguales de 0,5 Ω/km. Ramas de relación de 15 Ω y 40 Ω (ρ<sub>V</sub> = 0,375). La resistencia variable vale 20 Ω y 10 Ω en las dos posiciones del conmutador. Hallá el largo de cada cable y la distancia a la falla.',
+    f: [['Largo de cada cable', 'km', 7.5, 0.01], ['L<sub>x</sub>', 'km', 5.45, 0.01]],
+    sol: '$ R_{2L} = \\dfrac{15}{40}\\cdot 20 = 7{,}5\\ \\Omega $ → cada cable: 3,75 Ω → 7,5 km<br>$ R_X = \\dfrac{R_{2L} - \\rho_V R_V}{\\rho_V + 1} = \\dfrac{7{,}5 - 0{,}375 \\cdot 10}{1{,}375} = 2{,}73\\ \\Omega $ → 5,45 km' },
+  { src: 'Stanley-Wolf · Ejemplo 10-4', t: 'Error límite de un Wheatstone',
+    q: 'Equilibrio con R₂ = 100 Ω, R₁ = 1000 Ω y R₃ = 120,3 Ω (Rx = R₃R₂/R₁). Las fijas tienen ±0,02 % y la variable ±0,04 %. Hallá Rx y su error absoluto en el peor caso.',
+    f: [['R<sub>x</sub>', 'Ω', 12.03, 0.002], ['Error', 'Ω', 0.0096, 0.06]],
+    sol: '$ R_x = 120{,}3 \\cdot \\dfrac{100}{1000} = 12{,}03\\ \\Omega \\qquad e = 0{,}02 + 0{,}02 + 0{,}04 = 0{,}08\\ \\% $<br>$ R_x = 12{,}03 \\pm 0{,}0096\\ \\Omega \\approx 12{,}03 \\pm 0{,}01\\ \\Omega $' }
+];
+var exSolved = {};
+function buildExercises() {
+  $('ex-list').innerHTML = EX.map(function (e, i) {
+    return '<details class="ex-card" id="ex-' + i + '"><summary><span class="badge badge-blue mr-2">' + e.src + '</span>' + e.t + '</summary>' +
+      '<div class="p-4 space-y-3"><p class="text-sm text-gray-700">' + e.q + '</p>' +
+      '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">' + e.f.map(function (f, j) {
+        return '<div><label class="slider-label block">' + f[0] + ' [' + f[1] + ']</label><input id="exi-' + i + '-' + j + '" class="num-in" type="text"></div>';
+      }).join('') + '</div>' +
+      '<div class="flex gap-2"><button type="button" onclick="checkEx(' + i + ')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-2 rounded-lg">Verificar</button>' +
+      '<button type="button" onclick="toggleSol(\'exs-' + i + '\')" class="text-xs font-bold text-blue-700 hover:underline">Resolución</button></div>' +
+      '<div id="exr-' + i + '" class="text-sm"></div><div id="exs-' + i + '" class="hidden formula-box text-sm">' + e.sol + '</div></div></details>';
+  }).join('');
+}
+function checkEx(i) {
+  var e = EX[i], ok = 0, msgs = [];
+  e.f.forEach(function (f, j) {
+    var v = parseNum($('exi-' + i + '-' + j).value);
+    var good = isFinite(v) && Math.abs(v - f[2]) <= Math.abs(f[2]) * f[3] + 1e-15;
+    if (good) ok++;
+    msgs.push((good ? '✅ ' : '❌ ') + f[0]);
+  });
+  var all = ok === e.f.length;
+  statusBox('exr-' + i, all ? 'ok-box' : 'warn-box', msgs.join(' · ') + (all ? ' — ¡Correcto!' : ' — Revisá los valores marcados.'));
+  if (all && !exSolved[i]) {
+    exSolved[i] = true; $('ex-' + i).classList.add('solved');
+    var n = Object.keys(exSolved).length;
+    $('ex-count').textContent = n + ' / ' + EX.length;
+    toast('Ejercicio resuelto: ' + n + ' de ' + EX.length, 'ok');
+  }
+}
+
+// =============================================
+// QUIZ AL FINAL DE CADA PESTAÑA
+// =============================================
+var quizData = {
+  'tab-intro': [
+    { q: 'En el equilibrio de un puente de Wheatstone se cumple que…',
+      opts: ['La suma de las resistencias enfrentadas es igual', 'El producto de las resistencias enfrentadas es igual', 'La corriente de la fuente es nula', 'Las cuatro resistencias son iguales'],
+      ans: 1, exp: 'Con I<sub>G</sub> = 0, V<sub>A</sub> = V<sub>B</sub> y resulta $R_x R_1 = R_3 R_2$: producto de enfrentadas. La regla vale para todos los puentes.' },
+    { q: '¿Por qué el resultado del puente no depende de la tensión de la fuente?',
+      opts: ['Porque la fuente está regulada', 'Porque la condición de equilibrio sólo contiene resistencias', 'Porque el galvanómetro compensa la tensión', 'Sí depende: hay que medir E con exactitud'],
+      ans: 1, exp: '$R_x = R_3 R_2/R_1$ no contiene E. La tensión influye en la sensibilidad (cómo se llega al cero), no en el valor de equilibrio.' }
+  ],
+  'tab-sens': [
+    { q: 'Si se duplica la tensión de alimentación (sin superar la potencia admisible), el error de insensibilidad…',
+      opts: ['Se duplica', 'Se reduce a la mitad', 'No cambia', 'Se reduce a la cuarta parte'],
+      ans: 1, exp: '$e_i$ es inversamente proporcional a U: la tensión es la perilla del operador para ajustar la sensibilidad.' },
+    { q: 'Según la UNLP, ¿qué valor conviene que tenga el error de insensibilidad?',
+      opts: ['El menor posible, aunque complique la medición', 'Del orden de 1/10 del error de construcción del puente', 'Igual al error de construcción', 'No importa si el puente es de buena calidad'],
+      ans: 1, exp: 'Menor no agrega exactitud y complica el manejo; mayor desperdicia la calidad de los patrones.' }
+  ],
+  'tab-norma': [
+    { q: 'En el Normameter R1, ¿cómo se elige B para obtener la mejor exactitud (±0,5 %)?',
+      opts: ['Siempre B = 1', 'Para que la lectura del dial A quede entre 1 y 10', 'Para que A quede en 12', 'B = 5000 para valores altos y B = 0,1 para bajos'],
+      ans: 1, exp: 'Con B entre 1 y 1000 y A entre 1 y 10 la exactitud es ±0,5 %; en los extremos de la escala y con B = 0,1 o 5000 es ±2 %.' },
+    { q: '¿Por qué se usa alimentación alterna (zumbador) para medir electrolitos?',
+      opts: ['Porque la CA tiene más potencia', 'Para evitar la polarización de los electrodos', 'Porque el galvanómetro no funciona en CC', 'Para medir la inductancia del líquido'],
+      ans: 1, exp: 'Con CC los electrodos se polarizan y aparece una FEM que falsea la medición. El equilibrio se busca por el mínimo de tono en los auriculares.' }
+  ],
+  'tab-kelvin': [
+    { q: 'En el puente de hilo (Kirchhoff), ¿dónde conviene que quede el contacto en el equilibrio?',
+      opts: ['Cerca del extremo C', 'Cerca del centro del hilo', 'Cerca del extremo D', 'Da lo mismo'],
+      ans: 1, exp: 'El error relativo por la incertidumbre de lectura, $\\Delta l\\,(1/l_{CA} + 1/l_{AD})$, es mínimo en el centro del hilo.' },
+    { q: 'El puente de Kelvin se llama «doble» porque…',
+      opts: ['Tiene el doble de exactitud que el Wheatstone', 'Tiene un segundo par de brazos de relación', 'Mide dos resistencias a la vez', 'Usa dos fuentes'],
+      ans: 1, exp: 'El segundo par (r₁, r₂) fija el punto de conexión del galvanómetro sobre la unión r y elimina su efecto si $r_b/r_a = r_2/r_1$.' }
+  ],
+  'tab-ca': [
+    { q: '¿Por qué es más laborioso equilibrar un puente de CA que uno de CC?',
+      opts: ['Porque la fuente de CA es inestable', 'Porque hay que cumplir dos condiciones (parte real e imaginaria, o módulo y ángulo)', 'Porque el detector es menos sensible', 'Porque las impedancias varían con la temperatura'],
+      ans: 1, exp: 'La igualdad compleja $Z_1Z_3 = Z_2Z_4$ son dos ecuaciones reales: hay que regular dos elementos.' },
+    { q: 'Con el puente de Heaviside se obtuvieron L<sub>x1</sub> = 520 mH (a favor) y L<sub>x2</sub> = 360 mH (en oposición). La inductancia mutua es…',
+      opts: ['160 mH', '80 mH', '40 mH', '440 mH'],
+      ans: 2, exp: '$M = (L_{x1} - L_{x2})/4 = 160/4 = 40$ mH.' }
+  ],
+  'tab-b24a': [
+    { q: 'En el B24A, si la aguja del detector va a la izquierda, hay que…',
+      opts: ['Aumentar R', 'Reducir R', 'Invertir la fuente', 'Pasar a HT'],
+      ans: 1, exp: 'Según el manual: izquierda → reducir R; derecha → aumentar R. Las décadas se ajustan de la mayor a la menor.' },
+    { q: '¿Qué ventaja aporta la fuente de CA de 1,25 Hz del AL5401 para localizar cortes?',
+      opts: ['Más potencia en el cable', 'La detección sincrónica da el signo del desequilibrio, como en CC', 'Elimina la capacidad del cable', 'Permite usar auriculares'],
+      ans: 1, exp: 'Fuente y detector se invierten en sincronismo: la aguja indica hacia qué lado está desequilibrado el puente. Con 800 Hz y auricular sólo se oía un mínimo sin signo.' }
+  ],
+  'tab-tp': [
+    { q: 'En el TP, ¿cómo se calcula C<sub>X</sub> con el B24A en modo Murray?',
+      opts: ['$C_X = C_E \\cdot r / R$', '$C_X = C_E \\cdot R / r$', '$C_X = C_E + R/r$', '$C_X = R \\cdot r / C_E$'],
+      ans: 1, exp: 'Con C<sub>E</sub> entre X2 y T y C<sub>X</sub> entre X1 y T, en el equilibrio $C_X = C_E\\,R/r$.' },
+    { q: '¿Para qué valores es más ventajoso el puente frente a un multímetro?',
+      opts: ['Sólo para valores medios (100 Ω a 10 kΩ)', 'Para valores extremos (muy bajos o muy altos) y cuando se busca exactitud de 0,1 % o mejor', 'Nunca: el multímetro digital es siempre mejor', 'Sólo en corriente alterna'],
+      ans: 1, exp: 'El óhmetro pierde exactitud en los extremos; el puente compara con patrones y llega a 0,1 % en un rango amplio (y con Kelvin, a valores muy bajos).' }
+  ]
+};
+var quizAnswered = {};
+function buildQuizzes() {
+  document.querySelectorAll('[data-quiz]').forEach(function (el) { renderQuiz(el.getAttribute('data-quiz')); });
+}
+function renderQuiz(tab) {
+  try {
+    var qs = quizData[tab], el = document.querySelector('[data-quiz="' + tab + '"]');
+    if (!qs || !el) return;
+    quizAnswered[tab] = qs.map(function () { return null; });
+    el.innerHTML = '<div class="card overflow-hidden mb-4">' +
+      '<div class="section-header"><h2 class="text-lg font-bold">🧠 Quiz — ' + tabBtn(tab).textContent + '</h2>' +
+      '<p class="text-sm opacity-80 mt-1">Dos preguntas para cerrar la sección.</p></div>' +
+      '<div class="p-5 space-y-5">' + qs.map(function (q, qi) {
+        return '<div><div class="flex items-start gap-2 mb-3"><span class="badge badge-blue">' + (qi + 1) + '</span><p class="font-semibold text-gray-800 text-sm flex-1">' + q.q + '</p></div>' +
+          '<div class="space-y-2">' + q.opts.map(function (opt, oi) {
+            return '<div class="quiz-opt" id="opt-' + tab + '-' + qi + '-' + oi + '" onclick="selectOpt(\'' + tab + '\',' + qi + ',' + oi + ')">' + opt + '</div>';
+          }).join('') + '</div>' +
+          '<div id="exp-' + tab + '-' + qi + '" class="hidden mt-3 info-box text-sm"></div></div>';
+      }).join('') +
+      '<button id="qr-' + tab + '" onclick="resetQuiz(\'' + tab + '\')" class="hidden bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg">Reiniciar</button>' +
+      '</div></div>';
+    renderMath(el);
+  } catch (e) { console.error(e); }
+}
+function selectOpt(tab, qi, oi) {
+  try {
+    var ans = quizAnswered[tab];
+    if (ans[qi] !== null) return;
+    ans[qi] = oi;
+    var q = quizData[tab][qi], ok = oi === q.ans;
+    for (var i = 0; i < q.opts.length; i++) {
+      var el = $('opt-' + tab + '-' + qi + '-' + i);
+      if (i === q.ans) el.classList.add('correct');
+      else if (i === oi) el.classList.add('wrong');
+      el.style.pointerEvents = 'none';
+    }
+    var ex = $('exp-' + tab + '-' + qi);
+    ex.innerHTML = '<strong>' + (ok ? 'Correcto.' : 'Incorrecto.') + '</strong> ' + q.exp;
+    ex.classList.remove('hidden');
+    renderMath(ex);
+    $('qr-' + tab).classList.remove('hidden');
+    var btn = tabBtn(tab), name = btn.textContent;
+    if (ans.indexOf(null) >= 0) {
+      toast((ok ? '¡Respuesta correcta!' : 'Respuesta incorrecta') + ' — pregunta ' + (qi + 1) + ' de ' + ans.length, ok ? 'ok' : 'bad');
+      return;
+    }
+    var n = ans.filter(function (a, k) { return a === quizData[tab][k].ans; }).length, all = n === ans.length;
+    btn.classList.remove('ok', 'bad');
+    btn.classList.add(all ? 'ok' : 'bad');
+    toast(name + ': ' + n + ' de ' + ans.length + ' correctas', all ? 'ok' : 'bad');
+  } catch (e) { console.error(e); }
+}
+function resetQuiz(tab) {
+  tabBtn(tab).classList.remove('ok', 'bad');
+  renderQuiz(tab);
+}
+
+// =============================================
+// ARRANQUE
+// =============================================
+window.addEventListener('resize', function () { refreshTab(activeTab); });
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    renderSteppers();
+    renderLogros();
+    initWh();
+    initSens();
+    initNorma();
+    initKirch();
+    initKelvin();
+    initCa();
+    initB24();
+    initMurray();
+    initChopper();
+    setSync(false);
+    buildLab();
+    buildExercises();
+    $('ex-count').textContent = '0 / ' + EX.length;
+    renderMath(document.body);
+    buildQuizzes();
+    refreshTab('tab-intro');
+    console.log('Medidas Electronicas I Unidad 9 - cargado correctamente.');
+  } catch (e) { console.error(e); }
+});
+</script>
+</body>
+</html>
